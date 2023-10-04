@@ -1,0 +1,15 @@
+{
+  "name": "@treasure/core",
+  "version": "1.0.0",
+  "source": "src/index.ts",
+  "main": "dist/treasure-core.cjs.js",
+  "module": "dist/treasure-core.esm.js",
+  "scripts": {
+    "test": "echo",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}

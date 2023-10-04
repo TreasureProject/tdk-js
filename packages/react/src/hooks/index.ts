@@ -1,0 +1,1 @@
+export { useTreasureAccountDomains } from "./useTreasureAccountDomains";

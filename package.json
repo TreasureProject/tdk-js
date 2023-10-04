@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "preconstruct watch",
+    "build": "preconstruct dev && npm run typecheck && preconstruct build",
+    "typecheck": "tsc --noEmit",
+    "format": "eslint --fix . && prettier --write .",
+    "lint": "eslint .",
+    "test": "npm test --workspaces --if-present",
+    "prepare": "husky install",
+    "postinstall": "preconstruct dev"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
+    }
+  },
+  "devDependencies": {
+    "@preconstruct/cli": "^2.8.1",
+    "@tanstack/eslint-plugin-query": "^4.36.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint": "^8.50.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "husky": "^8.0.3",
+    "prettier": "3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "preconstruct": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}
