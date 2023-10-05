@@ -12,9 +12,9 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "isolatedModules": true,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
-    "typeRoots": ["node_modules/@types"],
     "types": ["node"]
   },
-  "include": ["./packages/**/src/**/*.ts?"]
+  "include": ["./packages/*/src/**/*.ts?"]
 }

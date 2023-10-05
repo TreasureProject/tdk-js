@@ -11,5 +11,11 @@
   "files": [
     "src",
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "viem": "^1.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.2"
+  }
 }
