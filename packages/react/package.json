@@ -1,26 +1,24 @@
 {
   "name": "@treasure/react",
   "version": "1.0.0",
-  "source": "src/index.ts",
-  "main": "dist/treasure-react.cjs.js",
-  "module": "dist/treasure-react.esm.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo",
-    "typecheck": "tsc --noEmit"
+    "build": "tsup",
+    "dev": "npm run build -- --watch",
+    "test": "echo"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.35.7",
-    "@treasure/core": "file:../core",
+    "@treasure/core": "*",
     "react": "^18.2.0",
     "tiny-invariant": "^1.3.1",
     "viem": "^1.15.1",
     "wagmi": "^1.4.3"
   },
   "devDependencies": {
-    "@types/react": "^18.2.24"
-  },
-  "files": [
-    "src",
-    "dist"
-  ]
+    "@types/react": "^18.2.24",
+    "tsup": "^7.2.0"
+  }
 }

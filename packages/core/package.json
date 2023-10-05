@@ -1,21 +1,19 @@
 {
   "name": "@treasure/core",
   "version": "1.0.0",
-  "source": "src/index.ts",
-  "main": "dist/treasure-core.cjs.js",
-  "module": "dist/treasure-core.esm.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo",
-    "typecheck": "tsc --noEmit"
+    "build": "tsup",
+    "dev": "npm run build -- --watch",
+    "test": "echo"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
   "dependencies": {
     "viem": "^1.15.1"
   },
   "devDependencies": {
-    "@types/node": "^20.8.2"
+    "@types/node": "^20.8.2",
+    "tsup": "^7.2.0"
   }
 }
