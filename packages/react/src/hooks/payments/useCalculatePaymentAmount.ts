@@ -1,18 +1,37 @@
 import {
-  PaymentsCalculatePaymentAmountParams,
-  getPaymentsCalculatePaymentAmountArgs,
+  PaymentsToken,
+  getPaymentsPriceType,
+  getPaymentsTokenAddress,
   paymentsModuleABI,
 } from "@treasure/core";
 import { useChainId, useContractRead } from "wagmi";
 
 import { useTreasureContractAddress } from "../useTreasureContractAddress";
 
-export const useCalculatePaymentAmount = (
-  params: PaymentsCalculatePaymentAmountParams,
-) =>
-  useContractRead({
-    ...useTreasureContractAddress({ contract: "PaymentsModule" }),
+type Params = {
+  paymentToken: PaymentsToken;
+  pricedToken: PaymentsToken | "USD";
+  pricedAmount: bigint;
+  enabled?: boolean;
+};
+
+export const useCalculatePaymentAmount = ({
+  paymentToken,
+  pricedToken,
+  pricedAmount,
+  enabled = true,
+}: Params) => {
+  const chainId = useChainId();
+  return useContractRead({
+    ...useTreasureContractAddress("PaymentsModule"),
     abi: paymentsModuleABI,
     functionName: "calculatePaymentAmountByPriceType",
-    args: getPaymentsCalculatePaymentAmountArgs(useChainId(), params),
+    args: [
+      getPaymentsTokenAddress(chainId, paymentToken),
+      pricedAmount,
+      getPaymentsPriceType(paymentToken, pricedToken),
+      getPaymentsTokenAddress(chainId, pricedToken),
+    ],
+    enabled,
   });
+};

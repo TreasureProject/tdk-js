@@ -1,11 +1,7 @@
-import { parseEther, zeroAddress } from "viem";
+import { zeroAddress } from "viem";
 
 import { getTreasureContractAddresses } from "../contracts";
-import {
-  type PaymentsCalculatePaymentAmountParams,
-  PaymentsPriceType,
-  type PaymentsToken,
-} from "./types";
+import { PaymentsPriceType, type PaymentsToken } from "./types";
 
 export const getPaymentsTokenAddress = (
   chainId: number,
@@ -16,7 +12,7 @@ export const getPaymentsTokenAddress = (
     case "ARB":
     case "MAGIC":
       return contractAddresses[token];
-    case "NATIVE":
+    case "GAS":
     case "USD":
       return zeroAddress;
     default:
@@ -24,13 +20,10 @@ export const getPaymentsTokenAddress = (
   }
 };
 
-export const getPaymentsPriceType = ({
-  paymentToken,
-  pricedToken,
-}: Pick<
-  PaymentsCalculatePaymentAmountParams,
-  "paymentToken" | "pricedToken"
->) => {
+export const getPaymentsPriceType = (
+  paymentToken: PaymentsToken,
+  pricedToken: PaymentsToken | "USD",
+) => {
   if (pricedToken === paymentToken) {
     return PaymentsPriceType.STATIC;
   }
@@ -39,24 +32,9 @@ export const getPaymentsPriceType = ({
     return PaymentsPriceType.PRICED_IN_USD;
   }
 
-  if (pricedToken === "NATIVE") {
+  if (pricedToken === "GAS") {
     return PaymentsPriceType.PRICED_IN_GAS_TOKEN;
   }
 
   return PaymentsPriceType.PRICED_IN_ERC20;
 };
-
-export const getPaymentsCalculatePaymentAmountArgs = (
-  chainId: number,
-  {
-    paymentToken,
-    pricedToken,
-    pricedAmount,
-  }: PaymentsCalculatePaymentAmountParams,
-) =>
-  [
-    getPaymentsTokenAddress(chainId, paymentToken),
-    parseEther(pricedAmount.toString()),
-    getPaymentsPriceType({ paymentToken, pricedToken }),
-    getPaymentsTokenAddress(chainId, pricedToken),
-  ] as const;

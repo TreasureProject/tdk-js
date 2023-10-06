@@ -1,6 +1,6 @@
 import type { AddressString } from "../types";
 
-export type PaymentsToken = "ARB" | "MAGIC" | "NATIVE" | AddressString;
+export type PaymentsToken = "ARB" | "MAGIC" | "GAS" | AddressString;
 
 export enum PaymentsPriceType {
   STATIC,
@@ -8,9 +8,3 @@ export enum PaymentsPriceType {
   PRICED_IN_USD,
   PRICED_IN_GAS_TOKEN,
 }
-
-export type PaymentsCalculatePaymentAmountParams = {
-  paymentToken: PaymentsToken;
-  pricedToken: PaymentsToken | "USD";
-  pricedAmount: number;
-};

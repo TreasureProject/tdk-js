@@ -1,5 +1,6 @@
 .husky/
 node_modules/
 dist/
+.gitignore
 .prettierignore
 package-lock.json

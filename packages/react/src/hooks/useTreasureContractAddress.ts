@@ -6,11 +6,7 @@ import {
 import { useChainId } from "wagmi";
 import { arbitrum } from "wagmi/chains";
 
-type Props = {
-  contract: TreasureContract;
-};
-
-export const useTreasureContractAddress = ({ contract }: Props) => {
+export const useTreasureContractAddress = (contract: TreasureContract) => {
   const chainId = useChainId();
   return {
     address: getTreasureContractAddress(chainId, contract),

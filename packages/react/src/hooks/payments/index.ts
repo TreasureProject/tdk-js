@@ -1,1 +1,2 @@
-export { useCalculatePaymentAmount } from "./useCalculatePaymentAmount";
+export * from "./useCalculatePaymentAmount";
+export * from "./useMakePayment";
