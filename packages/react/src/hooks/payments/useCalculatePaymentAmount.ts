@@ -1,5 +1,5 @@
+import type { PaymentsToken } from "@treasure/core";
 import {
-  PaymentsToken,
   getPaymentsPriceType,
   getPaymentsTokenAddress,
   paymentsModuleABI,

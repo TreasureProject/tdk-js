@@ -1,5 +1,5 @@
 import { PLATFORM_API_BASE_URI } from "../constants";
-import { AccountDomains } from "./types";
+import type { AccountDomains } from "./types";
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 

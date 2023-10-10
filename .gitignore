@@ -5,5 +5,4 @@ dist/
 .idea
 .cache
 .env
-package-lock.json
 coverage

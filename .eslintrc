@@ -30,6 +30,7 @@
   ],
   "ignorePatterns": ["node_modules/**/*", "**/dist/**/*"],
   "rules": {
+    "@typescript-eslint/consistent-type-imports": "error",
     "react/react-in-jsx-scope": "off"
   }
 }

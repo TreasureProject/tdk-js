@@ -1,9 +1,11 @@
-import {
+import type {
   AddressString,
   OnErrorFn,
   OnSuccessFn,
-  PaymentsPriceType,
   PaymentsToken,
+} from "@treasure/core";
+import {
+  PaymentsPriceType,
   getPaymentsPriceType,
   getPaymentsTokenAddress,
   paymentsModuleABI,
@@ -48,80 +50,12 @@ export const useMakePayment = ({
   const priceType = getPaymentsPriceType(paymentToken, pricedToken);
   const isPaymentTokenGas = paymentToken === "GAS";
 
-  const { config: configStatic } = usePrepareContractWrite({
-    address,
-    abi: paymentsModuleABI,
-    functionName: "makeStaticERC20Payment",
-    args: [recipient as AddressString, paymentTokenAddress, pricedAmount],
-    enabled:
-      enabled && priceType === PaymentsPriceType.STATIC && !isPaymentTokenGas,
-  });
-  const writeStatic = useContractWrite(configStatic);
-  const resultStatic = useWaitForTransaction(writeStatic.data);
-
-  const { config: configStaticGas } = usePrepareContractWrite({
-    address,
-    abi: paymentsModuleABI,
-    functionName: "makeStaticGasTokenPayment",
-    args: [recipient as AddressString, pricedAmount],
-    value: pricedAmount,
-    enabled:
-      enabled && priceType === PaymentsPriceType.STATIC && isPaymentTokenGas,
-  });
-  const writeStaticGas = useContractWrite(configStaticGas);
-  const resultStaticGas = useWaitForTransaction(writeStaticGas.data);
-
-  const { config: configPriceType } = usePrepareContractWrite({
-    address,
-    abi: paymentsModuleABI,
-    functionName: "makeERC20PaymentByPriceType",
-    args: [
-      recipient as AddressString,
-      paymentTokenAddress,
-      pricedAmount,
-      priceType,
-      pricedTokenAddress,
-    ],
-    enabled:
-      enabled && priceType !== PaymentsPriceType.STATIC && !isPaymentTokenGas,
-  });
-  const writePriceType = useContractWrite(configPriceType);
-  const resultPriceType = useWaitForTransaction(writePriceType.data);
-
-  const { config: configPriceTypeGas } = usePrepareContractWrite({
-    address,
-    abi: paymentsModuleABI,
-    functionName: "makeGasTokenPaymentByPriceType",
-    args: [
-      recipient as AddressString,
-      pricedAmount,
-      priceType,
-      pricedTokenAddress,
-    ],
-    value: pricedAmount,
-    enabled:
-      enabled && priceType !== PaymentsPriceType.STATIC && isPaymentTokenGas,
-  });
-  const writePriceTypeGas = useContractWrite(configPriceTypeGas);
-  const resultPriceTypeGas = useWaitForTransaction(writePriceTypeGas.data);
-
-  const result = writeStatic
-    ? resultStatic
-    : writeStaticGas
-    ? resultStaticGas
-    : writePriceType
-    ? resultPriceType
-    : writePriceTypeGas
-    ? resultPriceTypeGas
-    : undefined;
-
-  const write =
-    writeStatic.write ??
-    writeStaticGas.write ??
-    writePriceType.write ??
-    writePriceTypeGas.write;
-
-  const { approve, isApproved } = useApproval({
+  const {
+    approve,
+    isApproved: isERC20Approved,
+    isLoading: isApproveLoading,
+    refetch: refetchApproval,
+  } = useApproval({
     contractAddress: paymentTokenAddress,
     operatorAddress: address,
     type: "ERC20",
@@ -133,32 +67,123 @@ export const useMakePayment = ({
     onError,
   });
 
-  // Automatically call write if user just approved
-  useEffect(() => {
-    if (write && didApprove.current) {
-      write();
-    }
-  }, [write]);
+  const isApproved = isERC20Approved || isPaymentTokenGas;
+  const isEnabled = enabled && isApproved;
+  const type =
+    priceType === PaymentsPriceType.STATIC
+      ? isPaymentTokenGas
+        ? "staticGas"
+        : "static"
+      : isPaymentTokenGas
+      ? "priceTypeGas"
+      : "priceType";
 
-  // Check result for success or error status
-  useEffect(() => {
-    if (result?.isSuccess) {
-      onSuccess?.();
-    } else if (result?.isError) {
-      onError?.(result.error || undefined);
+  const preparedStatic = usePrepareContractWrite({
+    address,
+    abi: paymentsModuleABI,
+    functionName: "makeStaticERC20Payment",
+    args: [recipient as AddressString, paymentTokenAddress, pricedAmount],
+    enabled: isEnabled && type === "static",
+  });
+  const writeStatic = useContractWrite(preparedStatic.config);
+  const resultStatic = useWaitForTransaction(writeStatic.data);
+
+  const preparedStaticGas = usePrepareContractWrite({
+    address,
+    abi: paymentsModuleABI,
+    functionName: "makeStaticGasTokenPayment",
+    args: [recipient as AddressString, pricedAmount],
+    value: calculatedPaymentAmount,
+    enabled: isEnabled && type === "staticGas",
+  });
+  const writeStaticGas = useContractWrite(preparedStaticGas.config);
+  const resultStaticGas = useWaitForTransaction(writeStaticGas.data);
+
+  const preparedPriceType = usePrepareContractWrite({
+    address,
+    abi: paymentsModuleABI,
+    functionName: "makeERC20PaymentByPriceType",
+    args: [
+      recipient as AddressString,
+      paymentTokenAddress,
+      pricedAmount,
+      priceType,
+      pricedTokenAddress,
+    ],
+    enabled: isEnabled && type === "priceType",
+  });
+  const writePriceType = useContractWrite(preparedPriceType.config);
+  const resultPriceType = useWaitForTransaction(writePriceType.data);
+
+  const preparedPriceTypeGas = usePrepareContractWrite({
+    address,
+    abi: paymentsModuleABI,
+    functionName: "makeGasTokenPaymentByPriceType",
+    args: [
+      recipient as AddressString,
+      pricedAmount,
+      priceType,
+      pricedTokenAddress,
+    ],
+    value: calculatedPaymentAmount,
+    enabled: isEnabled && type === "priceTypeGas",
+  });
+  const writePriceTypeGas = useContractWrite(preparedPriceTypeGas.config);
+  const resultPriceTypeGas = useWaitForTransaction(writePriceTypeGas.data);
+
+  const [
+    { refetch: refetchPrepared },
+    { isLoading: writeIsLoading, error: writeError, write },
+    {
+      data,
+      isLoading: resultIsLoading = false,
+      isSuccess = false,
+      error: resultError,
+    },
+  ] = (() => {
+    switch (type) {
+      case "static":
+        return [preparedStatic, writeStatic, resultStatic];
+      case "staticGas":
+        return [preparedStaticGas, writeStaticGas, resultStaticGas];
+      case "priceType":
+        return [preparedPriceType, writePriceType, resultPriceType];
+      case "priceTypeGas":
+        return [preparedPriceTypeGas, writePriceTypeGas, resultPriceTypeGas];
     }
-  }, [result, onSuccess, onError]);
+  })();
+  const error = writeError || resultError;
+
+  const refetch = useCallback(async () => {
+    didApprove.current = false;
+    await refetchApproval();
+    await refetchPrepared();
+  }, [refetchApproval, refetchPrepared]);
+
+  useEffect(() => {
+    if (isEnabled) {
+      if (isSuccess) {
+        onSuccess?.(data);
+        refetch();
+      } else if (error) {
+        onError?.(error);
+        refetch();
+      }
+    }
+  }, [data, refetch, isEnabled, isSuccess, error, onSuccess, onError]);
+
+  // Automatically call write the first time a user approves
+  useEffect(() => {
+    if (isEnabled && write && didApprove.current) {
+      write();
+      didApprove.current = false;
+    }
+  }, [isEnabled, write]);
 
   return {
-    approve,
     isApproved,
-    canSubmit: isApproved ? !!write : !!approve,
-    makePayment: () => {
-      if (isApproved) {
-        write?.();
-      } else {
-        approve?.();
-      }
-    },
+    isLoading: isApproveLoading || !!writeIsLoading || !!resultIsLoading,
+    approve,
+    makePayment: enabled ? (isApproved ? write : approve) : undefined,
   };
 };

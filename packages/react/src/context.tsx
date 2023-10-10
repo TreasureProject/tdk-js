@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TreasureClient } from "@treasure/core";
-import { ReactNode, createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
 
 type State = {
   client: TreasureClient;

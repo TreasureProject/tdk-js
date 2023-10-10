@@ -1,5 +1,5 @@
-import { type AddressString, TokenStandard, erc1155ABI } from "@treasure/core";
-import { useCallback } from "react";
+import type { TokenStandard } from "@treasure/core";
+import { type AddressString, erc1155ABI } from "@treasure/core";
 import { erc20ABI, erc721ABI, useAccount, useContractRead } from "wagmi";
 
 type Props = {
@@ -19,16 +19,13 @@ export const useIsApproved = ({
 }: Props) => {
   const { address, isConnected } = useAccount();
   const isEnabled = enabled && isConnected;
-  const isERC20Enabled = isEnabled && type === "ERC20";
-  const isERC721Enabled = isEnabled && type === "ERC721";
-  const isERC1155Enabled = isEnabled && type === "ERC1155";
 
   const { data: allowance, refetch: refetchAllowance } = useContractRead({
     address: contractAddress as AddressString,
     abi: erc20ABI,
     functionName: "allowance",
     args: [address!, operatorAddress as AddressString],
-    enabled: isERC20Enabled,
+    enabled: isEnabled && type === "ERC20",
   });
 
   const {
@@ -39,7 +36,7 @@ export const useIsApproved = ({
     abi: erc721ABI,
     functionName: "isApprovedForAll",
     args: [address!, operatorAddress as AddressString],
-    enabled: isERC721Enabled,
+    enabled: isEnabled && type === "ERC721",
   });
 
   const {
@@ -50,35 +47,19 @@ export const useIsApproved = ({
     abi: erc1155ABI,
     functionName: "isApprovedForAll",
     args: [address!, operatorAddress as AddressString],
-    enabled: isERC1155Enabled,
+    enabled: isEnabled && type === "ERC721",
   });
-
-  const refetch = useCallback(() => {
-    if (isERC20Enabled) {
-      refetchAllowance();
-    }
-
-    if (isERC721Enabled) {
-      refetchERC721IsApprovedForAll();
-    }
-
-    if (isERC1155Enabled) {
-      refetchERC1155IsApprovedForAll();
-    }
-  }, [
-    isERC20Enabled,
-    isERC721Enabled,
-    isERC1155Enabled,
-    refetchAllowance,
-    refetchERC721IsApprovedForAll,
-    refetchERC1155IsApprovedForAll,
-  ]);
 
   return {
     isApproved:
       !!erc721IsApprovedForAll ||
       !!erc1155IsApprovedForAll ||
       (!!allowance && allowance >= amount),
-    refetch,
+    refetch:
+      type === "ERC20"
+        ? refetchAllowance
+        : type === "ERC721"
+        ? refetchERC721IsApprovedForAll
+        : refetchERC1155IsApprovedForAll,
   };
 };

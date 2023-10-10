@@ -1,4 +1,4 @@
-import { OnErrorFn, OnSuccessFn, TokenStandard } from "@treasure/core";
+import type { OnErrorFn, OnSuccessFn, TokenStandard } from "@treasure/core";
 import { useCallback } from "react";
 
 import { useApprove } from "./useApprove";
@@ -23,7 +23,7 @@ export const useApproval = ({
   onSuccess,
   onError,
 }: Props) => {
-  const { isApproved, refetch } = useIsApproved({
+  const { isApproved, refetch: refetch } = useIsApproved({
     contractAddress,
     operatorAddress,
     type,
@@ -36,7 +36,7 @@ export const useApproval = ({
     refetch();
   }, [onSuccess, refetch]);
 
-  const { approve } = useApprove({
+  const { isLoading, approve } = useApprove({
     contractAddress,
     operatorAddress,
     type,
@@ -48,6 +48,7 @@ export const useApproval = ({
 
   return {
     isApproved,
+    isLoading,
     approve,
     refetch,
   };

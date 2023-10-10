@@ -1,10 +1,10 @@
-import {
+import type {
   AddressString,
   OnErrorFn,
   OnSuccessFn,
   TokenStandard,
-  erc1155ABI,
 } from "@treasure/core";
+import { erc1155ABI } from "@treasure/core";
 import { useEffect } from "react";
 import {
   erc20ABI,
@@ -37,55 +37,71 @@ export const useApprove = ({
   const { address } = useAccount();
   const isEnabled = !!address && enabled;
 
-  const { config: erc20ApproveConfig } = usePrepareContractWrite({
+  const preparedERC20 = usePrepareContractWrite({
     address: contractAddress as AddressString,
     abi: erc20ABI,
     functionName: "approve",
     args: [operatorAddress as AddressString, amount],
     enabled: isEnabled && type === "ERC20",
   });
-  const erc20Approve = useContractWrite(erc20ApproveConfig);
-  const erc20ApproveResult = useWaitForTransaction(erc20Approve.data);
+  const writeERC20 = useContractWrite(preparedERC20.config);
+  const resultERC20 = useWaitForTransaction(writeERC20.data);
 
-  const { config: erc721ApproveConfig } = usePrepareContractWrite({
+  const preparedERC721 = usePrepareContractWrite({
     address: contractAddress as AddressString,
     abi: erc721ABI,
     functionName: "setApprovalForAll",
     args: [operatorAddress as AddressString, true],
     enabled: isEnabled && type === "ERC721",
   });
-  const erc721Approve = useContractWrite(erc721ApproveConfig);
-  const erc721ApproveResult = useWaitForTransaction(erc721Approve.data);
+  const writeERC721 = useContractWrite(preparedERC721.config);
+  const resultERC721 = useWaitForTransaction(writeERC721.data);
 
-  const { config: erc1155ApproveConfig } = usePrepareContractWrite({
+  const preparedERC1155 = usePrepareContractWrite({
     address: contractAddress as AddressString,
     abi: erc1155ABI,
     functionName: "setApprovalForAll",
     args: [operatorAddress as AddressString, true],
     enabled: isEnabled && type === "ERC1155",
   });
-  const erc1155Approve = useContractWrite(erc1155ApproveConfig);
-  const erc1155ApproveResult = useWaitForTransaction(erc1155Approve.data);
+  const writeERC1155 = useContractWrite(preparedERC1155.config);
+  const resultERC1155 = useWaitForTransaction(writeERC1155.data);
 
-  const result = erc721Approve.write
-    ? erc721ApproveResult
-    : erc1155Approve.write
-    ? erc1155ApproveResult
-    : erc20Approve.write
-    ? erc20ApproveResult
-    : undefined;
+  const [
+    { refetch: refetchPrepared },
+    { isLoading: writeIsLoading, error: writeError, write },
+    {
+      data,
+      isLoading: resultIsLoading = false,
+      isSuccess = false,
+      error: resultError,
+    },
+  ] = (() => {
+    switch (type) {
+      case "ERC20":
+        return [preparedERC20, writeERC20, resultERC20];
+      case "ERC721":
+        return [preparedERC721, writeERC721, resultERC721];
+      case "ERC1155":
+        return [preparedERC1155, writeERC1155, resultERC1155];
+    }
+  })();
+  const error = writeError || resultError;
 
   useEffect(() => {
-    if (result?.isSuccess) {
-      onSuccess?.();
-    } else if (result?.isError) {
-      onError?.(result.error || undefined);
+    if (isEnabled) {
+      if (isSuccess) {
+        onSuccess?.(data);
+        refetchPrepared();
+      } else if (error) {
+        onError?.(error);
+        refetchPrepared();
+      }
     }
-  }, [result, onSuccess, onError]);
+  }, [data, refetchPrepared, isEnabled, isSuccess, error, onSuccess, onError]);
 
   return {
-    approve: isEnabled
-      ? erc721Approve.write ?? erc1155Approve.write ?? erc20Approve.write
-      : undefined,
+    isLoading: writeIsLoading || resultIsLoading,
+    approve: isEnabled ? write : undefined,
   };
 };
