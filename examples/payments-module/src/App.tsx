@@ -41,18 +41,24 @@ export const App = () => {
   });
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 p-8 text-slate-50">
-      <header className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Payments Module Demo</h1>
+    <div className="mx-auto max-w-5xl space-y-8 p-8">
+      <header className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <h1 className="text-ruby-900 text-2xl font-semibold">
+          Payments Module Demo
+        </h1>
         <ConnectButton />
       </header>
       <main>
         {!isConnected ? (
-          <p className="text-center">Connect your wallet to continue.</p>
+          <p className="border-honey-200 bg-honey-50 rounded-lg border-2 p-4 text-center text-lg font-medium">
+            Connect your wallet to continue.
+          </p>
         ) : (
-          <div className="grid grid-cols-2">
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Configure Parameters</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="bg-night-900 text-night-300 space-y-4 rounded-lg p-4">
+              <h2 className="text-honey-200 text-xl font-semibold">
+                Parameters
+              </h2>
               <div>
                 <label className="block font-medium">Priced Token</label>
                 <select
@@ -105,7 +111,10 @@ export const App = () => {
                 </select>
               </div>
             </div>
-            <div className="space-y-3 rounded-lg bg-slate-700 p-4 text-slate-50">
+            <div className="border-honey-200 bg-honey-50 space-y-3 rounded-lg border-2 p-4">
+              <h2 className="text-ruby-900 text-xl font-semibold">
+                Payment Widget
+              </h2>
               <p>
                 <span className="font-medium">Cost:</span> {pricedAmount}{" "}
                 {pricedToken}
@@ -118,7 +127,7 @@ export const App = () => {
                   : paymentToken}
               </p>
               <button
-                className="rounded border border-slate-500 bg-slate-400 px-2 py-1.5 text-slate-600"
+                className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
                 disabled={isLoading || !makePayment}
                 onClick={makePayment}
               >

@@ -7,3 +7,7 @@ body,
 #root {
   height: 100%;
 }
+
+body {
+  font-family: "Whyte", sans-serif;
+}
