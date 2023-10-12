@@ -7,7 +7,7 @@
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write .",
     "lint": "eslint .",
-    "test": "npm test --workspaces --if-present",
+    "test": "vitest",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -26,7 +26,8 @@
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.5",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   },
   "workspaces": [
     "packages/*"
