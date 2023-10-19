@@ -9,14 +9,14 @@ import "@treasure-project/tailwind-config/fonts.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { arbitrum, arbitrumGoerli } from "wagmi/chains";
+import { arbitrumGoerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 import { App } from "./App.tsx";
 import "./index.css";
 
 const { chains, publicClient } = configureChains(
-  [arbitrum, arbitrumGoerli],
+  [arbitrumGoerli],
   [publicProvider()],
 );
 

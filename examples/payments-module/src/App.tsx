@@ -5,7 +5,7 @@ import { useState } from "react";
 import { formatEther, parseUnits } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 
-import { usePaymentsReceiver } from "./hooks/usePaymentsReceiver";
+const RECIPIENT_ADDRESS = "0x3f466d0d3f7283c25c5071c2930338b9c6bf3cd3";
 
 export const App = () => {
   const { isConnected } = useAccount();
@@ -19,7 +19,6 @@ export const App = () => {
     pricedToken: "USD",
     pricedAmount: 10,
   });
-  const { address: recipient } = usePaymentsReceiver();
 
   const pricedAmountBI = parseUnits(
     pricedAmount.toString(),
@@ -37,7 +36,7 @@ export const App = () => {
     pricedToken,
     pricedAmount: pricedAmountBI,
     calculatedPaymentAmount: paymentAmount,
-    recipient,
+    recipient: RECIPIENT_ADDRESS,
   });
 
   return (
