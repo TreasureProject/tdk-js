@@ -17,7 +17,7 @@ Coming soon
 
 ## Examples
 
-- [Payments Module](./examples/payments-module)
+- [Payments Module](./examples/payments-module) ([Demo](https://tdk-payments-example.vercel.app))
 
 ## Development
 
