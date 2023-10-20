@@ -1,7 +1,8 @@
-import type { PaymentsToken } from "@treasure/core";
+import type { Currency, Token } from "@treasure/core";
 import {
+  getCurrencyAddress,
   getPaymentsPriceType,
-  getPaymentsTokenAddress,
+  getTokenAddress,
   paymentsModuleABI,
 } from "@treasure/core";
 import { useChainId, useContractRead } from "wagmi";
@@ -9,15 +10,15 @@ import { useChainId, useContractRead } from "wagmi";
 import { useTreasureContractAddress } from "../useTreasureContractAddress";
 
 type Params = {
-  paymentToken: PaymentsToken;
-  pricedToken: PaymentsToken | "USD";
+  paymentToken: Token;
+  pricedCurrency: Currency;
   pricedAmount: bigint;
   enabled?: boolean;
 };
 
 export const useCalculatePaymentAmount = ({
   paymentToken,
-  pricedToken,
+  pricedCurrency,
   pricedAmount,
   enabled = true,
 }: Params) => {
@@ -27,10 +28,10 @@ export const useCalculatePaymentAmount = ({
     abi: paymentsModuleABI,
     functionName: "calculatePaymentAmountByPriceType",
     args: [
-      getPaymentsTokenAddress(chainId, paymentToken),
+      getTokenAddress(chainId, paymentToken),
       pricedAmount,
-      getPaymentsPriceType(paymentToken, pricedToken),
-      getPaymentsTokenAddress(chainId, pricedToken),
+      getPaymentsPriceType(paymentToken, pricedCurrency),
+      getCurrencyAddress(chainId, pricedCurrency),
     ],
     enabled,
   });

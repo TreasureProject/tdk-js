@@ -9,6 +9,7 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "decimal.js-light": "^2.5.1",
     "viem": "^1.15.1"
   },
   "devDependencies": {

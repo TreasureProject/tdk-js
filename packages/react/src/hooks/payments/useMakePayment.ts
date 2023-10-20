@@ -1,13 +1,15 @@
 import type {
   AddressString,
+  Currency,
   OnErrorFn,
   OnSuccessFn,
-  PaymentsToken,
+  Token,
 } from "@treasure/core";
 import {
   PaymentsPriceType,
+  getCurrencyAddress,
   getPaymentsPriceType,
-  getPaymentsTokenAddress,
+  getTokenAddress,
   paymentsModuleABI,
 } from "@treasure/core";
 import { useCallback, useEffect, useRef } from "react";
@@ -22,8 +24,8 @@ import { useApproval } from "../approvals/useApproval";
 import { useTreasureContractAddress } from "../useTreasureContractAddress";
 
 type Params = {
-  paymentToken: PaymentsToken;
-  pricedToken: PaymentsToken | "USD";
+  paymentToken: Token;
+  pricedCurrency: Currency;
   pricedAmount: bigint;
   calculatedPaymentAmount: bigint;
   recipient: string;
@@ -34,7 +36,7 @@ type Params = {
 
 export const useMakePayment = ({
   paymentToken,
-  pricedToken,
+  pricedCurrency,
   pricedAmount,
   calculatedPaymentAmount,
   recipient,
@@ -45,10 +47,10 @@ export const useMakePayment = ({
   const didApprove = useRef(false);
   const chainId = useChainId();
   const { address } = useTreasureContractAddress("PaymentsModule");
-  const paymentTokenAddress = getPaymentsTokenAddress(chainId, paymentToken);
-  const pricedTokenAddress = getPaymentsTokenAddress(chainId, pricedToken);
-  const priceType = getPaymentsPriceType(paymentToken, pricedToken);
-  const isPaymentTokenGas = paymentToken === "GAS";
+  const paymentTokenAddress = getTokenAddress(chainId, paymentToken);
+  const pricedCurrencyAddress = getCurrencyAddress(chainId, pricedCurrency);
+  const priceType = getPaymentsPriceType(paymentToken, pricedCurrency);
+  const isPaymentTokenGas = paymentToken === "ETH";
 
   const {
     approve,
@@ -108,7 +110,7 @@ export const useMakePayment = ({
       paymentTokenAddress,
       pricedAmount,
       priceType,
-      pricedTokenAddress,
+      pricedCurrencyAddress,
     ],
     enabled: isEnabled && type === "priceType",
   });
@@ -123,7 +125,7 @@ export const useMakePayment = ({
       recipient as AddressString,
       pricedAmount,
       priceType,
-      pricedTokenAddress,
+      pricedCurrencyAddress,
     ],
     value: calculatedPaymentAmount,
     enabled: isEnabled && type === "priceTypeGas",

@@ -1,39 +1,42 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import type { PaymentsToken } from "@treasure/react";
-import { useCalculatePaymentAmount, useMakePayment } from "@treasure/react";
+import type { Currency, Token } from "@treasure/react";
+import {
+  PaymentsCartModal,
+  useCalculatePaymentAmount,
+  useMakePayment,
+} from "@treasure/react";
 import { useState } from "react";
 import { formatEther, parseUnits } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 const RECIPIENT_ADDRESS = "0x3f466d0d3f7283c25c5071c2930338b9c6bf3cd3";
 
 export const App = () => {
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const [{ paymentToken, pricedToken, pricedAmount }, setState] = useState<{
-    paymentToken: PaymentsToken;
-    pricedToken: PaymentsToken | "USD";
+  const [{ paymentToken, pricedCurrency, pricedAmount }, setState] = useState<{
+    paymentToken: Token;
+    pricedCurrency: Currency;
     pricedAmount: number;
   }>({
     paymentToken: "MAGIC",
-    pricedToken: "USD",
+    pricedCurrency: "USD",
     pricedAmount: 10,
   });
 
   const pricedAmountBI = parseUnits(
     pricedAmount.toString(),
-    pricedToken === "USD" ? 8 : 18,
+    pricedCurrency === "USD" ? 8 : 18,
   );
 
   const { data: paymentAmount = 0n } = useCalculatePaymentAmount({
     paymentToken,
-    pricedToken,
+    pricedCurrency,
     pricedAmount: pricedAmountBI,
   });
 
   const { isApproved, isLoading, makePayment } = useMakePayment({
     paymentToken,
-    pricedToken,
+    pricedCurrency,
     pricedAmount: pricedAmountBI,
     calculatedPaymentAmount: paymentAmount,
     recipient: RECIPIENT_ADDRESS,
@@ -41,6 +44,19 @@ export const App = () => {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
+      <PaymentsCartModal
+        items={[
+          {
+            id: "1",
+            title: "Nahuati Necklace",
+            subtitle: "Corn | Common | Cosmetic",
+            quantity: 6,
+            priceCurrency: "USD",
+            pricePerItem: 0.99,
+          },
+        ]}
+        paymentTokens={["MAGIC", "ARB"]}
+      />
       <header className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <h1 className="text-ruby-900 text-2xl font-semibold">
           Payments Module Demo
@@ -53,7 +69,7 @@ export const App = () => {
             Connect your wallet to continue.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
             <div className="bg-night-900 text-night-300 space-y-4 rounded-lg p-4">
               <h2 className="text-honey-200 text-xl font-semibold">
                 Parameters
@@ -62,11 +78,11 @@ export const App = () => {
                 <label className="block font-medium">Priced Token</label>
                 <select
                   className="rounded px-2.5 py-1.5 text-slate-600"
-                  value={pricedToken}
+                  value={pricedCurrency}
                   onChange={(e) =>
                     setState((curr) => ({
                       ...curr,
-                      pricedToken: e.target.value as PaymentsToken | "USD",
+                      pricedCurrency: e.target.value as Currency,
                     }))
                   }
                 >
@@ -99,7 +115,7 @@ export const App = () => {
                   onChange={(e) =>
                     setState((curr) => ({
                       ...curr,
-                      paymentToken: e.target.value as PaymentsToken,
+                      paymentToken: e.target.value as Token,
                     }))
                   }
                 >
@@ -111,19 +127,13 @@ export const App = () => {
               </div>
             </div>
             <div className="border-honey-200 bg-honey-50 space-y-3 rounded-lg border-2 p-4">
-              <h2 className="text-ruby-900 text-xl font-semibold">
-                Payment Widget
-              </h2>
               <p>
                 <span className="font-medium">Cost:</span> {pricedAmount}{" "}
-                {pricedToken}
+                {pricedCurrency}
               </p>
               <p>
                 <span className="font-medium">Payment:</span>{" "}
-                {formatEther(paymentAmount)}{" "}
-                {paymentToken === "GAS"
-                  ? chain?.nativeCurrency.symbol ?? "ETH"
-                  : paymentToken}
+                {formatEther(paymentAmount)} {paymentToken}
               </p>
               <button
                 className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
