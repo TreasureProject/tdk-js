@@ -52,10 +52,11 @@ export const App = () => {
             subtitle: "Corn | Common | Cosmetic",
             quantity: 6,
             priceCurrency: "USD",
-            pricePerItem: 0.99,
+            pricePerItem: 1.99,
           },
         ]}
         paymentTokens={["MAGIC", "ARB"]}
+        paymentRecipient={RECIPIENT_ADDRESS}
       />
       <header className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <h1 className="text-ruby-900 text-2xl font-semibold">

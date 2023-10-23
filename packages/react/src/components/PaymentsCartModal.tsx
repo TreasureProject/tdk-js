@@ -1,8 +1,15 @@
-import type { Currency, Token } from "@treasure/core";
+import type { AddressString, Currency, Token } from "@treasure/core";
 import { formatUSD } from "@treasure/core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { formatEther, parseUnits } from "viem";
 
-import { useTokenBalances, useTokenPrices } from "../hooks";
+import {
+  useCalculatePaymentAmount,
+  useMakePayment,
+  useTokenBalances,
+  useTokenPrices,
+} from "../hooks";
 import { CloseIcon } from "../icons/CloseIcon";
 import { TrashIcon } from "../icons/TrashIcon";
 import { cn } from "../utils";
@@ -15,36 +22,62 @@ type Item = {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   imageUrl?: string;
-  quantity?: number;
-  priceCurrency: Currency;
   pricePerItem: number;
+  priceCurrency: Currency;
+  quantity?: number;
   data?: unknown;
 };
 
 type Props = {
   items: Item[];
   paymentTokens: Token[];
+  paymentRecipient: AddressString;
 };
 
-export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
+export const PaymentsCartModal = ({
+  items,
+  paymentTokens,
+  paymentRecipient,
+}: Props) => {
+  const { t } = useTranslation();
   const [selectedToken, setSelectedToken] = useState(paymentTokens[0]);
   const { data: tokenPrices } = useTokenPrices({
     tokens: paymentTokens,
   });
   const { data: tokenBalances } = useTokenBalances({ tokens: paymentTokens });
 
-  const totalItemsPrice = items.reduce(
-    (acc, { pricePerItem, quantity }) =>
-      acc + (quantity === undefined ? 1 : quantity) * pricePerItem,
-    0,
+  const selectedTokenPrice = tokenPrices[paymentTokens.indexOf(selectedToken)];
+  const pricedCurrency = items[0]?.priceCurrency ?? "USD";
+  const pricedAmount = parseUnits(
+    items
+      .reduce(
+        (acc, { pricePerItem, quantity }) =>
+          acc + (quantity === undefined ? 1 : quantity) * pricePerItem,
+        0,
+      )
+      .toString(),
+    pricedCurrency === "USD" ? 8 : 18, // TODO: don't assume 18 decimals
   );
-  const selectedOptionPrice = tokenPrices[paymentTokens.indexOf(selectedToken)];
+
+  const { data: totalCost = 0n } = useCalculatePaymentAmount({
+    paymentToken: selectedToken,
+    pricedCurrency,
+    pricedAmount,
+  });
+
+  const { isApproved, isLoading, makePayment } = useMakePayment({
+    paymentToken: selectedToken,
+    pricedCurrency,
+    pricedAmount,
+    calculatedPaymentAmount: totalCost,
+    recipient: paymentRecipient,
+  });
 
   return (
     <div className="tdk-space-y-8 tdk-rounded-2xl tdk-bg-[#0B1421] tdk-p-10">
       <div className="tdk-flex tdk-items-start tdk-justify-between">
         <h1 className="tdk-text-2xl tdk-font-semibold tdk-text-white">
-          Checkout Overview
+          {t("payments.cart.title")}
         </h1>
         <button className="tdk-flex tdk-h-10 tdk-w-10 tdk-items-center tdk-justify-center tdk-rounded-full tdk-border tdk-border-[#5E6470] tdk-text-[#5E6470] hover:tdk-border-night-200 hover:tdk-bg-night-200 hover:tdk-text-night-900 tdk-transition-colors">
           <CloseIcon className="tdk-w-4 tdk-h-4" />
@@ -56,9 +89,11 @@ export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
             <div className="tdk-space-y-8 tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-px-6 tdk-py-8">
               <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-text-sm">
                 <p className="tdk-text-night-600">
-                  {items.length} {items.length === 1 ? "item" : "items"}
+                  {t("common.items", { count: items.length })}
                 </p>
-                <button className="tdk-text-[#0093D5]">Clear cart</button>
+                <button className="tdk-text-[#0093D5]">
+                  {t("payments.cart.clear")}
+                </button>
               </div>
               <ul>
                 {items.map((item) => (
@@ -91,7 +126,10 @@ export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
                         currency={item.priceCurrency}
                         amount={item.pricePerItem}
                       />
-                      <button className="tdk-group tdk-flex tdk-h-9 tdk-w-9 tdk-items-center tdk-justify-center tdk-rounded-md tdk-border tdk-border-[#5E6470] hover:tdk-border-night-200 tdk-transition-colors">
+                      <button
+                        className="tdk-group tdk-flex tdk-h-9 tdk-w-9 tdk-items-center tdk-justify-center tdk-rounded-md tdk-border tdk-border-[#5E6470] hover:tdk-border-night-200 tdk-transition-colors"
+                        title={t("common.removeItem")}
+                      >
                         <TrashIcon className="tdk-w-4 tdk-h-4 tdk-text-night-500 group-hover:tdk-text-night-200 tdk-transition-colors" />
                       </button>
                     </div>
@@ -101,18 +139,18 @@ export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
             </div>
           </div>
           <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF]">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam
-            </p>
-            <p>&copy; 2021-2023 Treasure. All Rights Reserved.</p>
+            <p>{t("payments.cart.terms")}</p>
+            <p>{t("payments.cart.termsCopy")}</p>
           </div>
         </div>
         <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44]">
           <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-p-6 tdk-text-sm">
-            <p className="tdk-text-night-600">Check out using</p>
-            <button className="tdk-text-[#0093D5]">More info</button>
+            <p className="tdk-text-night-600">
+              {t("payments.cart.optionsTitle")}
+            </p>
+            <button className="tdk-text-[#0093D5]">
+              {t("common.moreInfo")}
+            </button>
           </div>
           <ul>
             {paymentTokens.map((token, i) => (
@@ -155,17 +193,19 @@ export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
           </ul>
           <div className="tdk-space-y-6 tdk-border-t tdk-border-[#192B44] tdk-px-5 tdk-py-6 tdk-text-sm tdk-text-[#9EA3AA]">
             <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3">
-              <p>Total</p>
+              <p>{t("common.total")}</p>
               <div className="tdk-text-right">
                 <CurrencyAmount
-                  className="tdk-text-white tdk-font-semibold"
+                  className="tdk-text-white tdk-font-semibold tdk-justify-end"
                   iconClassName="tdk-w-3.5 tdk-h-3.5"
                   currency={selectedToken}
-                  amount={totalItemsPrice * selectedOptionPrice}
+                  amount={Number(formatEther(totalCost))}
                 />
-                {/* TODO: Don't assume that items are priced in USD */}
                 <p className="tdk-text-xs tdk-text-[#9EA3AA]">
-                  ~ {formatUSD(totalItemsPrice)}
+                  ~{" "}
+                  {formatUSD(
+                    Number(formatEther(totalCost)) * selectedTokenPrice,
+                  )}
                 </p>
               </div>
             </div>
@@ -173,8 +213,16 @@ export const PaymentsCartModal = ({ items, paymentTokens }: Props) => {
               <p>Fee</p>
               <p className="tdk-font-medium tdk-text-white">None</p>
             </div> */}
-            <button className="tdk-border-ruby-900 focus:tdk-ring-ruby-500 tdk-bg-ruby-900 hover:tdk-bg-ruby-1000 tdk-w-full tdk-cursor-pointer tdk-rounded-lg tdk-border-2 tdk-px-5 tdk-py-2 tdk-font-semibold tdk-text-white tdk-shadow-sm tdk-transition-colors tdk-duration-500 hover:tdk-text-white focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2 disabled:tdk-cursor-not-allowed disabled:tdk-opacity-50">
-              Check out
+            <button
+              className="tdk-border-ruby-900 focus:tdk-ring-ruby-500 tdk-bg-ruby-900 hover:tdk-bg-ruby-1000 tdk-w-full tdk-cursor-pointer tdk-rounded-lg tdk-border-2 tdk-px-5 tdk-py-2 tdk-font-semibold tdk-text-white tdk-shadow-sm tdk-transition-colors tdk-duration-500 hover:tdk-text-white focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2 disabled:tdk-cursor-not-allowed disabled:tdk-opacity-50"
+              disabled={isLoading || !makePayment}
+              onClick={makePayment}
+            >
+              {isLoading
+                ? t("common.loading")
+                : isApproved
+                ? t("payments.cart.submit")
+                : t("payments.cart.approveAndSubmit")}
             </button>
           </div>
         </div>
