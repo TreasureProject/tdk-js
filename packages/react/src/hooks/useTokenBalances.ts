@@ -5,9 +5,10 @@ import { useAccount, useChainId, useContractReads } from "wagmi";
 
 type Props = {
   tokens: Token[];
+  enabled?: boolean;
 };
 
-export const useTokenBalances = ({ tokens }: Props) => {
+export const useTokenBalances = ({ tokens, enabled = true }: Props) => {
   const { address } = useAccount();
   const chainId = useChainId();
   const { data, ...result } = useContractReads({
@@ -17,7 +18,7 @@ export const useTokenBalances = ({ tokens }: Props) => {
       functionName: "balanceOf",
       args: [address!],
     })),
-    enabled: !!address,
+    enabled: enabled && !!address,
   });
   return {
     data:

@@ -7,6 +7,7 @@ export * from "@treasure/core";
 export * from "./context";
 export * from "./components";
 export * from "./hooks";
+export * from "./icons";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -19,15 +20,15 @@ i18n.use(initReactI18next).init({
           removeItem: "Remove item",
           total: "Total",
           moreInfo: "More info",
+          insufficientBalance: "Insufficient balance",
         },
         payments: {
           cart: {
             title: "Checkout Overview",
-            clear: "Clear cart",
             terms:
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
             termsCopy: "© 2021-2023 Treasure. All Rights Reserved.",
-            optionsTitle: "Check out using",
+            optionsTitle: "Select payment token:",
             submit: "Check out",
             approveAndSubmit: "Approve & check out",
           },

@@ -7,9 +7,10 @@ import { useTreasureContractAddresses } from "./useTreasureContractAddress";
 
 type Props = {
   tokens: Token[];
+  enabled?: boolean;
 };
 
-export const useTokenPrices = ({ tokens }: Props) => {
+export const useTokenPrices = ({ tokens, enabled = true }: Props) => {
   const contractAddresses = useTreasureContractAddresses();
   const { data, ...result } = useContractReads({
     contracts: tokens.map((token) => {
@@ -24,6 +25,7 @@ export const useTokenPrices = ({ tokens }: Props) => {
         functionName: "latestAnswer",
       };
     }),
+    enabled,
   });
   return {
     data:
