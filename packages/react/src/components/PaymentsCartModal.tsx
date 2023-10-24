@@ -20,6 +20,7 @@ import { CloseIcon } from "../icons/CloseIcon";
 import { ExternalLinkIcon } from "../icons/ExternalLinkIcon";
 import { TrashIcon } from "../icons/TrashIcon";
 import { cn } from "../utils";
+import { Button } from "./ui/Button";
 import { CurrencyAmount } from "./ui/CurrencyAmount";
 import { CurrencyIcon } from "./ui/CurrencyIcon";
 import { Dialog, DialogContent } from "./ui/Dialog";
@@ -103,11 +104,11 @@ const PaymentsCartModalContents = ({
   return (
     <div
       className={cn(
-        "tdk-space-y-8 tdk-rounded-2xl tdk-bg-[#0B1421] tdk-p-10 tdk-mx-auto",
+        "tdk-space-y-6 md:tdk-space-y-8 tdk-rounded-2xl tdk-bg-[#0B1421] tdk-p-4 md:tdk-p-10 tdk-mx-auto",
         className,
       )}
     >
-      <div className="tdk-flex tdk-items-start tdk-justify-between">
+      <div className="tdk-flex tdk-items-center tdk-justify-between">
         <h1 className="tdk-text-2xl tdk-font-semibold tdk-text-white">
           {t("payments.cart.title", { context: isSuccess ? "success" : "" })}
         </h1>
@@ -118,10 +119,10 @@ const PaymentsCartModalContents = ({
           <CloseIcon className="tdk-w-4 tdk-h-4" />
         </button>
       </div>
-      <div className="tdk-grid tdk-grid-cols-2 tdk-gap-10">
-        <div className="tdk-flex tdk-flex-col tdk-justify-between tdk-gap-8">
+      <div className="tdk-grid tdk-grid-cols-1 md:tdk-grid-cols-2 tdk-gap-6 md:tdk-gap-10">
+        <div className="tdk-flex tdk-flex-col tdk-justify-between tdk-gap-6 md:tdk-gap-8">
           <div className="tdk-space-y-3">
-            <div className="tdk-space-y-8 tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-px-6 tdk-py-8">
+            <div className="tdk-space-y-4 md:tdk-space-y-8 tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-px-4 md:tdk-px-6 tdk-py-4 md:tdk-py-8">
               <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-text-sm">
                 <p className="tdk-text-night-600">
                   {t("common.items", { count: totalItems })}
@@ -133,7 +134,7 @@ const PaymentsCartModalContents = ({
                     key={item.id}
                     className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-8"
                   >
-                    <div className="tdk-flex tdk-items-center tdk-gap-3">
+                    <div className="tdk-flex tdk-items-center tdk-gap-2 md:tdk-gap-3">
                       <div className="tdk-relative">
                         <div className="tdk-bg-night-400 tdk-h-16 tdk-w-16 tdk-rounded-lg tdk-overflow-hidden">
                           {item.imageUrl ? (
@@ -155,10 +156,16 @@ const PaymentsCartModalContents = ({
                             {item.subtitle}
                           </span>
                         ) : null}
+                        <CurrencyAmount
+                          className="md:tdk-hidden"
+                          currency={item.priceCurrency}
+                          amount={item.pricePerItem}
+                        />
                       </div>
                     </div>
                     <div className="tdk-flex tdk-items-center tdk-gap-6">
                       <CurrencyAmount
+                        className="tdk-hidden md:tdk-block"
                         currency={item.priceCurrency}
                         amount={item.pricePerItem}
                       />
@@ -187,7 +194,7 @@ const PaymentsCartModalContents = ({
               ) : undefined}
             </div>
           </div>
-          <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF]">
+          <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF] tdk-hidden md:tdk-block">
             <p>{t("payments.cart.terms")}</p>
             <p>{t("payments.cart.termsCopy")}</p>
           </div>
@@ -206,17 +213,12 @@ const PaymentsCartModalContents = ({
               <p className="tdk-text-xs tdk-text-night-200">
                 {t("payments.cart.successMessageDescription")}
               </p>
-              <button
-                className="tdk-border-ruby-900 focus:tdk-ring-ruby-500 tdk-bg-ruby-900 hover:tdk-bg-ruby-1000 tdk-w-full tdk-cursor-pointer tdk-rounded-lg tdk-border-2 tdk-px-5 tdk-py-2 tdk-font-semibold tdk-text-white tdk-shadow-sm tdk-transition-colors tdk-duration-500 hover:tdk-text-white focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2"
-                onClick={onClose}
-              >
-                {t("common.close")}
-              </button>
+              <Button onClick={onClose}>{t("common.close")}</Button>
             </div>
           </div>
         ) : (
           <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44]">
-            <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-p-6 tdk-text-sm">
+            <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-p-4 md:tdk-p-6 tdk-text-sm">
               <p className="tdk-text-night-600">
                 {t("payments.cart.optionsTitle")}
               </p>
@@ -229,12 +231,12 @@ const PaymentsCartModalContents = ({
                 <li key={token}>
                   <button
                     className={cn(
-                      "tdk-group tdk-flex tdk-w-full tdk-items-center tdk-justify-between tdk-gap-8 tdk-p-4 tdk-transition-colors",
+                      "tdk-group tdk-flex tdk-w-full tdk-items-center tdk-justify-between tdk-gap-6 md:tdk-gap-8 tdk-p-3 md:tdk-p-4 tdk-transition-colors",
                       token === selectedToken && "tdk-bg-[#101D2F]",
                     )}
                     onClick={() => setSelectedToken(token)}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="tdk-flex tdk-items-center tdk-gap-3 md:tdk-gap-4">
                       <RadioButtonIcon selected={token === selectedToken} />
                       <div className="tdk-text-left">
                         <span className="tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
@@ -245,7 +247,7 @@ const PaymentsCartModalContents = ({
                         </span>
                       </div>
                     </div>
-                    <div className="tdk-flex tdk-items-center tdk-gap-8">
+                    <div className="tdk-flex tdk-items-center tdk-gap-3 md:tdk-gap-8">
                       {tokenBalances[paymentTokens.indexOf(token)] ? (
                         <CurrencyAmount
                           currency={token}
@@ -263,7 +265,7 @@ const PaymentsCartModalContents = ({
                 </li>
               ))}
             </ul>
-            <div className="tdk-space-y-6 tdk-border-t tdk-border-[#192B44] tdk-px-5 tdk-py-6 tdk-text-sm tdk-text-[#9EA3AA]">
+            <div className="tdk-space-y-4 md:tdk-space-y-6 tdk-border-t tdk-border-[#192B44] tdk-p-4 md:tdk-px-5 md:tdk-py-6 tdk-text-sm tdk-text-[#9EA3AA]">
               <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3">
                 <p>{t("common.total")}</p>
                 <div className="tdk-text-right">
@@ -285,8 +287,7 @@ const PaymentsCartModalContents = ({
                 <p>Fee</p>
                 <p className="tdk-font-medium tdk-text-white">None</p>
               </div> */}
-              <button
-                className="tdk-border-ruby-900 focus:tdk-ring-ruby-500 tdk-bg-ruby-900 hover:tdk-bg-ruby-1000 tdk-w-full tdk-cursor-pointer tdk-rounded-lg tdk-border-2 tdk-px-5 tdk-py-2 tdk-font-semibold tdk-text-white tdk-shadow-sm tdk-transition-colors tdk-duration-500 hover:tdk-text-white focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2 disabled:tdk-cursor-not-allowed disabled:tdk-opacity-50"
+              <Button
                 disabled={isLoading || !makePayment}
                 onClick={makePayment}
               >
@@ -297,10 +298,14 @@ const PaymentsCartModalContents = ({
                   : isApproved
                   ? t("payments.cart.submit")
                   : t("payments.cart.approveAndSubmit")}
-              </button>
+              </Button>
             </div>
           </div>
         )}
+        <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF] md:tdk-hidden">
+          <p>{t("payments.cart.terms")}</p>
+          <p>{t("payments.cart.termsCopy")}</p>
+        </div>
       </div>
     </div>
   );

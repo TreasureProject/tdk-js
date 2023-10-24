@@ -36,7 +36,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "tdk-fixed tdk-left-[50%] tdk-top-[50%] tdk-z-50 tdk-w-full tdk-translate-x-[-50%] tdk-translate-y-[-50%] tdk-p-6 tdk-duration-200 data-[state=open]:tdk-animate-in data-[state=closed]:tdk-animate-out data-[state=closed]:tdk-fade-out-0 data-[state=open]:tdk-fade-in-0 data-[state=closed]:tdk-zoom-out-95 data-[state=open]:tdk-zoom-in-95 data-[state=closed]:tdk-slide-out-to-left-1/2 data-[state=closed]:tdk-slide-out-to-top-[48%] data-[state=open]:tdk-slide-in-from-left-1/2 data-[state=open]:tdk-slide-in-from-top-[48%]",
+        "tdk-fixed tdk-left-[50%] tdk-top-[50%] tdk-z-50 tdk-w-full tdk-translate-x-[-50%] tdk-translate-y-[-50%] tdk-p-4 sm:tdk-p-6 tdk-duration-200 data-[state=open]:tdk-animate-in data-[state=closed]:tdk-animate-out data-[state=closed]:tdk-fade-out-0 data-[state=open]:tdk-fade-in-0 data-[state=closed]:tdk-zoom-out-95 data-[state=open]:tdk-zoom-in-95 data-[state=closed]:tdk-slide-out-to-left-1/2 data-[state=closed]:tdk-slide-out-to-top-[48%] data-[state=open]:tdk-slide-in-from-left-1/2 data-[state=open]:tdk-slide-in-from-top-[48%]",
         className,
       )}
       {...props}
