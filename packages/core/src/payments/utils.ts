@@ -1,40 +1,52 @@
-import { zeroAddress } from "viem";
+import Decimal from "decimal.js-light";
 
-import { getTreasureContractAddresses } from "../contracts";
-import { PaymentsPriceType, type PaymentsToken } from "./types";
-
-export const getPaymentsTokenAddress = (
-  chainId: number,
-  token: PaymentsToken | "USD",
-) => {
-  const contractAddresses = getTreasureContractAddresses(chainId);
-  switch (token) {
-    case "ARB":
-    case "MAGIC":
-      return contractAddresses[token];
-    case "GAS":
-    case "USD":
-      return zeroAddress;
-    default:
-      return token;
-  }
-};
+import { type Currency, PaymentsPriceType, type Token } from "./types";
 
 export const getPaymentsPriceType = (
-  paymentToken: PaymentsToken,
-  pricedToken: PaymentsToken | "USD",
+  paymentToken: Token,
+  pricedCurrency: Currency,
 ) => {
-  if (pricedToken === paymentToken) {
+  if (pricedCurrency === paymentToken) {
     return PaymentsPriceType.STATIC;
   }
 
-  if (pricedToken === "USD") {
+  if (pricedCurrency === "USD") {
     return PaymentsPriceType.PRICED_IN_USD;
   }
 
-  if (pricedToken === "GAS") {
+  if (pricedCurrency === "ETH") {
     return PaymentsPriceType.PRICED_IN_GAS_TOKEN;
   }
 
   return PaymentsPriceType.PRICED_IN_ERC20;
+};
+
+export const formatUSD = (value: number | string) =>
+  `$${Number(value).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
+export const formatAmount = (value: string | number, toLocale = true) => {
+  const decimal = new Decimal(value);
+  let decimalPlaces: number;
+  if (decimal.lt(1e-3)) {
+    decimalPlaces = 6;
+  } else if (decimal.lt(1)) {
+    decimalPlaces = 4;
+  } else if (decimal.lt(100)) {
+    decimalPlaces = 3;
+  } else {
+    decimalPlaces = 2;
+  }
+
+  const rounded = decimal.toDecimalPlaces(decimalPlaces, Decimal.ROUND_DOWN);
+
+  if (toLocale) {
+    return rounded
+      .toNumber()
+      .toLocaleString("en-US", { maximumFractionDigits: decimalPlaces });
+  }
+
+  return rounded.toString();
 };
