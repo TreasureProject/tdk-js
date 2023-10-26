@@ -1,3 +1,4 @@
+import { CheckoutWithCard } from "@paperxyz/react-client-sdk";
 import type {
   AddressString,
   Currency,
@@ -8,6 +9,7 @@ import { formatUSD, sumArray } from "@treasure/core";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatEther, parseUnits } from "viem";
+import { useAccount } from "wagmi";
 
 import {
   useBlockExplorer,
@@ -16,10 +18,15 @@ import {
   useTokenBalances,
   useTokenPrices,
 } from "../hooks";
+import { AmericanExpressIcon } from "../icons/AmericanExpressIcon";
+import { ApplePayIcon } from "../icons/ApplePayIcon";
 import { CloseIcon } from "../icons/CloseIcon";
 import { ExternalLinkIcon } from "../icons/ExternalLinkIcon";
+import { GooglePayIcon } from "../icons/GooglePayIcon";
+import { MastercardIcon } from "../icons/MastercardIcon";
 import { TrashIcon } from "../icons/TrashIcon";
 import { TreasureLogoFull } from "../icons/TreasureLogoFull";
+import { VisaIcon } from "../icons/VisaIcon";
 import { cn } from "../utils";
 import { Button } from "./ui/Button";
 import { CurrencyAmount } from "./ui/CurrencyAmount";
@@ -59,9 +66,11 @@ const PaymentsCartModalContents = ({
   className,
   onClose,
 }: ContentProps) => {
+  const { address } = useAccount();
   const blockExplorer = useBlockExplorer();
   const { t } = useTranslation();
   const [selectedToken, setSelectedToken] = useState(paymentTokens[0]);
+  const [showCheckOutWithCard, setShowCheckOutWithCard] = useState(false);
   const [successHash, setSuccessHash] = useState<string | undefined>();
   const { data: tokenPrices } = useTokenPrices({
     tokens: paymentTokens,
@@ -218,6 +227,41 @@ const PaymentsCartModalContents = ({
               <Button onClick={onClose}>{t("common.close")}</Button>
             </div>
           </div>
+        ) : showCheckOutWithCard ? (
+          <div className="tdk-rounded-xl tdk-border tdk-border-[rgb(25,43,68)] p-4">
+            <button
+              className="tdk-text-sm tdk-text-night-400 tdk-mb-3 hover:tdk-text-night-300 tdk-transition-colors tdk-font-medium"
+              onClick={() => setShowCheckOutWithCard(false)}
+            >
+              &#x2039; Back to all payment methods
+            </button>
+            <CheckoutWithCard
+              configs={{
+                contractId: "6029d167-4ae5-42f7-b204-f355ad9246ff",
+                walletAddress: address ?? "",
+                mintMethod: {
+                  name: "mint",
+                  args: {
+                    _id: "76",
+                    _amount: "$QUANTITY",
+                    _account: "$WALLET",
+                  },
+                  payment: {
+                    value: "0.00001 * $QUANTITY",
+                    currency: "AGOR",
+                  },
+                },
+              }}
+              options={{
+                colorPrimary: "#DC2626",
+                colorText: "#E7E8E9",
+                inputBorderColor: "#9FA3A9",
+              }}
+              onPaymentSuccess={({ transactionId }) => {
+                setSuccessHash(transactionId);
+              }}
+            />
+          </div>
         ) : (
           <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44]">
             <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-4 tdk-p-4 md:tdk-p-6 tdk-text-sm">
@@ -266,6 +310,26 @@ const PaymentsCartModalContents = ({
                   </button>
                 </li>
               ))}
+              <li>
+                <button
+                  className="tdk-group tdk-flex tdk-w-full tdk-items-center tdk-gap-3 md:tdk-gap-4 tdk-p-3 md:tdk-p-4 tdk-transition-colors"
+                  onClick={() => setShowCheckOutWithCard(true)}
+                >
+                  <RadioButtonIcon />
+                  <div className="tdk-flex-1 tdk-text-left tdk-flex tdk-items-center tdk-gap-2 tdk-justify-between">
+                    <span className="tdk-shrink-0 tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
+                      Pay with
+                    </span>
+                    <div className="tdk-flex-1 tdk-flex tdk-items-center tdk-justify-end tdk-gap-1 tdk-flex-wrap">
+                      <ApplePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                      <GooglePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                      <VisaIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                      <MastercardIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                      <AmericanExpressIcon className="tdk-h-5" />
+                    </div>
+                  </div>
+                </button>
+              </li>
             </ul>
             <div className="tdk-space-y-4 md:tdk-space-y-6 tdk-border-t tdk-border-[#192B44] tdk-p-4 md:tdk-px-5 md:tdk-py-6 tdk-text-sm tdk-text-[#9EA3AA]">
               <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3">

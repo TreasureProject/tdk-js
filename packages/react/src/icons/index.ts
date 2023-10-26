@@ -1,6 +1,6 @@
-import type { HTMLAttributes } from "react";
+import type { SVGAttributes } from "react";
 
-export type IconProps = HTMLAttributes<SVGElement> & {
+export type IconProps = SVGAttributes<SVGElement> & {
   className?: string;
 };
 
