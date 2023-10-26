@@ -1,4 +1,6 @@
-export type IconProps = {
+import type { HTMLAttributes } from "react";
+
+export type IconProps = HTMLAttributes<SVGElement> & {
   className?: string;
 };
 

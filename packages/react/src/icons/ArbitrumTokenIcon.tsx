@@ -1,7 +1,12 @@
 import type { IconProps } from ".";
 
-export const ArbitrumTokenIcon = ({ className }: IconProps) => (
-  <svg viewBox="200 200 1100 1100" fill="currentColor" className={className}>
+export const ArbitrumTokenIcon = ({ className, ...props }: IconProps) => (
+  <svg
+    viewBox="200 200 1100 1100"
+    fill="currentColor"
+    className={className}
+    {...props}
+  >
     <path
       fill="transparent"
       d="m299.47,534.35v431.21c0,27.53,14.71,52.99,38.54,66.71l373.44,215.65c23.83,13.72,53.17,13.72,77,0l373.44-215.65c23.83-13.72,38.54-39.18,38.54-66.71v-431.21c0-27.53-14.71-52.99-38.54-66.71l-373.44-215.65c-23.83-13.72-53.17-13.72-77,0l-373.53,215.65c-23.83,13.72-38.45,39.18-38.45,66.71Z"

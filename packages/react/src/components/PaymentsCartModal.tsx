@@ -19,6 +19,7 @@ import {
 import { CloseIcon } from "../icons/CloseIcon";
 import { ExternalLinkIcon } from "../icons/ExternalLinkIcon";
 import { TrashIcon } from "../icons/TrashIcon";
+import { TreasureLogoFull } from "../icons/TreasureLogoFull";
 import { cn } from "../utils";
 import { Button } from "./ui/Button";
 import { CurrencyAmount } from "./ui/CurrencyAmount";
@@ -197,6 +198,7 @@ const PaymentsCartModalContents = ({
           <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF] tdk-hidden md:tdk-block">
             <p>{t("payments.cart.terms")}</p>
             <p>{t("payments.cart.termsCopy")}</p>
+            <TreasureLogoFull className="tdk-text-white tdk-h-10" />
           </div>
         </div>
         {isSuccess ? (
@@ -305,6 +307,7 @@ const PaymentsCartModalContents = ({
         <div className="tdk-space-y-3 tdk-text-xs tdk-text-[#A4A9AF] md:tdk-hidden">
           <p>{t("payments.cart.terms")}</p>
           <p>{t("payments.cart.termsCopy")}</p>
+          <TreasureLogoFull className="tdk-text-white tdk-h-8" />
         </div>
       </div>
     </div>
