@@ -1,5 +1,5 @@
 import type { Currency } from "@treasure/core";
-import { formatAmount } from "@treasure/core";
+import { formatAmount, formatUSD } from "@treasure/core";
 
 import { cn } from "../../utils";
 import { CurrencyIcon } from "./CurrencyIcon";
@@ -24,7 +24,7 @@ export const CurrencyAmount = ({
     )}
   >
     {currency === "USD" ? (
-      `$${amount}`
+      formatUSD(amount)
     ) : (
       <>
         <CurrencyIcon

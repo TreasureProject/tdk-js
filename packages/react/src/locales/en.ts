@@ -9,6 +9,7 @@ export const en = {
       total: "Total",
       moreInfo: "More info",
       insufficientBalance: "Insufficient balance",
+      goBack: "Go back",
     },
     payments: {
       cart: {
@@ -18,8 +19,8 @@ export const en = {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
         termsCopy: "© 2021-2023 Treasure. All Rights Reserved.",
         optionsTitle: "Select payment token:",
-        submit: "Check out",
-        approveAndSubmit: "Approve & check out",
+        checkOut: "Check out",
+        submit: "Confirm & pay",
         successMessageTitle: "Thanks for your order!",
         successMessageDescription:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",

@@ -6,7 +6,7 @@ import type {
   Token,
 } from "@treasure/core";
 import { formatUSD, sumArray } from "@treasure/core";
-import { useCallback, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatEther, parseUnits } from "viem";
 import { useAccount } from "wagmi";
@@ -47,7 +47,7 @@ type Item = {
 
 type ContentProps = {
   items: Item[];
-  paymentTokens: Token[];
+  paymentCurrencies: Currency[];
   paymentRecipient: AddressString;
   enabled?: boolean;
   className?: string;
@@ -58,9 +58,34 @@ type Props = ContentProps & {
   open: boolean;
 };
 
+type State =
+  | { status: "IDLE" }
+  | { status: "CHECKOUT" }
+  | { status: "CHECKOUT_WITH_CARD" }
+  | { status: "SUCCESS"; txHash: string | undefined };
+
+type Action =
+  | { type: "RESET" }
+  | { type: "CHECK_OUT" }
+  | { type: "CHECK_OUT_WITH_CARD" }
+  | { type: "SUCCESS"; txHash: string | undefined };
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "RESET":
+      return { status: "IDLE" };
+    case "CHECK_OUT":
+      return { status: "CHECKOUT" };
+    case "CHECK_OUT_WITH_CARD":
+      return { status: "CHECKOUT_WITH_CARD" };
+    case "SUCCESS":
+      return { status: "SUCCESS", txHash: action.txHash };
+  }
+};
+
 const PaymentsCartModalContents = ({
   items,
-  paymentTokens,
+  paymentCurrencies,
   paymentRecipient,
   enabled = true,
   className,
@@ -69,19 +94,27 @@ const PaymentsCartModalContents = ({
   const { address } = useAccount();
   const blockExplorer = useBlockExplorer();
   const { t } = useTranslation();
-  const [selectedToken, setSelectedToken] = useState(paymentTokens[0]);
-  const [showCheckOutWithCard, setShowCheckOutWithCard] = useState(false);
-  const [successHash, setSuccessHash] = useState<string | undefined>();
+  const [state, dispatch] = useReducer(reducer, { status: "IDLE" });
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(
+    paymentCurrencies[0],
+  );
+
+  const paymentTokens = paymentCurrencies.filter(
+    (currency) => currency !== "USD",
+  ) as Token[];
   const { data: tokenPrices } = useTokenPrices({
     tokens: paymentTokens,
     enabled,
   });
   const { data: tokenBalances } = useTokenBalances({ tokens: paymentTokens });
+  const isSelectedUsd = selectedCurrency === "USD";
 
-  const isSuccess = !!successHash;
-  const selectedTokenPrice = tokenPrices[paymentTokens.indexOf(selectedToken)];
-  const selectedTokenBalance =
-    tokenBalances[paymentTokens.indexOf(selectedToken)];
+  const selectedTokenPrice = isSelectedUsd
+    ? 1
+    : tokenPrices[paymentTokens.indexOf(selectedCurrency)];
+  const selectedTokenBalance = isSelectedUsd
+    ? 0
+    : tokenBalances[paymentTokens.indexOf(selectedCurrency)];
   const pricedCurrency = items[0]?.priceCurrency ?? "USD";
   const pricedAmount = sumArray(
     items.map(({ quantity, pricePerItem }) => (quantity ?? 1) * pricePerItem),
@@ -93,23 +126,46 @@ const PaymentsCartModalContents = ({
   const totalItems = sumArray(items.map(({ quantity }) => quantity ?? 1));
 
   const { data: totalCost = 0n } = useCalculatePaymentAmount({
-    paymentToken: selectedToken,
+    paymentToken: selectedCurrency as Token,
     pricedCurrency,
     pricedAmount: pricedAmountBI,
-    enabled,
+    enabled: enabled && !isSelectedUsd,
   });
 
-  const { isApproved, isLoading, makePayment } = useMakePayment({
-    paymentToken: selectedToken,
+  const { isLoading, makePayment } = useMakePayment({
+    paymentToken: selectedCurrency as Token,
     pricedCurrency,
     pricedAmount: pricedAmountBI,
     calculatedPaymentAmount: totalCost,
     recipient: paymentRecipient,
-    enabled: enabled && selectedTokenBalance >= pricedAmount,
+    enabled: enabled && !isSelectedUsd && selectedTokenBalance >= pricedAmount,
     onSuccess: useCallback<OnSuccessFn>((data) => {
-      setSuccessHash(data?.transactionHash);
+      dispatch({ type: "SUCCESS", txHash: data?.transactionHash });
     }, []),
   });
+
+  const renderTotalRow = () => (
+    <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3 tdk-text-[#9EA3AA]">
+      <p>{t("common.total")}</p>
+      <div className="tdk-text-right">
+        <CurrencyAmount
+          className="tdk-text-white tdk-font-semibold tdk-justify-end"
+          iconClassName="tdk-w-3.5 tdk-h-3.5"
+          currency={selectedCurrency}
+          amount={
+            isSelectedUsd && pricedCurrency === "USD"
+              ? pricedAmount
+              : Number(formatEther(totalCost))
+          }
+        />
+        {!isSelectedUsd ? (
+          <p className="tdk-text-xs tdk-text-[#9EA3AA]">
+            ~ {formatUSD(Number(formatEther(totalCost)) * selectedTokenPrice)}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -120,7 +176,9 @@ const PaymentsCartModalContents = ({
     >
       <div className="tdk-flex tdk-items-center tdk-justify-between">
         <h1 className="tdk-text-2xl tdk-font-semibold tdk-text-white">
-          {t("payments.cart.title", { context: isSuccess ? "success" : "" })}
+          {t("payments.cart.title", {
+            context: state.status === "SUCCESS" ? "success" : "",
+          })}
         </h1>
         <button
           className="tdk-flex tdk-h-10 tdk-w-10 tdk-items-center tdk-justify-center tdk-rounded-full tdk-border tdk-border-[#5E6470] tdk-text-[#5E6470] hover:tdk-border-night-200 hover:tdk-bg-night-200 hover:tdk-text-night-900 tdk-transition-colors"
@@ -179,7 +237,7 @@ const PaymentsCartModalContents = ({
                         currency={item.priceCurrency}
                         amount={item.pricePerItem}
                       />
-                      {!isSuccess ? (
+                      {state.status === "IDLE" ? (
                         <button
                           className="tdk-group tdk-flex tdk-h-9 tdk-w-9 tdk-items-center tdk-justify-center tdk-rounded-md tdk-border tdk-border-[#5E6470] hover:tdk-border-night-200 tdk-transition-colors"
                           title={t("common.removeItem")}
@@ -191,10 +249,10 @@ const PaymentsCartModalContents = ({
                   </li>
                 ))}
               </ul>
-              {successHash ? (
+              {state.status === "SUCCESS" && state.txHash ? (
                 <a
                   className="tdk-w-full tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-border tdk-border-[#192B44] tdk-p-3 tdk-rounded-md tdk-text-[#0093D5] tdk-text-sm tdk-font-semibold hover:tdk-text-night-200 tdk-transition-colors"
-                  href={`${blockExplorer.url}/tx/${successHash}`}
+                  href={`${blockExplorer.url}/tx/${state.txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -210,7 +268,7 @@ const PaymentsCartModalContents = ({
             <TreasureLogoFull className="tdk-text-white tdk-h-10" />
           </div>
         </div>
-        {isSuccess ? (
+        {state.status === "SUCCESS" ? (
           <div className="space-y-8 text-center">
             <img
               className="tdk-max-w-[60%] tdk-mx-auto"
@@ -227,40 +285,90 @@ const PaymentsCartModalContents = ({
               <Button onClick={onClose}>{t("common.close")}</Button>
             </div>
           </div>
-        ) : showCheckOutWithCard ? (
-          <div className="tdk-rounded-xl tdk-border tdk-border-[rgb(25,43,68)] p-4">
-            <button
-              className="tdk-text-sm tdk-text-night-400 tdk-mb-3 hover:tdk-text-night-300 tdk-transition-colors tdk-font-medium"
-              onClick={() => setShowCheckOutWithCard(false)}
+        ) : state.status === "CHECKOUT_WITH_CARD" ? (
+          <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-text-sm tdk-space-y-2 p-4">
+            <div>
+              <CheckoutWithCard
+                configs={{
+                  contractId: "6029d167-4ae5-42f7-b204-f355ad9246ff",
+                  walletAddress: address ?? "",
+                  mintMethod: {
+                    name: "mint",
+                    args: {
+                      _id: "76",
+                      _amount: "$QUANTITY",
+                      _account: "$WALLET",
+                    },
+                    payment: {
+                      value: "0.00001 * $QUANTITY",
+                      currency: "AGOR",
+                    },
+                  },
+                }}
+                options={{
+                  colorPrimary: "#DC2626",
+                  colorText: "#E7E8E9",
+                  inputBorderColor: "#9FA3A9",
+                }}
+                onPaymentSuccess={() => {
+                  dispatch({ type: "SUCCESS", txHash: undefined });
+                }}
+              />
+            </div>
+            <Button
+              variant="secondary"
+              onClick={() => dispatch({ type: "RESET" })}
             >
-              &#x2039; Back to all payment methods
-            </button>
-            <CheckoutWithCard
-              configs={{
-                contractId: "6029d167-4ae5-42f7-b204-f355ad9246ff",
-                walletAddress: address ?? "",
-                mintMethod: {
-                  name: "mint",
-                  args: {
-                    _id: "76",
-                    _amount: "$QUANTITY",
-                    _account: "$WALLET",
-                  },
-                  payment: {
-                    value: "0.00001 * $QUANTITY",
-                    currency: "AGOR",
-                  },
-                },
-              }}
-              options={{
-                colorPrimary: "#DC2626",
-                colorText: "#E7E8E9",
-                inputBorderColor: "#9FA3A9",
-              }}
-              onPaymentSuccess={({ transactionId }) => {
-                setSuccessHash(transactionId);
-              }}
-            />
+              {t("common.goBack")}
+            </Button>
+          </div>
+        ) : state.status === "CHECKOUT" ? (
+          <div className="tdk-space-y-3">
+            <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-p-4 tdk-flex tdk-items-center tdk-justify-between tdk-gap-6">
+              <div className="tdk-flex tdk-items-center tdk-gap-3">
+                <div className="tdk-rounded-md tdk-border tdk-border-[#192B44] tdk-p-2.5">
+                  <CurrencyIcon
+                    currency={selectedCurrency}
+                    className="tdk-h-6 tdk-w-6"
+                  />
+                </div>
+                <div className="tdk-text-left">
+                  <span className="tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
+                    {selectedCurrency}
+                  </span>
+                  <span className="tdk-block tdk-text-xs tdk-text-[#9EA3AA]">
+                    ~ {formatUSD(selectedTokenPrice)}
+                  </span>
+                </div>
+              </div>
+              <div className="tdk-text-right">
+                <CurrencyAmount
+                  className="tdk-text-base tdk-text-white"
+                  currency={selectedCurrency}
+                  amount={selectedTokenBalance}
+                />
+                <span className="tdk-block tdk-text-xs tdk-text-[#9EA3AA]">
+                  Your balance
+                </span>
+              </div>
+            </div>
+            <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44] tdk-p-4 tdk-text-sm tdk-space-y-6">
+              {renderTotalRow()}
+              <div className="tdk-space-y-3">
+                <Button
+                  onClick={makePayment}
+                  disabled={isLoading || !makePayment}
+                >
+                  {t("payments.cart.submit")}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => dispatch({ type: "RESET" })}
+                >
+                  {t("common.goBack")}
+                </Button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="tdk-rounded-xl tdk-border tdk-border-[#192B44]">
@@ -278,12 +386,12 @@ const PaymentsCartModalContents = ({
                   <button
                     className={cn(
                       "tdk-group tdk-flex tdk-w-full tdk-items-center tdk-justify-between tdk-gap-6 md:tdk-gap-8 tdk-p-3 md:tdk-p-4 tdk-transition-colors",
-                      token === selectedToken && "tdk-bg-[#101D2F]",
+                      token === selectedCurrency && "tdk-bg-[#101D2F]",
                     )}
-                    onClick={() => setSelectedToken(token)}
+                    onClick={() => setSelectedCurrency(token)}
                   >
                     <div className="tdk-flex tdk-items-center tdk-gap-3 md:tdk-gap-4">
-                      <RadioButtonIcon selected={token === selectedToken} />
+                      <RadioButtonIcon selected={token === selectedCurrency} />
                       <div className="tdk-text-left">
                         <span className="tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
                           {token}
@@ -310,60 +418,54 @@ const PaymentsCartModalContents = ({
                   </button>
                 </li>
               ))}
-              <li>
-                <button
-                  className="tdk-group tdk-flex tdk-w-full tdk-items-center tdk-gap-3 md:tdk-gap-4 tdk-p-3 md:tdk-p-4 tdk-transition-colors"
-                  onClick={() => setShowCheckOutWithCard(true)}
-                >
-                  <RadioButtonIcon />
-                  <div className="tdk-flex-1 tdk-text-left tdk-flex tdk-items-center tdk-gap-2 tdk-justify-between">
-                    <span className="tdk-shrink-0 tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
-                      Pay with
-                    </span>
-                    <div className="tdk-flex-1 tdk-flex tdk-items-center tdk-justify-end tdk-gap-1 tdk-flex-wrap">
-                      <ApplePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
-                      <GooglePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
-                      <VisaIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
-                      <MastercardIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
-                      <AmericanExpressIcon className="tdk-h-5" />
+              {paymentCurrencies.includes("USD") ? (
+                <li>
+                  <button
+                    className={cn(
+                      "tdk-group tdk-flex tdk-w-full tdk-items-center tdk-gap-3 md:tdk-gap-4 tdk-p-3 md:tdk-px-4 md:tdk-py-6 tdk-transition-colors",
+                      isSelectedUsd && "tdk-bg-[#101D2F]",
+                    )}
+                    onClick={() => setSelectedCurrency("USD")}
+                  >
+                    <RadioButtonIcon selected={isSelectedUsd} />
+                    <div className="tdk-flex-1 tdk-text-left tdk-flex tdk-items-center tdk-gap-2 tdk-justify-between">
+                      <span className="tdk-shrink-0 tdk-block tdk-text-base tdk-font-semibold tdk-text-white group-hover:tdk-underline">
+                        Pay with
+                      </span>
+                      <div className="tdk-flex-1 tdk-flex tdk-items-center tdk-justify-end tdk-gap-1 tdk-flex-wrap">
+                        <ApplePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                        <GooglePayIcon className="tdk-h-5 tdk-bg-white tdk-rounded-md" />
+                        <VisaIcon className="tdk-h-5 tdk-border tdk-border-[#192B44] tdk-rounded-md" />
+                        <MastercardIcon className="tdk-h-5 tdk-border tdk-border-[#192B44] tdk-rounded-md" />
+                        <AmericanExpressIcon className="tdk-h-5" />
+                      </div>
                     </div>
-                  </div>
-                </button>
-              </li>
+                  </button>
+                </li>
+              ) : null}
             </ul>
             <div className="tdk-space-y-4 md:tdk-space-y-6 tdk-border-t tdk-border-[#192B44] tdk-p-4 md:tdk-px-5 md:tdk-py-6 tdk-text-sm tdk-text-[#9EA3AA]">
-              <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3">
-                <p>{t("common.total")}</p>
-                <div className="tdk-text-right">
-                  <CurrencyAmount
-                    className="tdk-text-white tdk-font-semibold tdk-justify-end"
-                    iconClassName="tdk-w-3.5 tdk-h-3.5"
-                    currency={selectedToken}
-                    amount={Number(formatEther(totalCost))}
-                  />
-                  <p className="tdk-text-xs tdk-text-[#9EA3AA]">
-                    ~{" "}
-                    {formatUSD(
-                      Number(formatEther(totalCost)) * selectedTokenPrice,
-                    )}
-                  </p>
-                </div>
-              </div>
+              {renderTotalRow()}
               {/* <div className="tdk-flex tdk-items-center tdk-justify-between tdk-gap-3">
                 <p>Fee</p>
                 <p className="tdk-font-medium tdk-text-white">None</p>
               </div> */}
               <Button
-                disabled={isLoading || !makePayment}
-                onClick={makePayment}
+                disabled={
+                  isLoading ||
+                  (selectedTokenBalance < pricedAmount && !isSelectedUsd)
+                }
+                onClick={() =>
+                  dispatch({
+                    type: isSelectedUsd ? "CHECK_OUT_WITH_CARD" : "CHECK_OUT",
+                  })
+                }
               >
                 {isLoading
                   ? t("common.loading")
-                  : selectedTokenBalance < pricedAmount
+                  : selectedTokenBalance < pricedAmount && !isSelectedUsd
                   ? t("common.insufficientBalance")
-                  : isApproved
-                  ? t("payments.cart.submit")
-                  : t("payments.cart.approveAndSubmit")}
+                  : t("payments.cart.checkOut")}
               </Button>
             </div>
           </div>

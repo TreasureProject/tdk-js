@@ -258,7 +258,7 @@ export const App = () => {
                     pricePerItem: product.usdPrice,
                   };
                 })}
-              paymentTokens={["MAGIC", "ARB"]}
+              paymentCurrencies={["MAGIC", "ARB", "USD"]}
               paymentRecipient={RECIPIENT_ADDRESS}
             />
           </>
