@@ -1,6 +1,7 @@
 {
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-prisma",
     "prettier-plugin-tailwindcss"
   ],
   "singleQuote": false,

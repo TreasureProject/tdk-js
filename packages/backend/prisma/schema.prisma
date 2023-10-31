@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  slug      String  @unique
+  name      String
+  projectId String  @unique @map("project_id")
+  icon      String?
+  cover     String?
+  color     String?
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("project")
+}
