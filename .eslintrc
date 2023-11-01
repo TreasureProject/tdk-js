@@ -28,7 +28,7 @@
     "plugin:react-hooks/recommended",
     "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
-  "ignorePatterns": ["node_modules/**/*", "**/dist/**/*"],
+  "ignorePatterns": ["node_modules/**/*", "**/build/**/*", "**/dist/**/*"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": "error",
     "react/react-in-jsx-scope": "off"

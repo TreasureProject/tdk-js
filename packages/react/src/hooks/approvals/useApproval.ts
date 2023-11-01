@@ -23,7 +23,7 @@ export const useApproval = ({
   onSuccess,
   onError,
 }: Props) => {
-  const { isApproved, refetch: refetch } = useIsApproved({
+  const { isApproved, refetch } = useIsApproved({
     contractAddress,
     operatorAddress,
     type,

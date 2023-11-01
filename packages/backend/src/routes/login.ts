@@ -1,24 +1,15 @@
-import { type Static, Type } from "@sinclair/typebox";
 import { getTreasureContractAddress } from "@treasure/core";
 import type { FastifyPluginAsync } from "fastify";
 
+import { baseReplySchema } from "../schemas/common";
+import { loginBodySchema } from "../schemas/login";
+import type { LoginBody } from "../types";
 import { db } from "../utils/db";
 import { engine } from "../utils/engine";
 import { env } from "../utils/env";
-import {
-  baseReplySchema,
-  chainIdSchemaType,
-  ethereumAddressSchemaType,
-} from "../utils/schema";
-
-const loginBodySchema = Type.Object({
-  project: Type.String(),
-  chainId: chainIdSchemaType,
-  address: ethereumAddressSchemaType,
-});
 
 export const loginRoutes: FastifyPluginAsync = async (app) => {
-  app.post<{ Body: Static<typeof loginBodySchema> }>(
+  app.post<{ Body: LoginBody }>(
     "/login",
     {
       schema: {

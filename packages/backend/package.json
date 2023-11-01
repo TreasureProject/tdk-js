@@ -1,6 +1,7 @@
 {
   "name": "@treasure/tdk-backend",
   "version": "1.0.0",
+  "types": "./dist/types.d.ts",
   "scripts": {
     "build": "tsup",
     "dev": "npm run build && concurrently \"npm run build -- --watch\" \"nodemon ./dist/index.js\"",
