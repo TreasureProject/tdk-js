@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "dev": "concurrently \"cd ./packages/core && npm run dev\" \"cd ./packages/react && npm run dev\"",
+    "dev": "concurrently \"cd ./packages/core && npm run dev\" \"cd ./packages/backend && npm run dev\" \"cd ./packages/react && npm run dev\"",
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",

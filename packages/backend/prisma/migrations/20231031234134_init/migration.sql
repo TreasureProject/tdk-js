@@ -4,6 +4,7 @@ CREATE TABLE "project" (
     "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "project_id" TEXT NOT NULL,
+    "backend_wallet" TEXT,
     "icon" TEXT,
     "cover" TEXT,
     "color" TEXT,

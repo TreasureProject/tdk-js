@@ -1,22 +1,37 @@
 import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
-import type { ReadProjectReply } from "../types";
 import { db } from "../utils/db";
+import { baseReplySchema, nullStringSchemaType } from "../utils/schema";
 
-export const User = Type.Object({
+const ReadProjectParamsSchema = Type.Object({
+  slug: Type.String(),
+});
+const ReadProjectReplySchema = Type.Object({
+  slug: Type.String(),
   name: Type.String(),
-  mail: Type.Optional(Type.String({ format: "email" })),
+  icon: nullStringSchemaType,
+  cover: nullStringSchemaType,
+  color: nullStringSchemaType,
 });
 
-export type UserType = Static<typeof User>;
-
 export const projectsRoutes: FastifyPluginAsync = async (app) => {
-  app.get<{ Params: { slug: string }; Reply: ReadProjectReply }>(
+  app.get<{
+    Params: Static<typeof ReadProjectParamsSchema>;
+    Reply: Static<typeof ReadProjectReplySchema>;
+  }>(
     "/projects/:slug",
+    {
+      schema: {
+        response: {
+          ...baseReplySchema,
+          200: ReadProjectReplySchema,
+        },
+      },
+    },
     async (request, reply) => {
       const { slug } = request.params;
-      const project = await db.project.findUnique({
+      const project = await db.project.findUniqueOrThrow({
         where: { slug },
         select: {
           slug: true,
@@ -26,10 +41,6 @@ export const projectsRoutes: FastifyPluginAsync = async (app) => {
           color: true,
         },
       });
-      if (!project) {
-        return reply.code(404).send({ error: "Project not found" });
-      }
-
       reply.send(project);
     },
   );

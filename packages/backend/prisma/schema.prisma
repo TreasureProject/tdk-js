@@ -12,12 +12,13 @@ model Project {
   id String @id @default(cuid())
 
   // Fields
-  slug      String  @unique
-  name      String
-  projectId String  @unique @map("project_id")
-  icon      String?
-  cover     String?
-  color     String?
+  slug          String  @unique
+  name          String
+  projectId     String  @unique @map("project_id")
+  backendWallet String? @map("backend_wallet")
+  icon          String?
+  cover         String?
+  color         String?
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at")

@@ -13,6 +13,7 @@ export type TreasureContract =
   | "MAGIC"
   | "ARB"
   | "PaymentsModule"
+  | "TreasureLoginAccountFactory"
   | PriceFeedContract;
 
 export const TREASURE_CONTRACT_ADDRESSES: Record<
@@ -26,6 +27,7 @@ export const TREASURE_CONTRACT_ADDRESSES: Record<
     ARBUSDPriceFeed: "0xb2a824043730fe05f3da2efafa1cbbe83fa548d6",
     ETHUSDPriceFeed: "0x639fe6ab55c921f74e7fac1ee960c0b6293ba612",
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
+    TreasureLoginAccountFactory: zeroAddress,
   },
   [arbitrumGoerli.id]: {
     MAGIC: "0x88f9efb3a7f728fdb2b8872fe994c84b1d148f65",
@@ -34,6 +36,7 @@ export const TREASURE_CONTRACT_ADDRESSES: Record<
     ARBUSDPriceFeed: "0x2ee9bfb2d319b31a573ea15774b755715988e99d",
     ETHUSDPriceFeed: "0x62cae0fa2da220f43a51f86db2edb36dca9a5a08",
     PaymentsModule: "0x366a17839a625b87b114be0ab5a45a979959702b",
+    TreasureLoginAccountFactory: "0x4ae17c5217ed0de8b403d1bae1bed24c2a05a877",
   },
 };
 

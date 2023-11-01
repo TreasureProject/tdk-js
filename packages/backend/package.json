@@ -3,17 +3,22 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsup",
-    "dev": "concurrently \"npm run build -- --watch\" \"nodemon ./dist/index.js\"",
+    "dev": "npm run build && concurrently \"npm run build -- --watch\" \"nodemon ./dist/index.js\"",
     "start": "node ./dist/index.js",
-    "db:migrate": "npx prisma migrate dev"
+    "db:seed": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' ./prisma/seed.ts",
+    "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@fastify/type-provider-typebox": "^3.5.0",
     "@prisma/client": "^5.3.0",
     "@sinclair/typebox": "^0.31.21",
+    "@thirdweb-dev/engine": "^0.0.1",
+    "@treasure/core": "*",
+    "dotenv": "^16.3.1",
     "fastify": "^4.24.3"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.0.1",
     "prisma": "^5.3.0"
   }
