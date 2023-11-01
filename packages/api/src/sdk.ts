@@ -78,7 +78,8 @@ export class TDKAPI {
     });
   }
 
-  async getProjectBySlug(slug: string) {
-    return this.get<ReadProjectReply>(`/projects/${slug}`);
-  }
+  project = {
+    findBySlug: (slug: string) =>
+      this.get<ReadProjectReply>(`/projects/${slug}`),
+  };
 }

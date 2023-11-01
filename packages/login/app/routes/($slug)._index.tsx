@@ -1,23 +1,23 @@
-import { type LoaderFunction, type MetaFunction, json } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { tdk } from "~/utils/tdk";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
   try {
-    const response = await fetch(`http://localhost:8080/projects/${slug}`);
-    const result = await response.json();
-    console.log(result);
+    const project = await tdk.project.findBySlug(slug);
+    return json({ project });
   } catch (err) {
     console.error("Error fetching project details:", err);
+    throw new Response(null, {
+      status: 404,
+      statusText: "Not Found",
+    });
   }
-
-  return json({});
 };
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: `Log in to ${data?.project.name}` }];
 };
 
 export default function Index() {
