@@ -3,8 +3,8 @@ import type {
   Currency,
   OnSuccessFn,
   Token,
-} from "@treasure/core";
-import { formatUSD, sumArray } from "@treasure/core";
+} from "@treasure/tdk-core";
+import { formatUSD, sumArray } from "@treasure/tdk-core";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatEther, parseUnits } from "viem";

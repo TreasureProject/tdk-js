@@ -1,5 +1,5 @@
 {
-  "name": "@treasure/react",
+  "name": "@treasure/tdk-react",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -11,7 +11,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
     "@tanstack/react-query": "^4.0.0",
-    "@treasure/core": "*",
+    "@treasure/tdk-core": "*",
     "clsx": "^2.0.0",
     "i18next": "^23.6.0",
     "react": "^18.2.0",

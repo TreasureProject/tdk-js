@@ -1,5 +1,5 @@
 {
-  "name": "@treasure/login",
+  "name": "@treasure/tdk-login",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -13,7 +13,7 @@
     "@remix-run/node": "^2.2.0",
     "@remix-run/react": "^2.2.0",
     "@remix-run/serve": "^2.2.0",
-    "@treasure/tdk-backend": "*",
+    "@treasure/tdk-api": "*",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -1,11 +1,11 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import type { Currency, Token } from "@treasure/react";
+import type { Currency, Token } from "@treasure/tdk-react";
 import {
   PaymentsCartModal,
   sumArray,
   useCalculatePaymentAmount,
   useMakePayment,
-} from "@treasure/react";
+} from "@treasure/tdk-react";
 import { useState } from "react";
 import { formatEther, parseUnits } from "viem";
 import { useAccount } from "wagmi";

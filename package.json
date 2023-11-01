@@ -3,7 +3,11 @@
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "dev": "concurrently \"cd ./packages/core && npm run dev\" \"cd ./packages/backend && npm run dev\" \"cd ./packages/react && npm run dev\"",
+    "dev": "concurrently \"npm run dev:core\" \"npm run dev:api\" \"npm run dev:react\"",
+    "dev:core": "npm run dev --prefix ./packages/core",
+    "dev:api": "npm run dev --prefix ./packages/api",
+    "dev:login": "npm run dev --prefix ./packages/login",
+    "dev:react": "npm run dev --prefix ./packages/react",
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",

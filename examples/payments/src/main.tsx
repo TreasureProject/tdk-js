@@ -6,7 +6,7 @@ import {
 import "@rainbow-me/rainbowkit/styles.css";
 import { injectedWallet } from "@rainbow-me/rainbowkit/wallets";
 import "@treasure-project/tailwind-config/fonts.css";
-import "@treasure/react/dist/index.css";
+import "@treasure/tdk-react/dist/index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";

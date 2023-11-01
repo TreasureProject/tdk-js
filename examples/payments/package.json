@@ -1,5 +1,5 @@
 {
-  "name": "@treasure/example-payments-module",
+  "name": "@treasure/tdk-examples-payments",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^1.0.12",
-    "@treasure/react": "*",
+    "@treasure/tdk-react": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "viem": "^1.15.3",

@@ -1,11 +1,12 @@
-# Treasure.js
+# Treasure Development Kit
 
-JavaScript SDK for the Treasure ecosystem
+SDK for the Treasure ecosystem
 
 ## Packages
 
-- [@treasure/core](./packages/core)
-- [@treasure/react](./packages/react)
+- [@treasure/tdk-core](./packages/core)
+- [@treasure/tdk-api](./packages/api)
+- [@treasure/tdk-react](./packages/react)
 
 ## Usage
 
@@ -17,7 +18,7 @@ Coming soon
 
 ## Examples
 
-- [Payments Module](./examples/payments-module) ([Demo](https://tdk-payments-example.vercel.app))
+- [Payments](./examples/payments) ([Demo](https://tdk-payments-example.vercel.app))
 
 ## Development
 

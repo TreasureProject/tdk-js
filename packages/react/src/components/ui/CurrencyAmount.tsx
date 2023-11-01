@@ -1,5 +1,5 @@
-import type { Currency } from "@treasure/core";
-import { formatAmount } from "@treasure/core";
+import type { Currency } from "@treasure/tdk-core";
+import { formatAmount } from "@treasure/tdk-core";
 
 import { cn } from "../../utils";
 import { CurrencyIcon } from "./CurrencyIcon";

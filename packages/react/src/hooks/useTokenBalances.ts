@@ -1,5 +1,5 @@
-import type { Token } from "@treasure/core";
-import { erc20ABI, getTokenAddress } from "@treasure/core";
+import type { Token } from "@treasure/tdk-core";
+import { erc20ABI, getTokenAddress } from "@treasure/tdk-core";
 import { formatUnits } from "viem";
 import { useAccount, useChainId, useContractReads } from "wagmi";
 

@@ -1,4 +1,4 @@
-import { getTreasureContractAddress } from "@treasure/core";
+import { getTreasureContractAddress } from "@treasure/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import { baseReplySchema } from "../schemas/common";

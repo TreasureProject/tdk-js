@@ -1,5 +1,5 @@
-import type { Token } from "@treasure/core";
-import { getTokenPriceFeedContract, priceFeedABI } from "@treasure/core";
+import type { Token } from "@treasure/tdk-core";
+import { getTokenPriceFeedContract, priceFeedABI } from "@treasure/tdk-core";
 import { formatUnits } from "viem";
 import { useContractReads } from "wagmi";
 

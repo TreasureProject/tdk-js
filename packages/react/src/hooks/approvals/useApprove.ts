@@ -3,8 +3,8 @@ import type {
   OnErrorFn,
   OnSuccessFn,
   TokenStandard,
-} from "@treasure/core";
-import { erc1155ABI } from "@treasure/core";
+} from "@treasure/tdk-core";
+import { erc1155ABI } from "@treasure/tdk-core";
 import { useEffect } from "react";
 import {
   erc20ABI,

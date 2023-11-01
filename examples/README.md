@@ -1,3 +1,3 @@
 # Treasure.js Examples
 
-- [Payments Module](./payments-module) ([Demo](https://tdk-payments-example.vercel.app))
+- [Payments](./payments) ([Demo](https://tdk-payments-example.vercel.app))

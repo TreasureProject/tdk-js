@@ -1,8 +1,8 @@
-import type { TreasureContract } from "@treasure/core";
+import type { TreasureContract } from "@treasure/tdk-core";
 import {
   TREASURE_CONTRACT_ADDRESSES,
   getTreasureContractAddress,
-} from "@treasure/core";
+} from "@treasure/tdk-core";
 import { useChainId } from "wagmi";
 import { arbitrum } from "wagmi/chains";
 

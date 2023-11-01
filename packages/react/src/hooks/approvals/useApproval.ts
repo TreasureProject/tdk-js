@@ -1,4 +1,4 @@
-import type { OnErrorFn, OnSuccessFn, TokenStandard } from "@treasure/core";
+import type { OnErrorFn, OnSuccessFn, TokenStandard } from "@treasure/tdk-core";
 import { useCallback } from "react";
 
 import { useApprove } from "./useApprove";

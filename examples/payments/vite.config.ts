@@ -5,6 +5,6 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    exclude: ["@treasure/react"],
+    exclude: ["@treasure/tdk-react"],
   },
 });

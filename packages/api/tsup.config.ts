@@ -7,9 +7,8 @@ export default defineConfig([
     onSuccess: "copyfiles .env ./dist",
   },
   {
-    entry: ["src/types.ts"],
-    dts: {
-      only: true,
-    },
+    entry: ["src/sdk.ts"],
+    format: ["cjs", "esm"],
+    dts: true,
   },
 ]);

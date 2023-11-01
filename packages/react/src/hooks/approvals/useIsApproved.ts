@@ -1,5 +1,5 @@
-import { erc1155ABI } from "@treasure/core";
-import type { AddressString, TokenStandard } from "@treasure/core";
+import { erc1155ABI } from "@treasure/tdk-core";
+import type { AddressString, TokenStandard } from "@treasure/tdk-core";
 import { erc20ABI, erc721ABI, useAccount, useContractRead } from "wagmi";
 
 type Props = {

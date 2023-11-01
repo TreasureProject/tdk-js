@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next";
 import "./globals.css";
 import { en } from "./locales";
 
-export * from "@treasure/core";
+export * from "@treasure/tdk-core";
 export * from "./context";
 export * from "./components";
 export * from "./hooks";
