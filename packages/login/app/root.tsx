@@ -6,7 +6,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import "~/tailwind.css";
+import "@treasure/tdk-react/dist/index.css";
+import "~/globals.css";
 
 export default function App() {
   return (

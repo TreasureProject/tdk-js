@@ -13,10 +13,14 @@
     "@remix-run/node": "^2.2.0",
     "@remix-run/react": "^2.2.0",
     "@remix-run/serve": "^2.2.0",
+    "@thirdweb-dev/react": "^4.1.1",
+    "@thirdweb-dev/wallets": "^2.1.0",
     "@treasure/tdk-api": "*",
+    "@treasure/tdk-react": "*",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-verification-input": "^4.0.0-beta.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.2.0",
