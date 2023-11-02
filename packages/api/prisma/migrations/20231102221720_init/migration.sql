@@ -5,6 +5,7 @@ CREATE TABLE "project" (
     "name" TEXT NOT NULL,
     "project_id" TEXT NOT NULL,
     "backend_wallet" TEXT,
+    "redirect_uris" TEXT[],
     "icon" TEXT,
     "cover" TEXT,
     "color" TEXT,

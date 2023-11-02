@@ -21,13 +21,16 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) => {
       const { project: slug, chainId, address: adminAddress } = request.body;
-      const project = await db.project.findUniqueOrThrow({ where: { slug } });
+      const { backendWallet } = await db.project.findUniqueOrThrow({
+        where: { slug },
+        select: { backendWallet: true },
+      });
       const {
         result: { deployedAddress },
       } = await engine.accountFactory.createAccount(
         chainId.toString(),
         getTreasureContractAddress(chainId, "TreasureLoginAccountFactory"),
-        project.backendWallet ?? env.DEFAULT_BACKEND_WALLET,
+        backendWallet || env.DEFAULT_BACKEND_WALLET,
         {
           adminAddress,
         },

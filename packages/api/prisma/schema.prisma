@@ -12,10 +12,11 @@ model Project {
   id String @id @default(cuid())
 
   // Fields
-  slug          String  @unique
+  slug          String   @unique
   name          String
-  projectId     String  @unique @map("project_id")
-  backendWallet String? @map("backend_wallet")
+  projectId     String   @unique @map("project_id")
+  backendWallet String?  @map("backend_wallet")
+  redirectUris  String[] @map("redirect_uris")
   icon          String?
   cover         String?
   color         String?

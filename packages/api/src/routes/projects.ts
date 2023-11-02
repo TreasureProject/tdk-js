@@ -26,6 +26,7 @@ export const projectsRoutes: FastifyPluginAsync = async (app) => {
         select: {
           slug: true,
           name: true,
+          redirectUris: true,
           icon: true,
           cover: true,
           color: true,

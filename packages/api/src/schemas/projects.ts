@@ -9,6 +9,7 @@ export const readProjectParamsSchema = Type.Object({
 export const readProjectReplySchema = Type.Object({
   slug: Type.String(),
   name: Type.String(),
+  redirectUris: Type.Array(Type.String()),
   icon: nullStringSchema,
   cover: nullStringSchema,
   color: nullStringSchema,

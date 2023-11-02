@@ -11,31 +11,48 @@ import {
 } from "@thirdweb-dev/react";
 import { EmbeddedWallet } from "@thirdweb-dev/wallets";
 import { Button } from "@treasure/tdk-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import VerificationInput from "react-verification-input";
 import { env } from "~/utils/env";
+import { getRpcsByChainId } from "~/utils/network";
 import { tdk } from "~/utils/tdk";
 
-const wallet = new EmbeddedWallet({
-  chain: {
-    chainId: 42161,
-    rpc: ["https://arb1.arbitrum.io/rpc"],
-  },
-  clientId: env.VITE_THIRDWEB_CLIENT_ID,
-});
-
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
-  try {
-    const project = await tdk.project.findBySlug(slug);
-    return json({ project });
-  } catch (err) {
-    console.error("Error fetching project details:", err);
+  const project = await (async () => {
+    try {
+      const result = await tdk.project.findBySlug(slug);
+      return result;
+    } catch (err) {
+      console.error("Error fetching project details:", err);
+      return undefined;
+    }
+  })();
+
+  if (!project) {
     throw new Response(null, {
       status: 404,
       statusText: "Not Found",
     });
   }
+
+  const url = new URL(request.url);
+  const chainId = Number(url.searchParams.get("chain_id") || 0);
+  const redirectUri =
+    url.searchParams.get("redirect_uri") || "https://app.treasure.lol";
+
+  if (!project.redirectUris.includes(redirectUri)) {
+    throw new Response(null, {
+      status: 403,
+      statusText: "Forbidden",
+    });
+  }
+
+  return json({
+    project,
+    chainId: chainId || 42161,
+    redirectUri,
+  });
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -43,13 +60,25 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function Index() {
-  const { project } = useLoaderData<typeof loader>();
+  const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
   const [email, setEmail] = useState("");
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [error, setError] = useState("");
 
+  const wallet = useMemo(
+    () =>
+      new EmbeddedWallet({
+        chain: {
+          chainId,
+          rpc: getRpcsByChainId(chainId),
+        },
+        clientId: env.VITE_THIRDWEB_CLIENT_ID,
+      }),
+    [chainId],
+  );
+
   const handleSignInComplete = (address: string) => {
-    console.log(address);
+    window.location.href = `${redirectUri}?tdk_address=${address}`;
   };
 
   const handleSignInWithEmail = () => {
