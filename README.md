@@ -6,6 +6,7 @@ SDK for the Treasure ecosystem
 
 - [@treasure/tdk-core](./packages/core)
 - [@treasure/tdk-api](./packages/api)
+- [@treasure/tdk-login](./packages/login)
 - [@treasure/tdk-react](./packages/react)
 
 ## Usage
@@ -28,7 +29,7 @@ Install dependencies:
 npm install
 ```
 
-Start watch mode for all workspaces:
+Start watch mode for base workspaces:
 
 ```bash
 npm run dev
