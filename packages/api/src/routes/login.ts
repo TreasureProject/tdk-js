@@ -1,6 +1,9 @@
 import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
+// Hack to make `declare module` types work
+import "../middleware/chain";
+import "../middleware/project";
 import { engine } from "../utils/engine";
 import {
   baseReplySchema,
