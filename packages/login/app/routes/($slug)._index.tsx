@@ -10,18 +10,20 @@ import {
   walletConnect,
 } from "@thirdweb-dev/react";
 import { EmbeddedWallet } from "@thirdweb-dev/wallets";
+import { TDKAPI } from "@treasure/tdk-api";
 import { Button } from "@treasure/tdk-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import VerificationInput from "react-verification-input";
 import { env } from "~/utils/env";
-import { type SupportedChainId, getRpcsByChainId } from "~/utils/network";
-import { tdk } from "~/utils/tdk";
+import { getRpcsByChainId } from "~/utils/network";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
   const project = await (async () => {
     try {
-      const result = await tdk.project.findBySlug(slug);
+      const result = await new TDKAPI(env.VITE_TDK_API_URL).project.findBySlug(
+        slug,
+      );
       return result;
     } catch (err) {
       console.error("Error fetching project details:", err);
@@ -65,6 +67,11 @@ export default function Index() {
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const [error, setError] = useState("");
 
+  const tdk = useMemo(
+    () => new TDKAPI(env.VITE_TDK_API_URL, project.slug, chainId),
+    [project.slug, chainId],
+  );
+
   const wallet = useMemo(
     () =>
       new EmbeddedWallet({
@@ -79,21 +86,13 @@ export default function Index() {
 
   const handleSignInComplete = async (address: string) => {
     try {
-      const { address: tdkAddress } = await tdk.logIn({
-        project: project.slug,
-        chainId: chainId as SupportedChainId,
-        address,
-      });
+      const { address: tdkAddress } = await tdk.logIn({ address });
       window.location.href = `${redirectUri}?tdk_address=${tdkAddress}`;
     } catch (err) {
       console.error("Error completing sign in:", err);
       setError("Sorry, we were unable to log you in. Please contact support.");
     }
   };
-
-  useEffect(() => {
-    handleSignInComplete("0x2cc546ceA1D15739520D982b1c7a2aB282831c91");
-  }, []);
 
   const handleSignInWithEmail = () => {
     wallet.sendVerificationEmail({ email });

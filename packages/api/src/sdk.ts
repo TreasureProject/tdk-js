@@ -1,9 +1,6 @@
-import type {
-  ErrorReply,
-  LoginBody,
-  LoginReply,
-  ReadProjectReply,
-} from "./types";
+import type { LoginBody, LoginReply } from "./routes/login";
+import type { ReadProjectReply } from "./routes/projects";
+import type { ErrorReply } from "./utils/schema";
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 
@@ -19,18 +16,23 @@ export class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
-  apiKey?: string;
+  projectId?: string;
+  chainId?: number;
 
-  constructor(baseUri: string, apiKey?: string) {
+  constructor(baseUri: string, projectId?: string, chainId?: number) {
     this.baseUri = baseUri;
-    this.apiKey = apiKey;
+    this.projectId = projectId;
+    this.chainId = chainId;
   }
 
   async fetch<T>(path: string, options?: RequestInit): Promise<T> {
     const response = await fetch(this.baseUri + path, {
       ...options,
       headers: {
-        ...(this.apiKey ? { "x-api-key": this.apiKey } : undefined),
+        ...(this.projectId ? { "x-project-id": this.projectId } : undefined),
+        ...(this.chainId
+          ? { "x-chain-id": this.chainId.toString() }
+          : undefined),
         ...options?.headers,
       },
     });

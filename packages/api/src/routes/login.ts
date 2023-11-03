@@ -1,18 +1,36 @@
-import { getTreasureContractAddress } from "@treasure/tdk-core";
+import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
-import { baseReplySchema } from "../schemas/common";
-import { loginBodySchema, loginReplySchema } from "../schemas/login";
-import type { LoginBody } from "../types";
-import { db } from "../utils/db";
 import { engine } from "../utils/engine";
-import { env } from "../utils/env";
+import {
+  baseReplySchema,
+  chainIdSchema,
+  ethereumAddressSchema,
+} from "../utils/schema";
+
+const loginHeadersSchema = Type.Object({
+  "x-project-id": Type.String(),
+  "x-chain-id": chainIdSchema,
+});
+
+const loginBodySchema = Type.Object({
+  address: Type.String(),
+});
+
+const loginReplySchema = Type.Object({
+  address: ethereumAddressSchema,
+});
+
+export type LoginHeaders = Static<typeof loginHeadersSchema>;
+export type LoginBody = Static<typeof loginBodySchema>;
+export type LoginReply = Static<typeof loginReplySchema>;
 
 export const loginRoutes: FastifyPluginAsync = async (app) => {
-  app.post<{ Body: LoginBody }>(
+  app.post<{ Headers: LoginHeaders; Body: LoginBody }>(
     "/login",
     {
       schema: {
+        headers: loginHeadersSchema,
         body: loginBodySchema,
         response: {
           ...baseReplySchema,
@@ -20,18 +38,18 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
         },
       },
     },
-    async (request) => {
-      const { project: slug, chainId, address: adminAddress } = request.body;
-      const { backendWallet } = await db.project.findUniqueOrThrow({
-        where: { slug },
-        select: { backendWallet: true },
-      });
+    async ({
+      body: { address: adminAddress },
+      chainId,
+      accountFactory,
+      backendWallet,
+    }) => {
       const {
         result: { deployedAddress },
       } = await engine.accountFactory.createAccount(
         chainId.toString(),
-        getTreasureContractAddress(chainId, "TreasureLoginAccountFactory"),
-        backendWallet || env.DEFAULT_BACKEND_WALLET,
+        accountFactory,
+        backendWallet,
         {
           adminAddress,
         },
