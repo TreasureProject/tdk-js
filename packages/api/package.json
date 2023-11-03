@@ -11,6 +11,7 @@
     "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@fastify/cors": "^8.4.1",
     "@fastify/swagger": "^8.12.0",
     "@fastify/swagger-ui": "^1.10.1",
     "@fastify/type-provider-typebox": "^3.5.0",

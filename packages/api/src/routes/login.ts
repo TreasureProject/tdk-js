@@ -2,7 +2,7 @@ import { getTreasureContractAddress } from "@treasure/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import { baseReplySchema } from "../schemas/common";
-import { loginBodySchema } from "../schemas/login";
+import { loginBodySchema, loginReplySchema } from "../schemas/login";
 import type { LoginBody } from "../types";
 import { db } from "../utils/db";
 import { engine } from "../utils/engine";
@@ -16,6 +16,7 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
         body: loginBodySchema,
         response: {
           ...baseReplySchema,
+          200: loginReplySchema,
         },
       },
     },

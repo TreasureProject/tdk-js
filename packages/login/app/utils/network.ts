@@ -2,7 +2,7 @@ const CHAIN_ID_TO_RPCS_MAPPING = {
   42161: ["https://arb1.arbitrum.io/rpc"],
 } as const;
 
-type SupportedChainId = keyof typeof CHAIN_ID_TO_RPCS_MAPPING;
+export type SupportedChainId = keyof typeof CHAIN_ID_TO_RPCS_MAPPING;
 
 export const getRpcsByChainId = (chainId: number) => {
   if (chainId in CHAIN_ID_TO_RPCS_MAPPING) {

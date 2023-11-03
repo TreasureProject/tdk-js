@@ -1,4 +1,9 @@
-import type { ErrorReply, ReadProjectReply } from "./types";
+import type {
+  ErrorReply,
+  LoginBody,
+  LoginReply,
+  ReadProjectReply,
+} from "./types";
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 
@@ -82,4 +87,8 @@ export class TDKAPI {
     findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
+
+  async logIn(params: LoginBody) {
+    return this.post<LoginReply>("/login", params);
+  }
 }

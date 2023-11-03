@@ -1,6 +1,7 @@
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import Fastify from "fastify";
 
+import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
 import { withOpenApi } from "./middleware/open-api";
 import { withRoutes } from "./middleware/routes";
@@ -9,6 +10,7 @@ import { env } from "./utils/env";
 const main = async () => {
   const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
 
+  await withCors(app);
   await withErrorHandler(app);
   await withOpenApi(app);
   await withRoutes(app);

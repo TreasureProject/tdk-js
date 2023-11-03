@@ -11,10 +11,10 @@ import {
 } from "@thirdweb-dev/react";
 import { EmbeddedWallet } from "@thirdweb-dev/wallets";
 import { Button } from "@treasure/tdk-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import VerificationInput from "react-verification-input";
 import { env } from "~/utils/env";
-import { getRpcsByChainId } from "~/utils/network";
+import { type SupportedChainId, getRpcsByChainId } from "~/utils/network";
 import { tdk } from "~/utils/tdk";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -77,9 +77,23 @@ export default function Index() {
     [chainId],
   );
 
-  const handleSignInComplete = (address: string) => {
-    window.location.href = `${redirectUri}?tdk_address=${address}`;
+  const handleSignInComplete = async (address: string) => {
+    try {
+      const { address: tdkAddress } = await tdk.logIn({
+        project: project.slug,
+        chainId: chainId as SupportedChainId,
+        address,
+      });
+      window.location.href = `${redirectUri}?tdk_address=${tdkAddress}`;
+    } catch (err) {
+      console.error("Error completing sign in:", err);
+      setError("Sorry, we were unable to log you in. Please contact support.");
+    }
   };
+
+  useEffect(() => {
+    handleSignInComplete("0x2cc546ceA1D15739520D982b1c7a2aB282831c91");
+  }, []);
 
   const handleSignInWithEmail = () => {
     wallet.sendVerificationEmail({ email });
