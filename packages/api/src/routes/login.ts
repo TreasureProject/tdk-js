@@ -3,13 +3,13 @@ import type { FastifyPluginAsync } from "fastify";
 
 // Hack to make `declare module` types work
 import "../middleware/chain";
+import "../middleware/jwt";
 import "../middleware/project";
 import { engine } from "../utils/engine";
 import {
   type ErrorReply,
   baseReplySchema,
   chainIdSchema,
-  ethereumAddressSchema,
 } from "../utils/schema";
 
 const loginHeadersSchema = Type.Object({
@@ -22,7 +22,7 @@ const loginBodySchema = Type.Object({
 });
 
 const loginReplySchema = Type.Object({
-  deployedAddress: ethereumAddressSchema,
+  authToken: Type.String(),
 });
 
 export type LoginHeaders = Static<typeof loginHeadersSchema>;
@@ -69,7 +69,14 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
         return reply.code(500).send({ error: "Unable to complete login. " });
       }
 
-      reply.send({ deployedAddress });
+      try {
+        const authToken = await reply.jwtSign({ address: deployedAddress });
+        reply.send({ authToken });
+      } catch (err) {
+        console.error(err);
+      }
+
+      reply.code(500).send({ error: "ded " });
     },
   );
 };

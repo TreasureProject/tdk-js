@@ -80,8 +80,8 @@ export default function Index() {
   const handleSignInComplete = useCallback(
     async (address: string) => {
       try {
-        const { deployedAddress } = await tdk.logIn({ address });
-        window.location.href = `${redirectUri}?tdk_address=${deployedAddress}`;
+        const { authToken } = await tdk.logIn({ address });
+        window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
       } catch (err) {
         console.error("Error completing sign in:", err);
         setError(

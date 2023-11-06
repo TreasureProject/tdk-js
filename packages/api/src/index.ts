@@ -4,6 +4,7 @@ import Fastify from "fastify";
 import { withChain } from "./middleware/chain";
 import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
+import { withJwt } from "./middleware/jwt";
 import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
 import { loginRoutes } from "./routes/login";
@@ -16,6 +17,7 @@ const main = async () => {
   // Middleware
   await withCors(app);
   await withErrorHandler(app);
+  await withJwt(app);
   await withSwagger(app);
   await withChain(app);
   await withProject(app);
