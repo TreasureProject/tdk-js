@@ -1,19 +1,12 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import {
-  ConnectWallet,
-  ThirdwebProvider,
-  coinbaseWallet,
-  metamaskWallet,
-  rainbowWallet,
-  walletConnect,
-} from "@thirdweb-dev/react";
 import { EmbeddedWallet } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure/tdk-api";
 import { Button } from "@treasure/tdk-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import VerificationInput from "react-verification-input";
+import { WalletConnectButton } from "~/components/WalletConnectButton";
 import { env } from "~/utils/env";
 import { getRpcsByChainId } from "~/utils/network";
 
@@ -84,15 +77,20 @@ export default function Index() {
     [chainId],
   );
 
-  const handleSignInComplete = async (address: string) => {
-    try {
-      const { address: tdkAddress } = await tdk.logIn({ address });
-      window.location.href = `${redirectUri}?tdk_address=${tdkAddress}`;
-    } catch (err) {
-      console.error("Error completing sign in:", err);
-      setError("Sorry, we were unable to log you in. Please contact support.");
-    }
-  };
+  const handleSignInComplete = useCallback(
+    async (address: string) => {
+      try {
+        const { deployedAddress } = await tdk.logIn({ address });
+        window.location.href = `${redirectUri}?tdk_address=${deployedAddress}`;
+      } catch (err) {
+        console.error("Error completing sign in:", err);
+        setError(
+          "Sorry, we were unable to log you in. Please contact support.",
+        );
+      }
+    },
+    [tdk, redirectUri],
+  );
 
   const handleSignInWithEmail = () => {
     wallet.sendVerificationEmail({ email });
@@ -214,24 +212,9 @@ export default function Index() {
                   </Button>
                 </div>
                 <span className="block text-center">or</span>
-                <ThirdwebProvider
-                  clientId={env.VITE_THIRDWEB_CLIENT_ID}
-                  supportedWallets={[
-                    metamaskWallet(),
-                    coinbaseWallet(),
-                    walletConnect(),
-                    rainbowWallet(),
-                  ]}
-                >
-                  <div className="text-center">
-                    <ConnectWallet
-                      btnTitle={"Connect Web3 Wallet"}
-                      modalSize={"compact"}
-                      welcomeScreen={{ title: "" }}
-                      modalTitleIconUrl={""}
-                    />
-                  </div>
-                </ThirdwebProvider>
+                <div className="text-center">
+                  <WalletConnectButton onConnected={handleSignInComplete} />
+                </div>
               </>
             )}
           </div>

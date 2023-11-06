@@ -6,6 +6,7 @@ import "../middleware/chain";
 import "../middleware/project";
 import { engine } from "../utils/engine";
 import {
+  type ErrorReply,
   baseReplySchema,
   chainIdSchema,
   ethereumAddressSchema,
@@ -21,7 +22,7 @@ const loginBodySchema = Type.Object({
 });
 
 const loginReplySchema = Type.Object({
-  address: ethereumAddressSchema,
+  deployedAddress: ethereumAddressSchema,
 });
 
 export type LoginHeaders = Static<typeof loginHeadersSchema>;
@@ -29,7 +30,11 @@ export type LoginBody = Static<typeof loginBodySchema>;
 export type LoginReply = Static<typeof loginReplySchema>;
 
 export const loginRoutes: FastifyPluginAsync = async (app) => {
-  app.post<{ Headers: LoginHeaders; Body: LoginBody }>(
+  app.post<{
+    Headers: LoginHeaders;
+    Body: LoginBody;
+    Reply: LoginReply | ErrorReply;
+  }>(
     "/login",
     {
       schema: {
@@ -41,12 +46,15 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
         },
       },
     },
-    async ({
-      body: { address: adminAddress },
-      chainId,
-      accountFactory,
-      backendWallet,
-    }) => {
+    async (
+      {
+        body: { address: adminAddress },
+        chainId,
+        accountFactory,
+        backendWallet,
+      },
+      reply,
+    ) => {
       const {
         result: { deployedAddress },
       } = await engine.accountFactory.createAccount(
@@ -57,7 +65,11 @@ export const loginRoutes: FastifyPluginAsync = async (app) => {
           adminAddress,
         },
       );
-      return { address: deployedAddress };
+      if (!deployedAddress) {
+        return reply.code(500).send({ error: "Unable to complete login. " });
+      }
+
+      reply.send({ deployedAddress });
     },
   );
 };
