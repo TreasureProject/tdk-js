@@ -1,7 +1,7 @@
 import { useTreasure } from "@treasure/tdk-react";
 
 export const App = () => {
-  const { address } = useTreasure();
+  const { address, logOut } = useTreasure();
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
@@ -10,7 +10,10 @@ export const App = () => {
       </header>
       <main>
         {address ? (
-          <p>Logged in as {address}</p>
+          <>
+            <p>Logged in as {address}</p>
+            <button onClick={logOut}>Log Out</button>
+          </>
         ) : (
           <a href="http://localhost:5173/platform?redirect_uri=http://localhost:5174&chain_id=421613">
             Log in with Treasure

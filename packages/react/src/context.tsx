@@ -20,13 +20,15 @@ type ContextValues = {
   address?: string;
   onStartAuth: () => void;
   onCompleteAuth: (authToken: string) => void;
+  logOut: () => void;
 };
 
 const Context = createContext({} as State & ContextValues);
 
 type Action =
   | { type: "START_AUTH" }
-  | { type: "COMPLETE_AUTH"; authToken: string };
+  | { type: "COMPLETE_AUTH"; authToken: string }
+  | { type: "RESET_AUTH" };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -36,10 +38,18 @@ const reducer = (state: State, action: Action): State => {
         status: "AUTHENTICATING",
       };
     case "COMPLETE_AUTH":
+      localStorage.setItem("tdk_auth_token", action.authToken);
       return {
         ...state,
         status: action.authToken ? "AUTHENTICATED" : "IDLE",
         authToken: action.authToken,
+      };
+    case "RESET_AUTH":
+      localStorage.removeItem("tdk_auth_token");
+      return {
+        ...state,
+        status: "IDLE",
+        authToken: undefined,
       };
   }
 };
@@ -69,13 +79,23 @@ export const TreasureProvider = ({ project = "platform", children }: Props) => {
   });
 
   useEffect(() => {
+    let authToken: string | null | undefined;
+
+    // Check browser query params
     if (window.location.search) {
-      const authToken = new URLSearchParams(window.location.search).get(
+      authToken = new URLSearchParams(window.location.search).get(
         "tdk_auth_token",
       );
-      if (authToken) {
-        dispatch({ type: "COMPLETE_AUTH", authToken });
-      }
+    }
+
+    // Check local storage
+    if (!authToken) {
+      authToken = localStorage.getItem("tdk_auth_token");
+    }
+
+    // Mark as logged in if we have a match
+    if (authToken) {
+      dispatch({ type: "COMPLETE_AUTH", authToken });
     }
   }, []);
 
@@ -95,6 +115,7 @@ export const TreasureProvider = ({ project = "platform", children }: Props) => {
         onStartAuth: () => dispatch({ type: "START_AUTH" }),
         onCompleteAuth: (authToken) =>
           dispatch({ type: "COMPLETE_AUTH", authToken }),
+        logOut: () => dispatch({ type: "RESET_AUTH" }),
       }}
     >
       {children}
