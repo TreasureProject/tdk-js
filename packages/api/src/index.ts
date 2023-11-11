@@ -1,13 +1,12 @@
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import Fastify from "fastify";
 
+import { withAuth } from "./middleware/auth";
 import { withChain } from "./middleware/chain";
 import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
-import { withJwt } from "./middleware/jwt";
 import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
-import { loginRoutes } from "./routes/login";
 import { projectsRoutes } from "./routes/projects";
 import { env } from "./utils/env";
 
@@ -17,13 +16,13 @@ const main = async () => {
   // Middleware
   await withCors(app);
   await withErrorHandler(app);
-  await withJwt(app);
+  await withAuth(app);
   await withSwagger(app);
   await withChain(app);
   await withProject(app);
 
   // Routes
-  await Promise.all([app.register(projectsRoutes), app.register(loginRoutes)]);
+  await Promise.all([app.register(projectsRoutes)]);
 
   // Start server
   await app.ready();

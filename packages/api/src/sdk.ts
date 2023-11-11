@@ -1,4 +1,3 @@
-import type { LoginBody, LoginReply } from "./routes/login";
 import type { ReadProjectReply } from "./routes/projects";
 import type { ErrorReply } from "./utils/schema";
 
@@ -89,8 +88,4 @@ export class TDKAPI {
     findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
-
-  async logIn(params: LoginBody) {
-    return this.post<LoginReply>("/login", params);
-  }
 }

@@ -1,14 +1,24 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { EmbeddedWallet } from "@thirdweb-dev/wallets";
+import {
+  ConnectWallet,
+  ThirdwebProvider,
+  coinbaseWallet,
+  embeddedWallet,
+  metamaskWallet,
+  rainbowWallet,
+  smartWallet,
+  useConnectionStatus,
+  useLogin,
+  useSmartWallet,
+  walletConnect,
+} from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
-import { Button } from "@treasure/tdk-react";
-import { useCallback, useMemo, useState } from "react";
+import { Button, getTreasureContractAddress } from "@treasure/tdk-react";
+import { useEffect, useState } from "react";
 import VerificationInput from "react-verification-input";
-import { WalletConnectButton } from "~/components/WalletConnectButton";
 import { env } from "~/utils/env";
-import { getRpcsByChainId } from "~/utils/network";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
@@ -54,63 +64,42 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: `Log in to ${data?.project.name}` }];
 };
 
-export default function Index() {
+const InnterLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
   const [email, setEmail] = useState("");
   const [showVerificationInput, setShowVerificationInput] = useState(false);
+  const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
+    factoryAddress: getTreasureContractAddress(
+      chainId,
+      "TreasureLoginAccountFactory",
+    ),
+    gasless: true,
+  });
+  const { login: logInWallet } = useLogin();
+  const connectionStatus = useConnectionStatus();
   const [error, setError] = useState("");
 
-  const tdk = useMemo(
-    () => new TDKAPI(env.VITE_TDK_API_URL, project.slug, chainId),
-    [project.slug, chainId],
-  );
-
-  const wallet = useMemo(
-    () =>
-      new EmbeddedWallet({
-        chain: {
-          chainId,
-          rpc: getRpcsByChainId(chainId),
-        },
-        clientId: env.VITE_THIRDWEB_CLIENT_ID,
-      }),
-    [chainId],
-  );
-
-  const handleSignInComplete = useCallback(
-    async (address: string) => {
-      try {
-        const { authToken } = await tdk.logIn({ address });
-        window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
-      } catch (err) {
-        console.error("Error completing sign in:", err);
-        setError(
-          "Sorry, we were unable to log you in. Please contact support.",
-        );
-      }
-    },
-    [tdk, redirectUri],
-  );
-
-  const handleSignInWithEmail = () => {
-    wallet.sendVerificationEmail({ email });
-    setShowVerificationInput(true);
+  const handleSignInWithEmail = async () => {
+    await connectSmartWallet({
+      connectPersonalWallet: async (embeddedWallet) => {
+        await embeddedWallet.sendVerificationEmail({ email });
+        setShowVerificationInput(true);
+      },
+    });
   };
 
   const handleSubmitVerificationCode = async (verificationCode: string) => {
     try {
-      const { user } = await wallet.authenticate({
-        strategy: "email_verification",
-        email,
-        verificationCode,
+      await connectSmartWallet({
+        connectPersonalWallet: async (embeddedWallet) => {
+          const authResult = await embeddedWallet.authenticate({
+            strategy: "email_verification",
+            email,
+            verificationCode,
+          });
+          await embeddedWallet.connect({ authResult });
+        },
       });
-      if (!user) {
-        return setError(
-          "Sorry, we were unable to log you in. Please contact support.",
-        );
-      }
-
-      handleSignInComplete(user.walletAddress);
     } catch (err) {
       console.error("Error authenticating with verification code:", err);
       if (err instanceof Error) {
@@ -121,14 +110,14 @@ export default function Index() {
 
   const handleSignInWithGoogle = async () => {
     try {
-      const { user } = await wallet.authenticate({ strategy: "google" });
-      if (!user) {
-        return setError(
-          "Sorry, we were unable to log you in. Please contact support.",
-        );
-      }
-
-      handleSignInComplete(user.walletAddress);
+      await connectSmartWallet({
+        connectPersonalWallet: async (embeddedWallet) => {
+          const authResult = await embeddedWallet.authenticate({
+            strategy: "google",
+          });
+          await embeddedWallet.connect({ authResult });
+        },
+      });
     } catch (err) {
       console.error("Error authenticating with Google:", err);
       if (err instanceof Error) {
@@ -136,6 +125,22 @@ export default function Index() {
       }
     }
   };
+
+  useEffect(() => {
+    if (connectionStatus === "connected") {
+      (async () => {
+        try {
+          const token = await logInWallet();
+          window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
+        } catch (err) {
+          console.error("Error completing sign in:", err);
+          setError(
+            "Sorry, we were unable to log you in. Please contact support.",
+          );
+        }
+      })();
+    }
+  }, [redirectUri, connectionStatus, logInWallet]);
 
   return (
     <>
@@ -213,7 +218,12 @@ export default function Index() {
                 </div>
                 <span className="block text-center">or</span>
                 <div className="text-center">
-                  <WalletConnectButton onConnected={handleSignInComplete} />
+                  <ConnectWallet
+                    btnTitle={"Connect Web3 Wallet"}
+                    modalSize={"compact"}
+                    welcomeScreen={{ title: "" }}
+                    modalTitleIconUrl=""
+                  />
                 </div>
               </>
             )}
@@ -221,5 +231,34 @@ export default function Index() {
         </div>
       </div>
     </>
+  );
+};
+
+export default function LoginPage() {
+  const { chainId } = useLoaderData<typeof loader>();
+  const smartWalletOptions = {
+    factoryAddress: getTreasureContractAddress(
+      chainId,
+      "TreasureLoginAccountFactory",
+    ),
+    gasless: true,
+  };
+  return (
+    <ThirdwebProvider
+      clientId={env.VITE_THIRDWEB_CLIENT_ID}
+      activeChain={chainId}
+      supportedWallets={[
+        smartWallet(metamaskWallet(), smartWalletOptions),
+        smartWallet(coinbaseWallet(), smartWalletOptions),
+        smartWallet(walletConnect(), smartWalletOptions),
+        smartWallet(rainbowWallet(), smartWalletOptions),
+      ]}
+      authConfig={{
+        domain: env.VITE_TDK_API_URL,
+        authUrl: "/auth",
+      }}
+    >
+      <InnterLoginPage />
+    </ThirdwebProvider>
   );
 }
