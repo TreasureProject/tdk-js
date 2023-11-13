@@ -294,10 +294,10 @@ const PaymentsCartModalContents = ({
                 {isLoading
                   ? t("common.loading")
                   : selectedTokenBalance < pricedAmount
-                  ? t("common.insufficientBalance")
-                  : isApproved
-                  ? t("payments.cart.submit")
-                  : t("payments.cart.approveAndSubmit")}
+                    ? t("common.insufficientBalance")
+                    : isApproved
+                      ? t("payments.cart.submit")
+                      : t("payments.cart.approveAndSubmit")}
               </Button>
             </div>
           </div>

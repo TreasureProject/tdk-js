@@ -77,8 +77,8 @@ export const useMakePayment = ({
         ? "staticGas"
         : "static"
       : isPaymentTokenGas
-      ? "priceTypeGas"
-      : "priceType";
+        ? "priceTypeGas"
+        : "priceType";
 
   const preparedStatic = usePrepareContractWrite({
     address,

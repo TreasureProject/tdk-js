@@ -59,7 +59,7 @@ export const useIsApproved = ({
       type === "ERC20"
         ? refetchAllowance
         : type === "ERC721"
-        ? refetchERC721IsApprovedForAll
-        : refetchERC1155IsApprovedForAll,
+          ? refetchERC721IsApprovedForAll
+          : refetchERC1155IsApprovedForAll,
   };
 };

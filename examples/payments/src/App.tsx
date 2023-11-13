@@ -178,8 +178,8 @@ export const App = () => {
                   {isLoading
                     ? "Loading..."
                     : isApproved
-                    ? "Make Payment"
-                    : "Approve & Make Payment"}
+                      ? "Make Payment"
+                      : "Approve & Make Payment"}
                 </button>
               </div>
             </div>
