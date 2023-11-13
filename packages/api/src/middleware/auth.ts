@@ -2,9 +2,11 @@ import { PrivateKeyWallet } from "@thirdweb-dev/auth/evm";
 import { ThirdwebAuth } from "@thirdweb-dev/auth/fastify";
 import type { FastifyInstance } from "fastify";
 
+import { env } from "../utils/env";
+
 const { authRouter, authMiddleware } = ThirdwebAuth({
-  domain: process.env.THIRDWEB_AUTH_DOMAIN || "",
-  wallet: new PrivateKeyWallet(process.env.THIRDWEB_AUTH_PRIVATE_KEY || ""),
+  domain: env.THIRDWEB_AUTH_DOMAIN,
+  wallet: new PrivateKeyWallet(env.THIRDWEB_AUTH_PRIVATE_KEY),
 });
 
 export const withAuth = async (app: FastifyInstance) => {

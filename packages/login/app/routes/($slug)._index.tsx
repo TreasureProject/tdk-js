@@ -16,7 +16,7 @@ import {
 } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
 import { Button, getTreasureContractAddress } from "@treasure/tdk-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import VerificationInput from "react-verification-input";
 import { env } from "~/utils/env";
 
@@ -77,6 +77,7 @@ const InnterLoginPage = () => {
   });
   const { login: logInWallet } = useLogin();
   const connectionStatus = useConnectionStatus();
+  const didAttemptLogin = useRef(false);
   const [error, setError] = useState("");
 
   const handleSignInWithEmail = async () => {
@@ -127,7 +128,9 @@ const InnterLoginPage = () => {
   };
 
   useEffect(() => {
-    if (connectionStatus === "connected") {
+    // Track didAttemptLogin ref because loginWallet is not memoized
+    if (connectionStatus === "connected" && !didAttemptLogin.current) {
+      didAttemptLogin.current = true;
       (async () => {
         try {
           const token = await logInWallet();
@@ -254,8 +257,8 @@ export default function LoginPage() {
         smartWallet(rainbowWallet(), smartWalletOptions),
       ]}
       authConfig={{
-        domain: env.VITE_TDK_API_URL,
-        authUrl: "/auth",
+        domain: env.VITE_THIRDWEB_AUTH_DOMAIN,
+        authUrl: `${env.VITE_TDK_API_URL}/auth`,
       }}
     >
       <InnterLoginPage />
