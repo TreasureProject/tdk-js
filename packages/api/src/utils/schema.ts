@@ -1,7 +1,7 @@
 import { type Static, Type } from "@sinclair/typebox";
 
 export const ethereumAddressSchema = Type.RegExp("/^0x[a-fA-F0-9]{40}$/g");
-export const nullStringSchema = Type.Union([Type.String(), Type.Null()]);
+export const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
 
 export const chainIdSchema = Type.Union([
   Type.Literal(42161), // arb

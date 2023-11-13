@@ -10,6 +10,7 @@ import {
   rainbowWallet,
   smartWallet,
   useConnectionStatus,
+  useCreateSessionKey,
   useLogin,
   useSmartWallet,
   walletConnect,
@@ -77,6 +78,7 @@ const InnterLoginPage = () => {
   });
   const { login: logInWallet } = useLogin();
   const connectionStatus = useConnectionStatus();
+  const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const didAttemptLogin = useRef(false);
   const [error, setError] = useState("");
 
@@ -133,8 +135,20 @@ const InnterLoginPage = () => {
       didAttemptLogin.current = true;
       (async () => {
         try {
-          const token = await logInWallet();
-          window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
+          const startDate = Date.now();
+          const [token, sessionKey] = await Promise.all([
+            logInWallet(),
+            createSessionKey({
+              keyAddress: project.backendWallet,
+              permissions: {
+                approvedCallTargets: [],
+                startDate,
+                expirationDate: startDate + 1000 * 60 * 60,
+              },
+            }),
+          ]);
+          console.log(token, sessionKey);
+          // window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
         } catch (err) {
           console.error("Error completing sign in:", err);
           setError(
@@ -143,7 +157,7 @@ const InnterLoginPage = () => {
         }
       })();
     }
-  }, [redirectUri, connectionStatus, logInWallet]);
+  }, [redirectUri, connectionStatus, project, logInWallet, createSessionKey]);
 
   return (
     <>

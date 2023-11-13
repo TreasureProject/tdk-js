@@ -2,7 +2,8 @@ import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
 import { db } from "../utils/db";
-import { baseReplySchema, nullStringSchema } from "../utils/schema";
+import { env } from "../utils/env";
+import { baseReplySchema, nullableStringSchema } from "../utils/schema";
 
 const readProjectParamsSchema = Type.Object({
   slug: Type.String(),
@@ -11,10 +12,11 @@ const readProjectParamsSchema = Type.Object({
 const readProjectReplySchema = Type.Object({
   slug: Type.String(),
   name: Type.String(),
+  backendWallet: Type.String(),
   redirectUris: Type.Array(Type.String()),
-  icon: nullStringSchema,
-  cover: nullStringSchema,
-  color: nullStringSchema,
+  icon: nullableStringSchema,
+  cover: nullableStringSchema,
+  color: nullableStringSchema,
 });
 
 export type ReadProjectParams = Static<typeof readProjectParamsSchema>;
@@ -40,13 +42,17 @@ export const projectsRoutes: FastifyPluginAsync = async (app) => {
         select: {
           slug: true,
           name: true,
+          backendWallet: true,
           redirectUris: true,
           icon: true,
           cover: true,
           color: true,
         },
       });
-      reply.send(project);
+      reply.send({
+        ...project,
+        backendWallet: project.backendWallet || env.DEFAULT_BACKEND_WALLET,
+      });
     },
   );
 };
