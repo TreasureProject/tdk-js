@@ -6,6 +6,7 @@ export const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
 export const chainIdSchema = Type.Union([
   Type.Literal(42161), // arb
   Type.Literal(421613), // arbgoerli
+  Type.Literal(421614), // arbsepolia
 ]);
 
 export const errorReplySchema = Type.Object({

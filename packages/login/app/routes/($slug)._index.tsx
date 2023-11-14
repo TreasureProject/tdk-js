@@ -65,7 +65,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: `Log in to ${data?.project.name}` }];
 };
 
-const InnterLoginPage = () => {
+const InnerLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
   const [email, setEmail] = useState("");
   const [showVerificationInput, setShowVerificationInput] = useState(false);
@@ -275,7 +275,7 @@ export default function LoginPage() {
         authUrl: `${env.VITE_TDK_API_URL}/auth`,
       }}
     >
-      <InnterLoginPage />
+      <InnerLoginPage />
     </ThirdwebProvider>
   );
 }

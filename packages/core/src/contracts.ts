@@ -1,5 +1,5 @@
 import { zeroAddress } from "viem";
-import { arbitrum, arbitrumGoerli } from "viem/chains";
+import { arbitrum, arbitrumGoerli, arbitrumSepolia } from "viem/chains";
 
 import type { Currency, Token } from "./payments/types";
 import type { AddressString } from "./types";
@@ -37,6 +37,15 @@ export const TREASURE_CONTRACT_ADDRESSES: Record<
     ETHUSDPriceFeed: "0x62cae0fa2da220f43a51f86db2edb36dca9a5a08",
     PaymentsModule: "0x366a17839a625b87b114be0ab5a45a979959702b",
     TreasureLoginAccountFactory: "0x4ae17c5217ed0de8b403d1bae1bed24c2a05a877",
+  },
+  [arbitrumSepolia.id]: {
+    MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
+    ARB: zeroAddress,
+    MAGICUSDPriceFeed: zeroAddress,
+    ARBUSDPriceFeed: zeroAddress,
+    ETHUSDPriceFeed: zeroAddress,
+    PaymentsModule: zeroAddress,
+    TreasureLoginAccountFactory: "0xfa9db4a45418688d14224b7782a44a8401f68be7",
   },
 };
 
