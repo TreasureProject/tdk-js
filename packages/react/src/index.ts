@@ -9,6 +9,7 @@ export * from "./context";
 export * from "./components";
 export * from "./hooks";
 export * from "./icons";
+export * from "./utils";
 
 i18n.use(initReactI18next).init({
   resources: { en },

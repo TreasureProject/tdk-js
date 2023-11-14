@@ -164,19 +164,24 @@ const InnerLoginPage = () => {
       <div className="fixed inset-0 bg-[url(/img/background.png)] bg-cover bg-center" />
       <div className="relative flex h-full items-center justify-center p-6">
         <div className="mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-white">
-          <div className="h-64 bg-slate-800" />
+          <div
+            className="h-64 bg-slate-800 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('${
+                project.cover || "/img/default_cover.png"
+              }')`,
+            }}
+          />
           <div className="space-y-5 p-8">
-            <div className="flex items-end justify-between">
-              <div className="font-semibold">
-                {project.slug === "platform" ? (
-                  <h1 className="text-2xl">Log in to Treasure</h1>
-                ) : (
-                  <>
-                    <h2 className="leading-4">Log in with Treasure to play</h2>
-                    <h1 className="text-3xl">{project.name}</h1>
-                  </>
-                )}
-              </div>
+            <div className="font-semibold">
+              {project.slug === "platform" ? (
+                <h1 className="text-2xl">Log in to Treasure</h1>
+              ) : (
+                <>
+                  <h2 className="leading-4">Log in with Treasure to play</h2>
+                  <h1 className="text-3xl">{project.name}</h1>
+                </>
+              )}
             </div>
             {error ? <div>{error}</div> : null}
             {showVerificationInput ? (

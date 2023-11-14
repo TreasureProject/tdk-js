@@ -15,7 +15,7 @@ export const App = () => {
             <button onClick={logOut}>Log Out</button>
           </>
         ) : (
-          <a href="http://localhost:5173/platform?redirect_uri=http://localhost:5174&chain_id=421613">
+          <a href="http://localhost:5173/platform?redirect_uri=http://localhost:5174&chain_id=421614">
             Log in with Treasure
           </a>
         )}
