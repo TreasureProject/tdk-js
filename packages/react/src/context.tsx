@@ -104,7 +104,7 @@ export const TreasureProvider = ({ project = "platform", children }: Props) => {
       return undefined;
     }
 
-    return jwtDecode<{ address: string }>(state.authToken).address;
+    return jwtDecode<{ sub: string }>(state.authToken).sub;
   }, [state.authToken]);
 
   return (

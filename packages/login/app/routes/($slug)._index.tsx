@@ -2,6 +2,11 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
+  Arbitrum,
+  ArbitrumGoerli,
+  ArbitrumSepolia,
+} from "@thirdweb-dev/chains";
+import {
   ConnectWallet,
   ThirdwebProvider,
   coinbaseWallet,
@@ -135,20 +140,17 @@ const InnerLoginPage = () => {
       didAttemptLogin.current = true;
       (async () => {
         try {
-          const startDate = Date.now();
-          const [token, sessionKey] = await Promise.all([
-            logInWallet(),
-            createSessionKey({
-              keyAddress: project.backendWallet,
-              permissions: {
-                approvedCallTargets: [],
-                startDate,
-                expirationDate: startDate + 1000 * 60 * 60,
-              },
-            }),
-          ]);
-          console.log(token, sessionKey);
-          // window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
+          const token = await logInWallet();
+          const sessionStartDate = Date.now();
+          createSessionKey({
+            keyAddress: project.backendWallet,
+            permissions: {
+              approvedCallTargets: [],
+              startDate: sessionStartDate,
+              expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
+            },
+          });
+          window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
         } catch (err) {
           console.error("Error completing sign in:", err);
           setError(
@@ -269,6 +271,13 @@ export default function LoginPage() {
     <ThirdwebProvider
       clientId={env.VITE_THIRDWEB_CLIENT_ID}
       activeChain={chainId}
+      supportedChains={
+        chainId === ArbitrumSepolia.chainId
+          ? [ArbitrumSepolia]
+          : chainId === ArbitrumGoerli.chainId
+            ? [ArbitrumGoerli]
+            : [Arbitrum]
+      }
       supportedWallets={[
         smartWallet(metamaskWallet(), smartWalletOptions),
         smartWallet(coinbaseWallet(), smartWalletOptions),
