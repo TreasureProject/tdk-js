@@ -1,4 +1,4 @@
-import type { IconProps } from ".";
+import type { IconProps } from "./types";
 
 export const MagicStarsIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 34 34" className={className}>

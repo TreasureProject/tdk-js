@@ -7,7 +7,7 @@ import {
 } from "@treasure/tdk-core";
 import { useChainId, useContractRead } from "wagmi";
 
-import { useTreasureContractAddress } from "../useTreasureContractAddress";
+import { useContractAddress } from "../useContractAddress";
 
 type Params = {
   paymentToken: Token;
@@ -24,7 +24,7 @@ export const useCalculatePaymentAmount = ({
 }: Params) => {
   const chainId = useChainId();
   return useContractRead({
-    ...useTreasureContractAddress("PaymentsModule"),
+    ...useContractAddress("PaymentsModule"),
     abi: paymentsModuleABI,
     functionName: "calculatePaymentAmountByPriceType",
     args: [

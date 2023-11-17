@@ -1,24 +1,16 @@
 import { zeroAddress } from "viem";
 import { arbitrum, arbitrumGoerli, arbitrumSepolia } from "viem/chains";
 
-import type { Currency, Token } from "./payments/types";
-import type { AddressString } from "./types";
+import type {
+  AddressString,
+  Contract,
+  PriceFeedContract,
+  Token,
+} from "../types";
 
-export type PriceFeedContract =
-  | "MAGICUSDPriceFeed"
-  | "ARBUSDPriceFeed"
-  | "ETHUSDPriceFeed";
-
-export type TreasureContract =
-  | "MAGIC"
-  | "ARB"
-  | "PaymentsModule"
-  | "TreasureLoginAccountFactory"
-  | PriceFeedContract;
-
-export const TREASURE_CONTRACT_ADDRESSES: Record<
+export const CONTRACT_ADDRESSES: Record<
   number,
-  Record<TreasureContract, AddressString>
+  Record<Contract, AddressString>
 > = {
   [arbitrum.id]: {
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
@@ -49,31 +41,13 @@ export const TREASURE_CONTRACT_ADDRESSES: Record<
   },
 };
 
-export const getTreasureContractAddresses = (chainId: number) => {
-  const addresses = TREASURE_CONTRACT_ADDRESSES[chainId];
-  return addresses ?? TREASURE_CONTRACT_ADDRESSES[arbitrum.id];
+export const getContractAddresses = (chainId: number) => {
+  const addresses = CONTRACT_ADDRESSES[chainId];
+  return addresses ?? CONTRACT_ADDRESSES[arbitrum.id];
 };
 
-export const getTreasureContractAddress = (
-  chainId: number,
-  contract: TreasureContract,
-) => getTreasureContractAddresses(chainId)[contract];
-
-export const getTokenAddress = (chainId: number, token: Token) => {
-  const contractAddresses = getTreasureContractAddresses(chainId);
-  switch (token) {
-    case "ARB":
-    case "MAGIC":
-      return contractAddresses[token];
-    case "ETH":
-      return zeroAddress;
-    default:
-      return token;
-  }
-};
-
-export const getCurrencyAddress = (chainId: number, currency: Currency) =>
-  currency === "USD" ? zeroAddress : getTokenAddress(chainId, currency);
+export const getContractAddress = (chainId: number, contract: Contract) =>
+  getContractAddresses(chainId)[contract];
 
 export const getTokenPriceFeedContract = (
   token: Token,

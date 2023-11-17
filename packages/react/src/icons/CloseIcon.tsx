@@ -1,4 +1,4 @@
-import type { IconProps } from ".";
+import type { IconProps } from "./types";
 
 export const CloseIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 16 16" className={className}>

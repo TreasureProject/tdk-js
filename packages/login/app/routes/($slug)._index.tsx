@@ -21,10 +21,11 @@ import {
   walletConnect,
 } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
-import { Button, getTreasureContractAddress } from "@treasure/tdk-react";
+import { Button, getContractAddress } from "@treasure/tdk-react";
 import { useEffect, useRef, useState } from "react";
 import VerificationInput from "react-verification-input";
-import { env } from "~/utils/env";
+
+import { env } from "../utils/env";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
@@ -75,10 +76,7 @@ const InnerLoginPage = () => {
   const [email, setEmail] = useState("");
   const [showVerificationInput, setShowVerificationInput] = useState(false);
   const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
-    factoryAddress: getTreasureContractAddress(
-      chainId,
-      "TreasureLoginAccountFactory",
-    ),
+    factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
     gasless: true,
   });
   const { login: logInWallet } = useLogin();
@@ -261,10 +259,7 @@ const InnerLoginPage = () => {
 export default function LoginPage() {
   const { chainId } = useLoaderData<typeof loader>();
   const smartWalletOptions = {
-    factoryAddress: getTreasureContractAddress(
-      chainId,
-      "TreasureLoginAccountFactory",
-    ),
+    factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
     gasless: true,
   };
   return (

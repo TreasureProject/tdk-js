@@ -2,7 +2,7 @@ import type { Currency } from "@treasure/tdk-core";
 
 import { ArbitrumTokenIcon } from "../../icons/ArbitrumTokenIcon";
 import { MagicTokenIcon } from "../../icons/MagicTokenIcon";
-import { cn } from "../../utils";
+import { cn } from "../../utils/classnames";
 
 type Props = {
   currency: Currency;

@@ -21,7 +21,7 @@ import {
 } from "wagmi";
 
 import { useApproval } from "../approvals/useApproval";
-import { useTreasureContractAddress } from "../useTreasureContractAddress";
+import { useContractAddress } from "../useContractAddress";
 
 type Params = {
   paymentToken: Token;
@@ -46,7 +46,7 @@ export const useMakePayment = ({
 }: Params) => {
   const didApprove = useRef(false);
   const chainId = useChainId();
-  const { address } = useTreasureContractAddress("PaymentsModule");
+  const { address } = useContractAddress("PaymentsModule");
   const paymentTokenAddress = getTokenAddress(chainId, paymentToken);
   const pricedCurrencyAddress = getCurrencyAddress(chainId, pricedCurrency);
   const priceType = getPaymentsPriceType(paymentToken, pricedCurrency);

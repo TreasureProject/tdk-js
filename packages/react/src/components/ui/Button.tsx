@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
-import { cn } from "../../utils";
+import { cn } from "../../utils/classnames";
 
 type BaseProps = {
   variant?: "primary" | "secondary";

@@ -1,4 +1,4 @@
-import type { IconProps } from ".";
+import type { IconProps } from "./types";
 
 export const MagicTokenIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className}>

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { PaymentsPriceType } from "./types";
-import { getPaymentsPriceType } from "./utils";
+import { PaymentsPriceType, getPaymentsPriceType } from "./payments";
 
 describe("payments utils", () => {
   it("should get payments price type", () => {

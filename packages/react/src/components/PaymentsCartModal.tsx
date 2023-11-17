@@ -9,17 +9,15 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatEther, parseUnits } from "viem";
 
-import {
-  useBlockExplorer,
-  useCalculatePaymentAmount,
-  useMakePayment,
-  useTokenBalances,
-  useTokenPrices,
-} from "../hooks";
+import { useCalculatePaymentAmount } from "../hooks/payments/useCalculatePaymentAmount";
+import { useMakePayment } from "../hooks/payments/useMakePayment";
+import { useBlockExplorer } from "../hooks/useBlockExplorer";
+import { useTokenBalances } from "../hooks/useTokenBalances";
+import { useTokenPrices } from "../hooks/useTokenPrices";
 import { CloseIcon } from "../icons/CloseIcon";
 import { ExternalLinkIcon } from "../icons/ExternalLinkIcon";
 import { TrashIcon } from "../icons/TrashIcon";
-import { cn } from "../utils";
+import { cn } from "../utils/classnames";
 import { Button } from "./ui/Button";
 import { CurrencyAmount } from "./ui/CurrencyAmount";
 import { CurrencyIcon } from "./ui/CurrencyIcon";

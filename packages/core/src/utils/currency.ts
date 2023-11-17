@@ -1,25 +1,8 @@
 import Decimal from "decimal.js-light";
+import { zeroAddress } from "viem";
 
-import { type Currency, PaymentsPriceType, type Token } from "./types";
-
-export const getPaymentsPriceType = (
-  paymentToken: Token,
-  pricedCurrency: Currency,
-) => {
-  if (pricedCurrency === paymentToken) {
-    return PaymentsPriceType.STATIC;
-  }
-
-  if (pricedCurrency === "USD") {
-    return PaymentsPriceType.PRICED_IN_USD;
-  }
-
-  if (pricedCurrency === "ETH") {
-    return PaymentsPriceType.PRICED_IN_GAS_TOKEN;
-  }
-
-  return PaymentsPriceType.PRICED_IN_ERC20;
-};
+import type { Currency, Token } from "../types";
+import { getContractAddresses } from "./contracts";
 
 export const formatUSD = (value: number | string) =>
   `$${Number(value).toLocaleString("en-US", {
@@ -50,3 +33,18 @@ export const formatAmount = (value: string | number, toLocale = true) => {
 
   return rounded.toString();
 };
+export const getTokenAddress = (chainId: number, token: Token) => {
+  const contractAddresses = getContractAddresses(chainId);
+  switch (token) {
+    case "ARB":
+    case "MAGIC":
+      return contractAddresses[token];
+    case "ETH":
+      return zeroAddress;
+    default:
+      return token;
+  }
+};
+
+export const getCurrencyAddress = (chainId: number, currency: Currency) =>
+  currency === "USD" ? zeroAddress : getTokenAddress(chainId, currency);
