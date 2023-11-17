@@ -1,4 +1,4 @@
-import { useTreasure } from "@treasure/tdk-react";
+import { TreasureLoginButton, useTreasure } from "@treasure/tdk-react";
 
 export const App = () => {
   const { address, logOut } = useTreasure();
@@ -15,9 +15,7 @@ export const App = () => {
             <button onClick={logOut}>Log Out</button>
           </>
         ) : (
-          <a href="http://localhost:5173/platform?redirect_uri=http://localhost:5174&chain_id=421613">
-            Log in with Treasure
-          </a>
+          <TreasureLoginButton />
         )}
       </main>
     </div>

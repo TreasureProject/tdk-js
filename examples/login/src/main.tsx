@@ -9,7 +9,14 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <TreasureProvider project="platform">
+    <TreasureProvider
+      project="platform"
+      chainId={import.meta.env.VITE_TDK_CHAIN_ID}
+      authConfig={{
+        loginDomain: import.meta.env.VITE_TDK_LOGIN_DOMAIN,
+        redirectUri: import.meta.env.VITE_TDK_LOGIN_REDIRECT_URI,
+      }}
+    >
       <App />
     </TreasureProvider>
   </React.StrictMode>,

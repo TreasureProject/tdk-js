@@ -1,6 +1,6 @@
 import { TreasureClient } from "@treasure/tdk-core";
 import { jwtDecode } from "jwt-decode";
-import type { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import {
   createContext,
   useContext,
@@ -9,9 +9,17 @@ import {
   useReducer,
 } from "react";
 
-type State = {
-  status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
+type Config = {
   project: string;
+  chainId?: number;
+  authConfig?: {
+    loginDomain: string;
+    redirectUri: string;
+  };
+};
+
+type State = Config & {
+  status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
   client: TreasureClient;
   authToken?: string;
 };
@@ -66,13 +74,12 @@ export const useTreasure = () => {
   return context;
 };
 
-type Props = {
-  project: string;
-  children: ReactNode;
-};
+type Props = PropsWithChildren<Config>;
 
-export const TreasureProvider = ({ project = "platform", children }: Props) => {
+export const TreasureProvider = ({ children, ...config }: Props) => {
+  const { project = "platform" } = config;
   const [state, dispatch] = useReducer(reducer, {
+    ...config,
     status: "IDLE",
     project,
     client: new TreasureClient(project),
