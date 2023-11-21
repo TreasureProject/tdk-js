@@ -226,12 +226,16 @@ const InnerLoginPage = () => {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <Button disabled={!email} onClick={handleSignInWithEmail}>
+                  <Button
+                    className="w-full"
+                    disabled={!email}
+                    onClick={handleSignInWithEmail}
+                  >
                     Sign in
                   </Button>
                   <Button
                     variant="secondary"
-                    className="flex items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
+                    className="flex w-full items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
                     onClick={handleSignInWithGoogle}
                   >
                     <img src="/img/google.svg" />

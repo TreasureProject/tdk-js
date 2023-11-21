@@ -5,8 +5,10 @@ export const App = () => {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
-      <header className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-        <h1 className="text-ruby-900 text-2xl font-semibold">Login Example</h1>
+      <header className="flex items-center justify-between gap-3">
+        <h1 className="text-ruby-900 text-2xl font-semibold">
+          TDK Login Example
+        </h1>
       </header>
       <main>
         {address ? (

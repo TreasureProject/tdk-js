@@ -1,4 +1,4 @@
-import { getTreasureContractAddress } from "@treasure/tdk-core";
+import { getContractAddress } from "@treasure/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 declare module "fastify" {
@@ -19,7 +19,7 @@ export const withChain = async (app: FastifyInstance) => {
     }
 
     req.chainId = chainId ?? 42161;
-    req.accountFactory = getTreasureContractAddress(
+    req.accountFactory = getContractAddress(
       req.chainId,
       "TreasureLoginAccountFactory",
     );
