@@ -10,11 +10,7 @@ const prisma = new PrismaClient();
       create: {
         slug: "platform",
         name: "Treasure",
-        projectId: "platform",
-        redirectUris: [
-          "https://app.treasure.lol",
-          "https://app-testnet.treasure.lol",
-        ],
+        redirectUris: ["http://localhost:5174"],
       },
     });
 
