@@ -22,6 +22,7 @@ import {
 } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
 import { Button, getContractAddress } from "@treasure/tdk-react";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useRef, useState } from "react";
 import VerificationInput from "react-verification-input";
 
@@ -31,9 +32,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
   const project = await (async () => {
     try {
-      const result = await new TDKAPI(env.VITE_TDK_API_URL).project.findBySlug(
-        slug,
-      );
+      const result = await new TDKAPI({
+        baseUri: env.VITE_TDK_API_URL,
+      }).project.findBySlug(slug);
       return result;
     } catch (err) {
       console.error("Error fetching project details:", err);
@@ -121,6 +122,11 @@ const InnerLoginPage = () => {
           const authResult = await embeddedWallet.authenticate({
             strategy: "google",
           });
+          const googleEmail = authResult.user?.authDetails.email;
+          if (googleEmail) {
+            setEmail(googleEmail);
+          }
+
           await embeddedWallet.connect({ authResult });
         },
       });
@@ -138,17 +144,27 @@ const InnerLoginPage = () => {
       didAttemptLogin.current = true;
       (async () => {
         try {
-          const token = await logInWallet();
+          const authToken = await logInWallet();
           const sessionStartDate = Date.now();
           createSessionKey({
-            keyAddress: project.backendWallet,
+            keyAddress: project.backendWallets[0],
             permissions: {
               approvedCallTargets: [],
               startDate: sessionStartDate,
               expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
             },
           });
-          window.location.href = `${redirectUri}?tdk_auth_token=${token}`;
+          const userEmail = jwtDecode<{ ctx: { email: string | null } }>(
+            authToken,
+          ).ctx.email;
+          if (!userEmail && email) {
+            const tdk = new TDKAPI({
+              baseUri: env.VITE_TDK_API_URL,
+              authToken,
+            });
+            await tdk.users.update({ email });
+          }
+          window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
         } catch (err) {
           console.error("Error completing sign in:", err);
           setError(
@@ -157,7 +173,14 @@ const InnerLoginPage = () => {
         }
       })();
     }
-  }, [redirectUri, connectionStatus, project, logInWallet, createSessionKey]);
+  }, [
+    redirectUri,
+    connectionStatus,
+    project,
+    email,
+    logInWallet,
+    createSessionKey,
+  ]);
 
   return (
     <>

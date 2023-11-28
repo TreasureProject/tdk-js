@@ -1,4 +1,5 @@
 import type { ReadProjectReply } from "./routes/projects";
+import type { UpdateUserBody, UpdateUserReply } from "./routes/users";
 import type { ErrorReply } from "./utils/schema";
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
@@ -15,11 +16,19 @@ export class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
+  authToken?: string;
   projectId?: string;
   chainId?: number;
 
-  constructor(baseUri: string, projectId?: string, chainId?: number) {
+  constructor(options: {
+    baseUri: string;
+    authToken?: string;
+    projectId?: string;
+    chainId?: number;
+  }) {
+    const { baseUri, authToken, projectId, chainId } = options;
     this.baseUri = baseUri;
+    this.authToken = authToken;
     this.projectId = projectId;
     this.chainId = chainId;
   }
@@ -28,6 +37,9 @@ export class TDKAPI {
     const response = await fetch(this.baseUri + path, {
       ...options,
       headers: {
+        ...(this.authToken
+          ? { Authorization: `Bearer ${this.authToken}` }
+          : undefined),
         ...(this.projectId ? { "x-project-id": this.projectId } : undefined),
         ...(this.chainId
           ? { "x-chain-id": this.chainId.toString() }
@@ -70,12 +82,12 @@ export class TDKAPI {
 
   async post<T>(
     path: string,
-    params: JSONValue,
+    body: JSONValue,
     options?: RequestInit,
   ): Promise<T> {
     return this.fetch<T>(path, {
       method: "POST",
-      body: JSON.stringify(params),
+      body: JSON.stringify(body),
       ...options,
       headers: {
         "content-type": "application/json",
@@ -84,8 +96,17 @@ export class TDKAPI {
     });
   }
 
+  setAuthToken(authToken: string) {
+    this.authToken = authToken;
+  }
+
   project = {
     findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
+  };
+
+  users = {
+    update: (body: UpdateUserBody) =>
+      this.post<UpdateUserReply>("/users/me", body),
   };
 }

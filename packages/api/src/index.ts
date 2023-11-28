@@ -7,6 +7,7 @@ import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
 import { withSwagger } from "./middleware/swagger";
 import { projectsRoutes } from "./routes/projects";
+import { usersRoutes } from "./routes/users";
 import { env } from "./utils/env";
 
 const main = async () => {
@@ -20,7 +21,7 @@ const main = async () => {
   await withChain(app);
 
   // Routes
-  await Promise.all([app.register(projectsRoutes)]);
+  await Promise.all([app.register(projectsRoutes), app.register(usersRoutes)]);
 
   // Start server
   await app.ready();

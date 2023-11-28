@@ -5,7 +5,7 @@ import type { FastifyInstance } from "fastify";
 import { db } from "../utils/db";
 import { env } from "../utils/env";
 
-const { authRouter, authMiddleware } = ThirdwebAuth({
+const { authRouter, authMiddleware, getUser } = ThirdwebAuth({
   domain: env.THIRDWEB_AUTH_DOMAIN,
   wallet: new PrivateKeyWallet(env.THIRDWEB_AUTH_PRIVATE_KEY),
   callbacks: {
@@ -40,3 +40,5 @@ export const withAuth = async (app: FastifyInstance) => {
   // We add the auth middleware to our app to let us access the user across our API
   app.register(authMiddleware);
 };
+
+export { getUser };
