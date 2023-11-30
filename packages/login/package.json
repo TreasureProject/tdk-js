@@ -22,7 +22,8 @@
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-verification-input": "^4.0.0-beta.1"
+    "react-verification-input": "^4.0.0",
+    "remix-utils": "^7.3.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.2.0",

@@ -10,21 +10,18 @@ import {
   ConnectWallet,
   ThirdwebProvider,
   coinbaseWallet,
-  embeddedWallet,
   metamaskWallet,
   rainbowWallet,
   smartWallet,
-  useConnectionStatus,
-  useCreateSessionKey,
-  useLogin,
-  useSmartWallet,
   walletConnect,
 } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
 import { Button, getContractAddress } from "@treasure/tdk-react";
-import { jwtDecode } from "jwt-decode";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import VerificationInput from "react-verification-input";
+import { ClientOnly } from "remix-utils/client-only";
+import { SpinnerIcon } from "~/components/SpinnerIcon";
+import { useTreasureLogin } from "~/hooks/useTreasureLogin";
 
 import { env } from "../utils/env";
 
@@ -52,7 +49,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const chainId = Number(url.searchParams.get("chain_id") || 0);
   const redirectUri =
-    url.searchParams.get("redirect_uri") || "https://app.treasure.lol";
+    url.searchParams.get("redirect_uri") || "http://localhost:5174";
 
   if (!project.redirectUris.includes(redirectUri)) {
     throw new Response(null, {
@@ -74,113 +71,21 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const InnerLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
-  const [email, setEmail] = useState("");
-  const [showVerificationInput, setShowVerificationInput] = useState(false);
-  const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
-    factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
-    gasless: true,
-  });
-  const { login: logInWallet } = useLogin();
-  const connectionStatus = useConnectionStatus();
-  const { mutateAsync: createSessionKey } = useCreateSessionKey();
-  const didAttemptLogin = useRef(false);
-  const [error, setError] = useState("");
-
-  const handleSignInWithEmail = async () => {
-    await connectSmartWallet({
-      connectPersonalWallet: async (embeddedWallet) => {
-        await embeddedWallet.sendVerificationEmail({ email });
-        setShowVerificationInput(true);
-      },
-    });
-  };
-
-  const handleSubmitVerificationCode = async (verificationCode: string) => {
-    try {
-      await connectSmartWallet({
-        connectPersonalWallet: async (embeddedWallet) => {
-          const authResult = await embeddedWallet.authenticate({
-            strategy: "email_verification",
-            email,
-            verificationCode,
-          });
-          await embeddedWallet.connect({ authResult });
-        },
-      });
-    } catch (err) {
-      console.error("Error authenticating with verification code:", err);
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    }
-  };
-
-  const handleSignInWithGoogle = async () => {
-    try {
-      await connectSmartWallet({
-        connectPersonalWallet: async (embeddedWallet) => {
-          const authResult = await embeddedWallet.authenticate({
-            strategy: "google",
-          });
-          const googleEmail = authResult.user?.authDetails.email;
-          if (googleEmail) {
-            setEmail(googleEmail);
-          }
-
-          await embeddedWallet.connect({ authResult });
-        },
-      });
-    } catch (err) {
-      console.error("Error authenticating with Google:", err);
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    }
-  };
-
-  useEffect(() => {
-    // Track didAttemptLogin ref because loginWallet is not memoized
-    if (connectionStatus === "connected" && !didAttemptLogin.current) {
-      didAttemptLogin.current = true;
-      (async () => {
-        try {
-          const authToken = await logInWallet();
-          const sessionStartDate = Date.now();
-          createSessionKey({
-            keyAddress: project.backendWallets[0],
-            permissions: {
-              approvedCallTargets: [],
-              startDate: sessionStartDate,
-              expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
-            },
-          });
-          const userEmail = jwtDecode<{ ctx: { email: string | null } }>(
-            authToken,
-          ).ctx.email;
-          if (!userEmail && email) {
-            const tdk = new TDKAPI({
-              baseUri: env.VITE_TDK_API_URL,
-              authToken,
-            });
-            await tdk.users.update({ email });
-          }
-          window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
-        } catch (err) {
-          console.error("Error completing sign in:", err);
-          setError(
-            "Sorry, we were unable to log you in. Please contact support.",
-          );
-        }
-      })();
-    }
-  }, [
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const {
+    status,
+    error,
+    reset,
+    startEmailLogin,
+    finishEmailLogin,
+    logInWithSSO,
+  } = useTreasureLogin({
+    chainId,
     redirectUri,
-    connectionStatus,
-    project,
-    email,
-    logInWallet,
-    createSessionKey,
-  ]);
+    backendWallet: project.backendWallets[0],
+  });
+
+  const isInputDisabled = status === "SENDING_EMAIL";
 
   return (
     <>
@@ -207,29 +112,37 @@ const InnerLoginPage = () => {
               )}
             </div>
             {error ? <div>{error}</div> : null}
-            {showVerificationInput ? (
+            {status === "LOADING" ? (
+              <div className="flex h-32 items-center justify-center">
+                <SpinnerIcon className="h-8 w-8" />
+              </div>
+            ) : status === "CONFIRM_EMAIL" ? (
               <div className="space-y-2 px-8 text-center">
                 <p className="text-sm">
                   Please check your email inbox and enter the 6-digit
                   verification code to continue:
                 </p>
-                <VerificationInput
-                  length={6}
-                  placeholder=""
-                  autoFocus
-                  onComplete={handleSubmitVerificationCode}
-                  classNames={{
-                    container: "mx-auto",
-                    character: "rounded bg-white",
-                    characterInactive: "bg-white",
-                    characterSelected: "border-[#DC2626] outline-[#DC2626]",
-                  }}
-                />
+                <ClientOnly>
+                  {() => (
+                    <VerificationInput
+                      length={6}
+                      placeholder=""
+                      autoFocus
+                      onComplete={finishEmailLogin}
+                      classNames={{
+                        container: "mx-auto",
+                        character: "rounded bg-white",
+                        characterInactive: "bg-white",
+                        characterSelected: "border-[#DC2626] outline-[#DC2626]",
+                      }}
+                    />
+                  )}
+                </ClientOnly>
                 <span className="block text-center">or</span>
                 <Button
                   variant="secondary"
                   className="text-slate-800 hover:text-slate-700"
-                  onClick={() => setShowVerificationInput(false)}
+                  onClick={reset}
                 >
                   Go back
                 </Button>
@@ -242,24 +155,29 @@ const InnerLoginPage = () => {
                       Email
                     </label>
                     <input
+                      ref={emailRef}
                       id="email"
-                      className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626]"
+                      className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isInputDisabled}
                     />
                   </div>
                   <Button
                     className="w-full"
-                    disabled={!email}
-                    onClick={handleSignInWithEmail}
+                    onClick={() =>
+                      emailRef.current?.value
+                        ? startEmailLogin(emailRef.current.value)
+                        : undefined
+                    }
+                    disabled={isInputDisabled}
                   >
                     Sign in
                   </Button>
                   <Button
                     variant="secondary"
                     className="flex w-full items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
-                    onClick={handleSignInWithGoogle}
+                    onClick={() => logInWithSSO("google")}
+                    disabled={isInputDisabled}
                   >
                     <img src="/img/google.svg" />
                     Continue with Google
