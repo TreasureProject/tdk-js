@@ -1,5 +1,4 @@
 import type { ReadProjectReply } from "./routes/projects";
-import type { UpdateUserBody, UpdateUserReply } from "./routes/users";
 import type { ErrorReply } from "./utils/schema";
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
@@ -82,12 +81,12 @@ export class TDKAPI {
 
   async post<T>(
     path: string,
-    body: JSONValue,
+    body?: JSONValue,
     options?: RequestInit,
   ): Promise<T> {
     return this.fetch<T>(path, {
       method: "POST",
-      body: JSON.stringify(body),
+      ...(body ? { body: JSON.stringify(body) } : undefined),
       ...options,
       headers: {
         "content-type": "application/json",
@@ -103,10 +102,5 @@ export class TDKAPI {
   project = {
     findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
-  };
-
-  users = {
-    update: (body: UpdateUserBody) =>
-      this.post<UpdateUserReply>("/users/me", body),
   };
 }

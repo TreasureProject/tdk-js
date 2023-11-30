@@ -96,12 +96,15 @@ export const useTreasureLogin = ({
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
 
   useEffect(() => {
-    // Track didAttemptLogin ref because loginWallet is not memoized
+    // Track didAttemptLogin ref because `loginWallet` is not memoized
     if (connectionStatus === "connected" && !didAttemptLogin.current) {
       didAttemptLogin.current = true;
       (async () => {
         try {
+          // Log user in and obtain TDK auth token
           const authToken = await logInWallet();
+
+          // Start on-chain session
           const sessionStartDate = Date.now();
           createSessionKey({
             keyAddress: backendWallet,
@@ -111,6 +114,8 @@ export const useTreasureLogin = ({
               expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
             },
           });
+
+          // Redirect back to project
           window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
         } catch (err) {
           console.error("Error completing sign in:", err);
