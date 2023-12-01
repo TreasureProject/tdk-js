@@ -1,5 +1,5 @@
 import { zeroAddress } from "viem";
-import { arbitrum, arbitrumGoerli, arbitrumSepolia } from "viem/chains";
+import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 import type {
   AddressString,
@@ -21,22 +21,13 @@ export const CONTRACT_ADDRESSES: Record<
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
     TreasureLoginAccountFactory: zeroAddress,
   },
-  [arbitrumGoerli.id]: {
-    MAGIC: "0x88f9efb3a7f728fdb2b8872fe994c84b1d148f65",
-    ARB: "0xf861378b543525ae0c47d33c90c954dc774ac1f9",
-    MAGICUSDPriceFeed: "0xd28ba6ca3bb72bf371b80a2a0a33cbcf9073c954",
-    ARBUSDPriceFeed: "0x2ee9bfb2d319b31a573ea15774b755715988e99d",
-    ETHUSDPriceFeed: "0x62cae0fa2da220f43a51f86db2edb36dca9a5a08",
-    PaymentsModule: "0x366a17839a625b87b114be0ab5a45a979959702b",
-    TreasureLoginAccountFactory: "0x4ae17c5217ed0de8b403d1bae1bed24c2a05a877",
-  },
   [arbitrumSepolia.id]: {
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
     ARB: zeroAddress,
-    MAGICUSDPriceFeed: zeroAddress,
+    MAGICUSDPriceFeed: "0x0fb99723aee6f420bead13e6bbb79b7e6f034298",
     ARBUSDPriceFeed: zeroAddress,
-    ETHUSDPriceFeed: zeroAddress,
-    PaymentsModule: zeroAddress,
+    ETHUSDPriceFeed: "0xd30e2101a97dcbaebcbc04f14c3f624e67a35165",
+    PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
     TreasureLoginAccountFactory: "0xfa9db4a45418688d14224b7782a44a8401f68be7",
   },
 };

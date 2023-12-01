@@ -10,14 +10,14 @@ import "@treasure/tdk-react/dist/index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { arbitrumGoerli } from "wagmi/chains";
+import { arbitrumSepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 import { App } from "./App.tsx";
 import "./index.css";
 
 const { chains, publicClient } = configureChains(
-  [arbitrumGoerli],
+  [arbitrumSepolia],
   [publicProvider()],
 );
 

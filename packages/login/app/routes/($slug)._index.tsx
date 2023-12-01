@@ -1,11 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import {
-  Arbitrum,
-  ArbitrumGoerli,
-  ArbitrumSepolia,
-} from "@thirdweb-dev/chains";
+import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
 import {
   ConnectWallet,
   ThirdwebProvider,
@@ -212,11 +208,7 @@ export default function LoginPage() {
       clientId={env.VITE_THIRDWEB_CLIENT_ID}
       activeChain={chainId}
       supportedChains={
-        chainId === ArbitrumSepolia.chainId
-          ? [ArbitrumSepolia]
-          : chainId === ArbitrumGoerli.chainId
-            ? [ArbitrumGoerli]
-            : [Arbitrum]
+        chainId === ArbitrumSepolia.chainId ? [ArbitrumSepolia] : [Arbitrum]
       }
       supportedWallets={[
         smartWallet(metamaskWallet(), smartWalletOptions),
