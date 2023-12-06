@@ -7,7 +7,7 @@ import {
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { getContractAddress } from "@treasure/tdk-react";
-import { useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 
 type State = {
   status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
@@ -86,50 +86,52 @@ export const useTreasureLogin = ({
     status: "IDLE",
   });
 
-  const didAttemptLogin = useRef(false);
   const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
     factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
     gasless: true,
   });
+  const didConnectEmbeddedWallet = useRef(false);
   const connectionStatus = useConnectionStatus();
   const { login: logInWallet } = useLogin();
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
 
+  const handleLogin = useCallback(
+    async (authToken: string) => {
+      // Start on-chain session
+      const sessionStartDate = Date.now();
+      createSessionKey({
+        keyAddress: backendWallet,
+        permissions: {
+          approvedCallTargets: [],
+          startDate: sessionStartDate,
+          expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
+        },
+      });
+
+      // Redirect back to project
+      window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
+    },
+    [createSessionKey, redirectUri, backendWallet],
+  );
+
   useEffect(() => {
-    // Track didAttemptLogin ref because `loginWallet` is not memoized
-    if (connectionStatus === "connected" && !didAttemptLogin.current) {
-      didAttemptLogin.current = true;
+    // Only process if connecting embedded wallet. ConnectWallet component handles auth on its own
+    if (connectionStatus === "connected" && didConnectEmbeddedWallet.current) {
+      // Immediately toggle ref because `logInWallet` is not memoized
+      didConnectEmbeddedWallet.current = false;
+
+      // Fetch auth token for smart account
       (async () => {
         try {
-          // Log user in and obtain TDK auth token
           const authToken = await logInWallet();
-
-          // Start on-chain session
-          const sessionStartDate = Date.now();
-          createSessionKey({
-            keyAddress: backendWallet,
-            permissions: {
-              approvedCallTargets: [],
-              startDate: sessionStartDate,
-              expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
-            },
-          });
-
-          // Redirect back to project
-          window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
+          handleLogin(authToken);
         } catch (err) {
-          console.error("Error completing sign in:", err);
+          console.error("Error logging in smart account:", err);
           dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
         }
       })();
     }
-  }, [
-    connectionStatus,
-    redirectUri,
-    backendWallet,
-    logInWallet,
-    createSessionKey,
-  ]);
+  }, [connectionStatus, logInWallet, handleLogin]);
 
   return {
     ...state,
@@ -153,6 +155,7 @@ export const useTreasureLogin = ({
               verificationCode,
             });
             await embeddedWallet.connect({ authResult });
+            didConnectEmbeddedWallet.current = true;
             dispatch({ type: "FINISH_EMAIL_LOGIN" });
           },
         });
@@ -170,6 +173,7 @@ export const useTreasureLogin = ({
               strategy,
             });
             await embeddedWallet.connect({ authResult });
+            didConnectEmbeddedWallet.current = true;
             dispatch({
               type: "FINISH_SSO_LOGIN",
               email: authResult.user?.authDetails.email,
@@ -181,5 +185,6 @@ export const useTreasureLogin = ({
         dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
       }
     },
+    handleLogin,
   };
 };

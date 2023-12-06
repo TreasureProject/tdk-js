@@ -75,6 +75,7 @@ const InnerLoginPage = () => {
     startEmailLogin,
     finishEmailLogin,
     logInWithSSO,
+    handleLogin,
   } = useTreasureLogin({
     chainId,
     redirectUri,
@@ -182,10 +183,15 @@ const InnerLoginPage = () => {
                 <span className="block text-center">or</span>
                 <div className="text-center">
                   <ConnectWallet
-                    btnTitle={"Connect Web3 Wallet"}
-                    modalSize={"compact"}
+                    btnTitle="Connect Web3 Wallet"
+                    modalSize="compact"
                     welcomeScreen={{ title: "" }}
                     modalTitleIconUrl=""
+                    auth={{
+                      loginOptional: false,
+                      onLogin: handleLogin,
+                    }}
+                    switchToActiveChain
                   />
                 </div>
               </>
