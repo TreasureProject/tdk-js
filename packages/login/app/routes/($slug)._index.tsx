@@ -80,6 +80,7 @@ const InnerLoginPage = () => {
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],
+    approvedCallTargets: project.callTargets,
   });
 
   const isInputDisabled = status === "SENDING_EMAIL";

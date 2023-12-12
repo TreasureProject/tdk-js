@@ -72,6 +72,7 @@ type Props = {
   chainId: number;
   redirectUri: string;
   backendWallet: string;
+  approvedCallTargets: string[];
 };
 
 const DEFAULT_ERROR_MESSAGE =
@@ -81,6 +82,7 @@ export const useTreasureLogin = ({
   chainId,
   redirectUri,
   backendWallet,
+  approvedCallTargets,
 }: Props) => {
   const [state, dispatch] = useReducer(reducer, {
     status: "IDLE",
@@ -98,20 +100,19 @@ export const useTreasureLogin = ({
   const handleLogin = useCallback(
     async (authToken: string) => {
       // Start on-chain session
-      const sessionStartDate = Date.now();
-      createSessionKey({
+      await createSessionKey({
         keyAddress: backendWallet,
         permissions: {
-          approvedCallTargets: [],
-          startDate: sessionStartDate,
-          expirationDate: sessionStartDate + 1000 * 60 * 60 * 24 * 3, // 3 days
+          approvedCallTargets,
+          startDate: 0,
+          expirationDate: Date.now() + 1000 * 60 * 60 * 24 * 3, // in 3 days
         },
       });
 
       // Redirect back to project
       window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
     },
-    [createSessionKey, redirectUri, backendWallet],
+    [createSessionKey, redirectUri, backendWallet, approvedCallTargets],
   );
 
   useEffect(() => {
