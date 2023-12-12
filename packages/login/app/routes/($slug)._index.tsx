@@ -4,6 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
 import {
   ConnectWallet,
+  type SmartWalletConfigOptions,
   ThirdwebProvider,
   coinbaseWallet,
   metamaskWallet,
@@ -206,7 +207,7 @@ const InnerLoginPage = () => {
 
 export default function LoginPage() {
   const { chainId } = useLoaderData<typeof loader>();
-  const smartWalletOptions = {
+  const smartWalletOptions: SmartWalletConfigOptions = {
     factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
     gasless: true,
   };
