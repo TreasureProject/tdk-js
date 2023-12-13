@@ -3,6 +3,7 @@ import {
   useConnectionStatus,
   useCreateSessionKey,
   useLogin,
+  useRevokeSessionKey,
   useSmartWallet,
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
@@ -96,10 +97,12 @@ export const useTreasureLogin = ({
   const connectionStatus = useConnectionStatus();
   const { login: logInWallet } = useLogin();
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
+  const { mutateAsync: revokeSessionKey } = useRevokeSessionKey();
 
   const handleLogin = useCallback(
     async (authToken: string) => {
       // Start on-chain session
+      await revokeSessionKey(backendWallet);
       await createSessionKey({
         keyAddress: backendWallet,
         permissions: {
@@ -112,7 +115,13 @@ export const useTreasureLogin = ({
       // Redirect back to project
       window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
     },
-    [createSessionKey, redirectUri, backendWallet, approvedCallTargets],
+    [
+      createSessionKey,
+      revokeSessionKey,
+      redirectUri,
+      backendWallet,
+      approvedCallTargets,
+    ],
   );
 
   useEffect(() => {

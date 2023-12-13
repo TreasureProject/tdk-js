@@ -1,16 +1,13 @@
-import { getContractAddress } from "@treasure/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 declare module "fastify" {
   interface FastifyRequest {
     chainId: number;
-    accountFactory: string;
   }
 }
 
 export const withChain = async (app: FastifyInstance) => {
   app.decorateRequest("chainId", null);
-  app.decorateRequest("accountFactory", null);
   app.addHook("onRequest", async (req) => {
     let chainId: number | undefined;
 
@@ -19,9 +16,5 @@ export const withChain = async (app: FastifyInstance) => {
     }
 
     req.chainId = chainId ?? 42161;
-    req.accountFactory = getContractAddress(
-      req.chainId,
-      "TreasureLoginAccountFactory",
-    );
   });
 };

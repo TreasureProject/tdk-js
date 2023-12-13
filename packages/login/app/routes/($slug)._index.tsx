@@ -24,10 +24,14 @@ import { env } from "../utils/env";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { slug = "platform" } = params;
+  const url = new URL(request.url);
+  const chainId = Number(url.searchParams.get("chain_id") || 0);
+
   const project = await (async () => {
     try {
       const result = await new TDKAPI({
         baseUri: env.VITE_TDK_API_URL,
+        chainId,
       }).project.findBySlug(slug);
       return result;
     } catch (err) {
@@ -43,8 +47,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     });
   }
 
-  const url = new URL(request.url);
-  const chainId = Number(url.searchParams.get("chain_id") || 0);
   const redirectUri =
     url.searchParams.get("redirect_uri") || "http://localhost:5174";
 
