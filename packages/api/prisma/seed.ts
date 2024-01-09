@@ -11,6 +11,14 @@ const prisma = new PrismaClient();
         slug: "platform",
         name: "Treasure",
         redirectUris: ["http://localhost:5174"],
+        callTargets: {
+          create: [
+            {
+              chainId: 421614,
+              address: "0x55d0cf68a1afe0932aff6f36c87efa703508191c", // MAGIC
+            },
+          ],
+        },
       },
     });
 

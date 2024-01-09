@@ -102,7 +102,12 @@ export const useTreasureLogin = ({
   const handleLogin = useCallback(
     async (authToken: string) => {
       // Start on-chain session
-      await revokeSessionKey(backendWallet);
+      try {
+        await revokeSessionKey(backendWallet);
+      } catch (err) {
+        console.error("Error revoking session key:", err);
+      }
+
       await createSessionKey({
         keyAddress: backendWallet,
         permissions: {
