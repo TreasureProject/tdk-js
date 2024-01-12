@@ -20,6 +20,7 @@
     "@thirdweb-dev/auth": "^4.1.4",
     "@thirdweb-dev/engine": "^0.0.4",
     "@treasure/tdk-core": "*",
+    "abitype": "^0.10.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3"
   },

@@ -1,13 +1,18 @@
+import type {
+  Abi,
+  AbiParametersToPrimitiveTypes,
+  ExtractAbiFunction,
+  ExtractAbiFunctionNames,
+} from "abitype";
+
+import type { WriteContractReply } from "./routes/contracts";
 import type { ReadProjectReply } from "./routes/projects";
 import type { ErrorReply } from "./utils/schema";
 
-type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
-
-interface JSONObject {
-  [x: string]: JSONValue;
-}
-
-type JSONArray = Array<JSONValue>;
+// @ts-expect-error: Patch BigInt for JSON serialization
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 export class APIError extends Error {
   statusCode?: number;
@@ -81,7 +86,7 @@ export class TDKAPI {
 
   async post<T>(
     path: string,
-    body?: JSONValue,
+    body?: unknown,
     options?: RequestInit,
   ): Promise<T> {
     return this.fetch<T>(path, {
@@ -99,8 +104,41 @@ export class TDKAPI {
     this.authToken = authToken;
   }
 
+  clearAuthToken() {
+    this.authToken = undefined;
+  }
+
   project = {
     findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
+  };
+
+  contract = {
+    write: <
+      TAbi extends Abi,
+      TFunctionName extends ExtractAbiFunctionNames<
+        TAbi,
+        "nonpayable" | "payable"
+      >,
+    >(
+      address: string,
+      {
+        functionName,
+        args,
+      }: {
+        abi: TAbi;
+        functionName:
+          | TFunctionName
+          | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
+        args: AbiParametersToPrimitiveTypes<
+          ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
+          "inputs"
+        >;
+      },
+    ) =>
+      this.post<WriteContractReply>(`/contracts/${address}`, {
+        functionName,
+        args,
+      }),
   };
 }

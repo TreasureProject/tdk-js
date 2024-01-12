@@ -10,11 +10,28 @@ export type PriceFeedContract =
   | "MAGICUSDPriceFeed"
   | "ARBUSDPriceFeed"
   | "ETHUSDPriceFeed";
+export type BridgeworldContract =
+  | "Consumables"
+  | "HarvesterAfarit"
+  | "NftHandlerAfarit"
+  | "HarvesterAsiterra"
+  | "NftHandlerAsiterra"
+  | "HarvesterEmerion"
+  | "NftHandlerEmerion"
+  | "HarvesterKameji"
+  | "NftHandlerKameji"
+  | "HarvesterLupusMagus"
+  | "NftHandlerLupusMagus"
+  | "HarvesterShinoba"
+  | "NftHandlerShinoba"
+  | "HarvesterThundermane"
+  | "NftHandlerThundermane";
 export type Contract =
   | "MAGIC"
   | "ARB"
   | "PaymentsModule"
   | "TreasureLoginAccountFactory"
+  | BridgeworldContract
   | PriceFeedContract;
 
 // Approvals

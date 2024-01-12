@@ -51,6 +51,7 @@ export const useIsApproved = ({
   });
 
   return {
+    allowance,
     isApproved:
       !!erc721IsApprovedForAll ||
       !!erc1155IsApprovedForAll ||

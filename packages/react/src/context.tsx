@@ -1,3 +1,4 @@
+import { TDKAPI } from "@treasure/tdk-api";
 import { TreasureClient } from "@treasure/tdk-core";
 import { jwtDecode } from "jwt-decode";
 import type { PropsWithChildren } from "react";
@@ -12,6 +13,7 @@ import {
 type Config = {
   project: string;
   chainId?: number;
+  apiUri?: string;
   authConfig?: {
     loginDomain: string;
     redirectUri: string;
@@ -21,6 +23,7 @@ type Config = {
 type State = Config & {
   status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
   client: TreasureClient;
+  tdk?: TDKAPI;
   authToken?: string;
 };
 
@@ -47,6 +50,7 @@ const reducer = (state: State, action: Action): State => {
       };
     case "COMPLETE_AUTH":
       localStorage.setItem("tdk_auth_token", action.authToken);
+      state.tdk?.setAuthToken(action.authToken);
       return {
         ...state,
         status: action.authToken ? "AUTHENTICATED" : "IDLE",
@@ -54,6 +58,7 @@ const reducer = (state: State, action: Action): State => {
       };
     case "RESET_AUTH":
       localStorage.removeItem("tdk_auth_token");
+      state.tdk?.clearAuthToken();
       return {
         ...state,
         status: "IDLE",
@@ -83,6 +88,13 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
     status: "IDLE",
     project,
     client: new TreasureClient(project),
+    tdk: config.apiUri
+      ? new TDKAPI({
+          baseUri: config.apiUri,
+          projectId: project,
+          chainId: config.chainId,
+        })
+      : undefined,
   });
 
   useEffect(() => {
