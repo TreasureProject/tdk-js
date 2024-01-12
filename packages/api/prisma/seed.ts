@@ -23,11 +23,11 @@ const prisma = new PrismaClient();
             },
             {
               chainId: 421614,
-              address: "0x413bf05048ef9953a94538a5b2c7ae86f41e531b", // Harvester (Lupus Magus)
+              address: "0x466d20a94e280bb419031161a6a7508438ad436f", // Harvester (Emerion)
             },
             {
               chainId: 421614,
-              address: "0xb9fbc2b364e9dbe61b3c083fcb2f85fc4520b25d", // NftHandler (Lupus Magus)
+              address: "0xff1e4795433e12816cb3b3f6342af02e8b942ffb", // NftHandler (Emerion)
             },
           ],
         },
