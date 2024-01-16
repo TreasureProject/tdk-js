@@ -14,7 +14,7 @@
     "dev:api": "npm run dev --prefix ./packages/api",
     "dev:login": "npm run dev --prefix ./packages/login",
     "dev:react": "npm run dev --prefix ./packages/react",
-    "dev:examples:login": "npm run dev --prefix ./examples/login",
+    "dev:examples:harvester": "npm run dev --prefix ./examples/harvester",
     "dev:examples:payments": "npm run dev --prefix ./examples/payments",
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
