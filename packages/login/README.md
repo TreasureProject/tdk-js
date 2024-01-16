@@ -1,28 +1,28 @@
-# templates/unstable-vite
+# TDK Login
 
-⚠️ Remix support for Vite is unstable and not recommended for production.
+Front-end UI for the Treasure Development Kit login flow
 
-📖 See the [Remix Vite docs][remix-vite-docs] for details on supported features.
+## Prerequisites
 
-## Setup
+- [>= Node 20.11.0](https://nodejs.org/en)
+- Running [TDK API](../api)
 
-```shellscript
-npx create-remix@latest --template remix-run/remix/templates/unstable-vite
+## Development
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-## Run
+Create `.env` file based on example and fill in with relevant environment variables:
 
-Spin up the Vite dev server:
+```bash
+cp .env.example .env
+```
 
-```shellscript
+Start server:
+
+```bash
 npm run dev
 ```
-
-Or build your app for production and run it:
-
-```shellscript
-npm run build
-npm run start
-```
-
-[remix-vite-docs]: https://remix.run/docs/en/main/future/vite

@@ -1,12 +1,11 @@
-# TDK Harvester Example
+# TDK API
 
-Example showing how front-ends can interact with the Treasure Development Kit to power Harvester staking flows
+Backend server powering the Treasure Development Kit
 
 ## Prerequisites
 
 - [>= Node 20.11.0](https://nodejs.org/en)
-- Running [TDK API](../../packages/api)
-- Running [TDK Login](../../packages/login)
+- [PostgreSQL](https://www.postgresql.org) server
 
 ## Development
 
@@ -20,6 +19,18 @@ Create `.env` file based on example and fill in with relevant environment variab
 
 ```bash
 cp .env.example .env
+```
+
+Generate database client:
+
+```bash
+npx prisma generate
+```
+
+Seed database with development values:
+
+```bash
+npm run db:seed
 ```
 
 Start server:
