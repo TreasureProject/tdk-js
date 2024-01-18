@@ -1,6 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import type { AddressString } from "@treasure/tdk-react";
 import {
+  type AddressString,
   Button,
   TOKEN_IDS,
   TreasureLoginButton,
