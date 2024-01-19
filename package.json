@@ -5,7 +5,7 @@
     "build": "npm run build --workspaces --if-present",
     "build:core": "npm run build --prefix ./packages/core",
     "build:api": "npm run build:core && npm run build --prefix ./packages/api",
-    "build:react": "npm run build:core && npm run build:api && npm run build --prefix ./packages/react",
+    "build:react": "npm run build:api && npm run build --prefix ./packages/react",
     "build:login": "npm run build:react && npm run build --prefix ./packages/login",
     "build:examples:harvester": "npm run build:react && npm run build --prefix ./examples/harvester",
     "build:examples:payments": "npm run build:react && npm run build --prefix ./examples/payments",
