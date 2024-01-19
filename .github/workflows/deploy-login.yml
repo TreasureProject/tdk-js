@@ -1,0 +1,18 @@
+name: Deploy Login
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: Deploy Login
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.11.0
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup deploy
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy development
+        run: flyctl deploy --config ./fly.login.toml --dockerfile ./Dockerfile.login --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
