@@ -47,7 +47,7 @@ export const useIsApproved = ({
     abi: erc1155ABI,
     functionName: "isApprovedForAll",
     args: [address!, operatorAddress as AddressString],
-    enabled: isEnabled && type === "ERC721",
+    enabled: isEnabled && type === "ERC1155",
   });
 
   return {
