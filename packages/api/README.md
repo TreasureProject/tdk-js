@@ -27,6 +27,12 @@ Generate database client:
 npx prisma generate
 ```
 
+Create initial tables in database:
+
+```bash
+npm run db:migrate
+```
+
 Seed database with development values:
 
 ```bash

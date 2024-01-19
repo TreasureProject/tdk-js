@@ -28,6 +28,8 @@ const main = async () => {
     app.register(contractsRoutes),
   ]);
 
+  app.get("/healthcheck", async (_, reply) => reply.send("OK"));
+
   // Start server
   await app.ready();
   app.listen({ port: env.PORT }, (err, address) => {
