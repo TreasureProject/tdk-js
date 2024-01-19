@@ -33,4 +33,4 @@ RUN npm prune --omit=dev
 
 # Start the server
 EXPOSE 3000
-CMD [ "npm", "start:login" ]
+CMD [ "npm", "run", "start:login" ]

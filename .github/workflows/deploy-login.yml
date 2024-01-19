@@ -1,6 +1,13 @@
 name: Deploy Login
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Select environment
+        options:
+          - development
+          - production
 jobs:
   deploy:
     name: Deploy Login
@@ -10,9 +17,21 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Read app name
+        uses: SebRollen/toml-action@v1.0.0
+        id: app_name
+        with:
+          file: "fly.login.toml"
+          field: "app"
       - name: Setup deploy
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy development
-        run: flyctl deploy --config ./fly.login.toml --dockerfile ./Dockerfile.login --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
+        if: ${{ inputs.environment == 'development' }}
+        run: flyctl deploy --config ./fly.login.toml --app ${{ steps.app_name.outputs.value }}-dev --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Deploy production
+        if: ${{ inputs.environment == 'production' }}
+        run: flyctl deploy --config ./fly.login.toml --remote-only --build-secret dotenv="${{ secrets.ENV_PROD }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
