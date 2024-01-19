@@ -1,0 +1,36 @@
+{
+  "name": "@treasure/tdk-login",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --ssr",
+    "dev": "vite dev",
+    "start": "remix-serve ./build/index.js"
+  },
+  "dependencies": {
+    "@remix-run/css-bundle": "^2.2.0",
+    "@remix-run/node": "^2.2.0",
+    "@remix-run/react": "^2.2.0",
+    "@remix-run/serve": "^2.2.0",
+    "@thirdweb-dev/chains": "^0.1.58",
+    "@thirdweb-dev/react": "^4.1.1",
+    "@thirdweb-dev/wallets": "^2.1.0",
+    "@treasure/tdk-api": "*",
+    "@treasure/tdk-react": "*",
+    "isbot": "^4.4.0",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-verification-input": "^4.0.0",
+    "remix-utils": "^7.3.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.2.0",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "tailwindcss": "^3.3.5",
+    "vite": "^5.0.0",
+    "vite-tsconfig-paths": "^4.2.1"
+  }
+}

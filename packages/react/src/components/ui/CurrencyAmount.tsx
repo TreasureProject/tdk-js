@@ -1,7 +1,7 @@
-import type { Currency } from "@treasure/core";
-import { formatAmount } from "@treasure/core";
+import type { Currency } from "@treasure/tdk-core";
+import { formatAmount } from "@treasure/tdk-core";
 
-import { cn } from "../../utils";
+import { cn } from "../../utils/classnames";
 import { CurrencyIcon } from "./CurrencyIcon";
 
 type Props = {

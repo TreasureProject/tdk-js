@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "types": ["node"]
+    "types": ["node"],
   },
-  "include": ["./packages/*/src/**/*.ts?", "./packages/*/src/**/*.d.ts"]
+  "include": ["./packages/*/src/**/*.ts?", "./packages/*/src/**/*.d.ts"],
 }

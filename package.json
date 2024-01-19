@@ -3,9 +3,21 @@
   "type": "module",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "dev": "concurrently \"cd ./packages/core && npm run dev\" \"cd ./packages/react && npm run dev\"",
+    "build:core": "npm run build --prefix ./packages/core",
+    "build:api": "npm run build:core && npm run build --prefix ./packages/api",
+    "build:react": "npm run build:api && npm run build --prefix ./packages/react",
+    "build:login": "npm run build:react && npm run build --prefix ./packages/login",
+    "build:examples:harvester": "npm run build:react && npm run build --prefix ./examples/harvester",
+    "build:examples:payments": "npm run build:react && npm run build --prefix ./examples/payments",
+    "dev": "concurrently \"npm run dev:core\" \"npm run dev:api\" \"npm run dev:react\"",
+    "dev:core": "npm run dev --prefix ./packages/core",
+    "dev:api": "npm run dev --prefix ./packages/api",
+    "dev:login": "npm run dev --prefix ./packages/login",
+    "dev:react": "npm run dev --prefix ./packages/react",
+    "dev:examples:harvester": "npm run dev --prefix ./examples/harvester",
+    "dev:examples:payments": "npm run dev --prefix ./examples/payments",
     "typecheck": "tsc --noEmit",
-    "format": "eslint --fix . && prettier --write .",
+    "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
     "test": "vitest",
     "prepare": "husky install"
@@ -25,9 +37,11 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.3",
+    "prettier-plugin-prisma": "^5.0.0",
     "prettier-plugin-tailwindcss": "^0.5.5",
+    "tsup": "^8.0.1",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^1.0.1"
   },
   "workspaces": [
     "packages/*",

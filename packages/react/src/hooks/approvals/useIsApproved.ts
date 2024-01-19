@@ -1,5 +1,5 @@
-import type { TokenStandard } from "@treasure/core";
-import { type AddressString, erc1155ABI } from "@treasure/core";
+import { erc1155ABI } from "@treasure/tdk-core";
+import type { AddressString, TokenStandard } from "@treasure/tdk-core";
 import { erc20ABI, erc721ABI, useAccount, useContractRead } from "wagmi";
 
 type Props = {
@@ -51,6 +51,7 @@ export const useIsApproved = ({
   });
 
   return {
+    allowance,
     isApproved:
       !!erc721IsApprovedForAll ||
       !!erc1155IsApprovedForAll ||
@@ -59,7 +60,7 @@ export const useIsApproved = ({
       type === "ERC20"
         ? refetchAllowance
         : type === "ERC721"
-        ? refetchERC721IsApprovedForAll
-        : refetchERC1155IsApprovedForAll,
+          ? refetchERC721IsApprovedForAll
+          : refetchERC1155IsApprovedForAll,
   };
 };

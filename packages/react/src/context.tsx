@@ -1,15 +1,71 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TreasureClient } from "@treasure/core";
-import type { ReactNode } from "react";
-import { createContext, useContext, useState } from "react";
+import { TDKAPI } from "@treasure/tdk-api";
+import { TreasureClient } from "@treasure/tdk-core";
+import { jwtDecode } from "jwt-decode";
+import type { PropsWithChildren } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 
-type State = {
-  client: TreasureClient;
+type Config = {
+  project: string;
+  chainId?: number;
+  apiUri?: string;
+  authConfig?: {
+    loginDomain: string;
+    redirectUri: string;
+  };
 };
 
-const Context = createContext({} as State);
+type State = Config & {
+  status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
+  client: TreasureClient;
+  tdk?: TDKAPI;
+  authToken?: string;
+};
 
-const queryClient = new QueryClient();
+type ContextValues = {
+  address?: string;
+  onStartAuth: () => void;
+  onCompleteAuth: (authToken: string) => void;
+  logOut: () => void;
+};
+
+const Context = createContext({} as State & ContextValues);
+
+type Action =
+  | { type: "START_AUTH" }
+  | { type: "COMPLETE_AUTH"; authToken: string }
+  | { type: "RESET_AUTH" };
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "START_AUTH":
+      return {
+        ...state,
+        status: "AUTHENTICATING",
+      };
+    case "COMPLETE_AUTH":
+      localStorage.setItem("tdk_auth_token", action.authToken);
+      state.tdk?.setAuthToken(action.authToken);
+      return {
+        ...state,
+        status: action.authToken ? "AUTHENTICATED" : "IDLE",
+        authToken: action.authToken,
+      };
+    case "RESET_AUTH":
+      localStorage.removeItem("tdk_auth_token");
+      state.tdk?.clearAuthToken();
+      return {
+        ...state,
+        status: "IDLE",
+        authToken: undefined,
+      };
+  }
+};
 
 export const useTreasure = () => {
   const context = useContext(Context);
@@ -23,23 +79,65 @@ export const useTreasure = () => {
   return context;
 };
 
-type Props = {
-  projectId?: string;
-  children: ReactNode;
-};
+type Props = PropsWithChildren<Config>;
 
-export const TreasureProvider = ({ projectId, children }: Props) => {
-  const [client] = useState<TreasureClient>(new TreasureClient(projectId));
+export const TreasureProvider = ({ children, ...config }: Props) => {
+  const { project = "platform" } = config;
+  const [state, dispatch] = useReducer(reducer, {
+    ...config,
+    status: "IDLE",
+    project,
+    client: new TreasureClient(project),
+    tdk: config.apiUri
+      ? new TDKAPI({
+          baseUri: config.apiUri,
+          projectId: project,
+          chainId: config.chainId,
+        })
+      : undefined,
+  });
+
+  useEffect(() => {
+    let authToken: string | null | undefined;
+
+    // Check browser query params
+    if (window.location.search) {
+      authToken = new URLSearchParams(window.location.search).get(
+        "tdk_auth_token",
+      );
+    }
+
+    // Check local storage
+    if (!authToken) {
+      authToken = localStorage.getItem("tdk_auth_token");
+    }
+
+    // Mark as logged in if we have a match
+    if (authToken) {
+      dispatch({ type: "COMPLETE_AUTH", authToken });
+    }
+  }, []);
+
+  const address = useMemo(() => {
+    if (!state.authToken) {
+      return undefined;
+    }
+
+    return jwtDecode<{ sub: string }>(state.authToken).sub;
+  }, [state.authToken]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Context.Provider
-        value={{
-          client,
-        }}
-      >
-        {children}
-      </Context.Provider>
-    </QueryClientProvider>
+    <Context.Provider
+      value={{
+        ...state,
+        address,
+        onStartAuth: () => dispatch({ type: "START_AUTH" }),
+        onCompleteAuth: (authToken) =>
+          dispatch({ type: "COMPLETE_AUTH", authToken }),
+        logOut: () => dispatch({ type: "RESET_AUTH" }),
+      }}
+    >
+      {children}
+    </Context.Provider>
   );
 };

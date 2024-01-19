@@ -1,16 +1,26 @@
-import type { Token } from "@treasure/core";
-import { erc20ABI, getTokenAddress } from "@treasure/core";
+import type { AddressString, Token } from "@treasure/tdk-core";
+import { erc20ABI, getTokenAddress } from "@treasure/tdk-core";
 import { formatUnits } from "viem";
 import { useAccount, useChainId, useContractReads } from "wagmi";
 
 type Props = {
   tokens: Token[];
+  address?: AddressString;
+  chainId?: number;
   enabled?: boolean;
 };
 
-export const useTokenBalances = ({ tokens, enabled = true }: Props) => {
-  const { address } = useAccount();
-  const chainId = useChainId();
+export const useTokenBalances = ({
+  tokens,
+  address: addressOverride,
+  chainId: chainIdOverride,
+  enabled = true,
+}: Props) => {
+  const { address: connectedAddress } = useAccount();
+  const connectedChainId = useChainId();
+  const address = addressOverride ?? connectedAddress;
+  const chainId = chainIdOverride ?? connectedChainId;
+
   const { data, ...result } = useContractReads({
     contracts: tokens.map((token) => ({
       address: getTokenAddress(chainId, token),
@@ -20,6 +30,7 @@ export const useTokenBalances = ({ tokens, enabled = true }: Props) => {
     })),
     enabled: enabled && !!address,
   });
+
   return {
     data:
       data?.map(

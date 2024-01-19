@@ -1,4 +1,4 @@
-import type { IconProps } from ".";
+import type { IconProps } from "./types";
 
 export const ArbitrumTokenIcon = ({ className }: IconProps) => (
   <svg viewBox="200 200 1100 1100" fill="currentColor" className={className}>
