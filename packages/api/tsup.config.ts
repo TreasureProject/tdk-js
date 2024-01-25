@@ -3,12 +3,12 @@ import { defineConfig } from "tsup";
 export default defineConfig([
   {
     entry: ["src/index.ts"],
-    format: ["cjs"],
+    format: ["esm"],
     onSuccess: "copyfiles .env ./dist",
   },
   {
     entry: ["src/sdk.ts"],
-    format: ["cjs", "esm"],
+    format: ["esm"],
     dts: true,
   },
 ]);

@@ -8,6 +8,7 @@ import { withErrorHandler } from "./middleware/error";
 import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
 import { contractsRoutes } from "./routes/contracts";
+import { harvestersRoutes } from "./routes/harvesters";
 import { projectsRoutes } from "./routes/projects";
 import { env } from "./utils/env";
 
@@ -26,6 +27,7 @@ const main = async () => {
   await Promise.all([
     app.register(projectsRoutes),
     app.register(contractsRoutes),
+    app.register(harvestersRoutes),
   ]);
 
   app.get("/healthcheck", async (_, reply) => reply.send("OK"));

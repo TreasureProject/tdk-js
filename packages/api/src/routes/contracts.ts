@@ -47,12 +47,18 @@ export const contractsRoutes: FastifyPluginAsync = async (app) => {
         return reply.code(401).send({ error: "Unauthorized" });
       }
 
+      const {
+        chainId,
+        backendWallet,
+        params: { address },
+        body,
+      } = req;
       try {
         const { result } = await engine.contract.write(
-          req.chainId.toString(),
-          req.params.address,
-          req.backendWallet,
-          req.body,
+          chainId.toString(),
+          address,
+          backendWallet,
+          body,
           user.address,
         );
         reply.send(result);

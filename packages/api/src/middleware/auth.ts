@@ -11,6 +11,9 @@ import { env } from "../utils/env";
 const { authRouter, authMiddleware, getUser } = ThirdwebAuth({
   domain: env.THIRDWEB_AUTH_DOMAIN,
   wallet: new PrivateKeyWallet(env.THIRDWEB_AUTH_PRIVATE_KEY),
+  authOptions: {
+    uri: `https://${env.THIRDWEB_AUTH_DOMAIN}`,
+  },
   callbacks: {
     onLogin: async (smartAccountAddress, req) => {
       const user = await db.user.upsert({

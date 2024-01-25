@@ -1,7 +1,8 @@
 {
   "name": "@treasure/tdk-api",
   "version": "1.0.0",
-  "module": "./dist/sdk.mjs",
+  "type": "module",
+  "exports": "./dist/sdk.js",
   "types": "./dist/sdk.d.ts",
   "scripts": {
     "build": "tsup",
@@ -20,13 +21,18 @@
     "@thirdweb-dev/auth": "^4.1.4",
     "@thirdweb-dev/engine": "^0.0.4",
     "@treasure/tdk-core": "*",
+    "@wagmi/core": "^2.6.0",
     "abitype": "^0.10.3",
     "dotenv": "^16.3.1",
-    "fastify": "^4.24.3"
+    "fastify": "^4.24.3",
+    "viem": "^2.5.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "nodemon": "^3.0.1",
     "prisma": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

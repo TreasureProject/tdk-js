@@ -1,8 +1,8 @@
 {
   "name": "@treasure/tdk-core",
   "version": "1.0.0",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "type": "module",
+  "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
@@ -11,5 +11,8 @@
   "dependencies": {
     "decimal.js-light": "^2.5.1",
     "viem": "^1.15.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
