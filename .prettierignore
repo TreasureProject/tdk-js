@@ -2,6 +2,8 @@
 build/
 dist/
 node_modules/
+.dockerignore
+.ebignore
 .gitignore
 .prettierignore
 package-lock.json

@@ -1,11 +1,8 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION=20.11.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:20-slim as base
 
-LABEL fly_launch_runtime="Remix"
-
-# Remix app lives here
+# Set working directory
 WORKDIR /app
 
 # Set production environment
@@ -16,21 +13,21 @@ RUN apt-get update -qq && \
     apt-get install -y build-essential pkg-config python-is-python3
 
 # Copy application code
-COPY --link . .
+COPY . .
 
 # Install dependencies
 RUN npm install --include=dev
 
 # Create environment file
 RUN --mount=type=secret,id=dotenv,dst=env \
-    tr ' ' '\n' < env > ./packages/login/.env
+    tr ' ' '\n' < env > ./packages/api/.env
 
 # Build application
-RUN npm run build:login
+RUN npm run build:api
 
 # Remove development dependencies
 RUN npm prune --omit=dev
 
 # Start the server
-EXPOSE 3000
-CMD [ "npm", "run", "start:login" ]
+EXPOSE 5000
+CMD [ "npm", "run", "start:api" ]

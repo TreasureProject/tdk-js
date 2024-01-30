@@ -16,6 +16,8 @@
     "dev:react": "npm run dev --prefix ./packages/react",
     "dev:examples:harvester": "npm run dev --prefix ./examples/harvester",
     "dev:examples:payments": "npm run dev --prefix ./examples/payments",
+    "generate:api": "npm run generate --prefix ./packages/api",
+    "start:api": "npm start --prefix ./packages/api",
     "start:login": "npm start --prefix ./packages/login",
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",

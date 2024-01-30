@@ -10,7 +10,6 @@ on:
           - production
 jobs:
   deploy:
-    name: Deploy Login
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous runs
@@ -21,17 +20,17 @@ jobs:
         uses: SebRollen/toml-action@v1.0.0
         id: app_name
         with:
-          file: "fly.login.toml"
+          file: "./deploy/fly.login.toml"
           field: "app"
       - name: Setup deploy
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy development
         if: ${{ inputs.environment == 'development' }}
-        run: flyctl deploy --config ./fly.login.toml --app ${{ steps.app_name.outputs.value }}-dev --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
+        run: flyctl deploy --config ./deploy/fly.login.toml --app ${{ steps.app_name.outputs.value }}-dev --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Deploy production
         if: ${{ inputs.environment == 'production' }}
-        run: flyctl deploy --config ./fly.login.toml --remote-only --build-secret dotenv="${{ secrets.ENV_PROD }}"
+        run: flyctl deploy --config ./deploy/fly.login.toml --remote-only --build-secret dotenv="${{ secrets.ENV_PROD }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
