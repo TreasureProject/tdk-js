@@ -1,9 +1,10 @@
 .husky/
 build/
+cdk.out/
 dist/
 node_modules/
 .dockerignore
-.ebignore
+.eslintrc
 .gitignore
 .prettierignore
 package-lock.json

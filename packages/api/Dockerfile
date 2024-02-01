@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 
-FROM node:20-slim as base
+FROM --platform=linux/amd64 node:20-slim as base
 
 # Set working directory
 WORKDIR /app
@@ -18,9 +18,8 @@ COPY . .
 # Install dependencies
 RUN npm install --include=dev
 
-# Create environment file
-RUN --mount=type=secret,id=dotenv,dst=env \
-    tr ' ' '\n' < env > ./packages/api/.env
+# Generate code
+RUN npm run generate:api
 
 # Build application
 RUN npm run build:api
@@ -29,5 +28,5 @@ RUN npm run build:api
 RUN npm prune --omit=dev
 
 # Start the server
-EXPOSE 5000
+EXPOSE 8080
 CMD [ "npm", "run", "start:api" ]

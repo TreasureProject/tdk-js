@@ -1,5 +1,4 @@
-### ElasticBeanstalk ###
-.elasticbeanstalk/
+cdk.out/
 
 ### macOS ###
 # General

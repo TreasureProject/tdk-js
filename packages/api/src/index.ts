@@ -34,7 +34,7 @@ const main = async () => {
 
   // Start server
   await app.ready();
-  app.listen({ port: env.PORT }, (err, address) => {
+  app.listen({ host: "0.0.0.0", port: env.PORT }, (err, address) => {
     if (err) {
       console.error("Error starting server:", err);
       process.exit(1);
