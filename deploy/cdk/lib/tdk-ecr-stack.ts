@@ -19,22 +19,26 @@ export class TdkEcrStack extends cdk.Stack {
         clientIds: ["sts.amazonaws.com"],
       },
     );
-    const githubRepo = "treasureproject/treasure.js";
+
     const githubPrincipal = new iam.OpenIdConnectPrincipal(
       githubProvider,
     ).withConditions({
       StringLike: {
-        "token.actions.githubusercontent.com:sub": `repo:${githubRepo}:*`,
+        "token.actions.githubusercontent.com:sub":
+          "repo:treasureproject/treasure.js:*",
+      },
+      StringEquals: {
+        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
       },
     });
 
-    new iam.Role(this, "githubActionsRole", {
+    const githubActionsRole = new iam.Role(this, "githubActionsRole", {
       assumedBy: githubPrincipal,
       description: "Role assumed by GitHub Actions for deploying to stack",
       roleName: "tdk-github-actions-role",
       maxSessionDuration: cdk.Duration.hours(1),
       inlinePolicies: {
-        CdkDeploymentPolicy: new iam.PolicyDocument({
+        EcrPushPolicy: new iam.PolicyDocument({
           assignSids: true,
           statements: [
             new iam.PolicyStatement({
@@ -56,6 +60,10 @@ export class TdkEcrStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "repositoryUri", {
       value: this.repo.repositoryUri,
+    });
+
+    new cdk.CfnOutput(this, "githubActionsRoleArn", {
+      value: githubActionsRole.roleArn,
     });
   }
 }

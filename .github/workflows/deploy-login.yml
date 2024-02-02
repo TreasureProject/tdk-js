@@ -12,21 +12,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
       - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Read app name
-        uses: SebRollen/toml-action@v1.0.0
-        id: app_name
-        with:
-          file: "./packages/login/fly.toml"
-          field: "app"
-      - name: Setup deploy
+        uses: actions/checkout@v4
+      - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy development
         if: ${{ inputs.environment == 'development' }}
-        run: flyctl deploy --config ./packages/login/fly.toml --app ${{ steps.app_name.outputs.value }}-dev --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
+        run: flyctl deploy --config ./packages/login/fly.toml --app tdk-login-dev --remote-only --build-secret dotenv="${{ secrets.ENV_DEV }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Deploy production
