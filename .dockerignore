@@ -1,66 +1,17 @@
-.env
-build/
-dist/
+.git/
+.github/
+.husky/
+cdk.out/
+deploy/
+.dockerignore
+.eslintrc
+.gitignore
+.lintstagedrc
+.prettierignore
+.prettierrc
+cdk.json
 
-# Created by https://www.toptal.com/developers/gitignore/api/react,macos
-
-# Edit at https://www.toptal.com/developers/gitignore?templates=react,macos
-
-### macOS
-
-# General
-
-**/.DS_Store
-**/.AppleDouble
-\*\*/.LSOverride
-
-# Icon must end with two \r
-
-\*\*/Icon
-
-# Thumbnails
-
-\*\_/.\_\_
-
-# Files that might appear in the root of a volume
-
-**/.DocumentRevisions-V100
-**/.fseventsd
-**/.Spotlight-V100
-**/.TemporaryItems
-**/.Trashes
-**/.VolumeIcon.icns
-\*\*/.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-
-**/.AppleDB
-**/.AppleDesktop
-**/Network Trash Folder
-**/Temporary Items
-\*\*/.apdisk
-
-### macOS Patch
-
-# iCloud generated files
-
-\*_/_.icloud
-
-### react
-
-**/.DS\_\*
-**/_.log
-**/logs
-**/\*\*/_.backup._
-**/**/_.back.\*
-
-**/node_modules
-**/bower_components
-
-\*_/_.sublime\*
-
-**/psd
-**/thumb
-\*\*/sketch
-
-# End of https://www.toptal.com/developers/gitignore/api/react,macos
+**/dist/
+**/node_modules/
+# **/.env*
+**/README.md

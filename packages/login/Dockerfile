@@ -1,7 +1,6 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION=20.11.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:20-slim as base
 
 LABEL fly_launch_runtime="Remix"
 
@@ -16,7 +15,7 @@ RUN apt-get update -qq && \
     apt-get install -y build-essential pkg-config python-is-python3
 
 # Copy application code
-COPY --link . .
+COPY . .
 
 # Install dependencies
 RUN npm install --include=dev

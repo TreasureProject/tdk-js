@@ -2,7 +2,7 @@ app = "tdk-login"
 primary_region = "lax"
 
 [build]
-  dockerfile = "Dockerfile.login"
+  dockerfile = "Dockerfile"
 
 [http_service]
   internal_port = 3000
