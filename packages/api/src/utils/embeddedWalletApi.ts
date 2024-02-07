@@ -1,9 +1,12 @@
-export const fetchEmbeddedWalletUser = async (adminAddress: string) => {
+export const fetchEmbeddedWalletUser = async (
+  adminAddress: string,
+  secretKey: string,
+) => {
   const embeddedWalletResponse = await fetch(
     `https://embedded-wallet.thirdweb.com/api/2023-11-30/embedded-wallet/user-details?queryBy=walletAddress&walletAddress=${adminAddress}`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.THIRDWEB_SECRET_KEY}`,
+        Authorization: `Bearer ${secretKey}`,
       },
     },
   );

@@ -25,7 +25,7 @@ export class TdkEcrStack extends cdk.Stack {
     ).withConditions({
       StringLike: {
         "token.actions.githubusercontent.com:sub":
-          "repo:treasureproject/treasure.js:*",
+          "repo:TreasureProject/tdk-js:*",
       },
       StringEquals: {
         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
@@ -38,7 +38,7 @@ export class TdkEcrStack extends cdk.Stack {
       roleName: "tdk-github-actions-role",
       maxSessionDuration: cdk.Duration.hours(1),
       inlinePolicies: {
-        EcrPushPolicy: new iam.PolicyDocument({
+        EcsDeployPolicy: new iam.PolicyDocument({
           assignSids: true,
           statements: [
             new iam.PolicyStatement({
@@ -50,6 +50,10 @@ export class TdkEcrStack extends cdk.Stack {
                 "ecr:InitiateLayerUpload",
                 "ecr:BatchCheckLayerAvailability",
                 "ecr:PutImage",
+                "ecs:DescribeServices",
+                "ecs:RegisterTaskDefinition",
+                "ecs:UpdateService",
+                "iam:PassRole",
               ],
               resources: ["*"],
             }),

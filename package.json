@@ -23,7 +23,7 @@
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
     "test": "vitest",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.0.0",
@@ -40,7 +40,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "husky": "^8.0.3",
+    "husky": "^9.0.10",
     "lint-staged": "^15.0.0",
     "prettier": "^3.0.3",
     "prettier-plugin-prisma": "^5.0.0",

@@ -4,6 +4,7 @@ import {
   Button,
   TOKEN_IDS,
   TreasureLoginButton,
+  erc20ABI,
   erc1155ABI,
   harvesterABI,
   nftHandlerABI,
@@ -13,7 +14,7 @@ import {
 } from "@treasure/tdk-react";
 import { useState } from "react";
 import { formatEther, parseEther, zeroAddress, zeroHash } from "viem";
-import { erc20ABI, useAccount, useContractReads } from "wagmi";
+import { useAccount, useReadContracts } from "wagmi";
 
 import { sleep } from "./utils";
 
@@ -46,7 +47,7 @@ export const App = () => {
       harvesterPermits = 0n,
     } = {},
     refetch,
-  } = useContractReads({
+  } = useReadContracts({
     contracts: [
       {
         address: contractAddresses.MAGIC,
@@ -92,16 +93,18 @@ export const App = () => {
         ],
       },
     ],
-    enabled: !!address,
-    select: (data) => ({
-      smartAccountMagic: data?.[0].result ?? 0n,
-      eoaMagic: data?.[1].result ?? 0n,
-      smartAccountPermits: data?.[2].result?.[0] ?? 0n,
-      eoaPermits: data?.[2].result?.[1] ?? 0n,
-      harvesterDepositCap: data?.[3].result ?? 0n,
-      harvesterDeposit: data?.[4].result?.[0] ?? 0n,
-      harvesterPermits: data?.[5].result ?? 0n,
-    }),
+    query: {
+      enabled: !!address,
+      select: (data) => ({
+        smartAccountMagic: data[0].result ?? 0n,
+        eoaMagic: data[1].result ?? 0n,
+        smartAccountPermits: data[2].result?.[0] ?? 0n,
+        eoaPermits: data[2].result?.[1] ?? 0n,
+        harvesterDepositCap: data[3].result ?? 0n,
+        harvesterDeposit: data[4].result?.[0] ?? 0n,
+        harvesterPermits: data[5].result ?? 0n,
+      }),
+    },
   });
 
   // Prepare approval for smart account to transfer MAGIC from EOA
