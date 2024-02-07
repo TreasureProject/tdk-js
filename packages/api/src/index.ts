@@ -10,6 +10,7 @@ import { withSwagger } from "./middleware/swagger";
 import { contractsRoutes } from "./routes/contracts";
 import { harvestersRoutes } from "./routes/harvesters";
 import { projectsRoutes } from "./routes/projects";
+import { transactionsRoutes } from "./routes/transactions";
 import { env } from "./utils/env";
 
 const main = async () => {
@@ -27,6 +28,7 @@ const main = async () => {
   await Promise.all([
     app.register(projectsRoutes),
     app.register(contractsRoutes),
+    app.register(transactionsRoutes),
     app.register(harvestersRoutes),
   ]);
 
