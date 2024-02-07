@@ -4,6 +4,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import type * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
+import * as iam from "aws-cdk-lib/aws-iam";
 import type { Construct } from "constructs";
 
 interface StackProps extends cdk.StackProps {
@@ -30,13 +31,29 @@ export class TdkApiStack extends cdk.Stack {
         taskImageOptions: {
           image: ecs.ContainerImage.fromEcrRepository(props.ecrRepo),
           containerPort: 8080,
+          taskRole: new iam.Role(this, "ecsTaskRole", {
+            assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+            inlinePolicies: {
+              GetSecretsPolicy: new iam.PolicyDocument({
+                statements: [
+                  new iam.PolicyStatement({
+                    effect: iam.Effect.ALLOW,
+                    actions: ["secretsmanager:GetSecretValue"],
+                    resources: [
+                      `arn:aws:secretsmanager:region:${this.account}:secret:tdkApiEnv`,
+                    ],
+                  }),
+                ],
+              }),
+            },
+          }),
         },
         memoryLimitMiB: 2048,
         publicLoadBalancer: true,
         certificate: Certificate.fromCertificateArn(
           this,
           "CertificateImported",
-          "arn:aws:acm:us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2",
+          `arn:aws:acm:us-west-2:${this.account}:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2`,
         ),
       },
     );

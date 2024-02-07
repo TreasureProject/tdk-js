@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import { db } from "../utils/db";
-import { env } from "../utils/env";
+import type { TdkApiContext } from "../types";
 import "./chain";
 
 declare module "fastify" {
@@ -10,7 +9,10 @@ declare module "fastify" {
   }
 }
 
-export const withProject = async (app: FastifyInstance) => {
+export const withProject = async (
+  app: FastifyInstance,
+  { env, db }: TdkApiContext,
+) => {
   app.decorateRequest("backendWallet", null);
   app.addHook("onRequest", async (req) => {
     const projectId = req.headers["x-project-id"];
