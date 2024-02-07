@@ -40,7 +40,7 @@ export class TdkApiStack extends cdk.Stack {
                     effect: iam.Effect.ALLOW,
                     actions: ["secretsmanager:GetSecretValue"],
                     resources: [
-                      `arn:aws:secretsmanager:region:${this.account}:secret:tdkApiEnv`,
+                      `arn:aws:secretsmanager:${this.region}:${this.account}:secret:tdkApiEnv-M2Lsr7`,
                     ],
                   }),
                 ],
@@ -53,7 +53,7 @@ export class TdkApiStack extends cdk.Stack {
         certificate: Certificate.fromCertificateArn(
           this,
           "CertificateImported",
-          `arn:aws:acm:us-west-2:${this.account}:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2`,
+          `arn:aws:acm:${this.region}:${this.account}:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2`,
         ),
       },
     );
