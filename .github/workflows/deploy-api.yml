@@ -1,4 +1,4 @@
-name: Deploy Login
+name: Deploy API
 on:
   workflow_dispatch:
     # inputs:

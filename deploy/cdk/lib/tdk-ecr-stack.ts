@@ -25,7 +25,7 @@ export class TdkEcrStack extends cdk.Stack {
     ).withConditions({
       StringLike: {
         "token.actions.githubusercontent.com:sub":
-          "repo:treasureproject/treasure.js:*",
+          "repo:treasureproject/tdk-js:*",
       },
       StringEquals: {
         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
