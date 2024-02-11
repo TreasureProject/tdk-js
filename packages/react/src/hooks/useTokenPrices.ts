@@ -1,7 +1,7 @@
 import type { Token } from "@treasure/tdk-core";
-import { getTokenPriceFeedContract, priceFeedABI } from "@treasure/tdk-core";
+import { getTokenPriceFeedContract, priceFeedAbi } from "@treasure/tdk-core";
 import { formatUnits } from "viem";
-import { useContractReads } from "wagmi";
+import { useReadContracts } from "wagmi";
 
 import { useContractAddresses } from "./useContractAddress";
 
@@ -12,20 +12,16 @@ type Props = {
 
 export const useTokenPrices = ({ tokens, enabled = true }: Props) => {
   const contractAddresses = useContractAddresses();
-  const { data, ...result } = useContractReads({
+  const { data, ...result } = useReadContracts({
     contracts: tokens.map((token) => {
       const priceFeed = getTokenPriceFeedContract(token);
-      if (!priceFeed) {
-        return undefined;
-      }
-
       return {
-        address: contractAddresses[priceFeed],
-        abi: priceFeedABI,
+        address: contractAddresses[priceFeed!],
+        abi: priceFeedAbi,
         functionName: "latestAnswer",
       };
     }),
-    enabled,
+    query: { enabled },
   });
   return {
     data:

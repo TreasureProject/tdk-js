@@ -1,6 +1,11 @@
-import { erc1155ABI } from "@treasure/tdk-core";
-import type { AddressString, TokenStandard } from "@treasure/tdk-core";
-import { erc20ABI, erc721ABI, useAccount, useContractRead } from "wagmi";
+import {
+  type AddressString,
+  type TokenStandard,
+  erc20Abi,
+  erc721Abi,
+  erc1155Abi,
+} from "@treasure/tdk-core";
+import { useAccount, useReadContract } from "wagmi";
 
 type Props = {
   contractAddress: string;
@@ -20,34 +25,40 @@ export const useIsApproved = ({
   const { address, isConnected } = useAccount();
   const isEnabled = enabled && isConnected;
 
-  const { data: allowance, refetch: refetchAllowance } = useContractRead({
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: contractAddress as AddressString,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: "allowance",
     args: [address!, operatorAddress as AddressString],
-    enabled: isEnabled && type === "ERC20",
+    query: {
+      enabled: isEnabled && type === "ERC20",
+    },
   });
 
   const {
     data: erc721IsApprovedForAll,
     refetch: refetchERC721IsApprovedForAll,
-  } = useContractRead({
+  } = useReadContract({
     address: contractAddress as AddressString,
-    abi: erc721ABI,
+    abi: erc721Abi,
     functionName: "isApprovedForAll",
     args: [address!, operatorAddress as AddressString],
-    enabled: isEnabled && type === "ERC721",
+    query: {
+      enabled: isEnabled && type === "ERC721",
+    },
   });
 
   const {
     data: erc1155IsApprovedForAll,
     refetch: refetchERC1155IsApprovedForAll,
-  } = useContractRead({
+  } = useReadContract({
     address: contractAddress as AddressString,
-    abi: erc1155ABI,
+    abi: erc1155Abi,
     functionName: "isApprovedForAll",
     args: [address!, operatorAddress as AddressString],
-    enabled: isEnabled && type === "ERC1155",
+    query: {
+      enabled: isEnabled && type === "ERC1155",
+    },
   });
 
   return {

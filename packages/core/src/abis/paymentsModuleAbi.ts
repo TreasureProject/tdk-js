@@ -1,4 +1,4 @@
-export const paymentsModuleABI = [
+export const paymentsModuleAbi = [
   {
     inputs: [
       {

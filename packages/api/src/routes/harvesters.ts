@@ -1,13 +1,14 @@
 import { type Static, Type } from "@sinclair/typebox";
 import {
   type AddressString,
-  erc1155ABI,
+  erc20Abi,
+  erc1155Abi,
   getContractAddresses,
-  harvesterABI,
+  harvesterAbi,
 } from "@treasure/tdk-core";
 import { readContracts } from "@wagmi/core";
 import type { FastifyPluginAsync } from "fastify";
-import { erc20Abi, zeroAddress } from "viem";
+import { zeroAddress } from "viem";
 
 import { getUser } from "../middleware/auth";
 import "../middleware/chain";
@@ -92,23 +93,23 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
           },
           {
             address: harvesterAddress,
-            abi: harvesterABI,
+            abi: harvesterAbi,
             functionName: "nftHandler",
           },
           {
             address: harvesterAddress,
-            abi: harvesterABI,
+            abi: harvesterAbi,
             functionName: "depositCapPerWallet",
           },
           {
             address: harvesterAddress,
-            abi: harvesterABI,
+            abi: harvesterAbi,
             functionName: "getUserDepositCap",
             args: [smartAccountAddress],
           },
           {
             address: harvesterAddress,
-            abi: harvesterABI,
+            abi: harvesterAbi,
             functionName: "getUserGlobalDeposit",
             args: [smartAccountAddress],
           },
@@ -126,13 +127,13 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         contracts: [
           {
             address: permitsAddress,
-            abi: erc1155ABI,
+            abi: erc1155Abi,
             functionName: "balanceOf",
             args: [smartAccountAddress, permitsTokenId],
           },
           {
             address: permitsAddress,
-            abi: erc1155ABI,
+            abi: erc1155Abi,
             functionName: "isApprovedForAll",
             args: [smartAccountAddress, nftHandlerAddress],
           },

@@ -1,4 +1,4 @@
-export const harvesterABI = [
+export const harvesterAbi = [
   {
     inputs: [],
     stateMutability: "nonpayable",

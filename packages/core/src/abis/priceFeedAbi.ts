@@ -1,4 +1,4 @@
-export const priceFeedABI = [
+export const priceFeedAbi = [
   {
     inputs: [
       { internalType: "address", name: "_aggregator", type: "address" },

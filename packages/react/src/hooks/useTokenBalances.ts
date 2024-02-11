@@ -1,7 +1,11 @@
-import type { AddressString, Token } from "@treasure/tdk-core";
-import { erc20ABI, getTokenAddress } from "@treasure/tdk-core";
+import {
+  type AddressString,
+  type Token,
+  erc20Abi,
+  getTokenAddress,
+} from "@treasure/tdk-core";
 import { formatUnits } from "viem";
-import { useAccount, useChainId, useContractReads } from "wagmi";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
 
 type Props = {
   tokens: Token[];
@@ -21,14 +25,16 @@ export const useTokenBalances = ({
   const address = addressOverride ?? connectedAddress;
   const chainId = chainIdOverride ?? connectedChainId;
 
-  const { data, ...result } = useContractReads({
+  const { data, ...result } = useReadContracts({
     contracts: tokens.map((token) => ({
       address: getTokenAddress(chainId, token),
-      abi: erc20ABI,
+      abi: erc20Abi,
       functionName: "balanceOf",
       args: [address!],
     })),
-    enabled: enabled && !!address,
+    query: {
+      enabled: enabled && !!address,
+    },
   });
 
   return {

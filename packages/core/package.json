@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "decimal.js-light": "^2.5.1",
-    "viem": "^1.15.1"
+    "viem": "^2.7.6"
   },
   "engines": {
     "node": ">=20"
