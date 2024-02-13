@@ -19,7 +19,7 @@ Coming soon
 
 ## Examples
 
-- [Harvester](./examples/harvester)
+- [Harvester](./examples/harvester) ([Demo](https://tdk-examples-harvester.vercel.app))
 - [Payments](./examples/payments) ([Demo](https://tdk-payments-example.vercel.app))
 
 ## Development

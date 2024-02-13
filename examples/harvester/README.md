@@ -2,6 +2,8 @@
 
 Example showing how front-ends can interact with the Treasure Development Kit to power Harvester staking flows
 
+[Live Demo](https://tdk-payments-example.vercel.app)
+
 ## Prerequisites
 
 - [>= Node 20.11.0](https://nodejs.org/en)
