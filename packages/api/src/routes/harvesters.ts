@@ -20,19 +20,17 @@ const readHarvesterParamsSchema = Type.Object({
 });
 
 const readHarvesterReplySchema = Type.Object({
-  harvester: Type.Object({
-    nftHandlerAddress: Type.String(),
-    permitsAddress: Type.String(),
-    permitsTokenId: Type.String(),
-  }),
-  user: Type.Object({
-    magicBalance: Type.String(),
-    permitsBalance: Type.Number(),
-    harvesterMagicAllowance: Type.String(),
-    harvesterPermitsApproved: Type.Boolean(),
-    harvesterDepositCap: Type.String(),
-    harvesterDepositAmount: Type.String(),
-  }),
+  id: Type.String(),
+  nftHandlerAddress: Type.String(),
+  permitsAddress: Type.String(),
+  permitsTokenId: Type.String(),
+  permitsDepositCap: Type.String(),
+  userMagicBalance: Type.String(),
+  userPermitsBalance: Type.Number(),
+  userMagicAllowance: Type.String(),
+  userApprovedPermits: Type.Boolean(),
+  userDepositCap: Type.String(),
+  userDepositAmount: Type.String(),
 });
 
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
@@ -59,38 +57,17 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         chainId,
         params: { id },
       } = req;
-      const user = await getUser(req);
-      if (!user) {
-        return reply.code(401).send({ error: "Unauthorized" });
-      }
 
       const contractAddresses = getContractAddresses(chainId);
-      const smartAccountAddress = user.address as AddressString;
       const harvesterAddress = id as AddressString;
 
       const [
-        { result: magicBalance = 0n },
-        { result: magicAllowance = 0n },
         { result: nftHandlerAddress = zeroAddress },
         {
           result: [permitsAddress, permitsTokenId] = [zeroAddress, 0n] as const,
         },
-        { result: depositCap = 0n },
-        { result: [harvesterDepositAmount] = [0n] as const },
       ] = await readContracts(config, {
         contracts: [
-          {
-            address: contractAddresses.MAGIC,
-            abi: erc20Abi,
-            functionName: "balanceOf",
-            args: [smartAccountAddress],
-          },
-          {
-            address: contractAddresses.MAGIC,
-            abi: erc20Abi,
-            functionName: "allowance",
-            args: [smartAccountAddress, harvesterAddress],
-          },
           {
             address: harvesterAddress,
             abi: harvesterAbi,
@@ -101,18 +78,6 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
             abi: harvesterAbi,
             functionName: "depositCapPerWallet",
           },
-          {
-            address: harvesterAddress,
-            abi: harvesterAbi,
-            functionName: "getUserDepositCap",
-            args: [smartAccountAddress],
-          },
-          {
-            address: harvesterAddress,
-            abi: harvesterAbi,
-            functionName: "getUserGlobalDeposit",
-            args: [smartAccountAddress],
-          },
         ],
       });
 
@@ -120,40 +85,83 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         return reply.code(404).send({ error: "Not found" });
       }
 
-      const [
-        { result: permitsBalance = 0n },
-        { result: harvesterPermitsApproved = false },
-      ] = await readContracts(config, {
-        contracts: [
-          {
-            address: permitsAddress,
-            abi: erc1155Abi,
-            functionName: "balanceOf",
-            args: [smartAccountAddress, permitsTokenId],
-          },
-          {
-            address: permitsAddress,
-            abi: erc1155Abi,
-            functionName: "isApprovedForAll",
-            args: [smartAccountAddress, nftHandlerAddress],
-          },
-        ],
-      });
+      let magicBalance = 0n;
+      let magicAllowance = 0n;
+      let permitsBalance = 0n;
+      let userApprovedPermits = false;
+      let depositCap = 0n;
+      let depositAmount = 0n;
+      const user = await getUser(req);
+      if (user) {
+        const smartAccountAddress = user.address as AddressString;
+        const [
+          { result: magicBalanceResult },
+          { result: magicAllowanceResult },
+          { result: permitsBalanceResult },
+          { result: userApprovedPermitsResult },
+          { result: depositCapResult },
+          { result: globalDepositResult },
+        ] = await readContracts(config, {
+          contracts: [
+            {
+              address: contractAddresses.MAGIC,
+              abi: erc20Abi,
+              functionName: "balanceOf",
+              args: [smartAccountAddress],
+            },
+            {
+              address: contractAddresses.MAGIC,
+              abi: erc20Abi,
+              functionName: "allowance",
+              args: [smartAccountAddress, harvesterAddress],
+            },
+            {
+              address: permitsAddress,
+              abi: erc1155Abi,
+              functionName: "balanceOf",
+              args: [smartAccountAddress, permitsTokenId],
+            },
+            {
+              address: permitsAddress,
+              abi: erc1155Abi,
+              functionName: "isApprovedForAll",
+              args: [smartAccountAddress, nftHandlerAddress],
+            },
+            {
+              address: harvesterAddress,
+              abi: harvesterAbi,
+              functionName: "getUserDepositCap",
+              args: [smartAccountAddress],
+            },
+            {
+              address: harvesterAddress,
+              abi: harvesterAbi,
+              functionName: "getUserGlobalDeposit",
+              args: [smartAccountAddress],
+            },
+          ],
+        });
+
+        magicBalance = magicBalanceResult ?? 0n;
+        magicAllowance = magicAllowanceResult ?? 0n;
+        permitsBalance = permitsBalanceResult ?? 0n;
+        userApprovedPermits = userApprovedPermitsResult ?? false;
+        depositCap = depositCapResult ?? 0n;
+        depositAmount = globalDepositResult?.[0] ?? 0n;
+      }
 
       reply.send({
-        harvester: {
-          nftHandlerAddress,
-          permitsAddress,
-          permitsTokenId: permitsTokenId.toString(),
-        },
-        user: {
-          magicBalance: magicBalance.toString(),
-          permitsBalance: Number(permitsBalance),
-          harvesterMagicAllowance: magicAllowance.toString(),
-          harvesterPermitsApproved,
-          harvesterDepositCap: depositCap.toString(),
-          harvesterDepositAmount: harvesterDepositAmount.toString(),
-        },
+        id,
+        nftHandlerAddress,
+        permitsAddress,
+        permitsTokenId: permitsTokenId.toString(),
+        permitsDepositCap: "2000",
+        userMagicBalance: magicBalance.toString(),
+        userPermitsBalance: Number(permitsBalance),
+        userMagicAllowance: magicAllowance.toString(),
+        userApprovedPermits,
+        userDepositCap: depositCap.toString(),
+        userDepositAmount: depositAmount.toString(),
       });
     },
   );
