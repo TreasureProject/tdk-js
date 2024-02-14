@@ -98,11 +98,6 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        const user = await getUser(req);
-        if (!user) {
-          return reply.code(401).send({ error: "Unauthorized" });
-        }
-
         try {
           const data = await engine.transaction.status(req.params.queueId);
           reply.send(data.result);

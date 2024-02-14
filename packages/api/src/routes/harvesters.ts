@@ -64,7 +64,11 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       const [
         { result: nftHandlerAddress = zeroAddress },
         {
-          result: [permitsAddress, permitsTokenId] = [zeroAddress, 0n] as const,
+          result: [permitsAddress, permitsTokenId, permitsDepositCap] = [
+            zeroAddress,
+            0n,
+            0n,
+          ] as const,
         },
       ] = await readContracts(config, {
         contracts: [
@@ -155,7 +159,7 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         nftHandlerAddress,
         permitsAddress,
         permitsTokenId: permitsTokenId.toString(),
-        permitsDepositCap: "2000",
+        permitsDepositCap: permitsDepositCap.toString(),
         userMagicBalance: magicBalance.toString(),
         userPermitsBalance: Number(permitsBalance),
         userMagicAllowance: magicAllowance.toString(),
