@@ -134,7 +134,8 @@ export const App = () => {
           amount,
         )} MAGIC from connected wallet to smart account`,
       );
-      await tdk?.contract.write(contractAddresses.MAGIC, {
+      await tdk?.transaction.create({
+        address: contractAddresses.MAGIC,
         abi: erc20Abi,
         functionName: "transferFrom",
         args: [eoaAddress, smartAccountAddress, amount],
@@ -149,7 +150,8 @@ export const App = () => {
         addLog(
           "Transferring Ancient Permit from connected wallet to smart account",
         );
-        await tdk?.contract.write(contractAddresses.Consumables, {
+        await tdk?.transaction.create({
+          address: contractAddresses.Consumables,
           abi: erc1155Abi,
           functionName: "safeTransferFrom",
           args: [eoaAddress, smartAccountAddress, permitTokenId, 1n, zeroHash],
@@ -159,7 +161,8 @@ export const App = () => {
 
       // Queue Consumables-NftHandler approval
       addLog("Approving Harvester to transfer Consumables");
-      await tdk?.contract.write(contractAddresses.Consumables, {
+      await tdk?.transaction.create({
+        address: contractAddresses.Consumables,
         abi: erc1155Abi,
         functionName: "setApprovalForAll",
         args: [nftHandlerAddress, true],
@@ -168,7 +171,8 @@ export const App = () => {
 
       // Queue Ancient Permit deposit
       addLog("Staking Ancient Permit to Harvester");
-      await tdk?.contract.write(nftHandlerAddress, {
+      await tdk?.transaction.create({
+        address: nftHandlerAddress,
         abi: nftHandlerAbi,
         functionName: "stakeNft",
         args: [contractAddresses.Consumables, permitTokenId, 1n],
@@ -178,7 +182,8 @@ export const App = () => {
 
     // Queue MAGIC-Harvester approval
     addLog("Approving Harvester to transfer MAGIC");
-    await tdk?.contract.write(contractAddresses.MAGIC, {
+    await tdk?.transaction.create({
+      address: contractAddresses.MAGIC,
       abi: erc20Abi,
       functionName: "approve",
       args: [harvesterAddress, amount],
@@ -187,7 +192,8 @@ export const App = () => {
 
     // // Queue Harvester deposit
     addLog(`Depositing ${formatEther(amount)} MAGIC to Harvester`);
-    await tdk?.contract.write(harvesterAddress, {
+    await tdk?.transaction.create({
+      address: harvesterAddress,
       abi: harvesterAbi,
       functionName: "deposit",
       args: [amount, 0n],
@@ -200,7 +206,8 @@ export const App = () => {
   const handleWithdraw = async () => {
     if (harvesterDeposit > 0) {
       addLog("Withdrawing all MAGIC from Harvester");
-      await tdk?.contract.write(harvesterAddress, {
+      await tdk?.transaction.create({
+        address: harvesterAddress,
         abi: harvesterAbi,
         functionName: "withdrawAll",
         args: [],
@@ -210,7 +217,8 @@ export const App = () => {
 
     if (harvesterPermits > 0) {
       addLog("Withdrawing all Ancient Permits from Harvester");
-      await tdk?.contract.write(nftHandlerAddress, {
+      await tdk?.transaction.create({
+        address: nftHandlerAddress,
         abi: nftHandlerAbi,
         functionName: "unstakeNft",
         args: [contractAddresses.Consumables, permitTokenId, harvesterPermits],
@@ -224,7 +232,8 @@ export const App = () => {
   const handleTransfer = async () => {
     if (smartAccountMagic > 0) {
       addLog("Transferring all MAGIC from smart account to connected wallet");
-      await tdk?.contract.write(contractAddresses.MAGIC, {
+      await tdk?.transaction.create({
+        address: contractAddresses.MAGIC,
         abi: erc20Abi,
         functionName: "transfer",
         args: [eoaAddress, smartAccountMagic],
@@ -236,7 +245,8 @@ export const App = () => {
       addLog(
         "Transferring all Ancient Permits from smart account to connected wallet",
       );
-      await tdk?.contract.write(contractAddresses.Consumables, {
+      await tdk?.transaction.create({
+        address: contractAddresses.Consumables,
         abi: erc1155Abi,
         functionName: "safeTransferFrom",
         args: [

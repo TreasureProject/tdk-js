@@ -15,6 +15,7 @@ export const withChain = async (app: FastifyInstance) => {
       chainId = Number(req.headers["x-chain-id"]);
     }
 
-    req.chainId = chainId ?? 42161;
+    req.chainId =
+      chainId && Number.isInteger(chainId) && chainId > 0 ? chainId : 42161;
   });
 };

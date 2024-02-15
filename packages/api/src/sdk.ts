@@ -5,8 +5,8 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
-import type { WriteContractReply } from "./routes/contracts";
 import type { ReadProjectReply } from "./routes/projects";
+import type { CreateTransactionReply } from "./routes/transactions";
 import type { ErrorReply } from "./utils/schema";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
@@ -113,32 +113,23 @@ export class TDKAPI {
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
 
-  contract = {
-    write: <
+  transaction = {
+    create: <
       TAbi extends Abi,
       TFunctionName extends ExtractAbiFunctionNames<
         TAbi,
         "nonpayable" | "payable"
       >,
-    >(
-      address: string,
-      {
-        functionName,
-        args,
-      }: {
-        abi: TAbi;
-        functionName:
-          | TFunctionName
-          | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
-        args: AbiParametersToPrimitiveTypes<
-          ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
-          "inputs"
-        >;
-      },
-    ) =>
-      this.post<WriteContractReply>(`/contracts/${address}`, {
-        functionName,
-        args,
-      }),
+    >(params: {
+      address: string;
+      abi: TAbi;
+      functionName:
+        | TFunctionName
+        | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
+      args: AbiParametersToPrimitiveTypes<
+        ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
+        "inputs"
+      >;
+    }) => this.post<CreateTransactionReply>(`/transactions`, params),
   };
 }
