@@ -33,6 +33,7 @@ export const projectsRoutes =
       "/projects/:slug",
       {
         schema: {
+          tags: ["projects"],
           response: {
             ...baseReplySchema,
             200: readProjectReplySchema,

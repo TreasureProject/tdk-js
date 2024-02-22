@@ -49,6 +49,7 @@ export const transactionsRoutes =
       "/transactions",
       {
         schema: {
+          tags: ["transactions"],
           response: {
             ...baseReplySchema,
             200: createTransactionReplySchema,
@@ -89,6 +90,7 @@ export const transactionsRoutes =
       "/transactions/:queueId",
       {
         schema: {
+          tags: ["transactions"],
           response: {
             ...baseReplySchema,
             200: readTransactionReplySchema,

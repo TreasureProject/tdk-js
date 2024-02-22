@@ -49,7 +49,9 @@ const main = async () => {
     app.register(harvestersRoutes),
   ]);
 
-  app.get("/healthcheck", async (_, reply) => reply.send("OK"));
+  app.get("/healthcheck", { schema: { tags: ["api"] } }, async (_, reply) =>
+    reply.send("OK"),
+  );
 
   // Start server
   await app.ready();

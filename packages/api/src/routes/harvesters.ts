@@ -44,6 +44,7 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
     "/harvesters/:id",
     {
       schema: {
+        tags: ["harvesters"],
         response: {
           ...baseReplySchema,
           200: readHarvesterReplySchema,
