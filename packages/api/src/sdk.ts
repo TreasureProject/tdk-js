@@ -5,8 +5,12 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import type { ReadHarvesterReply } from "./routes/harvesters";
 import type { ReadProjectReply } from "./routes/projects";
-import type { CreateTransactionReply } from "./routes/transactions";
+import type {
+  CreateTransactionReply,
+  ReadTransactionReply,
+} from "./routes/transactions";
 import type { ErrorReply } from "./utils/schema";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
@@ -114,22 +118,69 @@ export class TDKAPI {
   };
 
   transaction = {
-    create: <
+    create: async <
       TAbi extends Abi,
       TFunctionName extends ExtractAbiFunctionNames<
         TAbi,
         "nonpayable" | "payable"
       >,
-    >(params: {
-      address: string;
-      abi: TAbi;
-      functionName:
-        | TFunctionName
-        | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
-      args: AbiParametersToPrimitiveTypes<
-        ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
-        "inputs"
-      >;
-    }) => this.post<CreateTransactionReply>(`/transactions`, params),
+    >(
+      params: {
+        address: string;
+        abi: TAbi;
+        functionName:
+          | TFunctionName
+          | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
+        args: AbiParametersToPrimitiveTypes<
+          ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
+          "inputs"
+        >;
+      },
+      options: { waitForCompletion?: boolean } = { waitForCompletion: true },
+    ) => {
+      const result = await this.post<CreateTransactionReply>(
+        `/transactions`,
+        params,
+      );
+      if (!options.waitForCompletion) {
+        return result;
+      }
+
+      let retries = 0;
+      let transaction: ReadTransactionReply;
+      do {
+        if (retries > 0) {
+          await new Promise((r) => setTimeout(r, 2_500));
+        }
+
+        transaction = await this.transaction.get(result.queueId);
+        retries += 1;
+      } while (
+        retries < 15 &&
+        transaction.status !== "errored" &&
+        transaction.status !== "cancelled" &&
+        transaction.status !== "mined"
+      );
+
+      if (transaction.status == "errored") {
+        throw new APIError(transaction.errorMessage || "Transaction error");
+      }
+
+      if (transaction.status == "cancelled") {
+        throw new APIError("Transaction cancelled");
+      }
+
+      if (transaction.status != "mined") {
+        throw new APIError("Transaction timed out");
+      }
+
+      return transaction;
+    },
+    get: (queueId: string) =>
+      this.get<ReadTransactionReply>(`/transactions/${queueId}`),
+  };
+
+  harvester = {
+    get: (id: string) => this.get<ReadHarvesterReply>(`/harvesters/${id}`),
   };
 }

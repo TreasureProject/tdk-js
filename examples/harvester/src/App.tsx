@@ -1,8 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useQuery } from "@tanstack/react-query";
 import {
   type AddressString,
   Button,
-  TOKEN_IDS,
   TreasureLoginButton,
   erc20Abi,
   erc1155Abi,
@@ -14,9 +14,8 @@ import {
 } from "@treasure/tdk-react";
 import { useState } from "react";
 import { formatEther, parseEther, zeroAddress, zeroHash } from "viem";
-import { useAccount, useReadContracts } from "wagmi";
-
-import { sleep } from "./utils";
+import { arbitrumSepolia } from "viem/chains";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
 
 const MAGIC_AMOUNT = parseEther("1000");
 
@@ -24,37 +23,40 @@ export const App = () => {
   const { address, tdk, logOut } = useTreasure();
   const { address: eoaAddress = zeroAddress, isConnected: isEOAConnected } =
     useAccount();
+  const chainId = useChainId();
   const contractAddresses = useContractAddresses();
   const smartAccountAddress = (address ?? zeroAddress) as AddressString;
   const [logs, setLogs] = useState<{ date: Date; message: string }[]>([]);
 
   const harvesterAddress = contractAddresses.HarvesterEmerion;
-  const nftHandlerAddress = contractAddresses.NftHandlerEmerion;
-  const permitTokenId = TOKEN_IDS.Consumables.BeaconAncientPermit;
 
   const addLog = (message: string) =>
     setLogs((curr) => [...curr, { date: new Date(), message }]);
 
-  // Fetch balances and Harvester status
+  const { data: harvesterData, refetch: refetchHarvesterData } = useQuery({
+    queryKey: ["harvester", harvesterAddress, smartAccountAddress],
+    queryFn: () => tdk?.harvester.get(harvesterAddress),
+  });
+
+  const nftHandlerAddress = (harvesterData?.nftHandlerAddress ??
+    zeroAddress) as AddressString;
+  const permitTokenId = BigInt(harvesterData?.permitsTokenId ?? 0n);
+  const smartAccountMagic = BigInt(harvesterData?.userMagicBalance ?? 0n);
+  const smartAccountPermits = harvesterData?.userPermitsBalance ?? 0;
+  const harvesterDepositCap = BigInt(harvesterData?.userDepositCap ?? 0n);
+  const harvesterDeposit = BigInt(harvesterData?.userDepositAmount ?? 0n);
+  const harvesterPermits =
+    harvesterData?.permitsDepositCap &&
+    BigInt(harvesterData.permitsDepositCap) > 0
+      ? Number(formatEther(harvesterDepositCap)) /
+        Number(formatEther(BigInt(harvesterData.permitsDepositCap)))
+      : 0;
+
   const {
-    data: {
-      smartAccountMagic = 0n,
-      eoaMagic = 0n,
-      smartAccountPermits = 0n,
-      eoaPermits = 0n,
-      harvesterDepositCap = 0n,
-      harvesterDeposit = 0n,
-      harvesterPermits = 0n,
-    } = {},
-    refetch,
+    data: { eoaMagic = 0n, eoaPermits = 0n } = {},
+    refetch: refetchEOABalances,
   } = useReadContracts({
     contracts: [
-      {
-        address: contractAddresses.MAGIC,
-        abi: erc20Abi,
-        functionName: "balanceOf",
-        args: [smartAccountAddress],
-      },
       {
         address: contractAddresses.MAGIC,
         abi: erc20Abi,
@@ -64,48 +66,23 @@ export const App = () => {
       {
         address: contractAddresses.Consumables,
         abi: erc1155Abi,
-        functionName: "balanceOfBatch",
-        args: [
-          [smartAccountAddress, eoaAddress],
-          [permitTokenId, permitTokenId],
-        ],
-      },
-      {
-        address: harvesterAddress,
-        abi: harvesterAbi,
-        functionName: "getUserDepositCap",
-        args: [smartAccountAddress],
-      },
-      {
-        address: harvesterAddress,
-        abi: harvesterAbi,
-        functionName: "getUserGlobalDeposit",
-        args: [smartAccountAddress],
-      },
-      {
-        address: nftHandlerAddress,
-        abi: nftHandlerAbi,
-        functionName: "stakedNfts",
-        args: [
-          smartAccountAddress,
-          contractAddresses.Consumables,
-          permitTokenId,
-        ],
+        functionName: "balanceOf",
+        args: [eoaAddress, permitTokenId],
       },
     ],
     query: {
       enabled: !!address,
       select: (data) => ({
-        smartAccountMagic: data[0].result ?? 0n,
-        eoaMagic: data[1].result ?? 0n,
-        smartAccountPermits: data[2].result?.[0] ?? 0n,
-        eoaPermits: data[2].result?.[1] ?? 0n,
-        harvesterDepositCap: data[3].result ?? 0n,
-        harvesterDeposit: data[4].result?.[0] ?? 0n,
-        harvesterPermits: data[5].result ?? 0n,
+        eoaMagic: data[0].result ?? 0n,
+        eoaPermits: data[1].result ?? 0n,
       }),
     },
   });
+
+  const refetch = () => {
+    refetchHarvesterData();
+    refetchEOABalances();
+  };
 
   // Prepare approval for smart account to transfer MAGIC from EOA
   const { allowance: smartAccountAllowance = 0n, approve: approveMagic } =
@@ -140,7 +117,6 @@ export const App = () => {
         functionName: "transferFrom",
         args: [eoaAddress, smartAccountAddress, amount],
       });
-      await sleep(20_000);
       refetch();
     }
 
@@ -156,7 +132,6 @@ export const App = () => {
           functionName: "safeTransferFrom",
           args: [eoaAddress, smartAccountAddress, permitTokenId, 1n, zeroHash],
         });
-        await sleep(20_000);
       }
 
       // Queue Consumables-NftHandler approval
@@ -167,7 +142,6 @@ export const App = () => {
         functionName: "setApprovalForAll",
         args: [nftHandlerAddress, true],
       });
-      await sleep(20_000);
 
       // Queue Ancient Permit deposit
       addLog("Staking Ancient Permit to Harvester");
@@ -177,7 +151,6 @@ export const App = () => {
         functionName: "stakeNft",
         args: [contractAddresses.Consumables, permitTokenId, 1n],
       });
-      await sleep(20_000);
     }
 
     // Queue MAGIC-Harvester approval
@@ -188,7 +161,6 @@ export const App = () => {
       functionName: "approve",
       args: [harvesterAddress, amount],
     });
-    await sleep(20_000);
 
     // // Queue Harvester deposit
     addLog(`Depositing ${formatEther(amount)} MAGIC to Harvester`);
@@ -196,9 +168,8 @@ export const App = () => {
       address: harvesterAddress,
       abi: harvesterAbi,
       functionName: "deposit",
-      args: [amount, 0n],
+      args: [amount, chainId === arbitrumSepolia.id ? 1n : 0n],
     });
-    await sleep(20_000);
 
     refetch();
   };
@@ -212,7 +183,6 @@ export const App = () => {
         functionName: "withdrawAll",
         args: [],
       });
-      await sleep(20_000);
     }
 
     if (harvesterPermits > 0) {
@@ -221,9 +191,12 @@ export const App = () => {
         address: nftHandlerAddress,
         abi: nftHandlerAbi,
         functionName: "unstakeNft",
-        args: [contractAddresses.Consumables, permitTokenId, harvesterPermits],
+        args: [
+          contractAddresses.Consumables,
+          permitTokenId,
+          BigInt(harvesterPermits),
+        ],
       });
-      await sleep(20_000);
     }
 
     refetch();
@@ -238,7 +211,6 @@ export const App = () => {
         functionName: "transfer",
         args: [eoaAddress, smartAccountMagic],
       });
-      await sleep(20_000);
     }
 
     if (smartAccountPermits > 0) {
@@ -253,11 +225,10 @@ export const App = () => {
           smartAccountAddress,
           eoaAddress,
           permitTokenId,
-          smartAccountPermits,
+          BigInt(smartAccountPermits),
           zeroHash,
         ],
       });
-      await sleep(20_000);
     }
 
     refetch();

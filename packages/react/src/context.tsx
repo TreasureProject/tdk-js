@@ -10,6 +10,12 @@ import {
   useReducer,
 } from "react";
 
+import {
+  clearStoredAuthToken,
+  getStoredAuthToken,
+  setStoredAuthToken,
+} from "./utils/store";
+
 type Config = {
   project: string;
   chainId?: number;
@@ -34,12 +40,12 @@ type ContextValues = {
   logOut: () => void;
 };
 
-const Context = createContext({} as State & ContextValues);
-
 type Action =
   | { type: "START_AUTH" }
   | { type: "COMPLETE_AUTH"; authToken: string }
   | { type: "RESET_AUTH" };
+
+const Context = createContext({} as State & ContextValues);
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -49,7 +55,7 @@ const reducer = (state: State, action: Action): State => {
         status: "AUTHENTICATING",
       };
     case "COMPLETE_AUTH":
-      localStorage.setItem("tdk_auth_token", action.authToken);
+      setStoredAuthToken(action.authToken);
       state.tdk?.setAuthToken(action.authToken);
       return {
         ...state,
@@ -57,7 +63,7 @@ const reducer = (state: State, action: Action): State => {
         authToken: action.authToken,
       };
     case "RESET_AUTH":
-      localStorage.removeItem("tdk_auth_token");
+      clearStoredAuthToken();
       state.tdk?.clearAuthToken();
       return {
         ...state,
@@ -109,12 +115,17 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
 
     // Check local storage
     if (!authToken) {
-      authToken = localStorage.getItem("tdk_auth_token");
+      authToken = getStoredAuthToken();
     }
 
-    // Mark as logged in if we have a match
+    // Mark as logged in if we have a valid match
     if (authToken) {
-      dispatch({ type: "COMPLETE_AUTH", authToken });
+      const { exp } = jwtDecode<{ exp?: number }>(authToken);
+      if (!exp || exp * 1000 > Date.now()) {
+        dispatch({ type: "COMPLETE_AUTH", authToken });
+      } else {
+        clearStoredAuthToken();
+      }
     }
   }, []);
 

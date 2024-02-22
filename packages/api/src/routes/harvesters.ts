@@ -34,14 +34,12 @@ const readHarvesterReplySchema = Type.Object({
 });
 
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
-export type ReadHarvesterReply =
-  | Static<typeof readHarvesterReplySchema>
-  | ErrorReply;
+export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
 
 export const harvestersRoutes: FastifyPluginAsync = async (app) => {
   app.get<{
     Params: ReadHarvesterParams;
-    Reply: ReadHarvesterReply;
+    Reply: ReadHarvesterReply | ErrorReply;
   }>(
     "/harvesters/:id",
     {

@@ -32,21 +32,19 @@ const readTransactionReplySchema = Type.Object({
 });
 
 export type CreateTransactionBody = Static<typeof createTransactionBodySchema>;
-export type CreateTransactionReply =
-  | Static<typeof createTransactionReplySchema>
-  | ErrorReply;
+export type CreateTransactionReply = Static<
+  typeof createTransactionReplySchema
+>;
 
 export type ReadTransactionParams = Static<typeof readTransactionParamsSchema>;
-export type ReadTransactionReply =
-  | Static<typeof readTransactionReplySchema>
-  | ErrorReply;
+export type ReadTransactionReply = Static<typeof readTransactionReplySchema>;
 
 export const transactionsRoutes =
   ({ engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.post<{
       Body: CreateTransactionBody;
-      Reply: CreateTransactionReply;
+      Reply: CreateTransactionReply | ErrorReply;
     }>(
       "/transactions",
       {
@@ -86,7 +84,7 @@ export const transactionsRoutes =
 
     app.get<{
       Params: ReadTransactionParams;
-      Reply: ReadTransactionReply;
+      Reply: ReadTransactionReply | ErrorReply;
     }>(
       "/transactions/:queueId",
       {
