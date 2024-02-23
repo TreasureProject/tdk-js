@@ -10,6 +10,7 @@ export type TdkApiEnv = {
   THIRDWEB_ENGINE_URL: string;
   THIRDWEB_ENGINE_ACCESS_TOKEN: string;
   THIRDWEB_SECRET_KEY: string;
+  ZEEVERSE_API_URL: string;
 };
 
 export type TdkApiContext = {

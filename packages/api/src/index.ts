@@ -9,6 +9,7 @@ import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
 import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
+import { authRoutes } from "./routes/auth";
 import { harvestersRoutes } from "./routes/harvesters";
 import { projectsRoutes } from "./routes/projects";
 import { transactionsRoutes } from "./routes/transactions";
@@ -35,15 +36,16 @@ const main = async () => {
   };
 
   // Middleware
+  await withSwagger(app);
   await withCors(app);
   await withErrorHandler(app);
   await withChain(app);
   await withProject(app, ctx);
   await withAuth(app, ctx);
-  await withSwagger(app);
 
   // Routes
   await Promise.all([
+    app.register(authRoutes(ctx)),
     app.register(projectsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes),

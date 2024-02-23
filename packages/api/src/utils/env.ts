@@ -4,23 +4,14 @@ import {
 } from "@aws-sdk/client-secrets-manager";
 import "dotenv/config";
 
+import type { TdkApiEnv } from "../types";
+
 const client = new SecretsManagerClient({
   region: "us-west-2",
 });
 
-type Env = {
-  PORT: string;
-  DATABASE_URL: string;
-  DEFAULT_BACKEND_WALLET: string;
-  THIRDWEB_AUTH_DOMAIN: string;
-  THIRDWEB_AUTH_PRIVATE_KEY: string;
-  THIRDWEB_ENGINE_URL: string;
-  THIRDWEB_ENGINE_ACCESS_TOKEN: string;
-  THIRDWEB_SECRET_KEY: string;
-};
-
-export const getEnv = async (): Promise<Env> => {
-  let remoteEnv: Env | undefined;
+export const getEnv = async (): Promise<TdkApiEnv> => {
+  let remoteEnv: TdkApiEnv | undefined;
   try {
     const response = await client.send(
       new GetSecretValueCommand({
@@ -56,5 +47,7 @@ export const getEnv = async (): Promise<Env> => {
       "",
     THIRDWEB_SECRET_KEY:
       process.env.THIRDWEB_SECRET_KEY ?? remoteEnv?.THIRDWEB_SECRET_KEY ?? "",
+    ZEEVERSE_API_URL:
+      process.env.ZEEVERSE_API_URL ?? "https://api.zee-verse.com",
   };
 };

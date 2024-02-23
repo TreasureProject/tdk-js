@@ -12,6 +12,7 @@ import { zeroAddress } from "viem";
 
 import { getUser } from "../middleware/auth";
 import "../middleware/chain";
+import "../middleware/swagger";
 import { type ErrorReply, baseReplySchema } from "../utils/schema";
 import { config } from "../utils/wagmi";
 

@@ -5,6 +5,7 @@ import "./chain";
 
 declare module "fastify" {
   interface FastifyRequest {
+    projectId: string;
     backendWallet: string;
   }
 }
@@ -33,8 +34,12 @@ export const withProject = async (
           },
         },
       });
-      if (project && project.backendWallets.length > 0) {
-        req.backendWallet = project.backendWallets[0].address;
+
+      if (project) {
+        req.projectId = projectId;
+        if (project.backendWallets.length > 0) {
+          req.backendWallet = project.backendWallets[0].address;
+        }
       }
     }
 
