@@ -1,11 +1,12 @@
 import { type Static, Type } from "@sinclair/typebox";
+import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 export const ethereumAddressSchema = Type.RegExp("/^0x[a-fA-F0-9]{40}$/g");
 export const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
 
 export const chainIdSchema = Type.Union([
-  Type.Literal(42161), // arb
-  Type.Literal(421614), // arbsepolia
+  Type.Literal(arbitrum.id),
+  Type.Literal(arbitrumSepolia.id),
 ]);
 
 export const errorReplySchema = Type.Object({
@@ -15,6 +16,14 @@ export const errorReplySchema = Type.Object({
 export const baseReplySchema: object = {
   400: {
     description: "Bad Request",
+    ...errorReplySchema,
+  },
+  401: {
+    description: "Unauthorized",
+    ...errorReplySchema,
+  },
+  403: {
+    description: "Forbidden",
     ...errorReplySchema,
   },
   404: {

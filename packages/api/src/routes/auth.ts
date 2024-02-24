@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import "../middleware/project";
 import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
-import { type ErrorReply, baseReplySchema } from "../utils/schema";
+import type { ErrorReply } from "../utils/schema";
 import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
 
 const authenticateBodySchema = Type.Object({
@@ -44,10 +44,8 @@ export const authRoutes =
       "/auth/authenticate",
       {
         schema: {
-          tags: ["auth"],
           body: authenticateBodySchema,
           response: {
-            ...baseReplySchema,
             200: authenticateReplySchema,
           },
         },
@@ -83,10 +81,8 @@ export const authRoutes =
       "/auth/verify",
       {
         schema: {
-          tags: ["auth"],
           body: authVerifyBodySchema,
           response: {
-            ...baseReplySchema,
             200: authVerifyReplySchema,
           },
         },
