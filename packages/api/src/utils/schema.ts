@@ -1,13 +1,13 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { arbitrum, arbitrumSepolia } from "viem/chains";
+
+import { SUPPORTED_CHAINS } from "./wagmi";
 
 export const ethereumAddressSchema = Type.RegExp("/^0x[a-fA-F0-9]{40}$/g");
 export const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
 
-export const chainIdSchema = Type.Union([
-  Type.Literal(arbitrum.id),
-  Type.Literal(arbitrumSepolia.id),
-]);
+export const chainIdSchema = Type.Union(
+  SUPPORTED_CHAINS.map(({ id }) => Type.Literal(id)),
+);
 
 export const errorReplySchema = Type.Object({
   error: Type.String(),
