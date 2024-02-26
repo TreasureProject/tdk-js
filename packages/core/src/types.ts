@@ -1,5 +1,10 @@
 import type { TransactionReceipt } from "viem";
 
+import type { PROJECT_SLUGS } from "./constants";
+
+// Projects
+export type ProjectSlug = (typeof PROJECT_SLUGS)[number];
+
 // General transactions
 export type AddressString = `0x${string}`;
 export type OnSuccessFn = (data?: TransactionReceipt) => void;

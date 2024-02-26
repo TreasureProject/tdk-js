@@ -1,3 +1,4 @@
+import type { ProjectSlug } from "@treasure/tdk-core";
 import type {
   Abi,
   AbiParametersToPrimitiveTypes,
@@ -25,13 +26,13 @@ export class APIError extends Error {
 export class TDKAPI {
   baseUri: string;
   authToken?: string;
-  projectId?: string;
+  projectId?: ProjectSlug;
   chainId?: number;
 
   constructor(options: {
     baseUri: string;
     authToken?: string;
-    projectId?: string;
+    projectId?: ProjectSlug;
     chainId?: number;
   }) {
     const { baseUri, authToken, projectId, chainId } = options;
@@ -113,7 +114,7 @@ export class TDKAPI {
   }
 
   project = {
-    findBySlug: (slug: string) =>
+    findBySlug: (slug: ProjectSlug) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
 

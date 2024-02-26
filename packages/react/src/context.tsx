@@ -1,5 +1,5 @@
 import { TDKAPI } from "@treasure/tdk-api";
-import { TreasureClient } from "@treasure/tdk-core";
+import { type ProjectSlug, TreasureClient } from "@treasure/tdk-core";
 import { jwtDecode } from "jwt-decode";
 import type { PropsWithChildren } from "react";
 import {
@@ -17,7 +17,7 @@ import {
 } from "./utils/store";
 
 type Config = {
-  project: string;
+  project: ProjectSlug;
   chainId?: number;
   apiUri?: string;
   authConfig?: {
@@ -88,7 +88,7 @@ export const useTreasure = () => {
 type Props = PropsWithChildren<Config>;
 
 export const TreasureProvider = ({ children, ...config }: Props) => {
-  const { project = "platform" } = config;
+  const { project = "app" } = config;
   const [state, dispatch] = useReducer(reducer, {
     ...config,
     status: "IDLE",

@@ -2,7 +2,7 @@ import { erc20Abi, erc721Abi } from "viem";
 
 export * from "./types";
 
-export { TOKEN_IDS } from "./constants";
+export { PROJECT_SLUGS, TOKEN_IDS } from "./constants";
 export { TreasureClient } from "./TreasureClient";
 export { erc20Abi };
 export { erc721Abi };

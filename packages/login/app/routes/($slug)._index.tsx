@@ -13,7 +13,11 @@ import {
   walletConnect,
 } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
-import { Button, getContractAddress } from "@treasure/tdk-react";
+import {
+  Button,
+  type ProjectSlug,
+  getContractAddress,
+} from "@treasure/tdk-react";
 import { useRef } from "react";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
@@ -23,7 +27,7 @@ import { useTreasureLogin } from "~/hooks/useTreasureLogin";
 import { env } from "../utils/env";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { slug = "platform" } = params;
+  const slug = (params.slug as ProjectSlug) ?? "app";
   const url = new URL(request.url);
   const chainId = Number(url.searchParams.get("chain_id") || 0);
 
@@ -103,7 +107,7 @@ const InnerLoginPage = () => {
           />
           <div className="space-y-5 p-8">
             <div className="font-semibold">
-              {project.slug === "platform" ? (
+              {project.slug === "app" ? (
                 <h1 className="text-2xl">Log in to Treasure</h1>
               ) : (
                 <>

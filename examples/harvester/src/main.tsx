@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <TreasureProvider
-            project="platform"
+            project="zeeverse"
             chainId={import.meta.env.VITE_TDK_CHAIN_ID}
             apiUri={import.meta.env.VITE_TDK_API_URL}
             authConfig={{

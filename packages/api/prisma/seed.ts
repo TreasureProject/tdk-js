@@ -1,38 +1,103 @@
 import { PrismaClient } from "@prisma/client";
+import {
+  type Contract,
+  PROJECT_SLUGS,
+  type ProjectSlug,
+  getContractAddress,
+} from "@treasure/tdk-core";
+import { arbitrum, arbitrumSepolia } from "viem/chains";
+
+type Environment = "local" | "dev" | "prod";
+
+const NAMES: Record<ProjectSlug, string> = {
+  app: "Treasure",
+  zeeverse: "Zeeverse",
+};
+
+const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
+  app: {
+    local: ["http://localhost:3000"],
+    dev: ["https://app-testnet.treasure.lol"],
+    prod: ["https://app.treasure.lol"],
+  },
+  zeeverse: {
+    local: ["http://localhost:5174"],
+    dev: ["https://tdk-examples-harvester.vercel.app"],
+    prod: ["https://play.zee-verse.com"],
+  },
+};
+
+const CALL_TARGETS: Record<ProjectSlug, Contract[]> = {
+  app: [],
+  zeeverse: ["MAGIC", "Consumables", "HarvesterEmerion", "NftHandlerEmerion"],
+};
 
 const prisma = new PrismaClient();
 
+const createProject = ({
+  slug,
+  name,
+  redirectUris = [],
+  callTargets = [],
+}: {
+  slug: string;
+  name: string;
+  redirectUris?: string[];
+  callTargets?: Contract[];
+}) => {
+  const data = {
+    slug,
+    name,
+    redirectUris,
+    callTargets: {
+      connectOrCreate: callTargets.flatMap((contract) => {
+        const testnetCallTarget = {
+          chainId: arbitrumSepolia.id,
+          address: getContractAddress(arbitrumSepolia.id, contract),
+        };
+
+        const mainnetCallTarget = {
+          chainId: arbitrum.id,
+          address: getContractAddress(arbitrum.id, contract),
+        };
+
+        return [
+          {
+            where: {
+              chainId_address: testnetCallTarget,
+            },
+            create: testnetCallTarget,
+          },
+          {
+            where: {
+              chainId_address: mainnetCallTarget,
+            },
+            create: mainnetCallTarget,
+          },
+        ];
+      }),
+    },
+  } as const;
+  return prisma.project.upsert({
+    where: { slug },
+    create: data,
+    update: data,
+  });
+};
+
 (async () => {
+  const args = process.argv.slice(2);
+  const environment = (args[0] as Environment) ?? "local";
+
   try {
-    await prisma.project.upsert({
-      where: { slug: "platform" },
-      update: {},
-      create: {
-        slug: "platform",
-        name: "Treasure",
-        redirectUris: ["http://localhost:5174"],
-        callTargets: {
-          create: [
-            {
-              chainId: 421614,
-              address: "0x55d0cf68a1afe0932aff6f36c87efa703508191c", // MAGIC
-            },
-            {
-              chainId: 421614,
-              address: "0x9d012712d24c90dded4574430b9e6065183896be", // Consumables
-            },
-            {
-              chainId: 421614,
-              address: "0x466d20a94e280bb419031161a6a7508438ad436f", // Harvester (Emerion)
-            },
-            {
-              chainId: 421614,
-              address: "0xff1e4795433e12816cb3b3f6342af02e8b942ffb", // NftHandler (Emerion)
-            },
-          ],
-        },
-      },
-    });
+    for (const slug of PROJECT_SLUGS) {
+      await createProject({
+        slug,
+        name: NAMES[slug],
+        redirectUris: REDIRECT_URIS[slug][environment],
+        callTargets: CALL_TARGETS[slug],
+      });
+    }
 
     await prisma.$disconnect();
   } catch (err) {

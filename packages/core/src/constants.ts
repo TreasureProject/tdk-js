@@ -3,6 +3,8 @@ import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 import type { AddressString, Contract } from "./types";
 
+export const PROJECT_SLUGS = ["app", "zeeverse"] as const;
+
 export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
 
 export const TOKEN_IDS = {
