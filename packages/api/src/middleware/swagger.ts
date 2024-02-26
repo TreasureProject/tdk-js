@@ -3,6 +3,7 @@ import swaggerUi from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
 
 import { version } from "../../package.json";
+import { baseReplySchema } from "../utils/schema";
 
 export const withSwagger = async (app: FastifyInstance) => {
   await app.register(swagger, {
@@ -18,12 +19,28 @@ export const withSwagger = async (app: FastifyInstance) => {
     swagger: {
       consumes: ["application/json"],
       produces: ["application/json"],
-      tags: [
-        { name: "api" },
-        { name: "projects" },
-        { name: "transactions" },
-        { name: "harvesters" },
-      ],
+    },
+    transform: ({ schema, url }) => {
+      const nextSchema = { ...schema };
+
+      if (url.startsWith("/auth")) {
+        nextSchema.tags = ["auth"];
+      } else if (url.startsWith("/harvesters")) {
+        nextSchema.tags = ["harvesters"];
+      } else if (url.startsWith("/projects")) {
+        nextSchema.tags = ["projects"];
+      } else if (url.startsWith("/transactions")) {
+        nextSchema.tags = ["transactions"];
+      }
+
+      if (nextSchema.response) {
+        nextSchema.response = {
+          ...nextSchema.response,
+          ...baseReplySchema,
+        };
+      }
+
+      return { schema: nextSchema, url };
     },
   });
 

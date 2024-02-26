@@ -6,11 +6,7 @@ import "../middleware/chain";
 import "../middleware/project";
 import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
-import {
-  type ErrorReply,
-  baseReplySchema,
-  nullableStringSchema,
-} from "../utils/schema";
+import { type ErrorReply, nullableStringSchema } from "../utils/schema";
 
 const createTransactionBodySchema = Type.Object({
   address: Type.String(),
@@ -50,10 +46,8 @@ export const transactionsRoutes =
       "/transactions",
       {
         schema: {
-          tags: ["transactions"],
           body: createTransactionBodySchema,
           response: {
-            ...baseReplySchema,
             200: createTransactionReplySchema,
           },
         },
@@ -92,9 +86,7 @@ export const transactionsRoutes =
       "/transactions/:queueId",
       {
         schema: {
-          tags: ["transactions"],
           response: {
-            ...baseReplySchema,
             200: readTransactionReplySchema,
           },
         },

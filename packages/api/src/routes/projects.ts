@@ -4,7 +4,7 @@ import type { FastifyPluginAsync } from "fastify";
 import "../middleware/chain";
 import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
-import { baseReplySchema, nullableStringSchema } from "../utils/schema";
+import { nullableStringSchema } from "../utils/schema";
 
 const readProjectParamsSchema = Type.Object({
   slug: Type.String(),
@@ -34,9 +34,7 @@ export const projectsRoutes =
       "/projects/:slug",
       {
         schema: {
-          tags: ["projects"],
           response: {
-            ...baseReplySchema,
             200: readProjectReplySchema,
           },
         },
