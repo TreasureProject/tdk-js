@@ -2,19 +2,10 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
-import {
-  ConnectWallet,
-  type SmartWalletConfigOptions,
-  ThirdwebProvider,
-  coinbaseWallet,
-  metamaskWallet,
-  rainbowWallet,
-  smartWallet,
-  walletConnect,
-} from "@thirdweb-dev/react";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { TDKAPI } from "@treasure/tdk-api";
-import { Button, getContractAddress } from "@treasure/tdk-react";
-import { useRef } from "react";
+import { Button, type ProjectSlug } from "@treasure/tdk-react";
+import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
@@ -22,8 +13,13 @@ import { useTreasureLogin } from "~/hooks/useTreasureLogin";
 
 import { env } from "../utils/env";
 
+type LoginForm = {
+  email: string;
+  password: string;
+};
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { slug = "platform" } = params;
+  const slug = (params.slug as ProjectSlug) ?? "app";
   const url = new URL(request.url);
   const chainId = Number(url.searchParams.get("chain_id") || 0);
 
@@ -65,12 +61,20 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: `Log in to ${data?.project.name}` }];
+  const project = data?.project;
+  if (!project) {
+    return [];
+  }
+
+  if (project.slug === "app" || project.customAuth) {
+    return [{ title: `Log in to ${data?.project.name}` }];
+  }
+
+  return [{ title: `${project.name} | Log in with Treasure` }];
 };
 
 const InnerLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
-  const emailRef = useRef<HTMLInputElement | null>(null);
   const {
     status,
     error,
@@ -78,12 +82,27 @@ const InnerLoginPage = () => {
     startEmailLogin,
     finishEmailLogin,
     logInWithSSO,
-    handleLogin,
+    logInWithCustomAuth,
   } = useTreasureLogin({
+    projectId: project.slug as ProjectSlug,
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],
     approvedCallTargets: project.callTargets,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    // formState: { errors },
+  } = useForm<LoginForm>();
+
+  const onSubmit = handleSubmit(async ({ email, password }) => {
+    if (password) {
+      await logInWithCustomAuth(email, password);
+    } else {
+      await startEmailLogin(email);
+    }
   });
 
   const isInputDisabled = status === "SENDING_EMAIL";
@@ -101,10 +120,10 @@ const InnerLoginPage = () => {
               }')`,
             }}
           />
-          <div className="space-y-5 p-8">
+          <form className="space-y-5 p-8" onSubmit={onSubmit}>
             <div className="font-semibold">
-              {project.slug === "platform" ? (
-                <h1 className="text-2xl">Log in to Treasure</h1>
+              {project.slug === "app" || project.customAuth ? (
+                <h1 className="text-2xl">Log in to {project.name}</h1>
               ) : (
                 <>
                   <h2 className="leading-4">Log in with Treasure to play</h2>
@@ -156,20 +175,35 @@ const InnerLoginPage = () => {
                       Email
                     </label>
                     <input
-                      ref={emailRef}
+                      {...register("email", { required: true })}
                       id="email"
-                      className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
                       type="email"
+                      className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
                       disabled={isInputDisabled}
                     />
                   </div>
+                  {project.customAuth ? (
+                    <>
+                      <div className="space-y-1">
+                        <label
+                          htmlFor="password"
+                          className="block font-semibold"
+                        >
+                          Password
+                        </label>
+                        <input
+                          {...register("password", { required: true })}
+                          id="password"
+                          type="password"
+                          className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
+                          disabled={isInputDisabled}
+                        />
+                      </div>
+                    </>
+                  ) : null}
                   <Button
+                    type="submit"
                     className="w-full"
-                    onClick={() =>
-                      emailRef.current?.value
-                        ? startEmailLogin(emailRef.current.value)
-                        : undefined
-                    }
                     disabled={isInputDisabled}
                   >
                     Sign in
@@ -184,23 +218,9 @@ const InnerLoginPage = () => {
                     Continue with Google
                   </Button>
                 </div>
-                <span className="block text-center">or</span>
-                <div className="text-center">
-                  <ConnectWallet
-                    btnTitle="Connect Web3 Wallet"
-                    modalSize="compact"
-                    welcomeScreen={{ title: "" }}
-                    modalTitleIconUrl=""
-                    auth={{
-                      loginOptional: false,
-                      onLogin: handleLogin,
-                    }}
-                    switchToActiveChain
-                  />
-                </div>
               </>
             )}
-          </div>
+          </form>
         </div>
       </div>
     </>
@@ -209,10 +229,6 @@ const InnerLoginPage = () => {
 
 export default function LoginPage() {
   const { chainId } = useLoaderData<typeof loader>();
-  const smartWalletOptions: SmartWalletConfigOptions = {
-    factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
-    gasless: true,
-  };
   return (
     <ThirdwebProvider
       clientId={env.VITE_THIRDWEB_CLIENT_ID}
@@ -220,12 +236,6 @@ export default function LoginPage() {
       supportedChains={
         chainId === ArbitrumSepolia.chainId ? [ArbitrumSepolia] : [Arbitrum]
       }
-      supportedWallets={[
-        smartWallet(metamaskWallet(), smartWalletOptions),
-        smartWallet(coinbaseWallet(), smartWalletOptions),
-        smartWallet(walletConnect(), smartWalletOptions),
-        smartWallet(rainbowWallet(), smartWalletOptions),
-      ]}
       authConfig={{
         domain: env.VITE_THIRDWEB_AUTH_DOMAIN,
         authUrl: `${env.VITE_TDK_API_URL}/auth`,

@@ -19,7 +19,7 @@ const authenticateReplySchema = Type.Object({
 });
 
 const authVerifyBodySchema = Type.Object({
-  payload: authenticateReplySchema,
+  payload: Type.String(),
 });
 
 const authVerifyReplySchema = Type.Object({
@@ -89,10 +89,9 @@ export const authRoutes =
       },
       async (req, reply) => {
         const {
-          body: {
-            payload: { projectId, token },
-          },
+          body: { payload },
         } = req;
+        const { projectId, token } = JSON.parse(payload) as AuthenticateReply;
         const result: AuthVerifyReply = {
           userId: "",
           email: "",

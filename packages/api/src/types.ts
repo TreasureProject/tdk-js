@@ -1,6 +1,8 @@
 import type { PrismaClient } from "@prisma/client";
 import type { Engine } from "@thirdweb-dev/engine";
 
+import type { SUPPORTED_CHAIN_IDS } from "./utils/wagmi";
+
 export type TdkApiEnv = {
   PORT: string;
   DATABASE_URL: string;
@@ -18,3 +20,5 @@ export type TdkApiContext = {
   db: PrismaClient;
   engine: Engine;
 };
+
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];

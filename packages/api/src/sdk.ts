@@ -1,3 +1,4 @@
+import type { ProjectSlug } from "@treasure/tdk-core";
 import type {
   Abi,
   AbiParametersToPrimitiveTypes,
@@ -5,6 +6,7 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import type { AuthenciateBody, AuthenticateReply } from "./routes/auth";
 import type { ReadHarvesterReply } from "./routes/harvesters";
 import type { ReadProjectReply } from "./routes/projects";
 import type {
@@ -25,13 +27,13 @@ export class APIError extends Error {
 export class TDKAPI {
   baseUri: string;
   authToken?: string;
-  projectId?: string;
+  projectId?: ProjectSlug;
   chainId?: number;
 
   constructor(options: {
     baseUri: string;
     authToken?: string;
-    projectId?: string;
+    projectId?: ProjectSlug;
     chainId?: number;
   }) {
     const { baseUri, authToken, projectId, chainId } = options;
@@ -112,8 +114,13 @@ export class TDKAPI {
     this.authToken = undefined;
   }
 
+  auth = {
+    authenticate: (params: AuthenciateBody) =>
+      this.post<AuthenticateReply>(`/auth/authenticate`, params),
+  };
+
   project = {
-    findBySlug: (slug: string) =>
+    findBySlug: (slug: ProjectSlug) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
 

@@ -71,11 +71,13 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       ] = await readContracts(config, {
         contracts: [
           {
+            chainId,
             address: harvesterAddress,
             abi: harvesterAbi,
             functionName: "nftHandler",
           },
           {
+            chainId,
             address: harvesterAddress,
             abi: harvesterAbi,
             functionName: "depositCapPerWallet",
