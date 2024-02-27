@@ -18,6 +18,8 @@ const METADATA: Record<ProjectSlug, ProjectMetadata> = {
   },
   zeeverse: {
     name: "Zeeverse",
+    cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
+    color: "#8fd24f",
     customAuth: true,
   },
 };
