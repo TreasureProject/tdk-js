@@ -84,6 +84,7 @@ const InnerLoginPage = () => {
     logInWithSSO,
     logInWithCustomAuth,
   } = useTreasureLogin({
+    projectId: project.slug as ProjectSlug,
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],

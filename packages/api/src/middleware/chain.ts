@@ -1,8 +1,11 @@
 import type { FastifyInstance } from "fastify";
 
+import type { SupportedChainId } from "../types";
+import { SUPPORTED_CHAIN_IDS } from "../utils/wagmi";
+
 declare module "fastify" {
   interface FastifyRequest {
-    chainId: number;
+    chainId: SupportedChainId;
   }
 }
 
@@ -16,6 +19,8 @@ export const withChain = async (app: FastifyInstance) => {
     }
 
     req.chainId =
-      chainId && Number.isInteger(chainId) && chainId > 0 ? chainId : 42161;
+      chainId && (SUPPORTED_CHAIN_IDS as number[]).includes(chainId)
+        ? (chainId as SupportedChainId)
+        : 42161;
   });
 };

@@ -8,6 +8,7 @@ import {
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure/tdk-api";
+import type { ProjectSlug } from "@treasure/tdk-react";
 import { getContractAddress } from "@treasure/tdk-react";
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
@@ -85,6 +86,7 @@ const reducer = (state: State, action: Action): State => {
 };
 
 type Props = {
+  projectId: ProjectSlug;
   chainId: number;
   redirectUri: string;
   backendWallet: string;
@@ -95,6 +97,7 @@ const DEFAULT_ERROR_MESSAGE =
   "Sorry, we were unable to log you in. Please contact support.";
 
 export const useTreasureLogin = ({
+  projectId,
   chainId,
   redirectUri,
   backendWallet,
@@ -118,29 +121,37 @@ export const useTreasureLogin = ({
     () =>
       new TDKAPI({
         baseUri: env.VITE_TDK_API_URL,
-        projectId: "zeeverse",
+        projectId,
         chainId,
       }),
-    [chainId],
+    [projectId, chainId],
   );
 
   const handleLogin = useCallback(
     async (authToken: string) => {
       // Start on-chain session
       try {
+        console.debug("Revoking previous session keys");
         await revokeSessionKey(backendWallet);
       } catch (err) {
         console.error("Error revoking session key:", err);
       }
 
-      await createSessionKey({
-        keyAddress: backendWallet,
-        permissions: {
-          approvedCallTargets,
-          startDate: 0,
-          expirationDate: Date.now() + 1000 * 60 * 60 * 24 * 3, // in 3 days
-        },
-      });
+      console.log({ backendWallet, approvedCallTargets });
+
+      try {
+        console.debug("Creating new session key");
+        await createSessionKey({
+          keyAddress: backendWallet,
+          permissions: {
+            approvedCallTargets,
+            startDate: 0,
+            expirationDate: Date.now() + 1000 * 60 * 60 * 24 * 3, // in 3 days
+          },
+        });
+      } catch (err) {
+        console.error("Error creating session key:", err);
+      }
 
       // Redirect back to project
       window.location.href = `${redirectUri}?tdk_auth_token=${authToken}`;
@@ -160,15 +171,21 @@ export const useTreasureLogin = ({
       // Immediately toggle ref because `logInWallet` is not memoized
       didConnectEmbeddedWallet.current = false;
 
+      console.debug("Embedded wallet connected");
+
       // Fetch auth token for smart account
       (async () => {
+        let authToken: string;
         try {
-          const authToken = await logInWallet();
-          handleLogin(authToken);
+          console.debug("Fetching auth token for smart account");
+          authToken = await logInWallet();
         } catch (err) {
           console.error("Error logging in smart account:", err);
           dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+          return;
         }
+
+        await handleLogin(authToken);
       })();
     }
   }, [connectionStatus, logInWallet, handleLogin]);
@@ -227,14 +244,17 @@ export const useTreasureLogin = ({
     },
     logInWithCustomAuth: async (email: string, password: string) => {
       dispatch({ type: "START_CUSTOM_AUTH_LOGIN", email });
+      console.debug("Authenticating custom auth credentials");
       const result = await tdk.auth.authenticate({ email, password });
       await connectSmartWallet({
         connectPersonalWallet: async (embeddedWallet) => {
+          console.debug("Verifying custom auth credentials");
           const authResult = await embeddedWallet.authenticate({
             strategy: "auth_endpoint",
             payload: JSON.stringify(result),
             encryptionKey: "your-encryption-key",
           });
+          console.debug("Connecting Embedded wallet");
           await embeddedWallet.connect({ authResult });
           didConnectEmbeddedWallet.current = true;
           dispatch({ type: "FINISH_CUSTOM_AUTH_LOGIN" });

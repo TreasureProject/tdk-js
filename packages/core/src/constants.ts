@@ -92,6 +92,6 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x00a191804f5bc4942828ae8cde937a4b644d53cf",
     // Misc
     PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
-    TreasureLoginAccountFactory: "0xfa9db4a45418688d14224b7782a44a8401f68be7",
+    TreasureLoginAccountFactory: "0xe6a7a5935553d05ca47f5bfad55c14d9b55b88c9",
   },
 };
