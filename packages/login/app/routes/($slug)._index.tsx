@@ -208,15 +208,17 @@ const InnerLoginPage = () => {
                   >
                     Sign in
                   </Button>
-                  <Button
-                    variant="secondary"
-                    className="flex w-full items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
-                    onClick={() => logInWithSSO("google")}
-                    disabled={isInputDisabled}
-                  >
-                    <img src="/img/google.svg" />
-                    Continue with Google
-                  </Button>
+                  {!project.customAuth ? (
+                    <Button
+                      variant="secondary"
+                      className="flex w-full items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
+                      onClick={() => logInWithSSO("google")}
+                      disabled={isInputDisabled}
+                    >
+                      <img src="/img/google.svg" />
+                      Continue with Google
+                    </Button>
+                  ) : null}
                 </div>
               </>
             )}

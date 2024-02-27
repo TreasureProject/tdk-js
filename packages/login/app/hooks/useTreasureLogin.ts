@@ -137,8 +137,6 @@ export const useTreasureLogin = ({
         console.error("Error revoking session key:", err);
       }
 
-      console.log({ backendWallet, approvedCallTargets });
-
       try {
         console.debug("Creating new session key");
         await createSessionKey({
