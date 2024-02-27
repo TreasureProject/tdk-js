@@ -7,8 +7,10 @@ import {
   useSmartWallet,
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
+import { TDKAPI } from "@treasure/tdk-api";
 import { getContractAddress } from "@treasure/tdk-react";
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { env } from "~/utils/env";
 
 type State = {
   status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
@@ -23,6 +25,8 @@ type Action =
   | { type: "FINISH_EMAIL_LOGIN" }
   | { type: "START_SSO_LOGIN" }
   | { type: "FINISH_SSO_LOGIN"; email?: string }
+  | { type: "START_CUSTOM_AUTH_LOGIN"; email: string }
+  | { type: "FINISH_CUSTOM_AUTH_LOGIN" }
   | { type: "ERROR"; error: string };
 
 const reducer = (state: State, action: Action): State => {
@@ -59,6 +63,17 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         status: "LOADING",
         email: action.email,
+      };
+    case "START_CUSTOM_AUTH_LOGIN":
+      return {
+        ...state,
+        status: "LOADING",
+        email: action.email,
+      };
+    case "FINISH_CUSTOM_AUTH_LOGIN":
+      return {
+        ...state,
+        status: "LOADING",
       };
     case "ERROR":
       return {
@@ -98,6 +113,16 @@ export const useTreasureLogin = ({
   const { login: logInWallet } = useLogin();
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const { mutateAsync: revokeSessionKey } = useRevokeSessionKey();
+
+  const tdk = useMemo(
+    () =>
+      new TDKAPI({
+        baseUri: env.VITE_TDK_API_URL,
+        projectId: "zeeverse",
+        chainId,
+      }),
+    [chainId],
+  );
 
   const handleLogin = useCallback(
     async (authToken: string) => {
@@ -199,6 +224,22 @@ export const useTreasureLogin = ({
         console.error(`Error logging in with ${strategy}:`, err);
         dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
       }
+    },
+    logInWithCustomAuth: async (email: string, password: string) => {
+      dispatch({ type: "START_CUSTOM_AUTH_LOGIN", email });
+      const result = await tdk.auth.authenticate({ email, password });
+      await connectSmartWallet({
+        connectPersonalWallet: async (embeddedWallet) => {
+          const authResult = await embeddedWallet.authenticate({
+            strategy: "auth_endpoint",
+            payload: JSON.stringify(result),
+            encryptionKey: "your-encryption-key",
+          });
+          await embeddedWallet.connect({ authResult });
+          didConnectEmbeddedWallet.current = true;
+          dispatch({ type: "FINISH_CUSTOM_AUTH_LOGIN" });
+        },
+      });
     },
     handleLogin,
   };

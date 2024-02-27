@@ -4,6 +4,7 @@ CREATE TABLE "project" (
     "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "redirect_uris" TEXT[],
+    "custom_auth" BOOLEAN NOT NULL DEFAULT false,
     "icon" TEXT,
     "cover" TEXT,
     "color" TEXT,

@@ -6,6 +6,7 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import type { AuthenciateBody, AuthenticateReply } from "./routes/auth";
 import type { ReadHarvesterReply } from "./routes/harvesters";
 import type { ReadProjectReply } from "./routes/projects";
 import type {
@@ -112,6 +113,11 @@ export class TDKAPI {
   clearAuthToken() {
     this.authToken = undefined;
   }
+
+  auth = {
+    authenticate: (params: AuthenciateBody) =>
+      this.post<AuthenticateReply>(`/auth/authenticate`, params),
+  };
 
   project = {
     findBySlug: (slug: ProjectSlug) =>

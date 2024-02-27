@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import {
   type Contract,
@@ -9,9 +10,16 @@ import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";
 
-const NAMES: Record<ProjectSlug, string> = {
-  app: "Treasure",
-  zeeverse: "Zeeverse",
+type ProjectMetadata = Omit<Prisma.ProjectCreateInput, "slug">;
+
+const METADATA: Record<ProjectSlug, ProjectMetadata> = {
+  app: {
+    name: "Treasure",
+  },
+  zeeverse: {
+    name: "Zeeverse",
+    customAuth: true,
+  },
 };
 
 const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
@@ -36,18 +44,18 @@ const prisma = new PrismaClient();
 
 const createProject = ({
   slug,
-  name,
+  metadata,
   redirectUris = [],
   callTargets = [],
 }: {
   slug: string;
-  name: string;
+  metadata: ProjectMetadata;
   redirectUris?: string[];
   callTargets?: Contract[];
 }) => {
   const data = {
+    ...metadata,
     slug,
-    name,
     redirectUris,
     callTargets: {
       connectOrCreate: callTargets.flatMap((contract) => {
@@ -93,7 +101,7 @@ const createProject = ({
     for (const slug of PROJECT_SLUGS) {
       await createProject({
         slug,
-        name: NAMES[slug],
+        metadata: METADATA[slug],
         redirectUris: REDIRECT_URIS[slug][environment],
         callTargets: CALL_TARGETS[slug],
       });

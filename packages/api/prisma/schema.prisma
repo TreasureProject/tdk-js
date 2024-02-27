@@ -16,6 +16,7 @@ model Project {
   slug         String   @unique
   name         String
   redirectUris String[] @map("redirect_uris")
+  customAuth   Boolean  @default(false) @map("custom_auth")
   icon         String?
   cover        String?
   color        String?
