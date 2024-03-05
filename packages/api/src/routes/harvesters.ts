@@ -108,36 +108,42 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         ] = await readContracts(config, {
           contracts: [
             {
+              chainId,
               address: contractAddresses.MAGIC,
               abi: erc20Abi,
               functionName: "balanceOf",
               args: [smartAccountAddress],
             },
             {
+              chainId,
               address: contractAddresses.MAGIC,
               abi: erc20Abi,
               functionName: "allowance",
               args: [smartAccountAddress, harvesterAddress],
             },
             {
+              chainId,
               address: permitsAddress,
               abi: erc1155Abi,
               functionName: "balanceOf",
               args: [smartAccountAddress, permitsTokenId],
             },
             {
+              chainId,
               address: permitsAddress,
               abi: erc1155Abi,
               functionName: "isApprovedForAll",
               args: [smartAccountAddress, nftHandlerAddress],
             },
             {
+              chainId,
               address: harvesterAddress,
               abi: harvesterAbi,
               functionName: "getUserDepositCap",
               args: [smartAccountAddress],
             },
             {
+              chainId,
               address: harvesterAddress,
               abi: harvesterAbi,
               functionName: "getUserGlobalDeposit",
