@@ -1,21 +1,17 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useQuery } from "@tanstack/react-query";
 import {
   type AddressString,
   Button,
   TreasureLoginButton,
   erc20Abi,
   erc1155Abi,
-  harvesterAbi,
-  nftHandlerAbi,
   useApproval,
   useContractAddresses,
+  useHarvester,
   useTreasure,
 } from "@treasure/tdk-react";
-import { useState } from "react";
 import { formatEther, parseEther, zeroAddress, zeroHash } from "viem";
-import { arbitrumSepolia } from "viem/chains";
-import { useAccount, useChainId, useReadContracts } from "wagmi";
+import { useAccount, useReadContracts } from "wagmi";
 
 const MAGIC_AMOUNT = parseEther("1000");
 
@@ -23,34 +19,23 @@ export const App = () => {
   const { address, tdk, logOut } = useTreasure();
   const { address: eoaAddress = zeroAddress, isConnected: isEOAConnected } =
     useAccount();
-  const chainId = useChainId();
   const contractAddresses = useContractAddresses();
   const smartAccountAddress = (address ?? zeroAddress) as AddressString;
-  const [logs, setLogs] = useState<{ date: Date; message: string }[]>([]);
 
-  const harvesterAddress = contractAddresses.HarvesterEmerion;
-
-  const addLog = (message: string) =>
-    setLogs((curr) => [...curr, { date: new Date(), message }]);
-
-  const { data: harvesterData, refetch: refetchHarvesterData } = useQuery({
-    queryKey: ["harvester", harvesterAddress, smartAccountAddress],
-    queryFn: () => tdk?.harvester.get(harvesterAddress),
-  });
-
-  const nftHandlerAddress = (harvesterData?.nftHandlerAddress ??
-    zeroAddress) as AddressString;
-  const permitTokenId = BigInt(harvesterData?.permitsTokenId ?? 0n);
-  const smartAccountMagic = BigInt(harvesterData?.userMagicBalance ?? 0n);
-  const smartAccountPermits = harvesterData?.userPermitsBalance ?? 0;
-  const harvesterDepositCap = BigInt(harvesterData?.userDepositCap ?? 0n);
-  const harvesterDeposit = BigInt(harvesterData?.userDepositAmount ?? 0n);
-  const harvesterPermits =
-    harvesterData?.permitsDepositCap &&
-    BigInt(harvesterData.permitsDepositCap) > 0
-      ? Number(formatEther(harvesterDepositCap)) /
-        Number(formatEther(BigInt(harvesterData.permitsDepositCap)))
-      : 0;
+  const {
+    data: {
+      harvesterAddress,
+      permitTokenId,
+      smartAccountMagic,
+      smartAccountPermits,
+      harvesterDepositCap,
+      harvesterDeposit,
+      harvesterPermits,
+    },
+    deposit,
+    withdrawAll,
+    refetch: refetchHarvesterData,
+  } = useHarvester({ contract: "HarvesterEmerion", eoaAddress });
 
   const {
     data: { eoaMagic = 0n, eoaPermits = 0n } = {},
@@ -103,108 +88,11 @@ export const App = () => {
     type: "ERC1155",
   });
 
-  const handleDeposit = async (amount: bigint) => {
-    if (smartAccountMagic < amount) {
-      // Queue MAGIC transfer from EOA to smart account
-      addLog(
-        `Transferring ${formatEther(
-          amount,
-        )} MAGIC from connected wallet to smart account`,
-      );
-      await tdk?.transaction.create({
-        address: contractAddresses.MAGIC,
-        abi: erc20Abi,
-        functionName: "transferFrom",
-        args: [eoaAddress, smartAccountAddress, amount],
-      });
-      refetch();
-    }
-
-    if (harvesterDepositCap - harvesterDeposit < amount) {
-      if (smartAccountPermits < 1) {
-        // Queue Ancient Permit transfer from EOA to smart account
-        addLog(
-          "Transferring Ancient Permit from connected wallet to smart account",
-        );
-        await tdk?.transaction.create({
-          address: contractAddresses.Consumables,
-          abi: erc1155Abi,
-          functionName: "safeTransferFrom",
-          args: [eoaAddress, smartAccountAddress, permitTokenId, 1n, zeroHash],
-        });
-      }
-
-      // Queue Consumables-NftHandler approval
-      addLog("Approving Harvester to transfer Consumables");
-      await tdk?.transaction.create({
-        address: contractAddresses.Consumables,
-        abi: erc1155Abi,
-        functionName: "setApprovalForAll",
-        args: [nftHandlerAddress, true],
-      });
-
-      // Queue Ancient Permit deposit
-      addLog("Staking Ancient Permit to Harvester");
-      await tdk?.transaction.create({
-        address: nftHandlerAddress,
-        abi: nftHandlerAbi,
-        functionName: "stakeNft",
-        args: [contractAddresses.Consumables, permitTokenId, 1n],
-      });
-    }
-
-    // Queue MAGIC-Harvester approval
-    addLog("Approving Harvester to transfer MAGIC");
-    await tdk?.transaction.create({
-      address: contractAddresses.MAGIC,
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [harvesterAddress, amount],
-    });
-
-    // // Queue Harvester deposit
-    addLog(`Depositing ${formatEther(amount)} MAGIC to Harvester`);
-    await tdk?.transaction.create({
-      address: harvesterAddress,
-      abi: harvesterAbi,
-      functionName: "deposit",
-      args: [amount, chainId === arbitrumSepolia.id ? 1n : 0n],
-    });
-
-    refetch();
-  };
-
-  const handleWithdraw = async () => {
-    if (harvesterDeposit > 0) {
-      addLog("Withdrawing all MAGIC from Harvester");
-      await tdk?.transaction.create({
-        address: harvesterAddress,
-        abi: harvesterAbi,
-        functionName: "withdrawAll",
-        args: [],
-      });
-    }
-
-    if (harvesterPermits > 0) {
-      addLog("Withdrawing all Ancient Permits from Harvester");
-      await tdk?.transaction.create({
-        address: nftHandlerAddress,
-        abi: nftHandlerAbi,
-        functionName: "unstakeNft",
-        args: [
-          contractAddresses.Consumables,
-          permitTokenId,
-          BigInt(harvesterPermits),
-        ],
-      });
-    }
-
-    refetch();
-  };
-
   const handleTransfer = async () => {
     if (smartAccountMagic > 0) {
-      addLog("Transferring all MAGIC from smart account to connected wallet");
+      console.debug(
+        "Transferring all MAGIC from smart account to connected wallet",
+      );
       await tdk?.transaction.create({
         address: contractAddresses.MAGIC,
         abi: erc20Abi,
@@ -214,7 +102,7 @@ export const App = () => {
     }
 
     if (smartAccountPermits > 0) {
-      addLog(
+      console.debug(
         "Transferring all Ancient Permits from smart account to connected wallet",
       );
       await tdk?.transaction.create({
@@ -338,27 +226,25 @@ export const App = () => {
                     hasInsufficientFunds ||
                     (!hasDepositCapRemaining && !hasPermits)
                   }
-                  onClick={() => handleDeposit(MAGIC_AMOUNT)}
+                  onClick={async () => {
+                    await deposit(MAGIC_AMOUNT);
+                    refetch();
+                  }}
                 >
                   Deposit 1,000 MAGIC to Harvester
                 </Button>
                 {harvesterDeposit > 0 || harvesterPermits > 0 ? (
-                  <Button onClick={handleWithdraw}>Withdraw All</Button>
+                  <Button
+                    onClick={async () => {
+                      await withdrawAll();
+                      refetch();
+                    }}
+                  >
+                    Withdraw All
+                  </Button>
                 ) : null}
               </div>
             </div>
-            {logs.length > 0 ? (
-              <div className="space-y-1">
-                <h2 className="font-semibold">Logs</h2>
-                <ol className="text-sm">
-                  {logs.map(({ date, message }, i) => (
-                    <li key={i}>
-                      {date.toISOString()}: {message}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            ) : null}
           </>
         ) : null}
       </main>
