@@ -22,7 +22,7 @@
     "@fastify/type-provider-typebox": "^4.0.0",
     "@prisma/client": "^5.3.0",
     "@sinclair/typebox": "^0.32.5",
-    "@thirdweb-dev/auth": "^4.1.4",
+    "@thirdweb-dev/auth": "4.1.38-nightly-862905e16-20240307061523",
     "@thirdweb-dev/engine": "^0.0.5",
     "@treasure/tdk-core": "*",
     "@wagmi/core": "^2.6.0",
