@@ -1,6 +1,9 @@
 import { TDKAPI } from "@treasure/tdk-api";
-import { type ProjectSlug, TreasureClient } from "@treasure/tdk-core";
-import { jwtDecode } from "jwt-decode";
+import {
+  type ProjectSlug,
+  TreasureClient,
+  decodeAuthToken,
+} from "@treasure/tdk-core";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -120,8 +123,8 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
 
     // Mark as logged in if we have a valid match
     if (authToken) {
-      const { exp } = jwtDecode<{ exp?: number }>(authToken);
-      if (!exp || exp * 1000 > Date.now()) {
+      const exp = decodeAuthToken(authToken).exp ?? 0;
+      if (exp * 1000 > Date.now()) {
         dispatch({ type: "COMPLETE_AUTH", authToken });
       } else {
         clearStoredAuthToken();
@@ -134,7 +137,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
       return undefined;
     }
 
-    return jwtDecode<{ sub: string }>(state.authToken).sub;
+    return decodeAuthToken(state.authToken).sub;
   }, [state.authToken]);
 
   return (

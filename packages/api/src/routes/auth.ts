@@ -1,6 +1,6 @@
 import { type Static, Type } from "@sinclair/typebox";
+import { decodeAuthToken } from "@treasure/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
-import { jwtDecode } from "jwt-decode";
 
 import "../middleware/project";
 import "../middleware/swagger";
@@ -105,7 +105,7 @@ export const authRoutes =
           if (user.email_verified_at) {
             result.userId = user.id;
             result.email = user.email;
-            result.exp = jwtDecode(token).exp;
+            result.exp = decodeAuthToken(token).exp;
           }
         }
 

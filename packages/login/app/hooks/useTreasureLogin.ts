@@ -7,7 +7,7 @@ import {
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure/tdk-api";
 import type { ProjectSlug } from "@treasure/tdk-react";
-import { getContractAddress } from "@treasure/tdk-react";
+import { decodeAuthToken, getContractAddress } from "@treasure/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
 
@@ -166,7 +166,7 @@ export const useTreasureLogin = ({
             await smartWallet.createSessionKey(backendWallet, {
               approvedCallTargets,
               startDate: 0,
-              expirationDate: Date.now() + 1000 * 60 * 60 * 24 * 3, // in 3 days
+              expirationDate: (decodeAuthToken(authToken).exp ?? 0) * 1000,
             });
           } catch (err) {
             console.error("Error creating new session key:", err);
