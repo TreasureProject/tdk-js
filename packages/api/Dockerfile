@@ -18,9 +18,6 @@ COPY . .
 # Install dependencies
 RUN npm install --include=dev
 
-# Generate code
-RUN npm run generate
-
 # Build application
 RUN npm run build:api
 

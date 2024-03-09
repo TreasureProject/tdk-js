@@ -5,7 +5,7 @@
   "exports": "./dist/sdk.js",
   "types": "./dist/sdk.d.ts",
   "scripts": {
-    "build": "tsup",
+    "build": "npm run generate && tsup",
     "generate": "prisma generate",
     "dev": "npm run build && concurrently \"npm run build -- --watch\" \"nodemon -w ./dist/index.js ./dist/index.js\"",
     "start": "node ./dist/index.js",
