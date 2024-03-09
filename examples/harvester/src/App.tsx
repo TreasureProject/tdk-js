@@ -76,6 +76,7 @@ export const App = () => {
       operatorAddress: smartAccountAddress,
       type: "ERC20",
       amount: MAGIC_AMOUNT,
+      onSuccess: () => refetch(),
     });
 
   // Prepare approval for smart account to transfer Ancient Permits from EOA
@@ -86,6 +87,7 @@ export const App = () => {
     contractAddress: contractAddresses.Consumables,
     operatorAddress: smartAccountAddress,
     type: "ERC1155",
+    onSuccess: () => refetch(),
   });
 
   const handleTransfer = async () => {
