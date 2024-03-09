@@ -7,7 +7,7 @@ import {
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure/tdk-api";
 import type { ProjectSlug } from "@treasure/tdk-react";
-import { decodeAuthToken, getContractAddress } from "@treasure/tdk-react";
+import { getContractAddress } from "@treasure/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
 
@@ -129,8 +129,34 @@ export const useTreasureLogin = ({
 
       console.debug("Embedded wallet connected");
 
-      // Fetch auth token for smart account
+      const createSessionKey = () =>
+        smartWallet.createSessionKey(backendWallet, {
+          approvedCallTargets,
+          startDate: 0,
+          expirationDate: Date.now() + 86_400 * 1000,
+        });
+
+      // Start smart wallet session
       (async () => {
+        let didCreateSession = false;
+
+        // If smart wallet isn't deployed yet, create a new session to bundle the two txs
+        if (!(await smartWallet.isDeployed())) {
+          try {
+            console.debug("Deploying smart wallet and creating session key");
+            await createSessionKey();
+          } catch (err) {
+            console.error(
+              "Error deploying smart wallet and creating session key:",
+              err,
+            );
+            dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+            return;
+          }
+
+          didCreateSession = true;
+        }
+
         let authToken: string;
         try {
           console.debug("Fetching auth token for smart account");
@@ -142,36 +168,37 @@ export const useTreasureLogin = ({
         }
 
         // Check active signers to see if requested session is already available
-        const activeSigners = await smartWallet.getAllActiveSigners();
-        const requestedCallTargets = approvedCallTargets.map((callTarget) =>
-          callTarget.toLowerCase(),
-        );
-        const hasActiveSession = activeSigners.some(
-          ({ signer, permissions }) => {
-            const signerCallTargets = permissions.approvedCallTargets.map(
-              (callTarget) => callTarget.toLowerCase(),
-            );
-            return (
-              signer.toLowerCase() === backendWallet.toLowerCase() &&
-              requestedCallTargets.every((callTarget) =>
-                signerCallTargets.includes(callTarget),
-              )
-            );
-          },
-        );
+        if (!didCreateSession) {
+          console.debug("Checking for existing sessions");
+          const activeSigners = await smartWallet.getAllActiveSigners();
+          const requestedCallTargets = approvedCallTargets.map((callTarget) =>
+            callTarget.toLowerCase(),
+          );
+          const hasActiveSession = activeSigners.some(
+            ({ signer, permissions }) => {
+              const signerCallTargets = permissions.approvedCallTargets.map(
+                (callTarget) => callTarget.toLowerCase(),
+              );
+              return (
+                signer.toLowerCase() === backendWallet.toLowerCase() &&
+                requestedCallTargets.every((callTarget) =>
+                  signerCallTargets.includes(callTarget),
+                )
+              );
+            },
+          );
 
-        if (!hasActiveSession) {
-          console.debug("Creating new session key");
-          try {
-            await smartWallet.createSessionKey(backendWallet, {
-              approvedCallTargets,
-              startDate: 0,
-              expirationDate: (decodeAuthToken(authToken).exp ?? 0) * 1000,
-            });
-          } catch (err) {
-            console.error("Error creating new session key:", err);
-            dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
-            return;
+          if (!hasActiveSession) {
+            try {
+              console.debug("Creating new session key");
+              await createSessionKey();
+            } catch (err) {
+              console.error("Error creating new session key:", err);
+              dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+              return;
+            }
+          } else {
+            console.debug("Using existing session key");
           }
         }
 
