@@ -10,6 +10,7 @@ export { TreasureLoginButton } from "./components/login/TreasureLoginButton";
 export { Button } from "./components/ui/Button";
 export { TreasureProvider, useTreasure } from "./context";
 export { useApproval } from "./hooks/approvals/useApproval";
+export { useHarvester } from "./hooks/harvesters/useHarvester";
 export {
   useContractAddress,
   useContractAddresses,

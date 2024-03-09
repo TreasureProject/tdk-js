@@ -22,6 +22,9 @@ export const withAuth = async (
     authOptions: {
       uri: `https://${env.THIRDWEB_AUTH_DOMAIN}`,
     },
+    thirdwebAuthOptions: {
+      secretKey: env.THIRDWEB_SECRET_KEY,
+    },
     callbacks: {
       onLogin: async (smartAccountAddress, req) => {
         const user = await db.user.upsert({

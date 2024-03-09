@@ -23,4 +23,5 @@ export {
   getCurrencyAddress,
   getTokenAddress,
 } from "./utils/currency";
+export { decodeAuthToken } from "./utils/jwt";
 export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
