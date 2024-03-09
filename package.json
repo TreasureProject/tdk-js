@@ -23,6 +23,7 @@
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
     "test": "vitest",
+    "preinstall": "patch-package",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^9.0.10",
     "lint-staged": "^15.0.0",
+    "patch-package": "^8.0.0",
     "prettier": "^3.0.3",
     "prettier-plugin-prisma": "^5.0.0",
     "prettier-plugin-tailwindcss": "^0.5.5",

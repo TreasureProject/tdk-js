@@ -1,0 +1,12 @@
+diff --git a/node_modules/@eth-optimism/sdk/package.json b/node_modules/@eth-optimism/sdk/package.json
+index a5f74ae..7070042 100644
+--- a/node_modules/@eth-optimism/sdk/package.json
++++ b/node_modules/@eth-optimism/sdk/package.json
+@@ -62,7 +62,6 @@
+     "all": "pnpm clean && pnpm build && pnpm test && pnpm lint:fix && pnpm lint",
+     "build": "tsc -p tsconfig.json",
+     "clean": "rimraf dist/ ./tsconfig.tsbuildinfo",
+-    "preinstall": "npx only-allow pnpm",
+     "lint": "pnpm lint:fix && pnpm lint:check",
+     "lint:check": "eslint . --max-warnings=0",
+     "lint:fix": "pnpm lint:check --fix",
