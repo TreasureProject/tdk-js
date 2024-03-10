@@ -16,5 +16,10 @@
     "jsx": "react-jsx",
     "types": ["node"]
   },
-  "include": ["./packages/*/src/**/*.ts?", "./packages/*/src/**/*.d.ts"]
+  "include": [
+    "./apps/*/src/**/*.ts?",
+    "./apps/*/src/**/*.d.ts",
+    "./packages/*/src/**/*.ts?",
+    "./packages/*/src/**/*.d.ts"
+  ]
 }

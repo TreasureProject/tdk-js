@@ -4,20 +4,20 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "build:core": "npm run build --prefix ./packages/core",
-    "build:api": "npm run build:core && npm run build --prefix ./packages/api",
+    "build:api": "npm run build:core && npm run build --prefix ./apps/api",
     "build:react": "npm run build:api && npm run build --prefix ./packages/react",
-    "build:login": "npm run build:react && npm run build --prefix ./packages/login",
+    "build:login": "npm run build:react && npm run build --prefix ./apps/login",
     "build:examples:harvester": "npm run build:react && npm run build --prefix ./examples/harvester",
     "build:examples:payments": "npm run build:react && npm run build --prefix ./examples/payments",
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:api\" \"npm run dev:react\"",
     "dev:core": "npm run dev --prefix ./packages/core",
-    "dev:api": "npm run dev --prefix ./packages/api",
-    "dev:login": "npm run dev --prefix ./packages/login",
+    "dev:api": "npm run dev --prefix ./apps/api",
+    "dev:login": "npm run dev --prefix ./apps/login",
     "dev:react": "npm run dev --prefix ./packages/react",
     "dev:examples:harvester": "npm run dev --prefix ./examples/harvester",
     "dev:examples:payments": "npm run dev --prefix ./examples/payments",
-    "start:api": "npm start --prefix ./packages/api",
-    "start:login": "npm start --prefix ./packages/login",
+    "start:api": "npm start --prefix ./apps/api",
+    "start:login": "npm start --prefix ./apps/login",
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
@@ -51,6 +51,7 @@
     "vitest": "^1.0.1"
   },
   "workspaces": [
+    "apps/*",
     "packages/*",
     "examples/*"
   ]

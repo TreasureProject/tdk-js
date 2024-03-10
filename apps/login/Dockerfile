@@ -22,7 +22,7 @@ RUN npm install --include=dev
 
 # Create environment file
 RUN --mount=type=secret,id=dotenv,dst=env \
-    tr ' ' '\n' < env > ./packages/login/.env
+    tr ' ' '\n' < env > ./apps/login/.env
 
 # Build application
 RUN npm run build:login

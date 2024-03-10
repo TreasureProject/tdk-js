@@ -7,8 +7,8 @@ Example showing how front-ends can interact with the Treasure Development Kit to
 ## Prerequisites
 
 - [>= Node 20.11.0](https://nodejs.org/en)
-- Running [TDK API](../../packages/api)
-- Running [TDK Login](../../packages/login)
+- Running [TDK API](../../apps/api)
+- Running [TDK Login](../../apps/login)
 
 ## Development
 
