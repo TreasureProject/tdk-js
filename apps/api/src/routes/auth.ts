@@ -3,7 +3,6 @@ import { decodeAuthToken } from "@treasure/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/project";
-import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
 import type { ErrorReply } from "../utils/schema";
 import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";

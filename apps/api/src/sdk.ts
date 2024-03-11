@@ -13,6 +13,7 @@ import type {
   CreateTransactionReply,
   ReadTransactionReply,
 } from "./routes/transactions";
+import type { ReadCurrentUserReply } from "./routes/users";
 import type { ErrorReply } from "./utils/schema";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
@@ -122,6 +123,10 @@ export class TDKAPI {
   project = {
     findBySlug: (slug: ProjectSlug) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
+  };
+
+  user = {
+    me: () => this.get<ReadCurrentUserReply>("/users/me"),
   };
 
   transaction = {

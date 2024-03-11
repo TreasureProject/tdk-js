@@ -4,7 +4,6 @@ import type { FastifyPluginAsync } from "fastify";
 import { getUser } from "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/project";
-import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
 import { type ErrorReply, nullableStringSchema } from "../utils/schema";
 

@@ -13,6 +13,7 @@ import { authRoutes } from "./routes/auth";
 import { harvestersRoutes } from "./routes/harvesters";
 import { projectsRoutes } from "./routes/projects";
 import { transactionsRoutes } from "./routes/transactions";
+import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { getEnv } from "./utils/env";
 
@@ -46,6 +47,7 @@ const main = async () => {
   // Routes
   await Promise.all([
     app.register(authRoutes(ctx)),
+    app.register(usersRoutes(ctx)),
     app.register(projectsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes),

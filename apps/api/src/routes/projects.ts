@@ -2,7 +2,6 @@ import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
-import "../middleware/swagger";
 import type { TdkApiContext } from "../types";
 import { nullableStringSchema } from "../utils/schema";
 

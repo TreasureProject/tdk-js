@@ -31,6 +31,8 @@ export const withSwagger = async (app: FastifyInstance) => {
         nextSchema.tags = ["projects"];
       } else if (url.startsWith("/transactions")) {
         nextSchema.tags = ["transactions"];
+      } else if (url.startsWith("/users")) {
+        nextSchema.tags = ["users"];
       }
 
       if (nextSchema.response) {
