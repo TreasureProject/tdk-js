@@ -2,8 +2,6 @@
   "name": "@treasure/tdk-api",
   "version": "1.0.0",
   "type": "module",
-  "exports": "./dist/sdk.js",
-  "types": "./dist/sdk.d.ts",
   "scripts": {
     "build": "npm run generate && tsup",
     "generate": "prisma generate",

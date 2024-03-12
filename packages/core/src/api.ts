@@ -6,15 +6,18 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
-import type { AuthenciateBody, AuthenticateReply } from "./routes/auth";
-import type { ReadHarvesterReply } from "./routes/harvesters";
-import type { ReadProjectReply } from "./routes/projects";
+import type {
+  AuthenciateBody,
+  AuthenticateReply,
+} from "../../../apps/api/src/routes/auth";
+import type { ReadHarvesterReply } from "../../../apps/api/src/routes/harvesters";
+import type { ReadProjectReply } from "../../../apps/api/src/routes/projects";
 import type {
   CreateTransactionReply,
   ReadTransactionReply,
-} from "./routes/transactions";
-import type { ReadCurrentUserReply } from "./routes/users";
-import type { ErrorReply } from "./utils/schema";
+} from "../../../apps/api/src/routes/transactions";
+import type { ReadCurrentUserReply } from "../../../apps/api/src/routes/users";
+import type { ErrorReply } from "../../../apps/api/src/utils/schema";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {

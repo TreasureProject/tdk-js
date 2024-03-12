@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
-import { TDKAPI } from "@treasure/tdk-api";
+import { TDKAPI } from "@treasure/tdk-core";
 import { Button, type ProjectSlug } from "@treasure/tdk-react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";

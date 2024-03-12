@@ -3,7 +3,6 @@ import { erc20Abi, erc721Abi } from "viem";
 export * from "./types";
 
 export { PROJECT_SLUGS, TOKEN_IDS } from "./constants";
-export { TreasureClient } from "./TreasureClient";
 export { erc20Abi };
 export { erc721Abi };
 export { erc1155Abi } from "./abis/erc1155Abi";
@@ -11,6 +10,7 @@ export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
 export { priceFeedAbi } from "./abis/priceFeedAbi";
+export { TDKAPI } from "./api";
 export { sumArray } from "./utils/array";
 export {
   getContractAddress,
