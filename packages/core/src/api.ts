@@ -1,4 +1,3 @@
-import type { ProjectSlug } from "@treasure/tdk-core";
 import type {
   Abi,
   AbiParametersToPrimitiveTypes,
@@ -23,6 +22,7 @@ import {
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
 } from "./constants";
+import type { ProjectSlug } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
