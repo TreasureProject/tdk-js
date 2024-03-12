@@ -1,4 +1,3 @@
-import { type Static, Type } from "@sinclair/typebox";
 import {
   type AddressString,
   erc20Abi,
@@ -12,29 +11,13 @@ import { zeroAddress } from "viem";
 
 import { getUser } from "../middleware/auth";
 import "../middleware/chain";
-import type { ErrorReply } from "../utils/schema";
+import {
+  type ErrorReply,
+  type ReadHarvesterParams,
+  type ReadHarvesterReply,
+  readHarvesterReplySchema,
+} from "../schema";
 import { config } from "../utils/wagmi";
-
-const readHarvesterParamsSchema = Type.Object({
-  id: Type.String(),
-});
-
-const readHarvesterReplySchema = Type.Object({
-  id: Type.String(),
-  nftHandlerAddress: Type.String(),
-  permitsAddress: Type.String(),
-  permitsTokenId: Type.String(),
-  permitsDepositCap: Type.String(),
-  userMagicBalance: Type.String(),
-  userPermitsBalance: Type.Number(),
-  userMagicAllowance: Type.String(),
-  userApprovedPermits: Type.Boolean(),
-  userDepositCap: Type.String(),
-  userDepositAmount: Type.String(),
-});
-
-export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
-export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
 
 export const harvestersRoutes: FastifyPluginAsync = async (app) => {
   app.get<{

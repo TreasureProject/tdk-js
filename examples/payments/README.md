@@ -4,8 +4,6 @@ The Payments module facilitates commerce within games. Developers can effortless
 
 [Click here](https://docs.treasure.lol/infrastructure/game-development-suite/payments) to view the full module documentation.
 
-[Live Demo](https://tdk-payments-example.vercel.app)
-
 ## Prerequisites
 
 - [>= Node 20.11.0](https://nodejs.org/en)

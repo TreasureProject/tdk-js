@@ -15,10 +15,10 @@ import { useContractAddresses } from "../useContractAddress";
 
 type Props = {
   contract: Contract;
-  eoaAddress: AddressString;
+  userAddress: AddressString;
 };
 
-export const useHarvester = ({ contract, eoaAddress }: Props) => {
+export const useHarvester = ({ contract, userAddress }: Props) => {
   const { address, tdk } = useTreasure();
   const chainId = useChainId();
   const contractAddresses = useContractAddresses();
@@ -73,7 +73,7 @@ export const useHarvester = ({ contract, eoaAddress }: Props) => {
             address: contractAddresses.MAGIC,
             abi: erc20Abi,
             functionName: "transferFrom",
-            args: [eoaAddress, smartAccountAddress, amount],
+            args: [userAddress, smartAccountAddress, amount],
           }),
         );
       }
@@ -90,7 +90,7 @@ export const useHarvester = ({ contract, eoaAddress }: Props) => {
               abi: erc1155Abi,
               functionName: "safeTransferFrom",
               args: [
-                eoaAddress,
+                userAddress,
                 smartAccountAddress,
                 permitTokenId,
                 1n,

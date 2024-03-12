@@ -1,37 +1,20 @@
-import { type Static, Type } from "@sinclair/typebox";
 import { decodeAuthToken } from "@treasure/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/project";
+import {
+  type AuthVerifyBody,
+  type AuthVerifyReply,
+  type AuthenciateBody,
+  type AuthenticateReply,
+  type ErrorReply,
+  authVerifyBodySchema,
+  authVerifyReplySchema,
+  authenticateBodySchema,
+  authenticateReplySchema,
+} from "../schema";
 import type { TdkApiContext } from "../types";
-import type { ErrorReply } from "../utils/schema";
 import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
-
-const authenticateBodySchema = Type.Object({
-  email: Type.String(),
-  password: Type.String(),
-});
-
-const authenticateReplySchema = Type.Object({
-  projectId: Type.String(),
-  token: Type.String(),
-});
-
-const authVerifyBodySchema = Type.Object({
-  payload: Type.String(),
-});
-
-const authVerifyReplySchema = Type.Object({
-  userId: Type.String(),
-  email: Type.String(),
-  exp: Type.Optional(Type.Number()),
-});
-
-export type AuthenciateBody = Static<typeof authenticateBodySchema>;
-export type AuthenticateReply = Static<typeof authenticateReplySchema>;
-
-export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
-export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;
 
 export const authRoutes =
   ({ env }: TdkApiContext): FastifyPluginAsync =>

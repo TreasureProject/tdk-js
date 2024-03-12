@@ -1,9 +1,11 @@
-import { TDKAPI } from "@treasure/tdk-api";
 import {
-  type ProjectSlug,
-  TreasureClient,
-  decodeAuthToken,
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+  DEFAULT_TDK_LOGIN_DOMAIN,
+  TDKAPI,
 } from "@treasure/tdk-core";
+import { type ProjectSlug, decodeAuthToken } from "@treasure/tdk-core";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -24,20 +26,27 @@ type Config = {
   chainId?: number;
   apiUri?: string;
   authConfig?: {
-    loginDomain: string;
-    redirectUri: string;
+    loginDomain?: string;
+    redirectUri?: string;
   };
 };
 
-type State = Config & {
+type State = {
+  project: ProjectSlug;
+  chainId: number;
+  apiUri: string;
+  authConfig: {
+    loginDomain: string;
+    redirectUri: string;
+  };
   status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
-  client: TreasureClient;
   tdk?: TDKAPI;
   authToken?: string;
 };
 
 type ContextValues = {
   address?: string;
+  isAuthenticated: boolean;
   onStartAuth: () => void;
   onCompleteAuth: (authToken: string) => void;
   logOut: () => void;
@@ -91,19 +100,30 @@ export const useTreasure = () => {
 type Props = PropsWithChildren<Config>;
 
 export const TreasureProvider = ({ children, ...config }: Props) => {
-  const { project = "app" } = config;
+  const {
+    project = DEFAULT_TDK_APP,
+    chainId = DEFAULT_TDK_CHAIN_ID,
+    apiUri = DEFAULT_TDK_API_BASE_URI,
+    authConfig,
+  } = config;
+  const {
+    loginDomain = DEFAULT_TDK_LOGIN_DOMAIN,
+    redirectUri = window.location.href,
+  } = authConfig ?? {};
   const [state, dispatch] = useReducer(reducer, {
-    ...config,
-    status: "IDLE",
     project,
-    client: new TreasureClient(project),
-    tdk: config.apiUri
-      ? new TDKAPI({
-          baseUri: config.apiUri,
-          projectId: project,
-          chainId: config.chainId,
-        })
-      : undefined,
+    chainId,
+    apiUri,
+    authConfig: {
+      loginDomain,
+      redirectUri,
+    },
+    status: "IDLE",
+    tdk: new TDKAPI({
+      baseUri: config.apiUri,
+      project,
+      chainId: config.chainId,
+    }),
   });
 
   useEffect(() => {
@@ -145,6 +165,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
       value={{
         ...state,
         address,
+        isAuthenticated: !!address,
         onStartAuth: () => dispatch({ type: "START_AUTH" }),
         onCompleteAuth: (authToken) =>
           dispatch({ type: "COMPLETE_AUTH", authToken }),

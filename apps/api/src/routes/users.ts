@@ -1,18 +1,12 @@
-import { type Static, Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
 import { getUser } from "../middleware/auth";
+import {
+  type ErrorReply,
+  type ReadCurrentUserReply,
+  readCurrentUserReplySchema,
+} from "../schema";
 import type { TdkApiContext } from "../types";
-import type { ErrorReply } from "../utils/schema";
-import { nullableStringSchema } from "../utils/schema";
-
-const readCurrentUserReplySchema = Type.Object({
-  id: Type.String(),
-  smartAccountAddress: Type.String(),
-  email: nullableStringSchema,
-});
-
-export type ReadCurrentUserReply = Static<typeof readCurrentUserReplySchema>;
 
 export const usersRoutes =
   ({ db }: TdkApiContext): FastifyPluginAsync =>

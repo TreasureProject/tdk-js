@@ -3,7 +3,11 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
-import { TDKAPI } from "@treasure/tdk-api";
+import {
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+  TDKAPI,
+} from "@treasure/tdk-core";
 import { Button, type ProjectSlug } from "@treasure/tdk-react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
@@ -19,9 +23,11 @@ type LoginForm = {
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const slug = (params.slug as ProjectSlug) ?? "app";
+  const slug = (params.slug as ProjectSlug) ?? DEFAULT_TDK_APP;
   const url = new URL(request.url);
-  const chainId = Number(url.searchParams.get("chain_id") || 0);
+  const chainId = Number(
+    url.searchParams.get("chain_id") || DEFAULT_TDK_CHAIN_ID,
+  );
 
   const project = await (async () => {
     try {
@@ -43,10 +49,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     });
   }
 
-  const redirectUri =
-    url.searchParams.get("redirect_uri") || "http://localhost:5174";
+  const redirectUri = url.searchParams.get("redirect_uri");
 
-  if (!project.redirectUris.includes(redirectUri)) {
+  if (!redirectUri || !project.redirectUris.includes(redirectUri)) {
     throw new Response(null, {
       status: 403,
       statusText: "Forbidden",
@@ -55,7 +60,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   return json({
     project,
-    chainId: chainId || 42161,
+    chainId,
     redirectUri,
   });
 };
@@ -84,7 +89,7 @@ const InnerLoginPage = () => {
     logInWithSSO,
     logInWithCustomAuth,
   } = useTreasureLogin({
-    projectId: project.slug as ProjectSlug,
+    project: project.slug as ProjectSlug,
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],

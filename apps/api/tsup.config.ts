@@ -6,9 +6,4 @@ export default defineConfig([
     format: ["esm"],
     onSuccess: "copyfiles .env ./dist",
   },
-  {
-    entry: ["src/sdk.ts"],
-    format: ["esm"],
-    dts: true,
-  },
 ]);

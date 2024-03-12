@@ -1,4 +1,3 @@
-import type { ProjectSlug } from "@treasure/tdk-core";
 import type {
   Abi,
   AbiParametersToPrimitiveTypes,
@@ -6,15 +5,22 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
-import type { AuthenciateBody, AuthenticateReply } from "./routes/auth";
-import type { ReadHarvesterReply } from "./routes/harvesters";
-import type { ReadProjectReply } from "./routes/projects";
 import type {
+  AuthenciateBody,
+  AuthenticateReply,
   CreateTransactionReply,
+  ErrorReply,
+  ReadCurrentUserReply,
+  ReadHarvesterReply,
+  ReadProjectReply,
   ReadTransactionReply,
-} from "./routes/transactions";
-import type { ReadCurrentUserReply } from "./routes/users";
-import type { ErrorReply } from "./utils/schema";
+} from "../../../apps/api/src/schema";
+import {
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+} from "./constants";
+import type { ProjectSlug } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -27,21 +33,25 @@ export class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
+  projectId: ProjectSlug;
+  chainId: number;
   authToken?: string;
-  projectId?: ProjectSlug;
-  chainId?: number;
 
-  constructor(options: {
-    baseUri: string;
-    authToken?: string;
-    projectId?: ProjectSlug;
+  constructor({
+    baseUri = DEFAULT_TDK_API_BASE_URI,
+    project = DEFAULT_TDK_APP,
+    chainId = DEFAULT_TDK_CHAIN_ID,
+    authToken,
+  }: {
+    baseUri?: string;
+    project?: ProjectSlug;
     chainId?: number;
+    authToken?: string;
   }) {
-    const { baseUri, authToken, projectId, chainId } = options;
     this.baseUri = baseUri;
-    this.authToken = authToken;
-    this.projectId = projectId;
+    this.projectId = project;
     this.chainId = chainId;
+    this.authToken = authToken;
   }
 
   async fetch<T>(path: string, options?: RequestInit): Promise<T> {

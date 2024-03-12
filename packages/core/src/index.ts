@@ -2,8 +2,14 @@ import { erc20Abi, erc721Abi } from "viem";
 
 export * from "./types";
 
-export { PROJECT_SLUGS, TOKEN_IDS } from "./constants";
-export { TreasureClient } from "./TreasureClient";
+export {
+  PROJECT_SLUGS,
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+  DEFAULT_TDK_LOGIN_DOMAIN,
+  TOKEN_IDS,
+} from "./constants";
 export { erc20Abi };
 export { erc721Abi };
 export { erc1155Abi } from "./abis/erc1155Abi";
@@ -11,6 +17,7 @@ export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
 export { priceFeedAbi } from "./abis/priceFeedAbi";
+export { TDKAPI } from "./api";
 export { sumArray } from "./utils/array";
 export {
   getContractAddress,
@@ -24,4 +31,5 @@ export {
   getTokenAddress,
 } from "./utils/currency";
 export { decodeAuthToken } from "./utils/jwt";
+export { createLoginUrl } from "./utils/login";
 export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
