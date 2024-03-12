@@ -41,6 +41,7 @@ type State = {
 
 type ContextValues = {
   address?: string;
+  isAuthenticated: boolean;
   onStartAuth: () => void;
   onCompleteAuth: (authToken: string) => void;
   logOut: () => void;
@@ -159,6 +160,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
       value={{
         ...state,
         address,
+        isAuthenticated: !!address,
         onStartAuth: () => dispatch({ type: "START_AUTH" }),
         onCompleteAuth: (authToken) =>
           dispatch({ type: "COMPLETE_AUTH", authToken }),
