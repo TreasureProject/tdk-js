@@ -1,4 +1,10 @@
-import { TDKAPI } from "@treasure/tdk-core";
+import {
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+  DEFAULT_TDK_LOGIN_DOMAIN,
+  TDKAPI,
+} from "@treasure/tdk-core";
 import { type ProjectSlug, decodeAuthToken } from "@treasure/tdk-core";
 import type { PropsWithChildren } from "react";
 import {
@@ -8,7 +14,6 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { arbitrum } from "viem/chains";
 
 import {
   clearStoredAuthToken,
@@ -96,13 +101,13 @@ type Props = PropsWithChildren<Config>;
 
 export const TreasureProvider = ({ children, ...config }: Props) => {
   const {
-    project = "app",
-    chainId = arbitrum.id,
-    apiUri = "https://tdk-api.treasure.lol",
+    project = DEFAULT_TDK_APP,
+    chainId = DEFAULT_TDK_CHAIN_ID,
+    apiUri = DEFAULT_TDK_API_BASE_URI,
     authConfig,
   } = config;
   const {
-    loginDomain = "https://login.treasure.lol",
+    loginDomain = DEFAULT_TDK_LOGIN_DOMAIN,
     redirectUri = window.location.href,
   } = authConfig ?? {};
   const [state, dispatch] = useReducer(reducer, {
@@ -116,7 +121,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
     status: "IDLE",
     tdk: new TDKAPI({
       baseUri: config.apiUri,
-      projectId: project,
+      project,
       chainId: config.chainId,
     }),
   });

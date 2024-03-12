@@ -7,6 +7,11 @@ export const PROJECT_SLUGS = ["app", "zeeverse"] as const;
 
 export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
 
+export const DEFAULT_TDK_API_BASE_URI = "https://tdk-api.treasure.lol";
+export const DEFAULT_TDK_APP = PROJECT_SLUGS[0];
+export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
+export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
+
 export const TOKEN_IDS = {
   Consumables: {
     SmallPrism: 1n,

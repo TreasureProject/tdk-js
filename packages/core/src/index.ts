@@ -2,7 +2,14 @@ import { erc20Abi, erc721Abi } from "viem";
 
 export * from "./types";
 
-export { PROJECT_SLUGS, TOKEN_IDS } from "./constants";
+export {
+  PROJECT_SLUGS,
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+  DEFAULT_TDK_LOGIN_DOMAIN,
+  TOKEN_IDS,
+} from "./constants";
 export { erc20Abi };
 export { erc721Abi };
 export { erc1155Abi } from "./abis/erc1155Abi";

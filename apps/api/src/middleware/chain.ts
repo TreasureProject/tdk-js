@@ -1,3 +1,4 @@
+import { DEFAULT_TDK_CHAIN_ID } from "@treasure/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 import type { SupportedChainId } from "../types";
@@ -21,6 +22,6 @@ export const withChain = async (app: FastifyInstance) => {
     req.chainId =
       chainId && (SUPPORTED_CHAIN_IDS as number[]).includes(chainId)
         ? (chainId as SupportedChainId)
-        : 42161;
+        : DEFAULT_TDK_CHAIN_ID;
   });
 };

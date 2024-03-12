@@ -84,7 +84,7 @@ const reducer = (state: State, action: Action): State => {
 };
 
 type Props = {
-  projectId: ProjectSlug;
+  project: ProjectSlug;
   chainId: number;
   redirectUri: string;
   backendWallet: string;
@@ -95,7 +95,7 @@ const DEFAULT_ERROR_MESSAGE =
   "Sorry, we were unable to log you in. Please contact support.";
 
 export const useTreasureLogin = ({
-  projectId,
+  project,
   chainId,
   redirectUri,
   backendWallet,
@@ -116,10 +116,10 @@ export const useTreasureLogin = ({
     () =>
       new TDKAPI({
         baseUri: env.VITE_TDK_API_URL,
-        projectId,
+        project,
         chainId,
       }),
-    [projectId, chainId],
+    [project, chainId],
   );
 
   useEffect(() => {

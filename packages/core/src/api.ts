@@ -18,6 +18,11 @@ import type {
 } from "../../../apps/api/src/routes/transactions";
 import type { ReadCurrentUserReply } from "../../../apps/api/src/routes/users";
 import type { ErrorReply } from "../../../apps/api/src/utils/schema";
+import {
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_APP,
+  DEFAULT_TDK_CHAIN_ID,
+} from "./constants";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -30,21 +35,25 @@ export class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
+  projectId: ProjectSlug;
+  chainId: number;
   authToken?: string;
-  projectId?: ProjectSlug;
-  chainId?: number;
 
-  constructor(options: {
+  constructor({
+    baseUri = DEFAULT_TDK_API_BASE_URI,
+    project = DEFAULT_TDK_APP,
+    chainId = DEFAULT_TDK_CHAIN_ID,
+    authToken,
+  }: {
     baseUri?: string;
-    authToken?: string;
-    projectId?: ProjectSlug;
+    project?: ProjectSlug;
     chainId?: number;
+    authToken?: string;
   }) {
-    const { baseUri, authToken, projectId, chainId } = options;
-    this.baseUri = baseUri ?? "https://tdk-api.treasure.lol";
-    this.authToken = authToken;
-    this.projectId = projectId;
+    this.baseUri = baseUri;
+    this.projectId = project;
     this.chainId = chainId;
+    this.authToken = authToken;
   }
 
   async fetch<T>(path: string, options?: RequestInit): Promise<T> {

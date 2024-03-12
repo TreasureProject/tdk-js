@@ -35,7 +35,7 @@ export const App = () => {
     deposit,
     withdrawAll,
     refetch: refetchHarvesterData,
-  } = useHarvester({ contract: "HarvesterEmerion", eoaAddress });
+  } = useHarvester({ contract: "HarvesterEmerion", userAddress: eoaAddress });
 
   const {
     data: { eoaMagic = 0n, eoaPermits = 0n } = {},
