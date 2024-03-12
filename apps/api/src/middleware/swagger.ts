@@ -3,7 +3,7 @@ import swaggerUi from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
 
 import { version } from "../../package.json";
-import { baseReplySchema } from "../utils/schema";
+import { baseReplySchema } from "../schema";
 
 export const withSwagger = async (app: FastifyInstance) => {
   await app.register(swagger, {

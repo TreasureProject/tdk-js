@@ -8,15 +8,13 @@ import type {
 import type {
   AuthenciateBody,
   AuthenticateReply,
-} from "../../../apps/api/src/routes/auth";
-import type { ReadHarvesterReply } from "../../../apps/api/src/routes/harvesters";
-import type { ReadProjectReply } from "../../../apps/api/src/routes/projects";
-import type {
   CreateTransactionReply,
+  ErrorReply,
+  ReadCurrentUserReply,
+  ReadHarvesterReply,
+  ReadProjectReply,
   ReadTransactionReply,
-} from "../../../apps/api/src/routes/transactions";
-import type { ReadCurrentUserReply } from "../../../apps/api/src/routes/users";
-import type { ErrorReply } from "../../../apps/api/src/utils/schema";
+} from "../../../apps/api/src/schema";
 import {
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_APP,
