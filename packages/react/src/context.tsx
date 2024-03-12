@@ -1,9 +1,5 @@
 import { TDKAPI } from "@treasure/tdk-api";
-import {
-  type ProjectSlug,
-  TreasureClient,
-  decodeAuthToken,
-} from "@treasure/tdk-core";
+import { type ProjectSlug, decodeAuthToken } from "@treasure/tdk-core";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -24,14 +20,13 @@ type Config = {
   chainId?: number;
   apiUri?: string;
   authConfig?: {
-    loginDomain: string;
-    redirectUri: string;
+    loginDomain?: string;
+    redirectUri?: string;
   };
 };
 
 type State = Config & {
   status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
-  client: TreasureClient;
   tdk?: TDKAPI;
   authToken?: string;
 };
@@ -96,14 +91,11 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
     ...config,
     status: "IDLE",
     project,
-    client: new TreasureClient(project),
-    tdk: config.apiUri
-      ? new TDKAPI({
-          baseUri: config.apiUri,
-          projectId: project,
-          chainId: config.chainId,
-        })
-      : undefined,
+    tdk: new TDKAPI({
+      baseUri: config.apiUri,
+      projectId: project,
+      chainId: config.chainId,
+    }),
   });
 
   useEffect(() => {

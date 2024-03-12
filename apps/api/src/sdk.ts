@@ -32,13 +32,13 @@ export class TDKAPI {
   chainId?: number;
 
   constructor(options: {
-    baseUri: string;
+    baseUri?: string;
     authToken?: string;
     projectId?: ProjectSlug;
     chainId?: number;
   }) {
     const { baseUri, authToken, projectId, chainId } = options;
-    this.baseUri = baseUri;
+    this.baseUri = baseUri ?? "https://tdk-api.treasure.lol";
     this.authToken = authToken;
     this.projectId = projectId;
     this.chainId = chainId;
