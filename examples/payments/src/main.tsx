@@ -5,8 +5,8 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@treasure-dev/tdk-react/dist/index.css";
 import "@treasure-project/tailwind-config/fonts.css";
-import "@treasure/tdk-react/dist/index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiProvider } from "wagmi";

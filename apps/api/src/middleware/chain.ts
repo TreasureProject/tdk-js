@@ -1,4 +1,4 @@
-import { DEFAULT_TDK_CHAIN_ID } from "@treasure/tdk-core";
+import { DEFAULT_TDK_CHAIN_ID } from "@treasure-dev/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 import type { SupportedChainId } from "../types";

@@ -1,10 +1,10 @@
-import type { Currency, Token } from "@treasure/tdk-core";
+import type { Currency, Token } from "@treasure-dev/tdk-core";
 import {
   getCurrencyAddress,
   getPaymentsPriceType,
   getTokenAddress,
   paymentsModuleAbi,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { useChainId, useReadContract } from "wagmi";
 
 import { useContractAddress } from "../useContractAddress";

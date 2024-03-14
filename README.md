@@ -4,13 +4,13 @@ SDK for the Treasure ecosystem
 
 ## Apps
 
-- [@treasure/tdk-api](./apps/api)
-- [@treasure/tdk-login](./apps/login)
+- [@treasure-dev/tdk-api](./apps/api)
+- [@treasure-dev/tdk-login](./apps/login)
 
 ## Packages
 
-- [@treasure/tdk-core](./packages/core)
-- [@treasure/tdk-react](./packages/react)
+- [@treasure-dev/tdk-core](./packages/core)
+- [@treasure-dev/tdk-react](./packages/react)
 
 ## Usage
 

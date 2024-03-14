@@ -1,9 +1,19 @@
 {
-  "name": "@treasure/tdk-core",
+  "name": "@treasure-dev/tdk-core",
   "version": "0.1.0",
-  "type": "module",
-  "exports": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"

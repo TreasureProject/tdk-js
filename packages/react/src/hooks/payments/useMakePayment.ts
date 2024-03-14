@@ -4,7 +4,7 @@ import type {
   OnErrorFn,
   OnSuccessFn,
   Token,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 
 // import {
 //   PaymentsPriceType,
@@ -12,7 +12,7 @@ import type {
 //   getPaymentsPriceType,
 //   getTokenAddress,
 //   paymentsModuleABI,
-// } from "@treasure/tdk-core";
+// } from "@treasure-dev/tdk-core";
 // import { useCallback, useEffect, useRef } from "react";
 // import {
 //   useChainId,

@@ -1,9 +1,9 @@
 import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TreasureProvider } from "@treasure-dev/tdk-react";
+import "@treasure-dev/tdk-react/dist/index.css";
 import "@treasure-project/tailwind-config/fonts.css";
-import { TreasureProvider } from "@treasure/tdk-react";
-import "@treasure/tdk-react/dist/index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { WagmiProvider } from "wagmi";

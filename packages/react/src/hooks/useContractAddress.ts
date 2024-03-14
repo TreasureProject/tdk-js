@@ -2,7 +2,7 @@ import {
   type Contract,
   getContractAddress,
   getContractAddresses,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { useChainId } from "wagmi";
 
 export const useContractAddress = (contract: Contract) => {

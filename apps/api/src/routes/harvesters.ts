@@ -4,7 +4,7 @@ import {
   erc1155Abi,
   getContractAddresses,
   harvesterAbi,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { readContracts } from "@wagmi/core";
 import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";

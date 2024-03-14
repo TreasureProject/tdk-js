@@ -1,4 +1,4 @@
-import { decodeAuthToken } from "@treasure/tdk-core";
+import { decodeAuthToken } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/project";

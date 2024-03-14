@@ -7,8 +7,8 @@ import {
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
   TDKAPI,
-} from "@treasure/tdk-core";
-import { Button, type ProjectSlug } from "@treasure/tdk-react";
+} from "@treasure-dev/tdk-core";
+import { Button, type ProjectSlug } from "@treasure-dev/tdk-react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";

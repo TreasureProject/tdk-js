@@ -9,7 +9,7 @@ import {
   useContractAddresses,
   useHarvester,
   useTreasure,
-} from "@treasure/tdk-react";
+} from "@treasure-dev/tdk-react";
 import { formatEther, parseEther, zeroAddress, zeroHash } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 

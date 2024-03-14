@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next";
 import "./globals.css";
 import { en } from "./locales/en";
 
-export * from "@treasure/tdk-core";
+export * from "@treasure-dev/tdk-core";
 export { PaymentsCartModal } from "./components/PaymentsCartModal";
 export { TreasureLoginButton } from "./components/login/TreasureLoginButton";
 export { Button } from "./components/ui/Button";

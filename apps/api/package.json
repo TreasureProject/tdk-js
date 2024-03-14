@@ -1,5 +1,5 @@
 {
-  "name": "@treasure/tdk-api",
+  "name": "@treasure-dev/tdk-api",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -22,7 +22,7 @@
     "@sinclair/typebox": "^0.32.5",
     "@thirdweb-dev/auth": "^4.1.4",
     "@thirdweb-dev/engine": "^0.0.5",
-    "@treasure/tdk-core": "*",
+    "@treasure-dev/tdk-core": "*",
     "@wagmi/core": "^2.6.0",
     "abitype": "^1.0.0",
     "dotenv": "^16.3.1",

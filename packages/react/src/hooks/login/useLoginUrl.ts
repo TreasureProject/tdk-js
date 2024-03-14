@@ -1,4 +1,4 @@
-import { createLoginUrl } from "@treasure/tdk-core";
+import { createLoginUrl } from "@treasure-dev/tdk-core";
 
 import { useTreasure } from "../../context";
 

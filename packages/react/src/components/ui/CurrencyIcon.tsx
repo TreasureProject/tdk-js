@@ -1,4 +1,4 @@
-import type { Currency } from "@treasure/tdk-core";
+import type { Currency } from "@treasure-dev/tdk-core";
 
 import { ArbitrumTokenIcon } from "../../icons/ArbitrumTokenIcon";
 import { MagicTokenIcon } from "../../icons/MagicTokenIcon";

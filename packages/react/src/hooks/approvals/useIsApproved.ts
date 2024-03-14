@@ -4,7 +4,7 @@ import {
   erc20Abi,
   erc721Abi,
   erc1155Abi,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { useAccount, useReadContract } from "wagmi";
 
 type Props = {

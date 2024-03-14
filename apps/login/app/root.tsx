@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import "@treasure/tdk-react/dist/index.css";
+import "@treasure-dev/tdk-react/dist/index.css";
 import "~/globals.css";
 
 export default function App() {

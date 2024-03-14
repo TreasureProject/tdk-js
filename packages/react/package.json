@@ -1,9 +1,23 @@
 {
-  "name": "@treasure/tdk-react",
+  "name": "@treasure-dev/tdk-react",
   "version": "0.1.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
+    }
+  },
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"
@@ -11,7 +25,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
     "@tanstack/react-query": "^5.18.1",
-    "@treasure/tdk-core": "*",
+    "@treasure-dev/tdk-core": "*",
     "clsx": "^2.0.0",
     "i18next": "^23.6.0",
     "react": "^18.2.0",

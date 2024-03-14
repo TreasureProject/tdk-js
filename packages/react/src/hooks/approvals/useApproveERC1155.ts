@@ -3,7 +3,7 @@ import {
   type OnErrorFn,
   type OnSuccessFn,
   erc1155Abi,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { useEffect } from "react";
 import {
   useAccount,

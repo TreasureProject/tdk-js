@@ -4,8 +4,8 @@ import {
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_LOGIN_DOMAIN,
   TDKAPI,
-} from "@treasure/tdk-core";
-import { type ProjectSlug, decodeAuthToken } from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
+import { type ProjectSlug, decodeAuthToken } from "@treasure-dev/tdk-core";
 import type { PropsWithChildren } from "react";
 import {
   createContext,

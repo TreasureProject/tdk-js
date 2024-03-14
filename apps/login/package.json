@@ -1,5 +1,5 @@
 {
-  "name": "@treasure/tdk-login",
+  "name": "@treasure-dev/tdk-login",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -16,8 +16,8 @@
     "@thirdweb-dev/chains": "^0.1.58",
     "@thirdweb-dev/react": "^4.1.1",
     "@thirdweb-dev/wallets": "^2.1.0",
-    "@treasure/tdk-api": "*",
-    "@treasure/tdk-react": "*",
+    "@treasure-dev/tdk-api": "*",
+    "@treasure-dev/tdk-react": "*",
     "isbot": "^5.1.0",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",

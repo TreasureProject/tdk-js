@@ -5,7 +5,7 @@ import {
   PROJECT_SLUGS,
   type ProjectSlug,
   getContractAddress,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";

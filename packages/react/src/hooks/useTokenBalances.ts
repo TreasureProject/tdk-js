@@ -3,7 +3,7 @@ import {
   type Token,
   erc20Abi,
   getTokenAddress,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { formatUnits } from "viem";
 import { useAccount, useChainId, useReadContracts } from "wagmi";
 

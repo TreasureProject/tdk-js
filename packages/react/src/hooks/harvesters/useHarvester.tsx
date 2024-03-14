@@ -5,7 +5,7 @@ import {
   erc1155Abi,
   harvesterAbi,
   nftHandlerAbi,
-} from "@treasure/tdk-core";
+} from "@treasure-dev/tdk-core";
 import { erc20Abi, formatEther, zeroAddress, zeroHash } from "viem";
 import { arbitrumSepolia } from "viem/chains";
 import { useChainId } from "wagmi";
