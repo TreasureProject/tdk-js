@@ -16,11 +16,17 @@ export type PriceFeedContract =
   | "ARBUSDPriceFeed"
   | "ETHUSDPriceFeed";
 export type BridgeworldContract =
+  | "BalancerCrystals"
   | "Consumables"
+  | "CorruptionRemoval"
+  | "Legions"
+  | "Treasures"
   | "HarvesterAfarit"
   | "NftHandlerAfarit"
   | "HarvesterAsiterra"
   | "NftHandlerAsiterra"
+  | "HarvesterEmberwing"
+  | "NftHandlerEmberwing"
   | "HarvesterEmerion"
   | "NftHandlerEmerion"
   | "HarvesterKameji"
@@ -31,13 +37,15 @@ export type BridgeworldContract =
   | "NftHandlerShinoba"
   | "HarvesterThundermane"
   | "NftHandlerThundermane";
+export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
 export type Contract =
   | "MAGIC"
   | "ARB"
   | "PaymentsModule"
   | "TreasureLoginAccountFactory"
+  | PriceFeedContract
   | BridgeworldContract
-  | PriceFeedContract;
+  | ZeeverseContract;
 
 // Approvals
 export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";
