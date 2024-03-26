@@ -12,14 +12,6 @@ SDK for the Treasure ecosystem
 - [@treasure-dev/tdk-core](./packages/core)
 - [@treasure-dev/tdk-react](./packages/react)
 
-## Usage
-
-Coming soon
-
-## Documentation
-
-Coming soon
-
 ## Examples
 
 - [Harvester](./examples/harvester) ([Demo](https://tdk-examples-harvester.vercel.app))
