@@ -4,9 +4,13 @@ import { useLoginUrl } from "../../hooks/login/useLoginUrl";
 import { MagicStarsIcon } from "../../icons/MagicStarsIcon";
 import { Button } from "../ui/Button";
 
-export const TreasureLoginButton = () => {
+type Props = {
+  data?: string;
+};
+
+export const TreasureLoginButton = (props?: Props) => {
   const { t } = useTranslation();
-  const loginUrl = useLoginUrl();
+  const loginUrl = useLoginUrl({ data: props?.data });
   return (
     <Button
       as="link"

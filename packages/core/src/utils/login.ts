@@ -5,9 +5,12 @@ export const createLoginUrl = ({
   chainId,
   domain,
   redirectUri,
+  data,
 }: {
   project: ProjectSlug;
   chainId: number;
   domain: string;
   redirectUri: string;
-}) => `${domain}/${project}?redirect_uri=${redirectUri}&chain_id=${chainId}`;
+  data?: string;
+}) =>
+  `${domain}/${project}?redirect_uri=${redirectUri}&chain_id=${chainId}${data ? `&data=${data}` : ""}`;
