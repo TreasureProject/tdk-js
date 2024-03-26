@@ -39,7 +39,12 @@ const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
 
 const CALL_TARGETS: Record<ProjectSlug, Contract[]> = {
   app: [],
-  zeeverse: ["MAGIC", "Consumables", "HarvesterEmerion", "NftHandlerEmerion"],
+  zeeverse: [
+    "MAGIC",
+    "Consumables",
+    "HarvesterEmberwing",
+    "NftHandlerEmberwing",
+  ],
 };
 
 const prisma = new PrismaClient();

@@ -1,6 +1,5 @@
 import { type Static, Type } from "@sinclair/typebox";
-
-import { SUPPORTED_CHAINS } from "./utils/wagmi";
+import { SUPPORTED_CHAINS } from "@treasure-dev/tdk-core";
 
 // Shared
 export const ethereumAddressSchema = Type.RegExp("/^0x[a-fA-F0-9]{40}$/g");
@@ -76,10 +75,22 @@ export const readHarvesterReplySchema = Type.Object({
   permitsAddress: Type.String(),
   permitsTokenId: Type.String(),
   permitsDepositCap: Type.String(),
+  boostersStakingRulesAddress: Type.String(),
+  boostersMaxStakeable: Type.Number(),
+  boostersTotalBoost: Type.String(),
+  boosters: Type.Array(
+    Type.Object({
+      tokenId: Type.String(),
+      user: Type.String(),
+      endTimestamp: Type.Number(),
+    }),
+  ),
   userMagicBalance: Type.String(),
-  userPermitsBalance: Type.Number(),
   userMagicAllowance: Type.String(),
-  userApprovedPermits: Type.Boolean(),
+  userPermitsBalance: Type.Number(),
+  userPermitsApproved: Type.Boolean(),
+  userBoostersBalances: Type.Array(Type.Tuple([Type.Number(), Type.Number()])),
+  userBoostersApproved: Type.Boolean(),
   userDepositCap: Type.String(),
   userDepositAmount: Type.String(),
 });
