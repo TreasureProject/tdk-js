@@ -1,2 +1,2 @@
 export * from './components/button/Button';
-export * from './components/popover/Popover';
+export * from './components/modal/RadixModal';
