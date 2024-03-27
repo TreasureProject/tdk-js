@@ -3,15 +3,13 @@
 import { Button } from './Button';
 
 const meta = {
-    component: Button,
-}
-
-
+  component: Button,
+};
 
 export const Example = {
-    args: {
-        primary: true,
-        label: 'Button',
-    },
-}
+  args: {
+    primary: true,
+    label: 'Button',
+  },
+};
 export default meta;
