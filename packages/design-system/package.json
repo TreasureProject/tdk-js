@@ -6,7 +6,8 @@
     "build": "tsup",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "watch": "npx tailwindcss -i src/tailwind.css -o src/output.css --watch"
+    "watch": "npx tailwindcss -i src/tailwind.css -o src/output.css --watch",
+    "dev": "concurrently \"storybook dev -p 6006\" \"npx tailwindcss -i src/tailwind.css -o src/output.css --watch\""
   },
   "license": "ISC",
   "devDependencies": {
