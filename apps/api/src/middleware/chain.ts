@@ -1,8 +1,9 @@
-import { DEFAULT_TDK_CHAIN_ID } from "@treasure-dev/tdk-core";
+import {
+  DEFAULT_TDK_CHAIN_ID,
+  SUPPORTED_CHAIN_IDS,
+  type SupportedChainId,
+} from "@treasure-dev/tdk-core";
 import type { FastifyInstance } from "fastify";
-
-import type { SupportedChainId } from "../types";
-import { SUPPORTED_CHAIN_IDS } from "../utils/wagmi";
 
 declare module "fastify" {
   interface FastifyRequest {

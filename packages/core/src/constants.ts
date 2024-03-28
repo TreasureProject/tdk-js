@@ -12,6 +12,9 @@ export const DEFAULT_TDK_APP = PROJECT_SLUGS[0];
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
 
+export const SUPPORTED_CHAINS = [arbitrum, arbitrumSepolia] as const;
+export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
+
 export const TOKEN_IDS = {
   Consumables: {
     SmallPrism: 1n,
@@ -146,8 +149,8 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerAfarit: "0xc57fbc64a6314ae431900fe8ae105a5d45aa27d4",
     HarvesterAsiterra: "0xb1645ae4ce2bbf345706a43647a3a9dc8f3ac69b",
     NftHandlerAsiterra: "0x01604018de9c87de330274f70eac727d0b4e0163",
-    HarvesterEmberwing: zeroAddress,
-    NftHandlerEmberwing: zeroAddress,
+    HarvesterEmberwing: "0x816c0717cf263e7da4cd33d4979ad15dbb70f122",
+    NftHandlerEmberwing: "0x94c64b689336b3f0388503cc1cb4a193520dff73",
     HarvesterEmerion: "0x466d20a94e280bb419031161a6a7508438ad436f",
     NftHandlerEmerion: "0xff1e4795433e12816cb3b3f6342af02e8b942ffb",
     HarvesterKameji: "0xb433147b69663fcd9a000a32fc5d0eef9505ff7c",
