@@ -20,7 +20,6 @@ const METADATA: Record<ProjectSlug, ProjectMetadata> = {
     name: "Zeeverse",
     cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
     color: "#8fd24f",
-    customAuth: true,
   },
 };
 
@@ -31,7 +30,10 @@ const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
     prod: ["https://app.treasure.lol"],
   },
   zeeverse: {
-    local: ["http://localhost:5174"],
+    local: [
+      "http://localhost:5174",
+      "http://localhost:3000/harvesters/zeeverse",
+    ],
     dev: ["https://tdk-examples-harvester.vercel.app"],
     prod: ["https://play.zee-verse.com"],
   },
@@ -42,8 +44,11 @@ const CALL_TARGETS: Record<ProjectSlug, Contract[]> = {
   zeeverse: [
     "MAGIC",
     "Consumables",
+    "Legions",
     "HarvesterEmberwing",
     "NftHandlerEmberwing",
+    "ZeeverseZee",
+    "ZeeverseItems",
   ],
 };
 

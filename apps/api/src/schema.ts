@@ -118,6 +118,20 @@ export const readProjectReplySchema = Type.Object({
 export type ReadProjectParams = Static<typeof readProjectParamsSchema>;
 export type ReadProjectReply = Static<typeof readProjectReplySchema>;
 
+// Contracts
+export const readContractBodySchema = Type.Object({
+  address: Type.String(),
+  functionName: Type.String(),
+  args: Type.Optional(Type.Any()),
+});
+
+export const readContractReplySchema = Type.Object({
+  result: Type.Any(),
+});
+
+export type ReadContractBody = Static<typeof readContractBodySchema>;
+export type ReadContractReply = Static<typeof readContractReplySchema>;
+
 // Transactions
 export const createTransactionBodySchema = Type.Object({
   address: Type.String(),
