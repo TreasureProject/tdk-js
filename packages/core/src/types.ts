@@ -43,7 +43,7 @@ export type Contract =
   | "MAGIC"
   | "ARB"
   | "PaymentsModule"
-  | "TreasureLoginAccountFactory"
+  | "ManagedAccountFactory"
   | PriceFeedContract
   | BridgeworldContract
   | ZeeverseContract;

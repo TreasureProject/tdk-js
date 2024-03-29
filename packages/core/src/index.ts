@@ -21,6 +21,7 @@ export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
 export { priceFeedAbi } from "./abis/priceFeedAbi";
 export { TDKAPI } from "./api";
+export { truncateEthAddress } from "./utils/address";
 export { sumArray } from "./utils/array";
 export {
   getContractAddress,

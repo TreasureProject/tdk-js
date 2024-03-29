@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
-import { useTreasureLogin } from "~/hooks/useTreasureLogin";
+import { useLogin } from "~/hooks/useLogin";
 
 import { env } from "../utils/env";
 
@@ -88,7 +88,7 @@ const InnerLoginPage = () => {
     finishEmailLogin,
     logInWithSSO,
     logInWithCustomAuth,
-  } = useTreasureLogin({
+  } = useLogin({
     project: project.slug as ProjectSlug,
     chainId,
     redirectUri,
