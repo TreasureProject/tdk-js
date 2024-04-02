@@ -82,6 +82,7 @@ export const readHarvesterReplySchema = Type.Object({
   // Permits settings
   permitsAddress: Type.String(),
   permitsTokenId: Type.String(),
+  permitsMaxStakeable: Type.Number(),
   permitsMagicMaxStakeable: Type.String(),
   // Boosters settings
   boostersMaxStakeable: Type.Number(),
@@ -91,7 +92,7 @@ export const readHarvesterReplySchema = Type.Object({
   totalEmissionsActivated: Type.Number(),
   totalMagicStaked: Type.String(),
   totalBoost: Type.Number(),
-  totalBoostersBoost: Type.String(),
+  totalBoostersBoost: Type.Number(),
   // Boosters state
   boosters: Type.Array(
     Type.Object({

@@ -1,6 +1,5 @@
 import {
   type AddressString,
-  getHarvesterBoostersInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
@@ -36,20 +35,13 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       } = req;
 
       const harvesterAddress = id as AddressString;
-      const {
-        nftHandlerAddress,
-        permitsStakingRulesAddress,
-        boostersStakingRulesAddress,
-        legionsStakingRulesAddress,
-        treasuresStakingRulesAddress,
-        charactersStakingRulesAddress,
-        permitsAddress,
-        permitsTokenId,
-        permitsMagicMaxStakeable,
-        totalEmissionsActivated,
-        totalMagicStaked,
-        totalBoost,
-      } = await getHarvesterInfo({ chainId, harvesterAddress });
+      const harvesterInfo = await getHarvesterInfo({
+        chainId,
+        harvesterAddress,
+      });
+
+      const { nftHandlerAddress, permitsAddress, permitsTokenId } =
+        harvesterInfo;
 
       if (nftHandlerAddress === zeroAddress) {
         return reply.code(404).send({ error: "Not found" });
@@ -87,34 +79,16 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
             totalBoost: 0,
           };
 
-      // Get boosters info
-      const {
-        maxStakeable: boostersMaxStakeable,
-        totalBoost: totalBoostersBoost,
-        boosters,
-      } = await getHarvesterBoostersInfo({
-        chainId,
-        stakingRulesAddress: boostersStakingRulesAddress,
-      });
-
       reply.send({
         id,
-        nftHandlerAddress,
-        permitsStakingRulesAddress,
-        boostersStakingRulesAddress,
-        legionsStakingRulesAddress,
-        treasuresStakingRulesAddress,
-        charactersStakingRulesAddress,
-        permitsAddress,
+        ...harvesterInfo,
         permitsTokenId: permitsTokenId.toString(),
-        permitsMagicMaxStakeable: permitsMagicMaxStakeable.toString(),
-        boostersMaxStakeable: Number(boostersMaxStakeable),
-        magicMaxStakeable: "0",
-        totalEmissionsActivated,
-        totalMagicStaked: totalMagicStaked.toString(),
-        totalBoost,
-        totalBoostersBoost: totalBoostersBoost.toString(),
-        boosters: boosters.map((booster) => ({
+        permitsMagicMaxStakeable:
+          harvesterInfo.permitsMagicMaxStakeable.toString(),
+        boostersMaxStakeable: Number(harvesterInfo.boostersMaxStakeable),
+        magicMaxStakeable: harvesterInfo.magicMaxStakeable.toString(),
+        totalMagicStaked: harvesterInfo.totalMagicStaked.toString(),
+        boosters: harvesterInfo.boosters.map((booster) => ({
           ...booster,
           tokenId: booster.tokenId.toString(),
         })),

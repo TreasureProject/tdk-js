@@ -2,12 +2,13 @@ import { readContracts } from "@wagmi/core";
 import { erc20Abi, formatEther, zeroAddress } from "viem";
 import { arbitrumSepolia } from "viem/chains";
 
-import { boosterStakingRulesAbi } from "../abis/boosterStakingRulesAbi";
+import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
 import { middlemanAbi } from "../abis/middlemanAbi";
 import { nftHandlerAbi } from "../abis/nftHandlerAbi";
+import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
 import { TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddress, getContractAddresses } from "./contracts";
@@ -88,7 +89,6 @@ export const getHarvesterInfo = async ({
       },
     ],
   });
-
   const [
     { result: stakingRulesAddresses = [] },
     { result: permitsStakingRulesAddress = zeroAddress },
@@ -137,8 +137,59 @@ export const getHarvesterInfo = async ({
     ],
   });
 
+  const [
+    { result: permitsMaxStakeable = 0n },
+    { result: boostersMaxStakeable = DEFAULT_BOOSTERS_MAX_STAKEABLE },
+    { result: boostersLifetimes = DEFAULT_BOOSTERS_LIFETIMES },
+    { result: totalBoostersBoost = 0n },
+    { result: boosters = [] },
+  ] = await readContracts(config, {
+    contracts: [
+      {
+        chainId,
+        address: permitsStakingRulesAddress,
+        abi: permitsStakingRulesAbi,
+        functionName: "maxStakeableTotal",
+      },
+      {
+        chainId,
+        address: boostersStakingRulesAddress,
+        abi: boostersStakingRulesAbi,
+        functionName: "maxStakeable",
+      },
+      {
+        chainId,
+        address: boostersStakingRulesAddress,
+        abi: boostersStakingRulesAbi,
+        functionName: "extractorLifetimes",
+        args: [BOOSTER_TOKEN_IDS],
+      },
+      {
+        chainId,
+        address: boostersStakingRulesAddress,
+        abi: boostersStakingRulesAbi,
+        functionName: "getExtractorsTotalBoost",
+      },
+      {
+        chainId,
+        address: boostersStakingRulesAddress,
+        abi: boostersStakingRulesAbi,
+        functionName: "getExtractors",
+      },
+    ],
+  });
+
+  const boostersLifetimesMap = boostersLifetimes.reduce(
+    (acc, curr, i) => ({
+      ...acc,
+      [BOOSTER_TOKEN_IDS[i].toString()]: Number(curr),
+    }),
+    {} as Record<string, number>,
+  );
+
   return {
     nftHandlerAddress,
+    stakingRulesAddresses,
     permitsStakingRulesAddress,
     boostersStakingRulesAddress,
     legionsStakingRulesAddress,
@@ -154,10 +205,22 @@ export const getHarvesterInfo = async ({
     ),
     permitsAddress,
     permitsTokenId,
+    permitsMaxStakeable: Number(permitsMaxStakeable),
     permitsMagicMaxStakeable,
+    magicMaxStakeable: permitsMaxStakeable * permitsMagicMaxStakeable,
+
+    boostersMaxStakeable,
     totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
     totalMagicStaked,
     totalBoost: Number(formatEther(totalBoost)),
+    totalBoostersBoost: Number(formatEther(totalBoostersBoost)),
+    boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
+      tokenId,
+      user,
+      endTimestamp:
+        Number(stakedTimestamp) +
+        (boostersLifetimesMap[tokenId.toString()] ?? 0),
+    })),
   };
 };
 
@@ -270,68 +333,5 @@ export const getHarvesterUserInfo = async ({
     totalBoost:
       Number(formatEther(totalBoost)) +
       (chainId === arbitrumSepolia.id ? 0.05 : 0),
-  };
-};
-
-export const getHarvesterBoostersInfo = async ({
-  chainId,
-  stakingRulesAddress,
-}: {
-  chainId: SupportedChainId;
-  stakingRulesAddress: AddressString;
-}) => {
-  const [
-    { result: maxStakeable = DEFAULT_BOOSTERS_MAX_STAKEABLE },
-    { result: lifetimes = DEFAULT_BOOSTERS_LIFETIMES },
-    { result: totalBoost = 0n },
-    { result: boosters = [] },
-  ] = await readContracts(config, {
-    contracts: [
-      {
-        chainId,
-        address: stakingRulesAddress,
-        abi: boosterStakingRulesAbi,
-        functionName: "maxStakeable",
-      },
-      {
-        chainId,
-        address: stakingRulesAddress,
-        abi: boosterStakingRulesAbi,
-        functionName: "extractorLifetimes",
-        args: [BOOSTER_TOKEN_IDS],
-      },
-      {
-        chainId,
-        address: stakingRulesAddress,
-        abi: boosterStakingRulesAbi,
-        functionName: "getExtractorsTotalBoost",
-      },
-      {
-        chainId,
-        address: stakingRulesAddress,
-        abi: boosterStakingRulesAbi,
-        functionName: "getExtractors",
-      },
-    ],
-  });
-
-  const lifetimesMap = lifetimes.reduce(
-    (acc, curr, i) => ({
-      ...acc,
-      [BOOSTER_TOKEN_IDS[i].toString()]: Number(curr),
-    }),
-    {} as Record<string, number>,
-  );
-
-  return {
-    maxStakeable,
-    lifetimes,
-    totalBoost,
-    boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
-      tokenId,
-      user,
-      endTimestamp:
-        Number(stakedTimestamp) + (lifetimesMap[tokenId.toString()] ?? 0),
-    })),
   };
 };
