@@ -103,6 +103,7 @@ export const CONTRACT_ADDRESSES: Record<
     ARBUSDPriceFeed: "0xb2a824043730fe05f3da2efafa1cbbe83fa548d6",
     ETHUSDPriceFeed: "0x639fe6ab55c921f74e7fac1ee960c0b6293ba612",
     // Bridgeworld
+    Middleman: "0x3ea9ceaebdeb702fcbc576710084c464431584c8",
     BalancerCrystals: "0xbfeba04384cecfaf0240b49163ed418f82e43d3a",
     Consumables: "0xf3d00a2559d84de7ac093443bcaada5f4ee4165c",
     CorruptionRemoval: "0x08f3533acdf2b9c400204056f771bdd6f1f1c200",
@@ -140,6 +141,7 @@ export const CONTRACT_ADDRESSES: Record<
     ARBUSDPriceFeed: zeroAddress,
     ETHUSDPriceFeed: "0xd30e2101a97dcbaebcbc04f14c3f624e67a35165",
     // Bridgeworld
+    Middleman: "0x81ece9e2a45e5c4c563316dae125e9dce2fa0d4b",
     BalancerCrystals: "0x43499c6926bcc78d3ad73fed6627de75c45c5878",
     Consumables: "0x9d012712d24c90dded4574430b9e6065183896be",
     CorruptionRemoval: "0xdd8b0dd8128873049b1d528262724bde600f5be2",

@@ -71,17 +71,28 @@ export const readHarvesterParamsSchema = Type.Object({
 
 export const readHarvesterReplySchema = Type.Object({
   id: Type.String(),
+  // NFT Handler
   nftHandlerAddress: Type.String(),
+  // Staking Rules
   permitsStakingRulesAddress: Type.String(),
   boostersStakingRulesAddress: Type.String(),
   legionsStakingRulesAddress: Type.Optional(Type.String()),
   treasuresStakingRulesAddress: Type.Optional(Type.String()),
   charactersStakingRulesAddress: Type.Optional(Type.String()),
+  // Permits settings
   permitsAddress: Type.String(),
   permitsTokenId: Type.String(),
-  permitsDepositCap: Type.String(),
+  permitsMagicMaxStakeable: Type.String(),
+  // Boosters settings
   boostersMaxStakeable: Type.Number(),
-  boostersTotalBoost: Type.String(),
+  // MAGIC settings
+  magicMaxStakeable: Type.String(),
+  // Overall state
+  totalEmissionsActivated: Type.Number(),
+  totalMagicStaked: Type.String(),
+  totalBoost: Type.Number(),
+  totalBoostersBoost: Type.String(),
+  // Boosters state
   boosters: Type.Array(
     Type.Object({
       tokenId: Type.String(),
@@ -89,14 +100,16 @@ export const readHarvesterReplySchema = Type.Object({
       endTimestamp: Type.Number(),
     }),
   ),
+  // User state
   userMagicBalance: Type.String(),
   userMagicAllowance: Type.String(),
   userPermitsBalance: Type.Number(),
   userPermitsApproved: Type.Boolean(),
   userBoostersBalances: Type.Array(Type.Tuple([Type.Number(), Type.Number()])),
   userBoostersApproved: Type.Boolean(),
-  userDepositCap: Type.String(),
-  userDepositAmount: Type.String(),
+  userMagicMaxStakeable: Type.String(),
+  userMagicStaked: Type.String(),
+  userTotalBoost: Type.Number(),
 });
 
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;

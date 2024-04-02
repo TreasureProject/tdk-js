@@ -40,12 +40,12 @@ export const useHarvester = ({
   const permitTokenId = BigInt(data?.permitsTokenId ?? 0n);
   const smartAccountMagic = BigInt(data?.userMagicBalance ?? 0n);
   const smartAccountPermits = data?.userPermitsBalance ?? 0;
-  const harvesterDepositCap = BigInt(data?.userDepositCap ?? 0n);
-  const harvesterDeposit = BigInt(data?.userDepositAmount ?? 0n);
+  const harvesterDepositCap = BigInt(data?.userMagicMaxStakeable ?? 0n);
+  const harvesterDeposit = BigInt(data?.userMagicStaked ?? 0n);
   const harvesterPermits =
-    data?.permitsDepositCap && BigInt(data.permitsDepositCap) > 0
+    data?.permitsMagicMaxStakeable && BigInt(data.permitsMagicMaxStakeable) > 0
       ? Number(formatEther(harvesterDepositCap)) /
-        Number(formatEther(BigInt(data.permitsDepositCap)))
+        Number(formatEther(BigInt(data.permitsMagicMaxStakeable)))
       : 0;
   return {
     data: {

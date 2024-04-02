@@ -45,7 +45,10 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         charactersStakingRulesAddress,
         permitsAddress,
         permitsTokenId,
-        permitsDepositCap,
+        permitsMagicMaxStakeable,
+        totalEmissionsActivated,
+        totalMagicStaked,
+        totalBoost,
       } = await getHarvesterInfo({ chainId, harvesterAddress });
 
       if (nftHandlerAddress === zeroAddress) {
@@ -60,8 +63,9 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         permitsApproved: userPermitsApproved,
         boostersBalances: userBoostersBalances,
         boostersApproved: userBoostersApproved,
-        depositCap: userDepositCap,
-        depositAmount: userDepositAmount,
+        magicMaxStakeable: userMagicMaxStakeable,
+        magicStaked: userMagicStaked,
+        totalBoost: userTotalBoost,
       } = user?.address
         ? await getHarvesterUserInfo({
             chainId,
@@ -78,14 +82,15 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
             permitsApproved: false,
             boostersBalances: [],
             boostersApproved: false,
-            depositCap: 0n,
-            depositAmount: 0n,
+            magicMaxStakeable: 0n,
+            magicStaked: 0n,
+            totalBoost: 0,
           };
 
       // Get boosters info
       const {
         maxStakeable: boostersMaxStakeable,
-        totalBoost: boostersTotalBoost,
+        totalBoost: totalBoostersBoost,
         boosters,
       } = await getHarvesterBoostersInfo({
         chainId,
@@ -102,9 +107,13 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         charactersStakingRulesAddress,
         permitsAddress,
         permitsTokenId: permitsTokenId.toString(),
-        permitsDepositCap: permitsDepositCap.toString(),
+        permitsMagicMaxStakeable: permitsMagicMaxStakeable.toString(),
         boostersMaxStakeable: Number(boostersMaxStakeable),
-        boostersTotalBoost: boostersTotalBoost.toString(),
+        magicMaxStakeable: "0",
+        totalEmissionsActivated,
+        totalMagicStaked: totalMagicStaked.toString(),
+        totalBoost,
+        totalBoostersBoost: totalBoostersBoost.toString(),
         boosters: boosters.map((booster) => ({
           ...booster,
           tokenId: booster.tokenId.toString(),
@@ -115,8 +124,9 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         userPermitsApproved,
         userBoostersBalances,
         userBoostersApproved,
-        userDepositCap: userDepositCap.toString(),
-        userDepositAmount: userDepositAmount.toString(),
+        userMagicMaxStakeable: userMagicMaxStakeable.toString(),
+        userMagicStaked: userMagicStaked.toString(),
+        userTotalBoost: userTotalBoost,
       });
     },
   );

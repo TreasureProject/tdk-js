@@ -1,10 +1,12 @@
 import { readContracts } from "@wagmi/core";
-import { erc20Abi, zeroAddress } from "viem";
+import { erc20Abi, formatEther, zeroAddress } from "viem";
+import { arbitrumSepolia } from "viem/chains";
 
 import { boosterStakingRulesAbi } from "../abis/boosterStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
+import { middlemanAbi } from "../abis/middlemanAbi";
 import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
@@ -37,15 +39,19 @@ export const getHarvesterInfo = async ({
   chainId: SupportedChainId;
   harvesterAddress: AddressString;
 }) => {
+  const contractAddresses = getContractAddresses(chainId);
   const [
     { result: nftHandlerAddress = zeroAddress },
     {
-      result: [permitsAddress, permitsTokenId, permitsDepositCap] = [
+      result: [permitsAddress, permitsTokenId, permitsMagicMaxStakeable] = [
         zeroAddress,
         0n,
         0n,
       ] as const,
     },
+    { result: totalEmissionsActivated = 0n },
+    { result: totalMagicStaked = 0n },
+    { result: totalBoost = 0n },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -59,6 +65,26 @@ export const getHarvesterInfo = async ({
         address: harvesterAddress,
         abi: harvesterAbi,
         functionName: "depositCapPerWallet",
+      },
+      {
+        chainId,
+        address: contractAddresses.Middleman,
+        abi: middlemanAbi,
+        functionName: "getUtilizationBoost",
+        args: [harvesterAddress],
+      },
+      {
+        chainId,
+        address: harvesterAddress,
+        abi: harvesterAbi,
+        functionName: "magicTotalDeposits",
+      },
+      {
+        chainId,
+        address: contractAddresses.Middleman,
+        abi: middlemanAbi,
+        functionName: "getHarvesterEmissionsBoost",
+        args: [harvesterAddress],
       },
     ],
   });
@@ -128,7 +154,10 @@ export const getHarvesterInfo = async ({
     ),
     permitsAddress,
     permitsTokenId,
-    permitsDepositCap,
+    permitsMagicMaxStakeable,
+    totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
+    totalMagicStaked,
+    totalBoost: Number(formatEther(totalBoost)),
   };
 };
 
@@ -155,8 +184,9 @@ export const getHarvesterUserInfo = async ({
     { result: permitsApproved = false },
     { result: boostersBalances = [] },
     { result: boostersApproved = false },
-    { result: depositCap = 0n },
-    { result: [depositAmount] = [0n] },
+    { result: magicMaxStakeable = 0n },
+    { result: [magicStaked] = [0n] },
+    { result: totalBoost = 0n },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -215,6 +245,13 @@ export const getHarvesterUserInfo = async ({
         functionName: "getUserGlobalDeposit",
         args: [userAddress],
       },
+      {
+        chainId,
+        address: harvesterAddress,
+        abi: harvesterAbi,
+        functionName: "getUserBoost",
+        args: [userAddress],
+      },
     ],
   });
   return {
@@ -227,8 +264,12 @@ export const getHarvesterUserInfo = async ({
       Number(boostersBalances[i] ?? 0),
     ]) as [number, number][],
     boostersApproved,
-    depositCap,
-    depositAmount,
+    magicMaxStakeable,
+    magicStaked,
+    // Testnet has a timelock boost applied to it
+    totalBoost:
+      Number(formatEther(totalBoost)) +
+      (chainId === arbitrumSepolia.id ? 0.05 : 0),
   };
 };
 
