@@ -126,7 +126,7 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
     // Treasure Misc
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
-    TreasureLoginAccountFactory: zeroAddress,
+    ManagedAccountFactory: zeroAddress,
     // Zeeverse
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
@@ -163,7 +163,7 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x00a191804f5bc4942828ae8cde937a4b644d53cf",
     // Treasure Misc
     PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
-    TreasureLoginAccountFactory: "0xae7f7e9286f5f9ede167a19d1d605df4fdbc417b",
+    ManagedAccountFactory: "0xae7f7e9286f5f9ede167a19d1d605df4fdbc417b",
     // Zeeverse
     ZeeverseZee: "0xb1af672c7e0e8880c066ecc24930a12ff2ee8534",
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
