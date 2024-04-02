@@ -1,7 +1,6 @@
 import {
   type AddressString,
   getHarvesterBoostersInfo,
-  getHarvesterBoostersStakingRulesAddress,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
@@ -39,6 +38,11 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       const harvesterAddress = id as AddressString;
       const {
         nftHandlerAddress,
+        permitsStakingRulesAddress,
+        boostersStakingRulesAddress,
+        legionsStakingRulesAddress,
+        treasuresStakingRulesAddress,
+        charactersStakingRulesAddress,
         permitsAddress,
         permitsTokenId,
         permitsDepositCap,
@@ -79,11 +83,6 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
           };
 
       // Get boosters info
-      const boostersStakingRulesAddress =
-        await getHarvesterBoostersStakingRulesAddress({
-          chainId,
-          nftHandlerAddress,
-        });
       const {
         maxStakeable: boostersMaxStakeable,
         totalBoost: boostersTotalBoost,
@@ -96,10 +95,14 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       reply.send({
         id,
         nftHandlerAddress,
+        permitsStakingRulesAddress,
+        boostersStakingRulesAddress,
+        legionsStakingRulesAddress,
+        treasuresStakingRulesAddress,
+        charactersStakingRulesAddress,
         permitsAddress,
         permitsTokenId: permitsTokenId.toString(),
         permitsDepositCap: permitsDepositCap.toString(),
-        boostersStakingRulesAddress,
         boostersMaxStakeable: Number(boostersMaxStakeable),
         boostersTotalBoost: boostersTotalBoost.toString(),
         boosters: boosters.map((booster) => ({

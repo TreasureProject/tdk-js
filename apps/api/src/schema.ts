@@ -72,10 +72,14 @@ export const readHarvesterParamsSchema = Type.Object({
 export const readHarvesterReplySchema = Type.Object({
   id: Type.String(),
   nftHandlerAddress: Type.String(),
+  permitsStakingRulesAddress: Type.String(),
+  boostersStakingRulesAddress: Type.String(),
+  legionsStakingRulesAddress: Type.Optional(Type.String()),
+  treasuresStakingRulesAddress: Type.Optional(Type.String()),
+  charactersStakingRulesAddress: Type.Optional(Type.String()),
   permitsAddress: Type.String(),
   permitsTokenId: Type.String(),
   permitsDepositCap: Type.String(),
-  boostersStakingRulesAddress: Type.String(),
   boostersMaxStakeable: Type.Number(),
   boostersTotalBoost: Type.String(),
   boosters: Type.Array(

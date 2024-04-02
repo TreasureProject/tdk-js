@@ -62,8 +62,70 @@ export const getHarvesterInfo = async ({
       },
     ],
   });
+
+  const [
+    { result: stakingRulesAddresses = [] },
+    { result: permitsStakingRulesAddress = zeroAddress },
+    { result: boostersStakingRulesAddress = zeroAddress },
+    { result: legionsStakingRulesAddress },
+    { result: treasuresStakingRulesAddress },
+  ] = await readContracts(config, {
+    contracts: [
+      {
+        chainId,
+        address: nftHandlerAddress,
+        abi: nftHandlerAbi,
+        functionName: "getAllStakingRules",
+      },
+      {
+        chainId,
+        address: nftHandlerAddress,
+        abi: nftHandlerAbi,
+        functionName: "getStakingRules",
+        args: [permitsAddress, permitsTokenId],
+      },
+      {
+        chainId,
+        address: nftHandlerAddress,
+        abi: nftHandlerAbi,
+        functionName: "getStakingRules",
+        args: [
+          getContractAddress(chainId, "Consumables"),
+          TOKEN_IDS.Consumables.SmallMetabolicBooster,
+        ],
+      },
+      {
+        chainId,
+        address: nftHandlerAddress,
+        abi: nftHandlerAbi,
+        functionName: "getStakingRules",
+        args: [getContractAddress(chainId, "Legions"), 1n],
+      },
+      {
+        chainId,
+        address: nftHandlerAddress,
+        abi: nftHandlerAbi,
+        functionName: "getStakingRules",
+        args: [getContractAddress(chainId, "Treasures"), 1n],
+      },
+    ],
+  });
+
   return {
     nftHandlerAddress,
+    permitsStakingRulesAddress,
+    boostersStakingRulesAddress,
+    legionsStakingRulesAddress,
+    treasuresStakingRulesAddress,
+    charactersStakingRulesAddress: stakingRulesAddresses.find(
+      (address) =>
+        ![
+          permitsStakingRulesAddress,
+          boostersStakingRulesAddress,
+          legionsStakingRulesAddress,
+          treasuresStakingRulesAddress,
+        ].includes(address),
+    ),
     permitsAddress,
     permitsTokenId,
     permitsDepositCap,
@@ -168,33 +230,6 @@ export const getHarvesterUserInfo = async ({
     depositCap,
     depositAmount,
   };
-};
-
-export const getHarvesterBoostersStakingRulesAddress = async ({
-  chainId,
-  nftHandlerAddress,
-}: {
-  chainId: SupportedChainId;
-  nftHandlerAddress: AddressString;
-}) => {
-  const [{ result: stakingRulesAddress = zeroAddress }] = await readContracts(
-    config,
-    {
-      contracts: [
-        {
-          chainId,
-          address: nftHandlerAddress,
-          abi: nftHandlerAbi,
-          functionName: "getStakingRules",
-          args: [
-            getContractAddress(chainId, "Consumables"),
-            TOKEN_IDS.Consumables.SmallMetabolicBooster,
-          ],
-        },
-      ],
-    },
-  );
-  return stakingRulesAddress;
 };
 
 export const getHarvesterBoostersInfo = async ({

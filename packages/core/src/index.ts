@@ -36,7 +36,6 @@ export {
 } from "./utils/currency";
 export {
   getHarvesterInfo,
-  getHarvesterBoostersStakingRulesAddress,
   getHarvesterBoostersInfo,
   getHarvesterUserInfo,
 } from "./utils/harvesters";
