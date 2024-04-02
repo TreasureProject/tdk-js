@@ -65,36 +65,64 @@ export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
 export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;
 
 // Harvesters
-export const readHarvesterParamsSchema = Type.Object({
+const harvesterInfoSchema = Type.Object({
   id: Type.String(),
-});
-
-export const readHarvesterReplySchema = Type.Object({
-  id: Type.String(),
+  // NFT Handler
   nftHandlerAddress: Type.String(),
-  permitsAddress: Type.String(),
-  permitsTokenId: Type.String(),
-  permitsDepositCap: Type.String(),
+  // Staking Rules
+  permitsStakingRulesAddress: Type.String(),
   boostersStakingRulesAddress: Type.String(),
+  legionsStakingRulesAddress: Type.Optional(Type.String()),
+  treasuresStakingRulesAddress: Type.Optional(Type.String()),
+  charactersStakingRulesAddress: Type.Optional(Type.String()),
+  // Permits settings
+  permitsAddress: Type.String(),
+  permitsTokenId: Type.Number(),
+  permitsMaxStakeable: Type.Number(),
+  permitsMagicMaxStakeable: Type.String(),
+  // Boosters settings
   boostersMaxStakeable: Type.Number(),
-  boostersTotalBoost: Type.String(),
+  // MAGIC settings
+  magicMaxStakeable: Type.String(),
+  // Overall state
+  totalEmissionsActivated: Type.Number(),
+  totalMagicStaked: Type.String(),
+  totalBoost: Type.Number(),
+  totalBoostersBoost: Type.Number(),
+  // Boosters state
   boosters: Type.Array(
     Type.Object({
-      tokenId: Type.String(),
+      tokenId: Type.Number(),
       user: Type.String(),
       endTimestamp: Type.Number(),
     }),
   ),
+});
+
+const harvesterUserInfoSchema = Type.Object({
   userMagicBalance: Type.String(),
   userMagicAllowance: Type.String(),
   userPermitsBalance: Type.Number(),
   userPermitsApproved: Type.Boolean(),
-  userBoostersBalances: Type.Array(Type.Tuple([Type.Number(), Type.Number()])),
+  userBoostersBalances: Type.Record(Type.Number(), Type.Number()),
   userBoostersApproved: Type.Boolean(),
-  userDepositCap: Type.String(),
-  userDepositAmount: Type.String(),
+  userTotalBoost: Type.Number(),
+  userMagicMaxStakeable: Type.String(),
+  userMagicStaked: Type.String(),
+  userMagicRewardsClaimable: Type.String(),
 });
 
+export const readHarvesterParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
+export const readHarvesterReplySchema = Type.Composite([
+  harvesterInfoSchema,
+  Type.Partial(harvesterUserInfoSchema),
+]);
+
+export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
+export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
 export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
 

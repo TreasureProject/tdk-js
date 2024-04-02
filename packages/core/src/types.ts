@@ -17,11 +17,14 @@ export type PriceFeedContract =
   | "ARBUSDPriceFeed"
   | "ETHUSDPriceFeed";
 export type BridgeworldContract =
+  // General
+  | "Middleman"
+  // NFTs
   | "BalancerCrystals"
   | "Consumables"
-  | "CorruptionRemoval"
   | "Legions"
   | "Treasures"
+  // Harvesters
   | "HarvesterAfarit"
   | "NftHandlerAfarit"
   | "HarvesterAsiterra"
@@ -37,7 +40,9 @@ export type BridgeworldContract =
   | "HarvesterShinoba"
   | "NftHandlerShinoba"
   | "HarvesterThundermane"
-  | "NftHandlerThundermane";
+  | "NftHandlerThundermane"
+  // Gameplay
+  | "CorruptionRemoval";
 export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
 export type Contract =
   | "MAGIC"

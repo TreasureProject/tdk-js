@@ -1,7 +1,5 @@
 import {
   type AddressString,
-  getHarvesterBoostersInfo,
-  getHarvesterBoostersStakingRulesAddress,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
@@ -37,83 +35,33 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       } = req;
 
       const harvesterAddress = id as AddressString;
-      const {
-        nftHandlerAddress,
-        permitsAddress,
-        permitsTokenId,
-        permitsDepositCap,
-      } = await getHarvesterInfo({ chainId, harvesterAddress });
+      const harvesterInfo = await getHarvesterInfo({
+        chainId,
+        harvesterAddress,
+      });
+
+      const { nftHandlerAddress, permitsAddress, permitsTokenId } =
+        harvesterInfo;
 
       if (nftHandlerAddress === zeroAddress) {
         return reply.code(404).send({ error: "Not found" });
       }
 
       const user = await getUser(req);
-      const {
-        magicBalance: userMagicBalance,
-        magicAllowance: userMagicAllowance,
-        permitsBalance: userPermitsBalance,
-        permitsApproved: userPermitsApproved,
-        boostersBalances: userBoostersBalances,
-        boostersApproved: userBoostersApproved,
-        depositCap: userDepositCap,
-        depositAmount: userDepositAmount,
-      } = user?.address
+      const harvesterUserInfo = user?.address
         ? await getHarvesterUserInfo({
             chainId,
             harvesterAddress,
-            nftHandlerAddress,
-            permitsAddress,
+            nftHandlerAddress: nftHandlerAddress as AddressString,
+            permitsAddress: permitsAddress as AddressString,
             permitsTokenId,
             userAddress: user.address as AddressString,
           })
-        : {
-            magicBalance: 0n,
-            magicAllowance: 0n,
-            permitsBalance: 0n,
-            permitsApproved: false,
-            boostersBalances: [],
-            boostersApproved: false,
-            depositCap: 0n,
-            depositAmount: 0n,
-          };
-
-      // Get boosters info
-      const boostersStakingRulesAddress =
-        await getHarvesterBoostersStakingRulesAddress({
-          chainId,
-          nftHandlerAddress,
-        });
-      const {
-        maxStakeable: boostersMaxStakeable,
-        totalBoost: boostersTotalBoost,
-        boosters,
-      } = await getHarvesterBoostersInfo({
-        chainId,
-        stakingRulesAddress: boostersStakingRulesAddress,
-      });
+        : undefined;
 
       reply.send({
-        id,
-        nftHandlerAddress,
-        permitsAddress,
-        permitsTokenId: permitsTokenId.toString(),
-        permitsDepositCap: permitsDepositCap.toString(),
-        boostersStakingRulesAddress,
-        boostersMaxStakeable: Number(boostersMaxStakeable),
-        boostersTotalBoost: boostersTotalBoost.toString(),
-        boosters: boosters.map((booster) => ({
-          ...booster,
-          tokenId: booster.tokenId.toString(),
-        })),
-        userMagicBalance: userMagicBalance.toString(),
-        userMagicAllowance: userMagicAllowance.toString(),
-        userPermitsBalance: Number(userPermitsBalance),
-        userPermitsApproved,
-        userBoostersBalances,
-        userBoostersApproved,
-        userDepositCap: userDepositCap.toString(),
-        userDepositAmount: userDepositAmount.toString(),
+        ...harvesterInfo,
+        ...harvesterUserInfo,
       });
     },
   );
