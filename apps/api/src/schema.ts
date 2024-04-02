@@ -65,11 +65,7 @@ export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
 export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;
 
 // Harvesters
-export const readHarvesterParamsSchema = Type.Object({
-  id: Type.String(),
-});
-
-export const readHarvesterReplySchema = Type.Object({
+const harvesterInfoSchema = Type.Object({
   id: Type.String(),
   // NFT Handler
   nftHandlerAddress: Type.String(),
@@ -81,7 +77,7 @@ export const readHarvesterReplySchema = Type.Object({
   charactersStakingRulesAddress: Type.Optional(Type.String()),
   // Permits settings
   permitsAddress: Type.String(),
-  permitsTokenId: Type.String(),
+  permitsTokenId: Type.Number(),
   permitsMaxStakeable: Type.Number(),
   permitsMagicMaxStakeable: Type.String(),
   // Boosters settings
@@ -96,23 +92,37 @@ export const readHarvesterReplySchema = Type.Object({
   // Boosters state
   boosters: Type.Array(
     Type.Object({
-      tokenId: Type.String(),
+      tokenId: Type.Number(),
       user: Type.String(),
       endTimestamp: Type.Number(),
     }),
   ),
-  // User state
+});
+
+const harvesterUserInfoSchema = Type.Object({
   userMagicBalance: Type.String(),
   userMagicAllowance: Type.String(),
   userPermitsBalance: Type.Number(),
   userPermitsApproved: Type.Boolean(),
-  userBoostersBalances: Type.Array(Type.Tuple([Type.Number(), Type.Number()])),
+  userBoostersBalances: Type.Record(Type.Number(), Type.Number()),
   userBoostersApproved: Type.Boolean(),
+  userTotalBoost: Type.Number(),
   userMagicMaxStakeable: Type.String(),
   userMagicStaked: Type.String(),
-  userTotalBoost: Type.Number(),
+  userMagicRewardsClaimable: Type.String(),
 });
 
+export const readHarvesterParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
+export const readHarvesterReplySchema = Type.Composite([
+  harvesterInfoSchema,
+  Type.Partial(harvesterUserInfoSchema),
+]);
+
+export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
+export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
 export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
 

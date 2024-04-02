@@ -48,59 +48,20 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       }
 
       const user = await getUser(req);
-      const {
-        magicBalance: userMagicBalance,
-        magicAllowance: userMagicAllowance,
-        permitsBalance: userPermitsBalance,
-        permitsApproved: userPermitsApproved,
-        boostersBalances: userBoostersBalances,
-        boostersApproved: userBoostersApproved,
-        magicMaxStakeable: userMagicMaxStakeable,
-        magicStaked: userMagicStaked,
-        totalBoost: userTotalBoost,
-      } = user?.address
+      const harvesterUserInfo = user?.address
         ? await getHarvesterUserInfo({
             chainId,
             harvesterAddress,
-            nftHandlerAddress,
-            permitsAddress,
+            nftHandlerAddress: nftHandlerAddress as AddressString,
+            permitsAddress: permitsAddress as AddressString,
             permitsTokenId,
             userAddress: user.address as AddressString,
           })
-        : {
-            magicBalance: 0n,
-            magicAllowance: 0n,
-            permitsBalance: 0n,
-            permitsApproved: false,
-            boostersBalances: [],
-            boostersApproved: false,
-            magicMaxStakeable: 0n,
-            magicStaked: 0n,
-            totalBoost: 0,
-          };
+        : undefined;
 
       reply.send({
-        id,
         ...harvesterInfo,
-        permitsTokenId: permitsTokenId.toString(),
-        permitsMagicMaxStakeable:
-          harvesterInfo.permitsMagicMaxStakeable.toString(),
-        boostersMaxStakeable: Number(harvesterInfo.boostersMaxStakeable),
-        magicMaxStakeable: harvesterInfo.magicMaxStakeable.toString(),
-        totalMagicStaked: harvesterInfo.totalMagicStaked.toString(),
-        boosters: harvesterInfo.boosters.map((booster) => ({
-          ...booster,
-          tokenId: booster.tokenId.toString(),
-        })),
-        userMagicBalance: userMagicBalance.toString(),
-        userMagicAllowance: userMagicAllowance.toString(),
-        userPermitsBalance: Number(userPermitsBalance),
-        userPermitsApproved,
-        userBoostersBalances,
-        userBoostersApproved,
-        userMagicMaxStakeable: userMagicMaxStakeable.toString(),
-        userMagicStaked: userMagicStaked.toString(),
-        userTotalBoost: userTotalBoost,
+        ...harvesterUserInfo,
       });
     },
   );

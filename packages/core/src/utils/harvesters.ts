@@ -2,6 +2,10 @@ import { readContracts } from "@wagmi/core";
 import { erc20Abi, formatEther, zeroAddress } from "viem";
 import { arbitrumSepolia } from "viem/chains";
 
+import type {
+  HarvesterInfo,
+  HarvesterUserInfo,
+} from "../../../../apps/api/src/schema";
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
@@ -39,7 +43,7 @@ export const getHarvesterInfo = async ({
 }: {
   chainId: SupportedChainId;
   harvesterAddress: AddressString;
-}) => {
+}): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
     { result: nftHandlerAddress = zeroAddress },
@@ -188,8 +192,8 @@ export const getHarvesterInfo = async ({
   );
 
   return {
+    id: harvesterAddress,
     nftHandlerAddress,
-    stakingRulesAddresses,
     permitsStakingRulesAddress,
     boostersStakingRulesAddress,
     legionsStakingRulesAddress,
@@ -204,18 +208,19 @@ export const getHarvesterInfo = async ({
         ].includes(address),
     ),
     permitsAddress,
-    permitsTokenId,
+    permitsTokenId: Number(permitsTokenId),
     permitsMaxStakeable: Number(permitsMaxStakeable),
-    permitsMagicMaxStakeable,
-    magicMaxStakeable: permitsMaxStakeable * permitsMagicMaxStakeable,
-
-    boostersMaxStakeable,
+    permitsMagicMaxStakeable: permitsMagicMaxStakeable.toString(),
+    magicMaxStakeable: (
+      permitsMaxStakeable * permitsMagicMaxStakeable
+    ).toString(),
+    boostersMaxStakeable: Number(boostersMaxStakeable),
     totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
-    totalMagicStaked,
+    totalMagicStaked: totalMagicStaked.toString(),
     totalBoost: Number(formatEther(totalBoost)),
     totalBoostersBoost: Number(formatEther(totalBoostersBoost)),
     boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
-      tokenId,
+      tokenId: Number(tokenId),
       user,
       endTimestamp:
         Number(stakedTimestamp) +
@@ -236,20 +241,21 @@ export const getHarvesterUserInfo = async ({
   harvesterAddress: AddressString;
   nftHandlerAddress: AddressString;
   permitsAddress: AddressString;
-  permitsTokenId: bigint;
+  permitsTokenId: number;
   userAddress: AddressString;
-}) => {
+}): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
-    { result: magicBalance = 0n },
-    { result: magicAllowance = 0n },
-    { result: permitsBalance = 0n },
-    { result: permitsApproved = false },
-    { result: boostersBalances = [] },
-    { result: boostersApproved = false },
-    { result: magicMaxStakeable = 0n },
-    { result: [magicStaked] = [0n] },
-    { result: totalBoost = 0n },
+    { result: userMagicBalance = 0n },
+    { result: userMagicAllowance = 0n },
+    { result: userPermitsBalance = 0n },
+    { result: userPermitsApproved = false },
+    { result: userBoostersBalances = [] },
+    { result: userBoostersApproved = false },
+    { result: userMagicMaxStakeable = 0n },
+    { result: [userMagicStaked] = [0n] },
+    { result: userTotalBoost = 0n },
+    { result: userMagicRewardsClaimable = 0n },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -271,7 +277,7 @@ export const getHarvesterUserInfo = async ({
         address: permitsAddress,
         abi: erc1155Abi,
         functionName: "balanceOf",
-        args: [userAddress, permitsTokenId],
+        args: [userAddress, BigInt(permitsTokenId)],
       },
       {
         chainId,
@@ -315,23 +321,34 @@ export const getHarvesterUserInfo = async ({
         functionName: "getUserBoost",
         args: [userAddress],
       },
+      {
+        chainId,
+        address: harvesterAddress,
+        abi: harvesterAbi,
+        functionName: "pendingRewardsAll",
+        args: [userAddress],
+      },
     ],
   });
   return {
-    magicBalance,
-    magicAllowance,
-    permitsBalance,
-    permitsApproved,
-    boostersBalances: BOOSTER_TOKEN_IDS.map((id, i) => [
-      Number(id),
-      Number(boostersBalances[i] ?? 0),
-    ]) as [number, number][],
-    boostersApproved,
-    magicMaxStakeable,
-    magicStaked,
+    userMagicBalance: userMagicBalance.toString(),
+    userMagicAllowance: userMagicAllowance.toString(),
+    userPermitsBalance: Number(userPermitsBalance),
+    userPermitsApproved,
+    userBoostersBalances: BOOSTER_TOKEN_IDS.reduce(
+      (acc, id, i) => ({
+        ...acc,
+        [Number(id)]: Number(userBoostersBalances[i]),
+      }),
+      {} as Record<number, number>,
+    ),
+    userBoostersApproved,
+    userMagicMaxStakeable: userMagicMaxStakeable.toString(),
+    userMagicStaked: userMagicStaked.toString(),
     // Testnet has a timelock boost applied to it
-    totalBoost:
-      Number(formatEther(totalBoost)) +
+    userTotalBoost:
+      Number(formatEther(userTotalBoost)) +
       (chainId === arbitrumSepolia.id ? 0.05 : 0),
+    userMagicRewardsClaimable: userMagicRewardsClaimable.toString(),
   };
 };
