@@ -6,7 +6,6 @@ import {
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure-dev/tdk-core";
-import type { ProjectSlug } from "@treasure-dev/tdk-react";
 import { getContractAddress } from "@treasure-dev/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
@@ -84,7 +83,7 @@ const reducer = (state: State, action: Action): State => {
 };
 
 type Props = {
-  project: ProjectSlug;
+  project: string;
   chainId: number;
   redirectUri: string;
   backendWallet: string;

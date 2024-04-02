@@ -8,7 +8,7 @@ import {
   DEFAULT_TDK_CHAIN_ID,
   TDKAPI,
 } from "@treasure-dev/tdk-core";
-import { Button, type ProjectSlug } from "@treasure-dev/tdk-react";
+import { Button } from "@treasure-dev/tdk-react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
@@ -23,7 +23,7 @@ type LoginForm = {
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const slug = (params.slug as ProjectSlug) ?? DEFAULT_TDK_APP;
+  const slug = params.slug ?? DEFAULT_TDK_APP;
   const url = new URL(request.url);
   const chainId = Number(
     url.searchParams.get("chain_id") || DEFAULT_TDK_CHAIN_ID,
@@ -89,7 +89,7 @@ const InnerLoginPage = () => {
     logInWithSSO,
     logInWithCustomAuth,
   } = useLogin({
-    project: project.slug as ProjectSlug,
+    project: project.slug,
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],

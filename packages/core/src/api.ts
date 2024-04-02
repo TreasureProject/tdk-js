@@ -20,7 +20,6 @@ import {
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
 } from "./constants";
-import type { ProjectSlug } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -33,7 +32,7 @@ export class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
-  projectId: ProjectSlug;
+  projectId: string;
   chainId: number;
   authToken?: string;
 
@@ -44,7 +43,7 @@ export class TDKAPI {
     authToken,
   }: {
     baseUri?: string;
-    project?: ProjectSlug;
+    project?: string;
     chainId?: number;
     authToken?: string;
   }) {
@@ -131,7 +130,7 @@ export class TDKAPI {
   };
 
   project = {
-    findBySlug: (slug: ProjectSlug) =>
+    findBySlug: (slug: string) =>
       this.get<ReadProjectReply>(`/projects/${slug}`),
   };
 

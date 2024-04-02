@@ -3,7 +3,6 @@ import {
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_LOGIN_DOMAIN,
-  type ProjectSlug,
   TDKAPI,
   decodeAuthToken,
 } from "@treasure-dev/tdk-core";
@@ -17,7 +16,7 @@ import {
 } from "./utils/store";
 
 type Config = {
-  project: ProjectSlug;
+  project: string;
   chainId?: number;
   apiUri?: string;
   authConfig?: {
@@ -27,7 +26,7 @@ type Config = {
 };
 
 type State = {
-  project: ProjectSlug;
+  project: string;
   chainId: number;
   apiUri: string;
   authConfig: {

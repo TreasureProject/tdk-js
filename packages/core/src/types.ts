@@ -1,9 +1,6 @@
 import type { TransactionReceipt } from "viem";
 
-import type { PROJECT_SLUGS, SUPPORTED_CHAIN_IDS } from "./constants";
-
-// Projects
-export type ProjectSlug = (typeof PROJECT_SLUGS)[number];
+import type { SUPPORTED_CHAIN_IDS } from "./constants";
 
 // General transactions
 export type AddressString = `0x${string}`;

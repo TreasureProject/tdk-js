@@ -1,5 +1,3 @@
-import type { ProjectSlug } from "../types";
-
 export const createLoginUrl = ({
   project,
   chainId,
@@ -7,7 +5,7 @@ export const createLoginUrl = ({
   redirectUri,
   data,
 }: {
-  project: ProjectSlug;
+  project: string;
   chainId: number;
   domain: string;
   redirectUri: string;

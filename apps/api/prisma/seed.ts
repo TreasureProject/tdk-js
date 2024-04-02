@@ -1,20 +1,18 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
-import {
-  type Contract,
-  PROJECT_SLUGS,
-  type ProjectSlug,
-  getContractAddress,
-} from "@treasure-dev/tdk-core";
+import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";
 
 type ProjectMetadata = Omit<Prisma.ProjectCreateInput, "slug">;
 
-const METADATA: Record<ProjectSlug, ProjectMetadata> = {
+const METADATA: Record<string, ProjectMetadata> = {
   app: {
     name: "Treasure",
+  },
+  realm: {
+    name: "Realm",
   },
   zeeverse: {
     name: "Zeeverse",
@@ -23,8 +21,13 @@ const METADATA: Record<ProjectSlug, ProjectMetadata> = {
   },
 };
 
-const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
+const REDIRECT_URIS: Record<string, Record<Environment, string[]>> = {
   app: {
+    local: ["http://localhost:3000"],
+    dev: ["https://app-testnet.treasure.lol"],
+    prod: ["https://app.treasure.lol"],
+  },
+  realm: {
     local: ["http://localhost:3000"],
     dev: ["https://app-testnet.treasure.lol"],
     prod: ["https://app.treasure.lol"],
@@ -39,8 +42,9 @@ const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
   },
 };
 
-const CALL_TARGETS: Record<ProjectSlug, Contract[]> = {
+const CALL_TARGETS: Record<string, Contract[]> = {
   app: [],
+  realm: ["MAGIC"],
   zeeverse: [
     "MAGIC",
     "Consumables",
@@ -110,7 +114,7 @@ const createProject = ({
   const environment = (args[0] as Environment) ?? "local";
 
   try {
-    for (const slug of PROJECT_SLUGS) {
+    for (const slug of Object.keys(METADATA)) {
       await createProject({
         slug,
         metadata: METADATA[slug],
