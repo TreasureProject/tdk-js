@@ -26,7 +26,11 @@ type Action =
   | { type: "FINISH_SSO_LOGIN"; email?: string }
   | { type: "START_CUSTOM_AUTH_LOGIN"; email: string }
   | { type: "FINISH_CUSTOM_AUTH_LOGIN" }
-  | { type: "ERROR"; error: string };
+  | { type: "ERROR"; error: string }
+  | {
+      type: "CHANGE_STATUS_DEV";
+      status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
+    };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -79,6 +83,11 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         status: "ERROR",
         error: action.error,
+      };
+    case "CHANGE_STATUS_DEV":
+      return {
+        ...state,
+        status: action.status,
       };
   }
 };
@@ -285,5 +294,8 @@ export const useTreasureLogin = ({
         },
       });
     },
+    changeStatus: (
+      status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR",
+    ) => dispatch({ type: "CHANGE_STATUS_DEV", status }),
   };
 };
