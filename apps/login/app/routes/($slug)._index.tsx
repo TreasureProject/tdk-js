@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import useMeasure from "react-use-measure";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
+import emailImg from "~/assets/email.webp";
 import logoImg from "~/assets/logo.svg";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
 import { useTreasureLogin } from "~/hooks/useTreasureLogin";
@@ -180,21 +181,21 @@ const InnerLoginPage = () => {
           )}
         </select>
         <div className="relative grid h-full place-items-center p-6">
-          <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-xl shadow-black/20">
+          <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-[#FFFCF3] shadow-xl shadow-black/20">
             <form onSubmit={onSubmit} className="space-y-2">
               <div className="flex h-16 items-center justify-between px-5 pt-5">
                 <div className="flex items-center">
                   <img
                     src={project.icon}
                     alt="ZeeVerse"
-                    className="h-full w-10 flex-shrink-0"
+                    className="h-full w-10 flex-shrink-0 rounded-lg bg-[#FFE9B5] p-1"
                   />
                   <div className="ml-2">
                     <h1 className="text-sm text-[#70747D]">Connect to</h1>
                     <h2 className="font-medium">{project.name}</h2>
                   </div>
                 </div>
-                <img src={logoImg} alt="ZeeVerse" className="h-12 w-auto" />
+                <img src={logoImg} alt="ZeeVerse" className="h-8 w-auto" />
               </div>
               <ResizeablePanel>
                 {error ? <div>{error}</div> : null}
@@ -203,10 +204,14 @@ const InnerLoginPage = () => {
                     <SpinnerIcon className="h-8 w-8" />
                   </div>
                 ) : status === "CONFIRM_EMAIL" ? (
-                  <div className="space-y-2 px-8 text-center">
-                    <p className="text-sm">
-                      Please check your email inbox and enter the 6-digit
-                      verification code to continue:
+                  <div className="my-4 text-center">
+                    <img className="mx-auto w-20" src={emailImg} />
+                    <p className="mt-4 font-medium">
+                      We&apos;ve sent you an email
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-[#868C95]">
+                      We’ve sent a code to your email, please enter it below to
+                      confirm your login
                     </p>
                     <ClientOnly>
                       {() => (
@@ -216,8 +221,9 @@ const InnerLoginPage = () => {
                           autoFocus
                           onComplete={finishEmailLogin}
                           classNames={{
-                            container: "mx-auto",
-                            character: "rounded bg-white",
+                            container: "mx-auto mt-4",
+                            character:
+                              "rounded text-lg flex items-center justify-center bg-white bg-white border border-[#CFD1D4]",
                             characterInactive: "bg-white",
                             characterSelected:
                               "border-[#DC2626] outline-[#DC2626]",
@@ -225,14 +231,14 @@ const InnerLoginPage = () => {
                         />
                       )}
                     </ClientOnly>
-                    <span className="block text-center">or</span>
+                    {/* <span className="block text-center">or</span>
                     <Button
                       variant="secondary"
                       className="text-slate-800 hover:text-slate-700"
                       onClick={reset}
                     >
                       Go back
-                    </Button>
+                    </Button> */}
                   </div>
                 ) : (
                   <>
