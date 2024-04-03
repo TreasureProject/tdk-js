@@ -40,10 +40,7 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
         harvesterAddress,
       });
 
-      const { nftHandlerAddress, permitsAddress, permitsTokenId } =
-        harvesterInfo;
-
-      if (nftHandlerAddress === zeroAddress) {
+      if (harvesterInfo.nftHandlerAddress === zeroAddress) {
         return reply.code(404).send({ error: "Not found" });
       }
 
@@ -51,10 +48,7 @@ export const harvestersRoutes: FastifyPluginAsync = async (app) => {
       const harvesterUserInfo = user?.address
         ? await getHarvesterUserInfo({
             chainId,
-            harvesterAddress,
-            nftHandlerAddress: nftHandlerAddress as AddressString,
-            permitsAddress: permitsAddress as AddressString,
-            permitsTokenId,
+            harvesterInfo,
             userAddress: user.address as AddressString,
           })
         : undefined;

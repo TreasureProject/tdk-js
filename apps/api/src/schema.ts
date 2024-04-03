@@ -84,11 +84,27 @@ const harvesterInfoSchema = Type.Object({
   boostersMaxStakeable: Type.Number(),
   // MAGIC settings
   magicMaxStakeable: Type.String(),
+  // Corruption settings
+  corruptionMaxGenerated: Type.String(),
+  corruptionRemovalRecipes: Type.Array(
+    Type.Object({
+      corruptionRemoved: Type.String(),
+      items: Type.Array(
+        Type.Object({
+          address: Type.String(),
+          tokenIds: Type.Array(Type.Number()),
+          amount: Type.Number(),
+          customHandler: Type.Optional(Type.String()),
+        }),
+      ),
+    }),
+  ),
   // Overall state
   totalEmissionsActivated: Type.Number(),
   totalMagicStaked: Type.String(),
   totalBoost: Type.Number(),
   totalBoostersBoost: Type.Number(),
+  totalCorruption: Type.String(),
   // Boosters state
   boosters: Type.Array(
     Type.Object({
@@ -107,6 +123,12 @@ const harvesterUserInfoSchema = Type.Object({
   userBoostersBalances: Type.Record(Type.Number(), Type.Number()),
   userBoostersApproved: Type.Boolean(),
   userTotalBoost: Type.Number(),
+  userPermitsMaxStakeable: Type.Number(),
+  userPermitsStaked: Type.Number(),
+  userCharactersMaxStakeable: Type.Number(),
+  userCharactersStaked: Type.Number(),
+  userCharactersMaxBoost: Type.Number(),
+  userCharactersBoost: Type.Number(),
   userMagicMaxStakeable: Type.String(),
   userMagicStaked: Type.String(),
   userMagicRewardsClaimable: Type.String(),

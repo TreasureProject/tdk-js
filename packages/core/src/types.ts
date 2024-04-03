@@ -16,6 +16,8 @@ export type PriceFeedContract =
 export type BridgeworldContract =
   // General
   | "Middleman"
+  // Tokens
+  | "Corruption"
   // NFTs
   | "BalancerCrystals"
   | "Consumables"
@@ -39,7 +41,8 @@ export type BridgeworldContract =
   | "HarvesterThundermane"
   | "NftHandlerThundermane"
   // Gameplay
-  | "CorruptionRemoval";
+  | "CorruptionRemoval"
+  | "ERC1155TokenSetCorruptionHandler";
 export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
 export type Contract =
   | "MAGIC"
