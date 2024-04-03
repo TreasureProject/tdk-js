@@ -7,6 +7,7 @@ import type {
   HarvesterUserInfo,
 } from "../../../../apps/api/src/schema";
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
+import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { corruptionAbi } from "../abis/corruptionAbi";
 import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
@@ -169,6 +170,16 @@ export const getHarvesterInfo = async ({
     ],
   });
 
+  const charactersStakingRulesAddress = stakingRulesAddresses.find(
+    (address) =>
+      ![
+        permitsStakingRulesAddress,
+        boostersStakingRulesAddress,
+        legionsStakingRulesAddress,
+        treasuresStakingRulesAddress,
+      ].includes(address),
+  );
+
   // Fetch staking rules data
   const [
     { result: permitsMaxStakeable = 0n },
@@ -227,15 +238,7 @@ export const getHarvesterInfo = async ({
     boostersStakingRulesAddress,
     legionsStakingRulesAddress,
     treasuresStakingRulesAddress,
-    charactersStakingRulesAddress: stakingRulesAddresses.find(
-      (address) =>
-        ![
-          permitsStakingRulesAddress,
-          boostersStakingRulesAddress,
-          legionsStakingRulesAddress,
-          treasuresStakingRulesAddress,
-        ].includes(address),
-    ),
+    charactersStakingRulesAddress,
     permitsAddress,
     permitsTokenId: Number(permitsTokenId),
     permitsMaxStakeable: Number(permitsMaxStakeable),
@@ -268,6 +271,7 @@ export const getHarvesterUserInfo = async ({
     permitsStakingRulesAddress,
     permitsAddress,
     permitsTokenId,
+    charactersStakingRulesAddress,
   },
   userAddress,
 }: {
@@ -285,6 +289,9 @@ export const getHarvesterUserInfo = async ({
     { result: userBoostersApproved = false },
     { result: userPermitsMaxStakeable = 0n },
     { result: userPermitsStaked = 0n },
+    { result: userCharactersMaxStakeable = 0n },
+    { result: userCharactersStaked = 0n },
+    { result: userCharacterMaxBoost = 0n },
     { result: userMagicMaxStakeable = 0n },
     { result: [userMagicStaked] = [0n] },
     { result: userTotalBoost = 0n },
@@ -346,6 +353,32 @@ export const getHarvesterUserInfo = async ({
         functionName: "getAmountStaked",
         args: [userAddress],
       },
+      // TODO: don't call this for if no characters staking rules
+      {
+        chainId,
+        address: (charactersStakingRulesAddress ??
+          zeroAddress) as AddressString,
+        abi: charactersStakingRulesAbi,
+        functionName: "maxStakeablePerUser",
+      },
+      {
+        chainId,
+        address: (charactersStakingRulesAddress ??
+          zeroAddress) as AddressString,
+        abi: charactersStakingRulesAbi,
+        // TODO: change this to be generic
+        functionName: "zeeAmountStaked",
+        args: [userAddress],
+      },
+      {
+        chainId,
+        address: (charactersStakingRulesAddress ??
+          zeroAddress) as AddressString,
+        abi: charactersStakingRulesAbi,
+        // TODO: change this to be generic
+        functionName: "levelToUserDepositBoost",
+        args: [50n],
+      },
       {
         chainId,
         address: harvesterAddress as AddressString,
@@ -391,12 +424,17 @@ export const getHarvesterUserInfo = async ({
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),
+    userCharactersMaxStakeable: Number(userCharactersMaxStakeable),
+    userCharactersStaked: Number(userCharactersStaked),
+    userCharactersMaxBoost:
+      Number(formatEther(userCharacterMaxBoost)) *
+      Number(userCharactersMaxStakeable),
+    userCharactersBoost: 0, // TODO: calculate
     userMagicMaxStakeable: userMagicMaxStakeable.toString(),
     userMagicStaked: userMagicStaked.toString(),
-    // Testnet has a timelock boost applied to it
     userTotalBoost:
       Number(formatEther(userTotalBoost)) +
-      (chainId === arbitrumSepolia.id ? 0.05 : 0),
+      (chainId === arbitrumSepolia.id ? 0.05 : 0), // Testnet has a timelock boost applied to it
     userMagicRewardsClaimable: userMagicRewardsClaimable.toString(),
   };
 };
