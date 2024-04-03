@@ -8,6 +8,8 @@ import type {
 } from "../../../../apps/api/src/schema";
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
+import { corruptionAbi } from "../abis/corruptionAbi";
+import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
 import { middlemanAbi } from "../abis/middlemanAbi";
@@ -45,6 +47,8 @@ export const getHarvesterInfo = async ({
   harvesterAddress: AddressString;
 }): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
+
+  // Fetch global and config data
   const [
     { result: nftHandlerAddress = zeroAddress },
     {
@@ -57,6 +61,9 @@ export const getHarvesterInfo = async ({
     { result: totalEmissionsActivated = 0n },
     { result: totalMagicStaked = 0n },
     { result: totalBoost = 0n },
+    { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
+    { result: totalCorruption = 0n },
+    // { result: corruptionRecipes = []}
   ] = await readContracts(config, {
     contracts: [
       {
@@ -89,6 +96,27 @@ export const getHarvesterInfo = async ({
         address: contractAddresses.Middleman,
         abi: middlemanAbi,
         functionName: "getHarvesterEmissionsBoost",
+        args: [harvesterAddress],
+      },
+      {
+        chainId,
+        address: contractAddresses.Corruption,
+        abi: corruptionAbi,
+        functionName: "addressToStreamInfo",
+        args: [harvesterAddress],
+      },
+      {
+        chainId,
+        address: contractAddresses.Corruption,
+        abi: corruptionAbi,
+        functionName: "balanceOf",
+        args: [harvesterAddress],
+      },
+      {
+        chainId,
+        address: contractAddresses.CorruptionRemoval,
+        abi: corruptionRemovalAbi,
+        functionName: "recipeInfosForBuilding",
         args: [harvesterAddress],
       },
     ],
@@ -141,6 +169,7 @@ export const getHarvesterInfo = async ({
     ],
   });
 
+  // Fetch staking rules data
   const [
     { result: permitsMaxStakeable = 0n },
     { result: boostersMaxStakeable = DEFAULT_BOOSTERS_MAX_STAKEABLE },
@@ -215,10 +244,12 @@ export const getHarvesterInfo = async ({
       permitsMaxStakeable * permitsMagicMaxStakeable
     ).toString(),
     boostersMaxStakeable: Number(boostersMaxStakeable),
+    corruptionMaxGenerated: corruptionMaxGenerated.toString(),
     totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
     totalMagicStaked: totalMagicStaked.toString(),
     totalBoost: Number(formatEther(totalBoost)),
     totalBoostersBoost: Number(formatEther(totalBoostersBoost)),
+    totalCorruption: totalCorruption.toString(),
     boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
       tokenId: Number(tokenId),
       user,
@@ -231,17 +262,17 @@ export const getHarvesterInfo = async ({
 
 export const getHarvesterUserInfo = async ({
   chainId,
-  harvesterAddress,
-  nftHandlerAddress,
-  permitsAddress,
-  permitsTokenId,
+  harvesterInfo: {
+    id: harvesterAddress,
+    nftHandlerAddress,
+    permitsStakingRulesAddress,
+    permitsAddress,
+    permitsTokenId,
+  },
   userAddress,
 }: {
   chainId: SupportedChainId;
-  harvesterAddress: AddressString;
-  nftHandlerAddress: AddressString;
-  permitsAddress: AddressString;
-  permitsTokenId: number;
+  harvesterInfo: HarvesterInfo;
   userAddress: AddressString;
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
@@ -252,6 +283,8 @@ export const getHarvesterUserInfo = async ({
     { result: userPermitsApproved = false },
     { result: userBoostersBalances = [] },
     { result: userBoostersApproved = false },
+    { result: userPermitsMaxStakeable = 0n },
+    { result: userPermitsStaked = 0n },
     { result: userMagicMaxStakeable = 0n },
     { result: [userMagicStaked] = [0n] },
     { result: userTotalBoost = 0n },
@@ -270,21 +303,21 @@ export const getHarvesterUserInfo = async ({
         address: contractAddresses.MAGIC,
         abi: erc20Abi,
         functionName: "allowance",
-        args: [userAddress, harvesterAddress],
+        args: [userAddress, harvesterAddress as AddressString],
       },
       {
         chainId,
-        address: permitsAddress,
+        address: permitsAddress as AddressString,
         abi: erc1155Abi,
         functionName: "balanceOf",
         args: [userAddress, BigInt(permitsTokenId)],
       },
       {
         chainId,
-        address: permitsAddress,
+        address: permitsAddress as AddressString,
         abi: erc1155Abi,
         functionName: "isApprovedForAll",
-        args: [userAddress, nftHandlerAddress],
+        args: [userAddress, nftHandlerAddress as AddressString],
       },
       {
         chainId,
@@ -298,32 +331,45 @@ export const getHarvesterUserInfo = async ({
         address: contractAddresses.Consumables,
         abi: consumablesAbi,
         functionName: "isApprovedForAll",
-        args: [userAddress, nftHandlerAddress],
+        args: [userAddress, nftHandlerAddress as AddressString],
       },
       {
         chainId,
-        address: harvesterAddress,
+        address: permitsStakingRulesAddress as AddressString,
+        abi: permitsStakingRulesAbi,
+        functionName: "maxStakeablePerUser",
+      },
+      {
+        chainId,
+        address: permitsStakingRulesAddress as AddressString,
+        abi: permitsStakingRulesAbi,
+        functionName: "getAmountStaked",
+        args: [userAddress],
+      },
+      {
+        chainId,
+        address: harvesterAddress as AddressString,
         abi: harvesterAbi,
         functionName: "getUserDepositCap",
         args: [userAddress],
       },
       {
         chainId,
-        address: harvesterAddress,
+        address: harvesterAddress as AddressString,
         abi: harvesterAbi,
         functionName: "getUserGlobalDeposit",
         args: [userAddress],
       },
       {
         chainId,
-        address: harvesterAddress,
+        address: harvesterAddress as AddressString,
         abi: harvesterAbi,
         functionName: "getUserBoost",
         args: [userAddress],
       },
       {
         chainId,
-        address: harvesterAddress,
+        address: harvesterAddress as AddressString,
         abi: harvesterAbi,
         functionName: "pendingRewardsAll",
         args: [userAddress],
@@ -343,6 +389,8 @@ export const getHarvesterUserInfo = async ({
       {} as Record<number, number>,
     ),
     userBoostersApproved,
+    userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
+    userPermitsStaked: Number(userPermitsStaked),
     userMagicMaxStakeable: userMagicMaxStakeable.toString(),
     userMagicStaked: userMagicStaked.toString(),
     // Testnet has a timelock boost applied to it

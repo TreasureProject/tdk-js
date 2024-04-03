@@ -16,6 +16,8 @@ export type PriceFeedContract =
 export type BridgeworldContract =
   // General
   | "Middleman"
+  // Tokens
+  | "Corruption"
   // NFTs
   | "BalancerCrystals"
   | "Consumables"
