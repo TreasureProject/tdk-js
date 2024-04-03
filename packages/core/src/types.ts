@@ -41,7 +41,8 @@ export type BridgeworldContract =
   | "HarvesterThundermane"
   | "NftHandlerThundermane"
   // Gameplay
-  | "CorruptionRemoval";
+  | "CorruptionRemoval"
+  | "ERC1155TokenSetCorruptionHandler";
 export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
 export type Contract =
   | "MAGIC"

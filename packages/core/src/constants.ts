@@ -106,6 +106,8 @@ export const CONTRACT_ADDRESSES: Record<
     BalancerCrystals: "0xbfeba04384cecfaf0240b49163ed418f82e43d3a",
     Consumables: "0xf3d00a2559d84de7ac093443bcaada5f4ee4165c",
     CorruptionRemoval: "0x08f3533acdf2b9c400204056f771bdd6f1f1c200",
+    ERC1155TokenSetCorruptionHandler:
+      "0x3c62778d8e01ed17c1048b64edaf121d36c71a4e",
     Legions: "0xfe8c1ac365ba6780aec5a985d989b327c27670a1",
     Treasures: "0xebba467ecb6b21239178033189ceae27ca12eadf",
     HarvesterAfarit: "0x70a75ac9537f6cdac553f82b6e39484acc521067",
@@ -145,6 +147,8 @@ export const CONTRACT_ADDRESSES: Record<
     BalancerCrystals: "0x43499c6926bcc78d3ad73fed6627de75c45c5878",
     Consumables: "0x9d012712d24c90dded4574430b9e6065183896be",
     CorruptionRemoval: "0xdd8b0dd8128873049b1d528262724bde600f5be2",
+    ERC1155TokenSetCorruptionHandler:
+      "0x937817e7fe8e3b3543db46f14473d5f110a79ece",
     Legions: "0xd144e34c3c0a8e605e9d45792380841a2169dd8f",
     Treasures: "0xfe592736200d7545981397ca7a8e896ac0c166d4",
     HarvesterAfarit: "0x1fe108cc61b293c92a174e9339bbe6d12fc2e4d9",

@@ -86,6 +86,19 @@ const harvesterInfoSchema = Type.Object({
   magicMaxStakeable: Type.String(),
   // Corruption settings
   corruptionMaxGenerated: Type.String(),
+  corruptionRemovalRecipes: Type.Array(
+    Type.Object({
+      corruptionRemoved: Type.String(),
+      items: Type.Array(
+        Type.Object({
+          address: Type.String(),
+          tokenIds: Type.Array(Type.Number()),
+          amount: Type.Number(),
+          customHandler: Type.Optional(Type.String()),
+        }),
+      ),
+    }),
+  ),
   // Overall state
   totalEmissionsActivated: Type.Number(),
   totalMagicStaked: Type.String(),

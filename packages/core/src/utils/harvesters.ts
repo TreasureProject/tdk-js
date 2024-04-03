@@ -1,5 +1,11 @@
 import { readContracts } from "@wagmi/core";
-import { erc20Abi, formatEther, zeroAddress } from "viem";
+import {
+  decodeAbiParameters,
+  erc20Abi,
+  formatEther,
+  parseAbiParameters,
+  zeroAddress,
+} from "viem";
 import { arbitrumSepolia } from "viem/chains";
 
 import type {
@@ -64,7 +70,7 @@ export const getHarvesterInfo = async ({
     { result: totalBoost = 0n },
     { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
     { result: totalCorruption = 0n },
-    // { result: corruptionRecipes = []}
+    { result: corruptionRemovalRecipes = [] },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -248,6 +254,46 @@ export const getHarvesterInfo = async ({
     ).toString(),
     boostersMaxStakeable: Number(boostersMaxStakeable),
     corruptionMaxGenerated: corruptionMaxGenerated.toString(),
+    corruptionRemovalRecipes: corruptionRemovalRecipes.map(
+      ({ corruptionRemoved, items }) => ({
+        corruptionRemoved: corruptionRemoved.toString(),
+        items: items.map(
+          ({
+            itemAddress,
+            itemId,
+            amount,
+            customHandler,
+            customRequirementData,
+          }) => {
+            if (
+              customHandler.toLowerCase() ===
+              contractAddresses.ERC1155TokenSetCorruptionHandler
+            ) {
+              const [{ amount: erc1155Amount, collection: address, tokenIds }] =
+                decodeAbiParameters(
+                  parseAbiParameters(
+                    "(uint256 amount, address collection, uint256[] tokenIds)",
+                  ),
+                  customRequirementData,
+                );
+
+              return {
+                address,
+                tokenIds: tokenIds.map((tokenId) => Number(tokenId)),
+                amount: Number(erc1155Amount),
+                customHandler,
+              };
+            }
+
+            return {
+              address: itemAddress,
+              tokenIds: [Number(itemId)],
+              amount: Number(amount),
+            };
+          },
+        ),
+      }),
+    ),
     totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
     totalMagicStaked: totalMagicStaked.toString(),
     totalBoost: Number(formatEther(totalBoost)),
