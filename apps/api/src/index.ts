@@ -52,7 +52,7 @@ const main = async () => {
     app.register(projectsRoutes(ctx)),
     app.register(contractsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
-    app.register(harvestersRoutes),
+    app.register(harvestersRoutes(ctx)),
   ]);
 
   app.get("/healthcheck", async (_, reply) => reply.send("OK"));

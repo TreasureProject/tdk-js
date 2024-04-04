@@ -2,6 +2,7 @@ import { readContracts } from "@wagmi/core";
 import {
   decodeAbiParameters,
   erc20Abi,
+  erc721Abi,
   formatEther,
   parseAbiParameters,
   zeroAddress,
@@ -11,6 +12,7 @@ import { arbitrumSepolia } from "viem/chains";
 import type {
   HarvesterInfo,
   HarvesterUserInfo,
+  InventoryToken,
 } from "../../../../apps/api/src/schema";
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
@@ -25,6 +27,7 @@ import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
 import { TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddress, getContractAddresses } from "./contracts";
+import { fetchUserInventory } from "./inventory";
 import { config } from "./wagmi";
 
 const DEFAULT_BOOSTERS_MAX_STAKEABLE = 10n;
@@ -49,9 +52,11 @@ const BOOSTER_TOKEN_IDS = [
 export const getHarvesterInfo = async ({
   chainId,
   harvesterAddress,
+  // tokenApiKey,
 }: {
   chainId: SupportedChainId;
   harvesterAddress: AddressString;
+  tokenApiKey?: string;
 }): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
 
@@ -201,6 +206,7 @@ export const getHarvesterInfo = async ({
     { result: boostersLifetimes = DEFAULT_BOOSTERS_LIFETIMES },
     { result: totalBoostersBoost = 0n },
     { result: boosters = [] },
+    { result: charactersAddress = zeroAddress },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -234,6 +240,13 @@ export const getHarvesterInfo = async ({
         abi: boostersStakingRulesAbi,
         functionName: "getExtractors",
       },
+      // TODO: don't call this if no characters staking rules
+      {
+        chainId,
+        address: charactersStakingRulesAddress ?? zeroAddress,
+        abi: charactersStakingRulesAbi,
+        functionName: "zeeAddress",
+      },
     ],
   });
 
@@ -253,6 +266,7 @@ export const getHarvesterInfo = async ({
     legionsStakingRulesAddress,
     treasuresStakingRulesAddress,
     charactersStakingRulesAddress,
+    charactersAddress,
     permitsAddress,
     permitsTokenId: Number(permitsTokenId),
     permitsMaxStakeable: Number(permitsMaxStakeable),
@@ -327,12 +341,15 @@ export const getHarvesterUserInfo = async ({
     permitsAddress,
     permitsTokenId,
     charactersStakingRulesAddress,
+    charactersAddress,
   },
   userAddress,
+  inventoryApiKey,
 }: {
   chainId: SupportedChainId;
   harvesterInfo: HarvesterInfo;
   userAddress: AddressString;
+  inventoryApiKey?: string;
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
@@ -344,6 +361,7 @@ export const getHarvesterUserInfo = async ({
     { result: userBoostersApproved = false },
     { result: userPermitsMaxStakeable = 0n },
     { result: userPermitsStaked = 0n },
+    { result: userCharactersApproved = false },
     { result: userCharactersMaxStakeable = 0n },
     { result: userCharactersStaked = 0n },
     { result: userCharacterMaxBoost = 0n },
@@ -408,7 +426,15 @@ export const getHarvesterUserInfo = async ({
         functionName: "getAmountStaked",
         args: [userAddress],
       },
-      // TODO: don't call this for if no characters staking rules
+      // TODO: don't call this if no characters staking rules
+      // TODO: handle non-ERC721 characters?
+      {
+        chainId,
+        address: (charactersAddress ?? zeroAddress) as AddressString,
+        abi: erc721Abi,
+        functionName: "isApprovedForAll",
+        args: [userAddress, nftHandlerAddress as AddressString],
+      },
       {
         chainId,
         address: (charactersStakingRulesAddress ??
@@ -463,6 +489,30 @@ export const getHarvesterUserInfo = async ({
       },
     ],
   });
+
+  let userCharactersInventory: InventoryToken[] = [];
+  if (
+    inventoryApiKey &&
+    charactersAddress &&
+    charactersAddress !== zeroAddress
+  ) {
+    try {
+      const inventoryTokens = await fetchUserInventory({
+        chainId,
+        apiKey: inventoryApiKey,
+        userAddress,
+        collectionAddresses: [charactersAddress],
+      });
+
+      userCharactersInventory = inventoryTokens.filter(
+        ({ address }) =>
+          address.toLowerCase() === charactersAddress.toLowerCase(),
+      );
+    } catch (err) {
+      console.error("Error fetching user inventory:", err);
+    }
+  }
+
   return {
     userMagicBalance: userMagicBalance.toString(),
     userMagicAllowance: userMagicAllowance.toString(),
@@ -478,6 +528,8 @@ export const getHarvesterUserInfo = async ({
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),
+    userCharactersInventory,
+    userCharactersApproved,
     userCharactersMaxStakeable: Number(userCharactersMaxStakeable),
     userCharactersStaked: Number(userCharactersStaked),
     userCharactersMaxBoost:
