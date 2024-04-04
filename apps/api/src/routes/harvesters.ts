@@ -14,49 +14,54 @@ import {
   type ReadHarvesterReply,
   readHarvesterReplySchema,
 } from "../schema";
+import type { TdkApiContext } from "../types";
 
-export const harvestersRoutes: FastifyPluginAsync = async (app) => {
-  app.get<{
-    Params: ReadHarvesterParams;
-    Reply: ReadHarvesterReply | ErrorReply;
-  }>(
-    "/harvesters/:id",
-    {
-      schema: {
-        response: {
-          200: readHarvesterReplySchema,
+export const harvestersRoutes =
+  ({ env }: TdkApiContext): FastifyPluginAsync =>
+  async (app) => {
+    app.get<{
+      Params: ReadHarvesterParams;
+      Reply: ReadHarvesterReply | ErrorReply;
+    }>(
+      "/harvesters/:id",
+      {
+        schema: {
+          response: {
+            200: readHarvesterReplySchema,
+          },
         },
       },
-    },
-    async (req, reply) => {
-      const {
-        chainId,
-        params: { id },
-      } = req;
+      async (req, reply) => {
+        const {
+          chainId,
+          params: { id },
+        } = req;
 
-      const harvesterAddress = id as AddressString;
-      const harvesterInfo = await getHarvesterInfo({
-        chainId,
-        harvesterAddress,
-      });
+        const harvesterAddress = id as AddressString;
+        const harvesterInfo = await getHarvesterInfo({
+          chainId,
+          harvesterAddress,
+          tokenApiKey: env.TROVE_API_KEY,
+        });
 
-      if (harvesterInfo.nftHandlerAddress === zeroAddress) {
-        return reply.code(404).send({ error: "Not found" });
-      }
+        if (harvesterInfo.nftHandlerAddress === zeroAddress) {
+          return reply.code(404).send({ error: "Not found" });
+        }
 
-      const user = await getUser(req);
-      const harvesterUserInfo = user?.address
-        ? await getHarvesterUserInfo({
-            chainId,
-            harvesterInfo,
-            userAddress: user.address as AddressString,
-          })
-        : undefined;
+        const user = await getUser(req);
+        const harvesterUserInfo = user?.address
+          ? await getHarvesterUserInfo({
+              chainId,
+              harvesterInfo,
+              userAddress: user.address as AddressString,
+              inventoryApiKey: env.TROVE_API_KEY,
+            })
+          : undefined;
 
-      reply.send({
-        ...harvesterInfo,
-        ...harvesterUserInfo,
-      });
-    },
-  );
-};
+        reply.send({
+          ...harvesterInfo,
+          ...harvesterUserInfo,
+        });
+      },
+    );
+  };

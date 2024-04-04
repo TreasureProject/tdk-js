@@ -65,6 +65,27 @@ export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
 export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;
 
 // Harvesters
+const tokenSchema = Type.Object({
+  address: Type.String(),
+  tokenId: Type.Number(),
+  name: Type.String(),
+  image: Type.String(),
+  attributes: Type.Array(
+    Type.Object({
+      type: Type.String(),
+      value: Type.Union([Type.String(), Type.Number()]),
+    }),
+  ),
+});
+
+const inventoryTokenSchema = Type.Intersect([
+  tokenSchema,
+  Type.Object({
+    user: Type.String(),
+    balance: Type.Number(),
+  }),
+]);
+
 const harvesterInfoSchema = Type.Object({
   id: Type.String(),
   // NFT Handler
@@ -75,6 +96,8 @@ const harvesterInfoSchema = Type.Object({
   legionsStakingRulesAddress: Type.Optional(Type.String()),
   treasuresStakingRulesAddress: Type.Optional(Type.String()),
   charactersStakingRulesAddress: Type.Optional(Type.String()),
+  // NFTs settings
+  charactersAddress: Type.Optional(Type.String()),
   // Permits settings
   permitsAddress: Type.String(),
   permitsTokenId: Type.Number(),
@@ -126,6 +149,9 @@ const harvesterUserInfoSchema = Type.Object({
   userTotalBoost: Type.Number(),
   userPermitsMaxStakeable: Type.Number(),
   userPermitsStaked: Type.Number(),
+  userInventoryCharacters: Type.Array(inventoryTokenSchema),
+  userStakedCharacters: Type.Array(tokenSchema),
+  userCharactersApproved: Type.Boolean(),
   userCharactersMaxStakeable: Type.Number(),
   userCharactersStaked: Type.Number(),
   userCharactersMaxBoost: Type.Number(),
@@ -144,6 +170,8 @@ export const readHarvesterReplySchema = Type.Composite([
   Type.Partial(harvesterUserInfoSchema),
 ]);
 
+export type Token = Static<typeof tokenSchema>;
+export type InventoryToken = Static<typeof inventoryTokenSchema>;
 export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
 export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
