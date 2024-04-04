@@ -421,8 +421,7 @@ export const getHarvesterUserInfo = async ({
         address: (charactersStakingRulesAddress ??
           zeroAddress) as AddressString,
         abi: charactersStakingRulesAbi,
-        // TODO: change this to be generic
-        functionName: "zeeAmountStaked",
+        functionName: "amountStaked",
         args: [userAddress],
       },
       {
