@@ -88,6 +88,7 @@ const harvesterInfoSchema = Type.Object({
   corruptionMaxGenerated: Type.String(),
   corruptionRemovalRecipes: Type.Array(
     Type.Object({
+      id: Type.String(),
       corruptionRemoved: Type.String(),
       items: Type.Array(
         Type.Object({

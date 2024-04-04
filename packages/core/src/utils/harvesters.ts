@@ -70,6 +70,7 @@ export const getHarvesterInfo = async ({
     { result: totalBoost = 0n },
     { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
     { result: totalCorruption = 0n },
+    { result: corruptionRemovalRecipeIds = [] },
     { result: corruptionRemovalRecipes = [] },
   ] = await readContracts(config, {
     contracts: [
@@ -117,6 +118,13 @@ export const getHarvesterInfo = async ({
         address: contractAddresses.Corruption,
         abi: corruptionAbi,
         functionName: "balanceOf",
+        args: [harvesterAddress],
+      },
+      {
+        chainId,
+        address: contractAddresses.CorruptionRemoval,
+        abi: corruptionRemovalAbi,
+        functionName: "recipeIdsForBuilding",
         args: [harvesterAddress],
       },
       {
@@ -255,7 +263,8 @@ export const getHarvesterInfo = async ({
     boostersMaxStakeable: Number(boostersMaxStakeable),
     corruptionMaxGenerated: corruptionMaxGenerated.toString(),
     corruptionRemovalRecipes: corruptionRemovalRecipes.map(
-      ({ corruptionRemoved, items }) => ({
+      ({ corruptionRemoved, items }, i) => ({
+        id: corruptionRemovalRecipeIds[i].toString(),
         corruptionRemoved: corruptionRemoved.toString(),
         items: items.map(
           ({
