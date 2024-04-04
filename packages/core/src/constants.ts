@@ -10,6 +10,18 @@ export const DEFAULT_TDK_APP = "app";
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
 
+export const BRIDGEWORLD_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-dev/live/gn",
+} as const;
+
+export const TROVE_API_URL = {
+  [arbitrum.id]: "https://trove-api.treasure.lol",
+  [arbitrumSepolia.id]: "https://trove-api-dev.treasure.lol",
+} as const;
+
 export const SUPPORTED_CHAINS = [arbitrum, arbitrumSepolia] as const;
 export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
 

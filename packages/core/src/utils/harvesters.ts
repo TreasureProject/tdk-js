@@ -13,6 +13,7 @@ import type {
   HarvesterInfo,
   HarvesterUserInfo,
   InventoryToken,
+  Token,
 } from "../../../../apps/api/src/schema";
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
@@ -24,10 +25,10 @@ import { harvesterAbi } from "../abis/harvesterAbi";
 import { middlemanAbi } from "../abis/middlemanAbi";
 import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
-import { TOKEN_IDS } from "../constants";
+import { BRIDGEWORLD_API_URL, TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddress, getContractAddresses } from "./contracts";
-import { fetchUserInventory } from "./inventory";
+import { fetchTokens, fetchUserInventory } from "./inventory";
 import { config } from "./wagmi";
 
 const DEFAULT_BOOSTERS_MAX_STAKEABLE = 10n;
@@ -48,6 +49,57 @@ const BOOSTER_TOKEN_IDS = [
   TOKEN_IDS.Consumables.AnabolicBooster,
   TOKEN_IDS.Consumables.OverclockedBooster,
 ];
+
+const fetchIndexedHarvester = async ({
+  chainId,
+  harvesterAddress,
+  userAddress,
+}: {
+  chainId: SupportedChainId;
+  harvesterAddress: string;
+  userAddress: string;
+}) => {
+  const response = await fetch(BRIDGEWORLD_API_URL[chainId], {
+    method: "POST",
+    body: JSON.stringify({
+      query: `
+      {
+        harvester(id: "${harvesterAddress.toLowerCase()}") {
+          userStakedCharacters: stakedTokens(
+            first: 1000
+            where: {
+              user: "${userAddress.toLowerCase()}"
+              token_: { category: Other }
+            }
+          ) {
+            token {
+              contract
+              tokenId
+            }
+            quantity
+          }
+        }
+      }
+      `,
+    }),
+  });
+  const {
+    data: { harvester },
+  } = (await response.json()) as {
+    data: {
+      harvester: {
+        userStakedCharacters: {
+          token: {
+            contract: string;
+            tokenId: string;
+          };
+          quantity: string;
+        }[];
+      };
+    };
+  };
+  return harvester;
+};
 
 export const getHarvesterInfo = async ({
   chainId,
@@ -353,164 +405,178 @@ export const getHarvesterUserInfo = async ({
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
-    { result: userMagicBalance = 0n },
-    { result: userMagicAllowance = 0n },
-    { result: userPermitsBalance = 0n },
-    { result: userPermitsApproved = false },
-    { result: userBoostersBalances = [] },
-    { result: userBoostersApproved = false },
-    { result: userPermitsMaxStakeable = 0n },
-    { result: userPermitsStaked = 0n },
-    { result: userCharactersApproved = false },
-    { result: userCharactersMaxStakeable = 0n },
-    { result: userCharactersStaked = 0n },
-    { result: userCharacterMaxBoost = 0n },
-    { result: userMagicMaxStakeable = 0n },
-    { result: [userMagicStaked] = [0n] },
-    { result: userTotalBoost = 0n },
-    { result: userMagicRewardsClaimable = 0n },
-  ] = await readContracts(config, {
-    contracts: [
-      {
-        chainId,
-        address: contractAddresses.MAGIC,
-        abi: erc20Abi,
-        functionName: "balanceOf",
-        args: [userAddress],
-      },
-      {
-        chainId,
-        address: contractAddresses.MAGIC,
-        abi: erc20Abi,
-        functionName: "allowance",
-        args: [userAddress, harvesterAddress as AddressString],
-      },
-      {
-        chainId,
-        address: permitsAddress as AddressString,
-        abi: erc1155Abi,
-        functionName: "balanceOf",
-        args: [userAddress, BigInt(permitsTokenId)],
-      },
-      {
-        chainId,
-        address: permitsAddress as AddressString,
-        abi: erc1155Abi,
-        functionName: "isApprovedForAll",
-        args: [userAddress, nftHandlerAddress as AddressString],
-      },
-      {
-        chainId,
-        address: contractAddresses.Consumables,
-        abi: consumablesAbi,
-        functionName: "balanceOfBatch",
-        args: [BOOSTER_TOKEN_IDS.map(() => userAddress), BOOSTER_TOKEN_IDS],
-      },
-      {
-        chainId,
-        address: contractAddresses.Consumables,
-        abi: consumablesAbi,
-        functionName: "isApprovedForAll",
-        args: [userAddress, nftHandlerAddress as AddressString],
-      },
-      {
-        chainId,
-        address: permitsStakingRulesAddress as AddressString,
-        abi: permitsStakingRulesAbi,
-        functionName: "maxStakeablePerUser",
-      },
-      {
-        chainId,
-        address: permitsStakingRulesAddress as AddressString,
-        abi: permitsStakingRulesAbi,
-        functionName: "getAmountStaked",
-        args: [userAddress],
-      },
-      // TODO: don't call this if no characters staking rules
-      // TODO: handle non-ERC721 characters?
-      {
-        chainId,
-        address: (charactersAddress ?? zeroAddress) as AddressString,
-        abi: erc721Abi,
-        functionName: "isApprovedForAll",
-        args: [userAddress, nftHandlerAddress as AddressString],
-      },
-      {
-        chainId,
-        address: (charactersStakingRulesAddress ??
-          zeroAddress) as AddressString,
-        abi: charactersStakingRulesAbi,
-        functionName: "maxStakeablePerUser",
-      },
-      {
-        chainId,
-        address: (charactersStakingRulesAddress ??
-          zeroAddress) as AddressString,
-        abi: charactersStakingRulesAbi,
-        functionName: "amountStaked",
-        args: [userAddress],
-      },
-      {
-        chainId,
-        address: (charactersStakingRulesAddress ??
-          zeroAddress) as AddressString,
-        abi: charactersStakingRulesAbi,
-        // TODO: change this to be generic
-        functionName: "levelToUserDepositBoost",
-        args: [50n],
-      },
-      {
-        chainId,
-        address: harvesterAddress as AddressString,
-        abi: harvesterAbi,
-        functionName: "getUserDepositCap",
-        args: [userAddress],
-      },
-      {
-        chainId,
-        address: harvesterAddress as AddressString,
-        abi: harvesterAbi,
-        functionName: "getUserGlobalDeposit",
-        args: [userAddress],
-      },
-      {
-        chainId,
-        address: harvesterAddress as AddressString,
-        abi: harvesterAbi,
-        functionName: "getUserBoost",
-        args: [userAddress],
-      },
-      {
-        chainId,
-        address: harvesterAddress as AddressString,
-        abi: harvesterAbi,
-        functionName: "pendingRewardsAll",
-        args: [userAddress],
-      },
+    [
+      { result: userMagicBalance = 0n },
+      { result: userMagicAllowance = 0n },
+      { result: userPermitsBalance = 0n },
+      { result: userPermitsApproved = false },
+      { result: userBoostersBalances = [] },
+      { result: userBoostersApproved = false },
+      { result: userPermitsMaxStakeable = 0n },
+      { result: userPermitsStaked = 0n },
+      { result: userCharactersApproved = false },
+      { result: userCharactersMaxStakeable = 0n },
+      { result: userCharactersStaked = 0n },
+      { result: userCharacterMaxBoost = 0n },
+      { result: userMagicMaxStakeable = 0n },
+      { result: [userMagicStaked] = [0n] },
+      { result: userTotalBoost = 0n },
+      { result: userMagicRewardsClaimable = 0n },
     ],
-  });
+    indexedHarvester,
+  ] = await Promise.all([
+    readContracts(config, {
+      contracts: [
+        {
+          chainId,
+          address: contractAddresses.MAGIC,
+          abi: erc20Abi,
+          functionName: "balanceOf",
+          args: [userAddress],
+        },
+        {
+          chainId,
+          address: contractAddresses.MAGIC,
+          abi: erc20Abi,
+          functionName: "allowance",
+          args: [userAddress, harvesterAddress as AddressString],
+        },
+        {
+          chainId,
+          address: permitsAddress as AddressString,
+          abi: erc1155Abi,
+          functionName: "balanceOf",
+          args: [userAddress, BigInt(permitsTokenId)],
+        },
+        {
+          chainId,
+          address: permitsAddress as AddressString,
+          abi: erc1155Abi,
+          functionName: "isApprovedForAll",
+          args: [userAddress, nftHandlerAddress as AddressString],
+        },
+        {
+          chainId,
+          address: contractAddresses.Consumables,
+          abi: consumablesAbi,
+          functionName: "balanceOfBatch",
+          args: [BOOSTER_TOKEN_IDS.map(() => userAddress), BOOSTER_TOKEN_IDS],
+        },
+        {
+          chainId,
+          address: contractAddresses.Consumables,
+          abi: consumablesAbi,
+          functionName: "isApprovedForAll",
+          args: [userAddress, nftHandlerAddress as AddressString],
+        },
+        {
+          chainId,
+          address: permitsStakingRulesAddress as AddressString,
+          abi: permitsStakingRulesAbi,
+          functionName: "maxStakeablePerUser",
+        },
+        {
+          chainId,
+          address: permitsStakingRulesAddress as AddressString,
+          abi: permitsStakingRulesAbi,
+          functionName: "getAmountStaked",
+          args: [userAddress],
+        },
+        // TODO: don't call this if no characters staking rules
+        // TODO: handle non-ERC721 characters?
+        {
+          chainId,
+          address: (charactersAddress ?? zeroAddress) as AddressString,
+          abi: erc721Abi,
+          functionName: "isApprovedForAll",
+          args: [userAddress, nftHandlerAddress as AddressString],
+        },
+        {
+          chainId,
+          address: (charactersStakingRulesAddress ??
+            zeroAddress) as AddressString,
+          abi: charactersStakingRulesAbi,
+          functionName: "maxStakeablePerUser",
+        },
+        {
+          chainId,
+          address: (charactersStakingRulesAddress ??
+            zeroAddress) as AddressString,
+          abi: charactersStakingRulesAbi,
+          functionName: "amountStaked",
+          args: [userAddress],
+        },
+        {
+          chainId,
+          address: (charactersStakingRulesAddress ??
+            zeroAddress) as AddressString,
+          abi: charactersStakingRulesAbi,
+          // TODO: change this to be generic
+          functionName: "levelToUserDepositBoost",
+          args: [50n],
+        },
+        {
+          chainId,
+          address: harvesterAddress as AddressString,
+          abi: harvesterAbi,
+          functionName: "getUserDepositCap",
+          args: [userAddress],
+        },
+        {
+          chainId,
+          address: harvesterAddress as AddressString,
+          abi: harvesterAbi,
+          functionName: "getUserGlobalDeposit",
+          args: [userAddress],
+        },
+        {
+          chainId,
+          address: harvesterAddress as AddressString,
+          abi: harvesterAbi,
+          functionName: "getUserBoost",
+          args: [userAddress],
+        },
+        {
+          chainId,
+          address: harvesterAddress as AddressString,
+          abi: harvesterAbi,
+          functionName: "pendingRewardsAll",
+          args: [userAddress],
+        },
+      ],
+    }),
+    fetchIndexedHarvester({
+      chainId,
+      harvesterAddress,
+      userAddress,
+    }),
+  ]);
 
-  let userCharactersInventory: InventoryToken[] = [];
-  if (
-    inventoryApiKey &&
-    charactersAddress &&
-    charactersAddress !== zeroAddress
-  ) {
-    try {
-      const inventoryTokens = await fetchUserInventory({
+  let userInventoryCharacters: InventoryToken[] = [];
+  let userStakedCharacters: Token[] = [];
+  if (inventoryApiKey) {
+    const [stakedTokens, inventoryTokens = []] = await Promise.all([
+      fetchTokens({
         chainId,
         apiKey: inventoryApiKey,
-        userAddress,
-        collectionAddresses: [charactersAddress],
-      });
+        tokens: indexedHarvester.userStakedCharacters.map(
+          ({ token: { contract, tokenId } }) => [contract, tokenId],
+        ),
+      }),
+      ...(charactersAddress
+        ? [
+            fetchUserInventory({
+              chainId,
+              apiKey: inventoryApiKey,
+              userAddress,
+              collectionAddresses: [charactersAddress],
+            }),
+          ]
+        : []),
+    ]);
 
-      userCharactersInventory = inventoryTokens.filter(
-        ({ address }) =>
-          address.toLowerCase() === charactersAddress.toLowerCase(),
-      );
-    } catch (err) {
-      console.error("Error fetching user inventory:", err);
-    }
+    userStakedCharacters = stakedTokens;
+    userInventoryCharacters = inventoryTokens;
   }
 
   return {
@@ -528,7 +594,8 @@ export const getHarvesterUserInfo = async ({
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),
-    userCharactersInventory,
+    userInventoryCharacters,
+    userStakedCharacters,
     userCharactersApproved,
     userCharactersMaxStakeable: Number(userCharactersMaxStakeable),
     userCharactersStaked: Number(userCharactersStaked),
