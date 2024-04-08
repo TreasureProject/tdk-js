@@ -394,6 +394,7 @@ export const getHarvesterUserInfo = async ({
     permitsTokenId,
     charactersStakingRulesAddress,
     charactersAddress,
+    corruptionRemovalRecipes,
   },
   userAddress,
   inventoryApiKey,
@@ -553,30 +554,47 @@ export const getHarvesterUserInfo = async ({
   ]);
 
   let userInventoryCharacters: InventoryToken[] = [];
+  let userInventoryCorruptionRemovalRecipeItems: InventoryToken[] = [];
   let userStakedCharacters: Token[] = [];
   if (inventoryApiKey) {
+    const inventoryAddresses = [
+      ...new Set([
+        ...(charactersAddress ? [charactersAddress] : []),
+        ...corruptionRemovalRecipes.flatMap(({ items }) =>
+          items.map(({ address }) => address),
+        ),
+      ]),
+    ];
     const [stakedTokens, inventoryTokens = []] = await Promise.all([
       fetchTokens({
         chainId,
         apiKey: inventoryApiKey,
         tokens: indexedHarvester.userStakedCharacters.map(
-          ({ token: { contract, tokenId } }) => [contract, tokenId],
+          ({ token: { contract: address, tokenId } }) => ({ address, tokenId }),
         ),
       }),
-      ...(charactersAddress
+      ...(inventoryAddresses.length > 0
         ? [
             fetchUserInventory({
               chainId,
               apiKey: inventoryApiKey,
               userAddress,
-              collectionAddresses: [charactersAddress],
+              collectionAddresses: inventoryAddresses,
             }),
           ]
         : []),
     ]);
 
     userStakedCharacters = stakedTokens;
-    userInventoryCharacters = inventoryTokens;
+    userInventoryCharacters = inventoryTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() === charactersAddress?.toLowerCase(),
+    );
+    // TODO: filter Corruption Removal recipe item inventory to only include relevant tokens
+    userInventoryCorruptionRemovalRecipeItems = inventoryTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() !== charactersAddress?.toLowerCase(),
+    );
   }
 
   return {
@@ -594,6 +612,7 @@ export const getHarvesterUserInfo = async ({
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),
+    userInventoryCorruptionRemovalRecipeItems,
     userInventoryCharacters,
     userStakedCharacters,
     userCharactersApproved,
