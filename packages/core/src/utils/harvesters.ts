@@ -27,6 +27,7 @@ import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
 import { BRIDGEWORLD_API_URL, TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
+import { sumArray } from "./array";
 import { getContractAddress, getContractAddresses } from "./contracts";
 import { fetchTokens, fetchUserInventory } from "./inventory";
 import { config } from "./wagmi";
@@ -621,7 +622,17 @@ export const getHarvesterUserInfo = async ({
     userCharactersMaxBoost:
       Number(formatEther(userCharacterMaxBoost)) *
       Number(userCharactersMaxStakeable),
-    userCharactersBoost: 0, // TODO: calculate
+    userCharactersBoost: sumArray(
+      userStakedCharacters.map(
+        ({ attributes }) =>
+          Number(
+            (
+              (attributes.find(({ type }) => type === "Staking Boost")
+                ?.value as string | undefined) ?? "0"
+            ).replace("%", ""),
+          ) / 100,
+      ),
+    ),
     userMagicMaxStakeable: userMagicMaxStakeable.toString(),
     userMagicStaked: userMagicStaked.toString(),
     userTotalBoost:

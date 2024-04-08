@@ -89,9 +89,6 @@ export const fetchUserInventory = async ({
   tokens?: { address: string; tokenId: number | string }[];
   projection?: string;
 }): Promise<InventoryToken[]> => {
-  if (tokens) {
-    console.log({ tokens });
-  }
   const chainSlug = getChainSlug(chainId);
   const url = new URL(`${TROVE_API_URL[chainId]}/tokens-for-user`);
   url.searchParams.append("userAddress", userAddress);
