@@ -1,15 +1,9 @@
 import { readContracts } from "@wagmi/core";
-import {
-  decodeAbiParameters,
-  erc20Abi,
-  erc721Abi,
-  formatEther,
-  parseAbiParameters,
-  zeroAddress,
-} from "viem";
+import { erc20Abi, erc721Abi, formatEther, zeroAddress } from "viem";
 import { arbitrumSepolia } from "viem/chains";
 
 import type {
+  CorruptionRemoval,
   HarvesterInfo,
   HarvesterUserInfo,
   InventoryToken,
@@ -19,7 +13,6 @@ import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { corruptionAbi } from "../abis/corruptionAbi";
-import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
 import { middlemanAbi } from "../abis/middlemanAbi";
@@ -29,6 +22,10 @@ import { BRIDGEWORLD_API_URL, TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { sumArray } from "./array";
 import { getContractAddress, getContractAddresses } from "./contracts";
+import {
+  fetchCorruptionRemovalRecipes,
+  fetchCorruptionRemovals,
+} from "./corruption";
 import { fetchTokens, fetchUserInventory } from "./inventory";
 import { config } from "./wagmi";
 
@@ -128,8 +125,6 @@ export const getHarvesterInfo = async ({
     { result: totalBoost = 0n },
     { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
     { result: totalCorruption = 0n },
-    { result: corruptionRemovalRecipeIds = [] },
-    { result: corruptionRemovalRecipes = [] },
   ] = await readContracts(config, {
     contracts: [
       {
@@ -176,20 +171,6 @@ export const getHarvesterInfo = async ({
         address: contractAddresses.Corruption,
         abi: corruptionAbi,
         functionName: "balanceOf",
-        args: [harvesterAddress],
-      },
-      {
-        chainId,
-        address: contractAddresses.CorruptionRemoval,
-        abi: corruptionRemovalAbi,
-        functionName: "recipeIdsForBuilding",
-        args: [harvesterAddress],
-      },
-      {
-        chainId,
-        address: contractAddresses.CorruptionRemoval,
-        abi: corruptionRemovalAbi,
-        functionName: "recipeInfosForBuilding",
         args: [harvesterAddress],
       },
     ],
@@ -329,47 +310,6 @@ export const getHarvesterInfo = async ({
     ).toString(),
     boostersMaxStakeable: Number(boostersMaxStakeable),
     corruptionMaxGenerated: corruptionMaxGenerated.toString(),
-    corruptionRemovalRecipes: corruptionRemovalRecipes.map(
-      ({ corruptionRemoved, items }, i) => ({
-        id: corruptionRemovalRecipeIds[i].toString(),
-        corruptionRemoved: corruptionRemoved.toString(),
-        items: items.map(
-          ({
-            itemAddress,
-            itemId,
-            amount,
-            customHandler,
-            customRequirementData,
-          }) => {
-            if (
-              customHandler.toLowerCase() ===
-              contractAddresses.ERC1155TokenSetCorruptionHandler
-            ) {
-              const [{ amount: erc1155Amount, collection: address, tokenIds }] =
-                decodeAbiParameters(
-                  parseAbiParameters(
-                    "(uint256 amount, address collection, uint256[] tokenIds)",
-                  ),
-                  customRequirementData,
-                );
-
-              return {
-                address,
-                tokenIds: tokenIds.map((tokenId) => Number(tokenId)),
-                amount: Number(erc1155Amount),
-                customHandler,
-              };
-            }
-
-            return {
-              address: itemAddress,
-              tokenIds: [Number(itemId)],
-              amount: Number(amount),
-            };
-          },
-        ),
-      }),
-    ),
     totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
     totalMagicStaked: totalMagicStaked.toString(),
     totalBoost: Number(formatEther(totalBoost)),
@@ -395,7 +335,6 @@ export const getHarvesterUserInfo = async ({
     permitsTokenId,
     charactersStakingRulesAddress,
     charactersAddress,
-    corruptionRemovalRecipes,
   },
   userAddress,
   inventoryApiKey,
@@ -555,17 +494,8 @@ export const getHarvesterUserInfo = async ({
   ]);
 
   let userInventoryCharacters: InventoryToken[] = [];
-  let userInventoryCorruptionRemovalRecipeItems: InventoryToken[] = [];
   let userStakedCharacters: Token[] = [];
   if (inventoryApiKey) {
-    const inventoryAddresses = [
-      ...new Set([
-        ...(charactersAddress ? [charactersAddress] : []),
-        ...corruptionRemovalRecipes.flatMap(({ items }) =>
-          items.map(({ address }) => address),
-        ),
-      ]),
-    ];
     const [stakedTokens, inventoryTokens = []] = await Promise.all([
       fetchTokens({
         chainId,
@@ -574,28 +504,20 @@ export const getHarvesterUserInfo = async ({
           ({ token: { contract: address, tokenId } }) => ({ address, tokenId }),
         ),
       }),
-      ...(inventoryAddresses.length > 0
+      ...(charactersAddress
         ? [
             fetchUserInventory({
               chainId,
               apiKey: inventoryApiKey,
               userAddress,
-              collectionAddresses: inventoryAddresses,
+              collectionAddresses: [charactersAddress],
             }),
           ]
         : []),
     ]);
 
     userStakedCharacters = stakedTokens;
-    userInventoryCharacters = inventoryTokens.filter(
-      ({ address }) =>
-        address.toLowerCase() === charactersAddress?.toLowerCase(),
-    );
-    // TODO: filter Corruption Removal recipe item inventory to only include relevant tokens
-    userInventoryCorruptionRemovalRecipeItems = inventoryTokens.filter(
-      ({ address }) =>
-        address.toLowerCase() !== charactersAddress?.toLowerCase(),
-    );
+    userInventoryCharacters = inventoryTokens;
   }
 
   return {
@@ -613,7 +535,6 @@ export const getHarvesterUserInfo = async ({
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),
-    userInventoryCorruptionRemovalRecipeItems,
     userInventoryCharacters,
     userStakedCharacters,
     userCharactersApproved,
@@ -639,5 +560,56 @@ export const getHarvesterUserInfo = async ({
       Number(formatEther(userTotalBoost)) +
       (chainId === arbitrumSepolia.id ? 0.05 : 0), // Testnet has a timelock boost applied to it
     userMagicRewardsClaimable: userMagicRewardsClaimable.toString(),
+  };
+};
+
+export const fetchHarvesterCorruptionRemovalInfo = async ({
+  chainId,
+  harvesterAddress,
+  userAddress,
+  inventoryApiKey,
+}: {
+  chainId: SupportedChainId;
+  harvesterAddress: string;
+  userAddress?: string;
+  inventoryApiKey?: string;
+}) => {
+  const corruptionRemovalRecipes = await fetchCorruptionRemovalRecipes({
+    chainId,
+    buildingAddress: harvesterAddress,
+  });
+
+  let userCorruptionRemovals: CorruptionRemoval[] = [];
+  let userInventoryCorruptionRemovalRecipeItems: InventoryToken[] = [];
+  if (userAddress) {
+    const [corruptionRemovals, inventoryTokens = []] = await Promise.all([
+      fetchCorruptionRemovals({
+        chainId,
+        buildingAddress: harvesterAddress,
+        userAddress,
+      }),
+      ...(inventoryApiKey
+        ? [
+            fetchUserInventory({
+              chainId,
+              apiKey: inventoryApiKey,
+              userAddress,
+              collectionAddresses: corruptionRemovalRecipes.flatMap(
+                ({ items }) => items.map(({ address }) => address),
+              ),
+            }),
+          ]
+        : []),
+    ]);
+
+    userCorruptionRemovals = corruptionRemovals;
+    // TODO: filter Corruption Removal recipe item inventory to only include relevant token IDs
+    userInventoryCorruptionRemovalRecipeItems = inventoryTokens;
+  }
+
+  return {
+    corruptionRemovalRecipes,
+    userInventoryCorruptionRemovalRecipeItems,
+    userCorruptionRemovals,
   };
 };
