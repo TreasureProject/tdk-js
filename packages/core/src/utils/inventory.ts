@@ -24,6 +24,9 @@ type InventoryTokenResponse = TokenResponse & {
   queryUserQuantityOwned: number;
 };
 
+const getChainSlug = (chainId: SupportedChainId) =>
+  chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
+
 export const fetchTokens = async ({
   chainId,
   apiKey,
@@ -31,16 +34,16 @@ export const fetchTokens = async ({
 }: {
   chainId: SupportedChainId;
   apiKey: string;
-  tokens: [string, string | number][]; // [contract, tokenId][]
+  tokens: { address: string; tokenId: number | string }[];
 }) => {
+  const chainSlug = getChainSlug(chainId);
   const response = await fetch(`${TROVE_API_URL[chainId]}/batch-tokens`, {
     method: "POST",
     body: JSON.stringify({
       ids: Array.from(
         new Set(
           tokens.map(
-            ([contract, tokenId]) =>
-              `${chainId === arbitrumSepolia.id ? "arbsepolia" : "arb"}/${contract}/${tokenId}`,
+            ({ address, tokenId }) => `${chainSlug}/${address}/${tokenId}`,
           ),
         ),
       ),
@@ -75,30 +78,34 @@ export const fetchUserInventory = async ({
   chainId,
   apiKey,
   userAddress,
-  collectionAddresses,
+  collectionAddresses = [],
+  tokens = [],
+  projection = "collectionAddr,collectionUrlSlug,queryUserQuantityOwned,metadata,image",
 }: {
   chainId: SupportedChainId;
   apiKey: string;
   userAddress: string;
-  collectionAddresses: string[];
+  collectionAddresses?: string[];
+  tokens?: { address: string; tokenId: number | string }[];
+  projection?: string;
 }): Promise<InventoryToken[]> => {
+  const chainSlug = getChainSlug(chainId);
   const url = new URL(`${TROVE_API_URL[chainId]}/tokens-for-user`);
   url.searchParams.append("userAddress", userAddress);
-  url.searchParams.append(
-    "slugs",
-    collectionAddresses
-      .map(
-        (collectionAddress) =>
-          `${
-            chainId === arbitrumSepolia.id ? "arbsepolia" : "arb"
-          }/${collectionAddress}`,
-      )
-      .join(","),
-  );
-  url.searchParams.append(
-    "projection",
-    "collectionAddr,collectionUrlSlug,queryUserQuantityOwned,metadata,image",
-  );
+  url.searchParams.append("projection", projection);
+  if (tokens.length > 0) {
+    url.searchParams.append(
+      "ids",
+      tokens
+        .map(({ address, tokenId }) => `${chainSlug}/${address}/${tokenId}`)
+        .join(","),
+    );
+  } else if (collectionAddresses.length > 0) {
+    url.searchParams.append(
+      "slugs",
+      collectionAddresses.map((address) => `${chainSlug}/${address}`).join(","),
+    );
+  }
 
   const response = await fetch(url, {
     headers: {

@@ -32,7 +32,11 @@ export {
   getCurrencyAddress,
   getTokenAddress,
 } from "./utils/currency";
-export { getHarvesterInfo, getHarvesterUserInfo } from "./utils/harvesters";
+export {
+  fetchHarvesterCorruptionRemovalInfo,
+  getHarvesterInfo,
+  getHarvesterUserInfo,
+} from "./utils/harvesters";
 export { decodeAuthToken } from "./utils/jwt";
 export { createLoginUrl } from "./utils/login";
 export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";

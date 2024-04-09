@@ -17,6 +17,13 @@ export const BRIDGEWORLD_API_URL = {
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-dev/live/gn",
 } as const;
 
+export const BRIDGEWORLD_CORRUPTION_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
+} as const;
+
 export const TROVE_API_URL = {
   [arbitrum.id]: "https://trove-api.treasure.lol",
   [arbitrumSepolia.id]: "https://trove-api-dev.treasure.lol",

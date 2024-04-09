@@ -86,6 +86,28 @@ const inventoryTokenSchema = Type.Intersect([
   }),
 ]);
 
+const corruptionRemovalRecipeSchema = Type.Object({
+  id: Type.String(),
+  corruptionRemoved: Type.String(),
+  items: Type.Array(
+    Type.Object({
+      address: Type.String(),
+      tokenIds: Type.Array(Type.Number()),
+      amount: Type.Number(),
+      customHandler: Type.Optional(Type.String()),
+    }),
+  ),
+});
+
+const corruptionRemovalSchema = Type.Object({
+  requestId: Type.String(),
+  recipeId: Type.String(),
+  status: Type.Enum({
+    Started: "Started",
+    Ready: "Ready",
+  }),
+});
+
 const harvesterInfoSchema = Type.Object({
   id: Type.String(),
   // NFT Handler
@@ -109,20 +131,6 @@ const harvesterInfoSchema = Type.Object({
   magicMaxStakeable: Type.String(),
   // Corruption settings
   corruptionMaxGenerated: Type.String(),
-  corruptionRemovalRecipes: Type.Array(
-    Type.Object({
-      id: Type.String(),
-      corruptionRemoved: Type.String(),
-      items: Type.Array(
-        Type.Object({
-          address: Type.String(),
-          tokenIds: Type.Array(Type.Number()),
-          amount: Type.Number(),
-          customHandler: Type.Optional(Type.String()),
-        }),
-      ),
-    }),
-  ),
   // Overall state
   totalEmissionsActivated: Type.Number(),
   totalMagicStaked: Type.String(),
@@ -170,12 +178,32 @@ export const readHarvesterReplySchema = Type.Composite([
   Type.Partial(harvesterUserInfoSchema),
 ]);
 
+export const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
+export const readHarvesterCorruptionRemovalReplySchema = Type.Object({
+  corruptionRemovalRecipes: Type.Array(corruptionRemovalRecipeSchema),
+  userInventoryCorruptionRemovalRecipeItems: Type.Array(inventoryTokenSchema),
+  userCorruptionRemovals: Type.Array(corruptionRemovalSchema),
+});
+
 export type Token = Static<typeof tokenSchema>;
 export type InventoryToken = Static<typeof inventoryTokenSchema>;
+export type CorruptionRemovalRecipe = Static<
+  typeof corruptionRemovalRecipeSchema
+>;
+export type CorruptionRemoval = Static<typeof corruptionRemovalSchema>;
 export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
 export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
 export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
+export type ReadHarvesterCorruptionRemovalParams = Static<
+  typeof readHarvesterCorruptionRemovalParamsSchema
+>;
+export type ReadHarvesterCorruptionRemovalReply = Static<
+  typeof readHarvesterCorruptionRemovalReplySchema
+>;
 
 // Projects
 export const readProjectParamsSchema = Type.Object({
