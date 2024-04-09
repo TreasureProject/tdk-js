@@ -49,6 +49,8 @@ const CALL_TARGETS: Record<string, Contract[]> = {
     "MAGIC",
     "Consumables",
     "Legions",
+    "CorruptionRemoval",
+    "ERC1155TokenSetCorruptionHandler",
     "HarvesterEmberwing",
     "NftHandlerEmberwing",
     "ZeeverseZee",

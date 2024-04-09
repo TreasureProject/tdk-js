@@ -86,7 +86,7 @@ const inventoryTokenSchema = Type.Intersect([
   }),
 ]);
 
-const corruptionRemovalRecipe = Type.Object({
+const corruptionRemovalRecipeSchema = Type.Object({
   id: Type.String(),
   corruptionRemoved: Type.String(),
   items: Type.Array(
@@ -101,11 +101,11 @@ const corruptionRemovalRecipe = Type.Object({
 
 const corruptionRemovalSchema = Type.Object({
   requestId: Type.String(),
+  recipeId: Type.String(),
   status: Type.Enum({
     Started: "Started",
     Ready: "Ready",
   }),
-  corruptionRemoved: Type.String(),
 });
 
 const harvesterInfoSchema = Type.Object({
@@ -183,14 +183,16 @@ export const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
 });
 
 export const readHarvesterCorruptionRemovalReplySchema = Type.Object({
-  corruptionRemovalRecipes: Type.Array(corruptionRemovalRecipe),
+  corruptionRemovalRecipes: Type.Array(corruptionRemovalRecipeSchema),
   userInventoryCorruptionRemovalRecipeItems: Type.Array(inventoryTokenSchema),
   userCorruptionRemovals: Type.Array(corruptionRemovalSchema),
 });
 
 export type Token = Static<typeof tokenSchema>;
 export type InventoryToken = Static<typeof inventoryTokenSchema>;
-export type CorruptionRemovalRecipe = Static<typeof corruptionRemovalRecipe>;
+export type CorruptionRemovalRecipe = Static<
+  typeof corruptionRemovalRecipeSchema
+>;
 export type CorruptionRemoval = Static<typeof corruptionRemovalSchema>;
 export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
 export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;

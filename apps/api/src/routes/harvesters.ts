@@ -1,9 +1,9 @@
 import {
   type AddressString,
+  fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
-import { fetchHarvesterCorruptionRemovalInfo } from "@treasure-dev/tdk-core/src/utils/harvesters";
 import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";
 

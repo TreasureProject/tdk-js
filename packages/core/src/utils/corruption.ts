@@ -92,7 +92,7 @@ export const fetchCorruptionRemovals = async ({
   chainId: SupportedChainId;
   buildingAddress: string;
   userAddress: string;
-}) => {
+}): Promise<CorruptionRemoval[]> => {
   const response = await fetch(BRIDGEWORLD_CORRUPTION_API_URL[chainId], {
     method: "POST",
     body: JSON.stringify({
@@ -100,15 +100,17 @@ export const fetchCorruptionRemovals = async ({
         removals(
           where: {
             building: "${buildingAddress.toLowerCase()}"
-            user: "${userAddress.toLowerCase()}
+            user: "${userAddress.toLowerCase()}"
             status_not: Finished
           }
           orderBy: startTimestamp
           orderDirection: asc
         ) {
           requestId
+          recipe {
+            recipeId
+          }
           status
-          corruptionRemoved
         }
       }`,
     }),
@@ -117,8 +119,18 @@ export const fetchCorruptionRemovals = async ({
     data: { removals },
   } = (await response.json()) as {
     data: {
-      removals: CorruptionRemoval[];
+      removals: {
+        requestId: string;
+        recipe: {
+          recipeId: string;
+        };
+        status: "Started" | "Ready";
+      }[];
     };
   };
-  return removals;
+  return removals.map(({ requestId, recipe: { recipeId }, status }) => ({
+    requestId,
+    recipeId,
+    status,
+  }));
 };
