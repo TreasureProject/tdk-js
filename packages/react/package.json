@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Treasure Development Kit for React-based projects",
   "keywords": [
     "treasure",
@@ -60,5 +60,8 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
     "tailwindcss-animate": "^1.0.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
