@@ -14,9 +14,11 @@ type TokenResponse = {
       value: string | number;
       trait_type: string;
     }[];
+    imageAlt?: string;
   };
   image: {
     uri: string;
+    originalUri?: string;
   };
 };
 
@@ -58,13 +60,14 @@ export const fetchTokens = async ({
       ({
         collectionAddr: address,
         tokenId,
-        metadata: { name, attributes },
-        image: { uri: image },
+        metadata: { name, attributes, imageAlt },
+        image: { uri: image, originalUri },
       }): Token => ({
         address,
         tokenId: Number(tokenId),
         name,
         image,
+        imageAlt: imageAlt ?? originalUri,
         attributes: attributes.map(({ trait_type: type, value }) => ({
           type,
           value,
@@ -124,8 +127,8 @@ export const fetchUserInventory = async ({
       ({
         collectionAddr: address,
         tokenId,
-        metadata: { name, attributes },
-        image: { uri: image },
+        metadata: { name, attributes, imageAlt },
+        image: { uri: image, originalUri },
         queryUserQuantityOwned: balance,
       }): InventoryToken => ({
         user: userAddress,
@@ -133,6 +136,7 @@ export const fetchUserInventory = async ({
         tokenId: Number(tokenId),
         name,
         image,
+        imageAlt: imageAlt ?? originalUri,
         attributes: attributes.map(({ trait_type: type, value }) => ({
           type,
           value,

@@ -70,6 +70,7 @@ const tokenSchema = Type.Object({
   tokenId: Type.Number(),
   name: Type.String(),
   image: Type.String(),
+  imageAlt: Type.Optional(Type.String()),
   attributes: Type.Array(
     Type.Object({
       type: Type.String(),
