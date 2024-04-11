@@ -1,8 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
 import type { Engine } from "@thirdweb-dev/engine";
 
-import type { SUPPORTED_CHAIN_IDS } from "./utils/wagmi";
-
 export type TdkApiEnv = {
   PORT: string;
   DATABASE_URL: string;
@@ -12,6 +10,7 @@ export type TdkApiEnv = {
   THIRDWEB_ENGINE_URL: string;
   THIRDWEB_ENGINE_ACCESS_TOKEN: string;
   THIRDWEB_SECRET_KEY: string;
+  TROVE_API_KEY: string;
   ZEEVERSE_API_URL: string;
 };
 
@@ -20,5 +19,3 @@ export type TdkApiContext = {
   db: PrismaClient;
   engine: Engine;
 };
-
-export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];

@@ -6,7 +6,7 @@ import { en } from "./locales/en";
 
 export * from "@treasure-dev/tdk-core";
 export { PaymentsCartModal } from "./components/PaymentsCartModal";
-export { TreasureLoginButton } from "./components/login/TreasureLoginButton";
+export { ConnectButton } from "./components/login/ConnectButton";
 export { Button } from "./components/ui/Button";
 export { TreasureProvider, useTreasure } from "./context";
 export { useApproval } from "./hooks/approvals/useApproval";

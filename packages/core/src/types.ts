@@ -1,12 +1,10 @@
 import type { TransactionReceipt } from "viem";
 
-import type { PROJECT_SLUGS } from "./constants";
-
-// Projects
-export type ProjectSlug = (typeof PROJECT_SLUGS)[number];
+import type { SUPPORTED_CHAIN_IDS } from "./constants";
 
 // General transactions
 export type AddressString = `0x${string}`;
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
 export type OnSuccessFn = (data?: TransactionReceipt) => void;
 export type OnErrorFn = (error?: Error) => void;
 
@@ -16,11 +14,16 @@ export type PriceFeedContract =
   | "ARBUSDPriceFeed"
   | "ETHUSDPriceFeed";
 export type BridgeworldContract =
+  // General
+  | "Middleman"
+  // Tokens
+  | "Corruption"
+  // NFTs
   | "BalancerCrystals"
   | "Consumables"
-  | "CorruptionRemoval"
   | "Legions"
   | "Treasures"
+  // Harvesters
   | "HarvesterAfarit"
   | "NftHandlerAfarit"
   | "HarvesterAsiterra"
@@ -36,13 +39,16 @@ export type BridgeworldContract =
   | "HarvesterShinoba"
   | "NftHandlerShinoba"
   | "HarvesterThundermane"
-  | "NftHandlerThundermane";
+  | "NftHandlerThundermane"
+  // Gameplay
+  | "CorruptionRemoval"
+  | "ERC1155TokenSetCorruptionHandler";
 export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
 export type Contract =
   | "MAGIC"
   | "ARB"
   | "PaymentsModule"
-  | "TreasureLoginAccountFactory"
+  | "ManagedAccountFactory"
   | PriceFeedContract
   | BridgeworldContract
   | ZeeverseContract;

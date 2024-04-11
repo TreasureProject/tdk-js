@@ -1,12 +1,11 @@
 import {
   embeddedWallet,
-  useLogin,
+  useLogin as useAuth,
   useSmartWallet,
   useWallet,
 } from "@thirdweb-dev/react";
 import type { EmbeddedWalletOauthStrategy } from "@thirdweb-dev/wallets";
 import { TDKAPI } from "@treasure-dev/tdk-core";
-import type { ProjectSlug } from "@treasure-dev/tdk-react";
 import { getContractAddress } from "@treasure-dev/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
@@ -93,7 +92,7 @@ const reducer = (state: State, action: Action): State => {
 };
 
 type Props = {
-  project: ProjectSlug;
+  project: string;
   chainId: number;
   redirectUri: string;
   backendWallet: string;
@@ -103,7 +102,7 @@ type Props = {
 const DEFAULT_ERROR_MESSAGE =
   "Sorry, we were unable to log you in. Please contact support.";
 
-export const useTreasureLogin = ({
+export const useLogin = ({
   project,
   chainId,
   redirectUri,
@@ -114,12 +113,12 @@ export const useTreasureLogin = ({
     status: "IDLE",
   });
   const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
-    factoryAddress: getContractAddress(chainId, "TreasureLoginAccountFactory"),
+    factoryAddress: getContractAddress(chainId, "ManagedAccountFactory"),
     gasless: true,
   });
   const didConnect = useRef(false);
   const smartWallet = useWallet("smartWallet");
-  const { login: authenticateSmartWallet } = useLogin();
+  const { login: authenticateSmartWallet } = useAuth();
 
   const tdk = useMemo(
     () =>

@@ -9,6 +9,7 @@ export const en = {
       total: "Total",
       moreInfo: "More info",
       insufficientBalance: "Insufficient balance",
+      copyAddress: "Copy Address",
     },
     payments: {
       cart: {
@@ -26,7 +27,8 @@ export const en = {
       },
     },
     login: {
-      action: "Log in with Treasure",
+      connect: "Connect",
+      disconnect: "Disconnect",
     },
   },
 };

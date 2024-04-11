@@ -8,8 +8,9 @@ import {
   DEFAULT_TDK_CHAIN_ID,
   TDKAPI,
 } from "@treasure-dev/tdk-core";
-import { Button, type ProjectSlug } from "@treasure-dev/tdk-react";
+import { Button } from "@treasure-dev/tdk-react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import useMeasure from "react-use-measure";
 import VerificationInput from "react-verification-input";
@@ -17,7 +18,7 @@ import { ClientOnly } from "remix-utils/client-only";
 import emailImg from "~/assets/email.webp";
 import logoImg from "~/assets/logo.svg";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
-import { useTreasureLogin } from "~/hooks/useTreasureLogin";
+import { useLogin } from "~/hooks/useLogin";
 
 import { env } from "../utils/env";
 
@@ -49,7 +50,7 @@ const AppleLogo = ({ className }: { className?: string }) => (
 );
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const slug = (params.slug as ProjectSlug) ?? DEFAULT_TDK_APP;
+  const slug = params.slug ?? DEFAULT_TDK_APP;
   const url = new URL(request.url);
   const chainId = Number(
     url.searchParams.get("chain_id") || DEFAULT_TDK_CHAIN_ID,
@@ -57,21 +58,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const project = await (async () => {
     try {
-      const result = {
-        name: "ZeeVerse",
-        slug: "t",
-        backendWallets: ["0x123"],
-        callTargets: ["0x123"],
-        redirectUris: ["http://localhost:3000"],
-        customAuth: false,
-        icon: "https://cdn.zee-verse.com/images/simple-logo.svg?width=1080&quality=75&web=1",
-        cover: null,
-        color: null,
-      };
-      // const result = await new TDKAPI({
-      //   baseUri: env.VITE_TDK_API_URL,
-      //   chainId,
-      // }).project.findBySlug(slug);
+      const result = await new TDKAPI({
+        baseUri: env.VITE_TDK_API_URL,
+        chainId,
+      }).project.findBySlug(slug);
       return result;
     } catch (err) {
       console.error("Error fetching project details:", err);
@@ -120,14 +110,13 @@ const InnerLoginPage = () => {
   const {
     status,
     error,
-    reset,
+    // reset,
     startEmailLogin,
     finishEmailLogin,
     logInWithSSO,
     logInWithCustomAuth,
-    changeStatus,
-  } = useTreasureLogin({
-    project: project.slug as ProjectSlug,
+  } = useLogin({
+    project: project.slug,
     chainId,
     redirectUri,
     backendWallet: project.backendWallets[0],
@@ -166,27 +155,13 @@ const InnerLoginPage = () => {
           }
           className="absolute inset-0 bg-repeat [background-image:var(--icon)] [background-size:1px_1px]"
         />
-        <select
-          className="relative"
-          onChange={(e) => changeStatus(e.target.value)}
-        >
-          {["IDLE", "LOADING", "SENDING_EMAIL", "CONFIRM_EMAIL", "ERROR"].map(
-            (status) => {
-              return (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              );
-            },
-          )}
-        </select>
         <div className="relative grid h-full place-items-center p-6">
           <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-[#FFFCF3] shadow-xl shadow-black/20">
             <form onSubmit={onSubmit} className="space-y-2">
               <div className="flex h-16 items-center justify-between px-5 pt-5">
                 <div className="flex items-center">
                   <img
-                    src={project.icon}
+                    src={project.icon ?? ""}
                     alt="ZeeVerse"
                     className="h-full w-10 flex-shrink-0 rounded-lg bg-[#FFE9B5] p-1"
                   />
@@ -342,7 +317,7 @@ const InnerLoginPage = () => {
   );
 };
 
-const ResizeablePanel = ({ children }) => {
+const ResizeablePanel = ({ children }: { children: ReactNode }) => {
   const [ref, { height }] = useMeasure();
   console.log(height);
   return (
@@ -391,7 +366,7 @@ const ResizeablePanel = ({ children }) => {
 */
 const ignoreCircularReferences = () => {
   const seen = new WeakSet();
-  return (key: string, value: any) => {
+  return (key: string, value: object | string) => {
     if (key.startsWith("_")) return; // Don't compare React's internal props.
     if (typeof value === "object" && value !== null) {
       if (seen.has(value)) return;

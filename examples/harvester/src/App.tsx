@@ -2,7 +2,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   type AddressString,
   Button,
-  TreasureLoginButton,
+  ConnectButton as TreasureConnectButton,
   erc20Abi,
   erc1155Abi,
   useApproval,
@@ -11,14 +11,15 @@ import {
   useTreasure,
 } from "@treasure-dev/tdk-react";
 import { formatEther, parseEther, zeroAddress, zeroHash } from "viem";
-import { useAccount, useReadContracts } from "wagmi";
+import { useAccount, useChainId, useReadContracts } from "wagmi";
 
 const MAGIC_AMOUNT = parseEther("1000");
 
 export const App = () => {
-  const { address, tdk, logOut } = useTreasure();
+  const { address, tdk } = useTreasure();
   const { address: eoaAddress = zeroAddress, isConnected: isEOAConnected } =
     useAccount();
+  const chainId = useChainId();
   const contractAddresses = useContractAddresses();
   const smartAccountAddress = (address ?? zeroAddress) as AddressString;
 
@@ -35,7 +36,11 @@ export const App = () => {
     deposit,
     withdrawAll,
     refetch: refetchHarvesterData,
-  } = useHarvester({ contract: "HarvesterEmerion", userAddress: eoaAddress });
+  } = useHarvester({
+    chainId,
+    contract: "HarvesterEmerion",
+    userAddress: eoaAddress,
+  });
 
   const {
     data: { eoaMagic = 0n, eoaPermits = 0n } = {},
@@ -95,7 +100,7 @@ export const App = () => {
       console.debug(
         "Transferring all MAGIC from smart account to connected wallet",
       );
-      await tdk?.transaction.create({
+      await tdk.transaction.create({
         address: contractAddresses.MAGIC,
         abi: erc20Abi,
         functionName: "transfer",
@@ -107,7 +112,7 @@ export const App = () => {
       console.debug(
         "Transferring all Ancient Permits from smart account to connected wallet",
       );
-      await tdk?.transaction.create({
+      await tdk.transaction.create({
         address: contractAddresses.Consumables,
         abi: erc1155Abi,
         functionName: "safeTransferFrom",
@@ -137,11 +142,7 @@ export const App = () => {
         <h1 className="text-ruby-900 text-2xl font-semibold">
           TDK Harvester Example
         </h1>
-        {address ? (
-          <Button onClick={logOut}>Log Out</Button>
-        ) : (
-          <TreasureLoginButton />
-        )}
+        <TreasureConnectButton />
       </header>
       <main className="space-y-6">
         {address ? (

@@ -3,31 +3,36 @@ import {
   type AddressString,
   type Contract,
   erc1155Abi,
+  getContractAddresses,
   harvesterAbi,
   nftHandlerAbi,
 } from "@treasure-dev/tdk-core";
 import { erc20Abi, formatEther, zeroAddress, zeroHash } from "viem";
-import { arbitrumSepolia } from "viem/chains";
-import { useChainId } from "wagmi";
+import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 import { useTreasure } from "../../context";
-import { useContractAddresses } from "../useContractAddress";
 
 type Props = {
-  contract: Contract;
+  chainId?: number;
+  contract: Contract | AddressString;
   userAddress: AddressString;
 };
 
-export const useHarvester = ({ contract, userAddress }: Props) => {
+export const useHarvester = ({
+  chainId = arbitrum.id,
+  contract,
+  userAddress,
+}: Props) => {
   const { address, tdk } = useTreasure();
-  const chainId = useChainId();
-  const contractAddresses = useContractAddresses();
+  const contractAddresses = getContractAddresses(chainId);
   const smartAccountAddress = (address ?? zeroAddress) as AddressString;
-  const harvesterAddress = contractAddresses[contract];
+  const harvesterAddress = contract.startsWith("0x")
+    ? (contract as AddressString)
+    : contractAddresses[contract as Contract];
 
   const { data, refetch } = useQuery({
     queryKey: ["harvester", harvesterAddress, smartAccountAddress],
-    queryFn: () => tdk?.harvester.get(harvesterAddress),
+    queryFn: () => tdk.harvester.get(harvesterAddress),
   });
 
   const nftHandlerAddress = (data?.nftHandlerAddress ??
@@ -35,12 +40,12 @@ export const useHarvester = ({ contract, userAddress }: Props) => {
   const permitTokenId = BigInt(data?.permitsTokenId ?? 0n);
   const smartAccountMagic = BigInt(data?.userMagicBalance ?? 0n);
   const smartAccountPermits = data?.userPermitsBalance ?? 0;
-  const harvesterDepositCap = BigInt(data?.userDepositCap ?? 0n);
-  const harvesterDeposit = BigInt(data?.userDepositAmount ?? 0n);
+  const harvesterDepositCap = BigInt(data?.userMagicMaxStakeable ?? 0n);
+  const harvesterDeposit = BigInt(data?.userMagicStaked ?? 0n);
   const harvesterPermits =
-    data?.permitsDepositCap && BigInt(data.permitsDepositCap) > 0
+    data?.permitsMagicMaxStakeable && BigInt(data.permitsMagicMaxStakeable) > 0
       ? Number(formatEther(harvesterDepositCap)) /
-        Number(formatEther(BigInt(data.permitsDepositCap)))
+        Number(formatEther(BigInt(data.permitsMagicMaxStakeable)))
       : 0;
   return {
     data: {

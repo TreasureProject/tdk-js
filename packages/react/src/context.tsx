@@ -4,16 +4,10 @@ import {
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_LOGIN_DOMAIN,
   TDKAPI,
+  decodeAuthToken,
 } from "@treasure-dev/tdk-core";
-import { type ProjectSlug, decodeAuthToken } from "@treasure-dev/tdk-core";
 import type { PropsWithChildren } from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-} from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 import {
   clearStoredAuthToken,
@@ -22,7 +16,7 @@ import {
 } from "./utils/store";
 
 type Config = {
-  project: ProjectSlug;
+  project: string;
   chainId?: number;
   apiUri?: string;
   authConfig?: {
@@ -32,7 +26,7 @@ type Config = {
 };
 
 type State = {
-  project: ProjectSlug;
+  project: string;
   chainId: number;
   apiUri: string;
   authConfig: {
@@ -40,13 +34,16 @@ type State = {
     redirectUri: string;
   };
   status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
-  tdk?: TDKAPI;
+  tdk: TDKAPI;
+  isAuthenticated: boolean;
   authToken?: string;
+  address?: string;
+  account?: {
+    email: string;
+  };
 };
 
 type ContextValues = {
-  address?: string;
-  isAuthenticated: boolean;
   onStartAuth: () => void;
   onCompleteAuth: (authToken: string) => void;
   logOut: () => void;
@@ -66,21 +63,29 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         status: "AUTHENTICATING",
       };
-    case "COMPLETE_AUTH":
+    case "COMPLETE_AUTH": {
       setStoredAuthToken(action.authToken);
-      state.tdk?.setAuthToken(action.authToken);
+      state.tdk.setAuthToken(action.authToken);
+      const decodedAuthToken = decodeAuthToken(action.authToken);
       return {
         ...state,
-        status: action.authToken ? "AUTHENTICATED" : "IDLE",
+        status: "AUTHENTICATED",
+        isAuthenticated: true,
         authToken: action.authToken,
+        address: decodedAuthToken.sub,
+        account: decodedAuthToken.ctx,
       };
+    }
     case "RESET_AUTH":
       clearStoredAuthToken();
-      state.tdk?.clearAuthToken();
+      state.tdk.clearAuthToken();
       return {
         ...state,
         status: "IDLE",
+        isAuthenticated: false,
         authToken: undefined,
+        address: undefined,
+        account: undefined,
       };
   }
 };
@@ -124,6 +129,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
       project,
       chainId: config.chainId,
     }),
+    isAuthenticated: false,
   });
 
   useEffect(() => {
@@ -152,20 +158,10 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
     }
   }, []);
 
-  const address = useMemo(() => {
-    if (!state.authToken) {
-      return undefined;
-    }
-
-    return decodeAuthToken(state.authToken).sub;
-  }, [state.authToken]);
-
   return (
     <Context.Provider
       value={{
         ...state,
-        address,
-        isAuthenticated: !!address,
         onStartAuth: () => dispatch({ type: "START_AUTH" }),
         onCompleteAuth: (authToken) =>
           dispatch({ type: "COMPLETE_AUTH", authToken }),

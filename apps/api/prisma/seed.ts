@@ -1,45 +1,61 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
-import {
-  type Contract,
-  PROJECT_SLUGS,
-  type ProjectSlug,
-  getContractAddress,
-} from "@treasure-dev/tdk-core";
+import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";
 
 type ProjectMetadata = Omit<Prisma.ProjectCreateInput, "slug">;
 
-const METADATA: Record<ProjectSlug, ProjectMetadata> = {
+const METADATA: Record<string, ProjectMetadata> = {
   app: {
     name: "Treasure",
+  },
+  realm: {
+    name: "Realm",
   },
   zeeverse: {
     name: "Zeeverse",
     cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
     color: "#8fd24f",
-    customAuth: true,
   },
 };
 
-const REDIRECT_URIS: Record<ProjectSlug, Record<Environment, string[]>> = {
+const REDIRECT_URIS: Record<string, Record<Environment, string[]>> = {
   app: {
     local: ["http://localhost:3000"],
     dev: ["https://app-testnet.treasure.lol"],
     prod: ["https://app.treasure.lol"],
   },
+  realm: {
+    local: ["http://localhost:3000"],
+    dev: ["https://app-testnet.treasure.lol"],
+    prod: ["https://app.treasure.lol"],
+  },
   zeeverse: {
-    local: ["http://localhost:5174"],
+    local: [
+      "http://localhost:5174",
+      "http://localhost:3000/harvesters/zeeverse",
+    ],
     dev: ["https://tdk-examples-harvester.vercel.app"],
     prod: ["https://play.zee-verse.com"],
   },
 };
 
-const CALL_TARGETS: Record<ProjectSlug, Contract[]> = {
+const CALL_TARGETS: Record<string, Contract[]> = {
   app: [],
-  zeeverse: ["MAGIC", "Consumables", "HarvesterEmerion", "NftHandlerEmerion"],
+  realm: ["MAGIC"],
+  zeeverse: [
+    "MAGIC",
+    "Consumables",
+    "Legions",
+    "CorruptionRemoval",
+    "ERC1155TokenSetCorruptionHandler",
+    "HarvesterEmberwing",
+    "NftHandlerEmberwing",
+    "ZeeverseZee",
+    "ZeeverseItems",
+  ],
 };
 
 const prisma = new PrismaClient();
@@ -100,7 +116,7 @@ const createProject = ({
   const environment = (args[0] as Environment) ?? "local";
 
   try {
-    for (const slug of PROJECT_SLUGS) {
+    for (const slug of Object.keys(METADATA)) {
       await createProject({
         slug,
         metadata: METADATA[slug],
