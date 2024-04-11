@@ -15,6 +15,7 @@ import { consumablesAbi } from "../abis/consumablesAbi";
 import { corruptionAbi } from "../abis/corruptionAbi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
+import { legionsStakingRulesAbi } from "../abis/legionsStakingRulesAbi";
 import { middlemanAbi } from "../abis/middlemanAbi";
 import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
@@ -76,6 +77,19 @@ const fetchIndexedHarvester = async ({
             }
             quantity
           }
+          userStakedLegions: stakedTokens(
+            first: 1000
+            where: {
+              user: "${userAddress.toLowerCase()}"
+              token_: { category: Legion }
+            }
+          ) {
+            token {
+              contract
+              tokenId
+            }
+            quantity
+          }
         }
       }
       `,
@@ -87,6 +101,13 @@ const fetchIndexedHarvester = async ({
     data: {
       harvester: {
         userStakedCharacters: {
+          token: {
+            contract: string;
+            tokenId: string;
+          };
+          quantity: string;
+        }[];
+        userStakedLegions: {
           token: {
             contract: string;
             tokenId: string;
@@ -334,6 +355,7 @@ export const getHarvesterUserInfo = async ({
     permitsAddress,
     permitsTokenId,
     charactersStakingRulesAddress,
+    legionsStakingRulesAddress,
     charactersAddress,
   },
   userAddress,
@@ -359,6 +381,9 @@ export const getHarvesterUserInfo = async ({
       { result: userCharactersMaxStakeable = 0n },
       { result: userCharactersStaked = 0n },
       { result: userCharacterMaxBoost = 0n },
+      { result: userLegionsApproved = false },
+      { result: userLegionsMaxWeightStakeable = 0n },
+      { result: userLegionsWeightStaked = 0n },
       { result: userMagicMaxStakeable = 0n },
       { result: [userMagicStaked] = [0n] },
       { result: userTotalBoost = 0n },
@@ -458,6 +483,27 @@ export const getHarvesterUserInfo = async ({
         },
         {
           chainId,
+          address: contractAddresses.Legions,
+          abi: erc721Abi,
+          functionName: "isApprovedForAll",
+          args: [userAddress, nftHandlerAddress as AddressString],
+        },
+        // TODO: don't call this if no legions staking rules
+        {
+          chainId,
+          address: (legionsStakingRulesAddress ?? zeroAddress) as AddressString,
+          abi: legionsStakingRulesAbi,
+          functionName: "maxLegionWeight",
+        },
+        {
+          chainId,
+          address: (legionsStakingRulesAddress ?? zeroAddress) as AddressString,
+          abi: legionsStakingRulesAbi,
+          functionName: "weightStaked",
+          args: [userAddress],
+        },
+        {
+          chainId,
           address: harvesterAddress as AddressString,
           abi: harvesterAbi,
           functionName: "getUserDepositCap",
@@ -494,30 +540,56 @@ export const getHarvesterUserInfo = async ({
   ]);
 
   let userInventoryCharacters: InventoryToken[] = [];
+  let userInventoryLegions: InventoryToken[] = [];
   let userStakedCharacters: Token[] = [];
+  let userStakedLegions: Token[] = [];
   if (inventoryApiKey) {
     const [stakedTokens, inventoryTokens = []] = await Promise.all([
       fetchTokens({
         chainId,
         apiKey: inventoryApiKey,
-        tokens: indexedHarvester.userStakedCharacters.map(
-          ({ token: { contract: address, tokenId } }) => ({ address, tokenId }),
-        ),
-      }),
-      ...(charactersAddress
-        ? [
-            fetchUserInventory({
-              chainId,
-              apiKey: inventoryApiKey,
-              userAddress,
-              collectionAddresses: [charactersAddress],
+        tokens: [
+          ...indexedHarvester.userStakedCharacters.map(
+            ({ token: { contract: address, tokenId } }) => ({
+              address,
+              tokenId,
             }),
-          ]
-        : []),
+          ),
+          ...indexedHarvester.userStakedLegions.map(
+            ({ token: { contract: address, tokenId } }) => ({
+              address,
+              tokenId,
+            }),
+          ),
+        ],
+      }),
+      fetchUserInventory({
+        chainId,
+        apiKey: inventoryApiKey,
+        userAddress,
+        collectionAddresses: [
+          ...(charactersAddress ? [charactersAddress] : []),
+          ...(legionsStakingRulesAddress ? [contractAddresses.Legions] : []),
+        ],
+      }),
     ]);
 
-    userStakedCharacters = stakedTokens;
-    userInventoryCharacters = inventoryTokens;
+    userStakedCharacters = stakedTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() === charactersAddress?.toLowerCase(),
+    );
+    userStakedLegions = stakedTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() === contractAddresses.Legions.toLowerCase(),
+    );
+    userInventoryCharacters = inventoryTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() === charactersAddress?.toLowerCase(),
+    );
+    userInventoryLegions = inventoryTokens.filter(
+      ({ address }) =>
+        address.toLowerCase() === contractAddresses.Legions.toLowerCase(),
+    );
   }
 
   return {
@@ -545,6 +617,24 @@ export const getHarvesterUserInfo = async ({
       Number(userCharactersMaxStakeable),
     userCharactersBoost: sumArray(
       userStakedCharacters.map(
+        ({ attributes }) =>
+          Number(
+            (
+              (attributes.find(({ type }) => type === "Staking Boost")
+                ?.value as string | undefined) ?? "0"
+            ).replace("%", ""),
+          ) / 100,
+      ),
+    ),
+    userInventoryLegions,
+    userStakedLegions,
+    userLegionsApproved,
+    userLegionsMaxWeightStakeable: Number(
+      formatEther(userLegionsMaxWeightStakeable),
+    ),
+    userLegionsWeightStaked: Number(formatEther(userLegionsWeightStaked)),
+    userLegionsBoost: sumArray(
+      userStakedLegions.map(
         ({ attributes }) =>
           Number(
             (
