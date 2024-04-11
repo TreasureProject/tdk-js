@@ -2,51 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Whyte";
-  font-weight: 500;
-  font-display: swap;
-  font-style: normal;
-  font-named-instance: "Regular";
-  src:
-    url("/fonts/ABCWhyte-Regular.woff2") format("woff2"),
-    url("/fonts/ABCWhyte-Regular.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Whyte";
-  font-weight: 600;
-  font-display: swap;
-  font-style: normal;
-  font-named-instance: "Regular";
-  src:
-    url("/fonts/ABCWhyte-Medium.woff2") format("woff2"),
-    url("/fonts/ABCWhyte-Medium.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Whyte";
-  font-weight: 700;
-  font-display: swap;
-  font-style: normal;
-  font-named-instance: "Regular";
-  src:
-    url("/fonts/ABCWhyte-Bold.woff2") format("woff2"),
-    url("/fonts/ABCWhyte-Bold.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Whyte";
-  font-weight: 500;
-  font-display: swap;
-  font-style: italic;
-  font-named-instance: "italic";
-  src:
-    url("/fonts/ABCWhyte-RegularItalic.woff2") format("woff2"),
-    url("/fonts/ABCWhyte-RegularItalic.woff") format("woff");
-}
-
 html,
 body {
   height: 100%;
+}
+
+body {
+  font-family: "Whyte", sans-serif;
 }

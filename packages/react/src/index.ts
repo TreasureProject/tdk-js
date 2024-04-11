@@ -18,6 +18,9 @@ export {
 export { useTokenBalances } from "./hooks/useTokenBalances";
 export { useCalculatePaymentAmount } from "./hooks/payments/useCalculatePaymentAmount";
 export { useMakePayment } from "./hooks/payments/useMakePayment";
+export { AppleLogoIcon } from "./icons/AppleLogoIcon";
+export { GoogleLogoIcon } from "./icons/GoogleLogoIcon";
+export { XLogoIcon } from "./icons/XLogoIcon";
 
 i18n.use(initReactI18next).init({
   resources: { en },

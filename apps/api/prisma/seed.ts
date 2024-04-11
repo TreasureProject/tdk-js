@@ -17,6 +17,7 @@ const METADATA: Record<string, ProjectMetadata> = {
   zeeverse: {
     name: "Zeeverse",
     cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
+    icon: "https://images.treasure.lol/tdk/login/zeeverse_icon.png",
     color: "#8fd24f",
   },
 };
