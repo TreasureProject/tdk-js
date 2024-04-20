@@ -13,15 +13,21 @@ export class TdkVpcStack extends Stack {
       subnetConfiguration: [
         {
           cidrMask: 20,
-          name: 'tdk-public-1',
+          name: "tdk-public-1",
           subnetType: SubnetType.PUBLIC,
         },
         {
           cidrMask: 28,
-          name: 'tdk-isolated-1',
+          name: "tdk-isolated-1",
           subnetType: SubnetType.PRIVATE_ISOLATED,
         },
       ],
+    });
+
+    new CfnOutput(this, `${id}-vpc-id`, {
+      exportName: `${id}-vpc-id`,
+      value: this.vpc.vpcId,
+      description: "VPC id"
     });
   }
 }

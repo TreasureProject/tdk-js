@@ -1,8 +1,21 @@
 {
-  "noumena-dev-Tdk-Vpc": {
-    "ExportsOutputRefnoumenadevTdkVpcVpctdkisolated1Subnet1Subnet8364A5D88D7F9E9C": "subnet-00c0ee7ac1d3d13f9",
-    "ExportsOutputRefnoumenadevTdkVpcVpctdkisolated1Subnet2Subnet789A2C332306C68E": "subnet-02a61f8f8d62a87db",
-    "ExportsOutputFnGetAttnoumenadevTdkVpcVpc32B59360CidrBlock680B3FBA": "10.0.0.0/16",
-    "ExportsOutputRefnoumenadevTdkVpcVpc32B59360BAD21E7B": "vpc-0f5d6c3d5d88921ce"
+  "noumena-dev-githuboidc": {
+    "noumenadevgithuboidcrepositoryuri": "665230337498.dkr.ecr.us-west-2.amazonaws.com/noumena-dev-githuboidc-noumenadevgithuboidcrepoa5aac015-2a0cxtkmiel6",
+    "noumenadevdeploymentConfigTdkApiCertificateArn": "arn:aws:acm:$us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2",
+    "noumenadevdeploymentConfigGithubOIDCProviderArn": "arn:aws:iam::665230337498:oidc-provider/token.actions.githubusercontent.com",
+    "noumenadevdeploymentConfigAWSRegion": "us-west-2",
+    "noumenadevdeploymentConfigTdkApiEnvSecretArn": "arn:aws:secretsmanager:us-west-2:$665230337498:secret:tdkApiEnv-M2Lsr7",
+    "noumenadevdeploymentConfigAWSAccountID": "665230337498",
+    "noumenadevdeploymentConfigVersion": "0.0.1",
+    "noumenadevgithuboidcgithubactionsrolearn": "arn:aws:iam::665230337498:role/noumena-dev-githuboidc-github-actions",
+    "noumenadevdeploymentConfigApp": "noumena",
+    "noumenadevdeploymentConfigEnvironment": "dev"
+  },
+  "noumena-dev-tdkvpc": {
+    "noumenadevtdkvpcvpcid": "vpc-0f4260da384407652",
+    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet2Subnet9370762EB725274F": "subnet-08cdd9f6e82bec6a8",
+    "ExportsOutputFnGetAttnoumenadevtdkvpcVpcDDFE839CCidrBlockDF79AA9B": "10.0.0.0/16",
+    "ExportsOutputRefnoumenadevtdkvpcVpcDDFE839CBE28899B": "vpc-0f4260da384407652",
+    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet1SubnetCCA0F44C3E396008": "subnet-0af801c43f1d82e42"
   }
 }

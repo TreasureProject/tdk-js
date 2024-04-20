@@ -1,0 +1,18 @@
+# project, deployment, etc
+App: "noumena"
+Environment: "prod"
+Version: "0.0.1"
+
+# aws account
+AWSAccountID: "884078395586"
+AWSRegion: "us-east-1"
+
+# domain
+TdkApiCertificateArn: ""
+
+# secrets
+TdkApiEnvSecretArn: ""
+
+# rpc node endpoints and chain ids
+
+# misc
