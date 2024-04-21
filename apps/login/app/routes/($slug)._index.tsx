@@ -80,10 +80,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   }
 
   if (project.slug === "app" || project.customAuth) {
-    return [{ title: `Log in to ${data?.project.name}` }];
+    return [{ title: `Connect to ${data?.project.name}` }];
   }
 
-  return [{ title: `${project.name} | Log in with Treasure` }];
+  return [{ title: `Connect to ${project.name} | Treasure Connect` }];
 };
 
 const InnerLoginPage = () => {
@@ -129,7 +129,7 @@ const InnerLoginPage = () => {
       <div className="h-full overflow-hidden">
         <div className="fixed inset-0 bg-[url(/img/background.png)] bg-cover bg-center" />
         <div className="relative grid h-full place-items-center p-6">
-          <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-[#FFFCF3] shadow-xl shadow-black/20">
+          <div className="bg-honey-25 relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl shadow-xl shadow-black/20">
             <form onSubmit={onSubmit} className="space-y-2">
               <div className="flex h-16 items-center justify-between px-5 pt-5">
                 <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ const InnerLoginPage = () => {
                       "https://images.treasure.lol/tdk/login/treasure_icon.png"
                     }
                     alt="ZeeVerse"
-                    className="h-14 w-14 shrink-0 rounded-lg bg-[#FFE9B5] p-1"
+                    className="bg-honey-200 h-14 w-14 shrink-0 rounded-lg p-1"
                   />
                   <div>
                     <h1 className="text-night-600 text-sm">Connect to</h1>
@@ -160,9 +160,9 @@ const InnerLoginPage = () => {
                     <p className="mt-4 font-medium">
                       We&apos;ve sent you an email
                     </p>
-                    <p className="mx-auto mt-2 max-w-sm text-sm text-[#868C95]">
-                      We&apos;ve sent a code to your email, please enter it
-                      below to confirm your login
+                    <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
+                      We&apos;ve sent a code to your email. Please enter it
+                      below to confirm your login.
                     </p>
                     <ClientOnly>
                       {() => (
@@ -198,11 +198,11 @@ const InnerLoginPage = () => {
                         <div className="mt-4">
                           <Button
                             variant="secondary"
-                            className="border-night-100 flex w-full items-center justify-center border"
+                            className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
                             onClick={() => logInWithSSO("google")}
                             disabled={isInputDisabled}
                           >
-                            <GoogleLogoIcon className="h-6 w-6 text-[#474A50]" />
+                            <GoogleLogoIcon className="text-night-700 h-6 w-6" />
                             <span className="sr-only">
                               Continue with Google
                             </span>
@@ -221,7 +221,7 @@ const InnerLoginPage = () => {
                       <div className="space-y-1.5">
                         <label
                           htmlFor="email"
-                          className="block text-sm font-semibold text-[#0A111C]"
+                          className="text-night-1200 block text-sm font-semibold"
                         >
                           Email
                         </label>
@@ -229,8 +229,8 @@ const InnerLoginPage = () => {
                           {...register("email", { required: true })}
                           id="email"
                           type="email"
-                          placeholder="Your Email"
-                          className="outline-ruby-900 w-full rounded-lg border border-[#dcdcdc] px-3 py-2.5 disabled:cursor-not-allowed"
+                          placeholder="Enter your email address..."
+                          className="outline-ruby-900 border-night-200 w-full rounded-lg border px-3 py-2.5 disabled:cursor-not-allowed"
                           disabled={isInputDisabled}
                         />
                       </div>
@@ -239,7 +239,7 @@ const InnerLoginPage = () => {
                           <div className="space-y-1.5">
                             <label
                               htmlFor="password"
-                              className="block text-sm font-semibold text-[#0A111C]"
+                              className="text-night-1200 block text-sm font-semibold"
                             >
                               Password
                             </label>
@@ -248,7 +248,7 @@ const InnerLoginPage = () => {
                               id="password"
                               type="password"
                               placeholder="Your Password"
-                              className="outline-ruby-900 w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 disabled:cursor-not-allowed"
+                              className="outline-ruby-900 border-night-200 w-full rounded-lg border px-2.5 py-1.5 disabled:cursor-not-allowed"
                               disabled={isInputDisabled}
                             />
                           </div>
