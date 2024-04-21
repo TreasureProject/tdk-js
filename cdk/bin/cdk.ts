@@ -30,6 +30,7 @@ export interface DeploymentConfig
 
   //misc
   readonly GithubOIDCProviderArn: string;
+  readonly TdkApiAppRepoArn: string;
 }
 
 function ensureString(object: { [name: string]: any }, propName: string ): string
@@ -66,6 +67,8 @@ function getConfig()
     TdkApiEnvSecretArn: ensureString(unparsedEnv, "TdkApiEnvSecretArn"),
 
     GithubOIDCProviderArn: ensureString(unparsedEnv, "GithubOIDCProviderArn"),
+
+    TdkApiAppRepoArn: ensureString(unparsedEnv, "TdkApiAppRepoArn"),
   };
 
   return deploymentConfig;
@@ -110,14 +113,14 @@ async function Main()
   Tags.of(tdkDbStack).add("stack", "tdk-db");
 
   // API APP
-  const tdkApiAppStack = new TdkApiAppStack(app, `${deploymentConfig.App}-${deploymentConfig.Environment}-apiapp`, {
-    env: {
-      account: deploymentConfig.AWSAccountID,
-      region: deploymentConfig.AWSRegion
-    },
-    description: `${deploymentConfig.App}-${deploymentConfig.Environment} TDK API App`,
-  }, deploymentConfig);
-  Tags.of(tdkApiAppStack).add("stack", "tdk-api-app");
+  // const tdkApiAppStack = new TdkApiAppStack(app, `${deploymentConfig.App}-${deploymentConfig.Environment}-apiapp`, {
+  //   env: {
+  //     account: deploymentConfig.AWSAccountID,
+  //     region: deploymentConfig.AWSRegion
+  //   },
+  //   description: `${deploymentConfig.App}-${deploymentConfig.Environment} TDK API App`,
+  // }, deploymentConfig);
+  // Tags.of(tdkApiAppStack).add("stack", "tdk-api-app");
 
   // ==============================================================================
   // OUTPUTS :: exportName should be unique per env and cannot contain underscore

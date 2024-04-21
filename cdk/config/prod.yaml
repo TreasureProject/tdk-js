@@ -16,3 +16,5 @@ TdkApiEnvSecretArn: ""
 # rpc node endpoints and chain ids
 
 # misc
+GithubOIDCProviderArn: ""
+TdkApiAppRepoArn: ""

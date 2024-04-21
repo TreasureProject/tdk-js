@@ -1,6 +1,6 @@
 {
   "noumena-dev-githuboidc": {
-    "noumenadevgithuboidcrepositoryuri": "665230337498.dkr.ecr.us-west-2.amazonaws.com/noumena-dev-githuboidc-noumenadevgithuboidcrepoa5aac015-2a0cxtkmiel6",
+    "noumenadevgithuboidcrepositoryuri": "665230337498.dkr.ecr.us-west-2.amazonaws.com/noumena-dev-githuboidc-noumenadevgithuboidcrepoa5aac015-l7r8ebksa2ri",
     "noumenadevdeploymentConfigTdkApiCertificateArn": "arn:aws:acm:$us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2",
     "noumenadevdeploymentConfigGithubOIDCProviderArn": "arn:aws:iam::665230337498:oidc-provider/token.actions.githubusercontent.com",
     "noumenadevdeploymentConfigAWSRegion": "us-west-2",
@@ -12,10 +12,13 @@
     "noumenadevdeploymentConfigEnvironment": "dev"
   },
   "noumena-dev-tdkvpc": {
-    "noumenadevtdkvpcvpcid": "vpc-0f4260da384407652",
-    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet2Subnet9370762EB725274F": "subnet-08cdd9f6e82bec6a8",
+    "noumenadevtdkvpcvpcid": "vpc-09b423ab243a4af78",
+    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet2Subnet9370762EB725274F": "subnet-030be7e33057c2b3c",
     "ExportsOutputFnGetAttnoumenadevtdkvpcVpcDDFE839CCidrBlockDF79AA9B": "10.0.0.0/16",
-    "ExportsOutputRefnoumenadevtdkvpcVpcDDFE839CBE28899B": "vpc-0f4260da384407652",
-    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet1SubnetCCA0F44C3E396008": "subnet-0af801c43f1d82e42"
+    "ExportsOutputRefnoumenadevtdkvpcVpcDDFE839CBE28899B": "vpc-09b423ab243a4af78",
+    "ExportsOutputRefnoumenadevtdkvpcVpctdkisolated1Subnet1SubnetCCA0F44C3E396008": "subnet-0eb9d0ba0531947f3"
+  },
+  "noumena-dev-tdkdb": {
+    "noumenadevtdkdbDbClusterHostname": "noumena-tdk-db.cluster-craq44ow46iv.us-west-2.rds.amazonaws.com"
   }
 }

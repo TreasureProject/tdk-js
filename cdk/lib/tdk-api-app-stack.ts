@@ -7,15 +7,18 @@ import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patte
 import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { DeploymentConfig } from "../bin/cdk";
+import { Repository } from "aws-cdk-lib/aws-ecr";
 
 export class TdkApiAppStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps, deploymentConfig: DeploymentConfig) {
     super(scope, id, props);
     
-    const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
-      directory: "../apps/api",
-      exclude: [ ".env", ".env.example" ]
-    });
+    // const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
+    //   directory: "../apps/api",
+    //   exclude: [ ".env", ".env.example" ]
+    // });
+
+    const apiAppRepo = Repository.fromRepositoryArn(this, `${id}-repo`, deploymentConfig.TdkApiAppRepoArn);
 
     const cluster = new Cluster(this, `${id}-cluster`, {
       vpc: new Vpc(this, `${id}-vpc`, {
@@ -31,7 +34,8 @@ export class TdkApiAppStack extends Stack {
         cpu: 512,
         desiredCount: 2,
         taskImageOptions: {
-          image: ContainerImage.fromEcrRepository(apiDockerImage.repository),
+          // image: ContainerImage.fromEcrRepository(apiDockerImage.repository),
+          image: ContainerImage.fromEcrRepository(apiAppRepo),
           containerPort: 8080,
           taskRole: new Role(this, `${id}-ecs-task`, {
             assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com"),
