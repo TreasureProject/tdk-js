@@ -69,6 +69,24 @@ export class TdkApiAppStack extends Stack {
     });
 
     // OUTPUTS
+    new CfnOutput(this, `${id}-ecr-repo-uri`, {
+      exportName: `${id}-ecr-repo-uri`,
+      value: apiDockerImage.repository.repositoryUri,
+      description: "ECR repo Uri"
+    });
+
+    new CfnOutput(this, `${id}-ecr-repo-arn`, {
+      exportName: `${id}-ecr-repo-arn`,
+      value: apiDockerImage.repository.repositoryArn,
+      description: "ECR repo ARN"
+    });
+
+    new CfnOutput(this, `${id}-ecr-repo-name`, {
+      exportName: `${id}-ecr-repo-name`,
+      value: apiDockerImage.repository.repositoryName,
+      description: "ECR repo name"
+    });
+
     new CfnOutput(this, `${id}-alb-dnsname`, {
       exportName: `${id}-alb-dnsname`,
       value: service.loadBalancer.loadBalancerDnsName,
