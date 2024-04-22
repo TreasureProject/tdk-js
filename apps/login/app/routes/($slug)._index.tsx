@@ -88,6 +88,7 @@ const InnerLoginPage = () => {
   const {
     status,
     error,
+    isLoading,
     startEmailLogin,
     finishEmailLogin,
     logInWithSSO,
@@ -109,8 +110,6 @@ const InnerLoginPage = () => {
       await startEmailLogin(email);
     }
   });
-
-  const isInputDisabled = status === "SENDING_EMAIL";
 
   return (
     <div className="h-full overflow-hidden">
@@ -141,12 +140,12 @@ const InnerLoginPage = () => {
                   {error}
                 </p>
               ) : null}
-              {status === "LOADING" ? (
-                <div className="flex h-32 items-center justify-center">
+              {status === "START_SESSION" ? (
+                <div className="flex h-32 flex-col items-center justify-center gap-3">
                   <SpinnerIcon className="h-8 w-8" />
+                  <p className="text-night-1000">Starting session...</p>
                 </div>
-              ) : status === "CONFIRM_EMAIL" ||
-                status === "CONFIRMING_EMAIL" ? (
+              ) : status === "CONFIRM_EMAIL" ? (
                 <div className="my-4 space-y-4 text-center">
                   <img className="mx-auto w-20" src={emailImg} />
                   <div className="space-y-1.5">
@@ -178,9 +177,9 @@ const InnerLoginPage = () => {
                   <Button
                     className="w-full"
                     onClick={() => finishEmailLogin(verificationInput)}
-                    disabled={status === "CONFIRMING_EMAIL"}
+                    disabled={isLoading}
                   >
-                    {status === "CONFIRMING_EMAIL" ? "Verifying..." : "Verify"}
+                    {isLoading ? "Verifying..." : "Verify"}
                   </Button>
                 </div>
               ) : (
@@ -192,7 +191,7 @@ const InnerLoginPage = () => {
                           variant="secondary"
                           className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
                           onClick={() => logInWithSSO("google")}
-                          disabled={isInputDisabled}
+                          disabled={isLoading}
                         >
                           <GoogleLogoIcon className="text-night-700 h-6 w-6" />
                           <span className="sr-only">Continue with Google</span>
@@ -219,7 +218,7 @@ const InnerLoginPage = () => {
                         type="email"
                         placeholder="Enter your email address..."
                         className="outline-ruby-900 border-night-200 w-full rounded-lg border px-3 py-2.5 disabled:cursor-not-allowed"
-                        disabled={isInputDisabled}
+                        disabled={isLoading}
                       />
                     </div>
                     {project.customAuth ? (
@@ -237,7 +236,7 @@ const InnerLoginPage = () => {
                             type="password"
                             placeholder="Your Password"
                             className="outline-ruby-900 border-night-200 w-full rounded-lg border px-2.5 py-1.5 disabled:cursor-not-allowed"
-                            disabled={isInputDisabled}
+                            disabled={isLoading}
                           />
                         </div>
                       </>
@@ -245,7 +244,7 @@ const InnerLoginPage = () => {
                     <Button
                       type="submit"
                       className="w-full"
-                      disabled={isInputDisabled}
+                      disabled={isLoading}
                     >
                       Connect
                     </Button>
