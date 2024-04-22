@@ -123,7 +123,7 @@ const InnerLoginPage = () => {
                     project.icon ??
                     "https://images.treasure.lol/tdk/login/treasure_icon.png"
                   }
-                  alt="ZeeVerse"
+                  alt=""
                   className="bg-honey-200 h-14 w-14 shrink-0 rounded-lg p-1"
                 />
                 <div>
@@ -131,7 +131,7 @@ const InnerLoginPage = () => {
                   <h2 className="font-medium">{project.name}</h2>
                 </div>
               </div>
-              <img src={logoImg} alt="ZeeVerse" className="h-8 w-auto" />
+              <img src={logoImg} alt="" className="h-8 w-auto" />
             </div>
             <div className="w-full px-5 pb-5">
               {error ? (
@@ -163,9 +163,10 @@ const InnerLoginPage = () => {
                         classNames={{
                           container: "mx-auto mt-4",
                           character:
-                            "rounded text-lg flex items-center justify-center bg-white bg-white border border-night-200",
+                            "rounded text-lg flex items-center justify-center bg-white bg-white border border-night-200 text-night-1200",
                           characterInactive: "bg-white",
-                          characterSelected: "border-ruby-900 outline-ruby-900",
+                          characterSelected:
+                            "border-ruby-900 outline-ruby-900 text-night-1200",
                         }}
                       />
                     )}

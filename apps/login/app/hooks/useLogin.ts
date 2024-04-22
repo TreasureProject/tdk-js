@@ -9,9 +9,10 @@ import { TDKAPI } from "@treasure-dev/tdk-core";
 import { getContractAddress } from "@treasure-dev/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
+import { getErrorMessage } from "~/utils/error";
 
 type State = {
-  status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
+  status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL";
   email?: string;
   error?: string;
 };
@@ -25,11 +26,7 @@ type Action =
   | { type: "FINISH_SSO_LOGIN"; email?: string }
   | { type: "START_CUSTOM_AUTH_LOGIN"; email: string }
   | { type: "FINISH_CUSTOM_AUTH_LOGIN" }
-  | { type: "ERROR"; error: string }
-  | {
-      type: "CHANGE_STATUS_DEV";
-      status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
-    };
+  | { type: "ERROR"; error: string };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -49,11 +46,13 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         status: "CONFIRM_EMAIL",
+        error: undefined,
       };
     case "FINISH_EMAIL_LOGIN":
       return {
         ...state,
         status: "LOADING",
+        error: undefined,
       };
     case "START_SSO_LOGIN":
       return {
@@ -76,17 +75,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         status: "LOADING",
+        error: undefined,
       };
     case "ERROR":
       return {
         ...state,
-        status: "ERROR",
         error: action.error,
-      };
-    case "CHANGE_STATUS_DEV":
-      return {
-        ...state,
-        status: action.status,
       };
   }
 };
@@ -98,9 +92,6 @@ type Props = {
   backendWallet: string;
   approvedCallTargets: string[];
 };
-
-const DEFAULT_ERROR_MESSAGE =
-  "Sorry, we were unable to log you in. Please contact support.";
 
 export const useLogin = ({
   project,
@@ -158,7 +149,10 @@ export const useLogin = ({
               "Error deploying smart wallet and creating session key:",
               err,
             );
-            dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+            dispatch({
+              type: "ERROR",
+              error: `An error occurred while deploying your Treasure account: ${getErrorMessage(err)}`,
+            });
             return;
           }
 
@@ -171,7 +165,10 @@ export const useLogin = ({
           authToken = await authenticateSmartWallet();
         } catch (err) {
           console.error("Error logging in smart account:", err);
-          dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+          dispatch({
+            type: "ERROR",
+            error: `An error occurred while authenticating your Treasure account: ${getErrorMessage(err)}`,
+          });
           return;
         }
 
@@ -202,7 +199,10 @@ export const useLogin = ({
               await createSessionKey();
             } catch (err) {
               console.error("Error creating new session key:", err);
-              dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+              dispatch({
+                type: "ERROR",
+                error: `An error occurred while starting your Treasure account session: ${getErrorMessage(err)}`,
+              });
               return;
             }
           } else {
@@ -250,7 +250,10 @@ export const useLogin = ({
         });
       } catch (err) {
         console.error("Error finishing email login:", err);
-        dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+        dispatch({
+          type: "ERROR",
+          error: `An error occurred while confirming your email: ${getErrorMessage(err)}`,
+        });
       }
     },
     logInWithSSO: async (strategy: EmbeddedWalletOauthStrategy) => {
@@ -271,7 +274,18 @@ export const useLogin = ({
         });
       } catch (err) {
         console.error(`Error logging in with ${strategy}:`, err);
-        dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+
+        const errorMessage = getErrorMessage(err);
+        if (errorMessage === "User closed login window") {
+          // User cancelled login
+          dispatch({ type: "RESET" });
+          return;
+        }
+
+        dispatch({
+          type: "ERROR",
+          error: `An error occurred while logging in: ${errorMessage}`,
+        });
       }
     },
     logInWithCustomAuth: async (email: string, password: string) => {
@@ -293,8 +307,5 @@ export const useLogin = ({
         },
       });
     },
-    changeStatus: (
-      status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR",
-    ) => dispatch({ type: "CHANGE_STATUS_DEV", status }),
   };
 };
