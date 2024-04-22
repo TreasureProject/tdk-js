@@ -8,10 +8,10 @@ AWSAccountID: "665230337498"
 AWSRegion: "us-west-2"
 
 # domain
-TdkApiCertificateArn: "arn:aws:acm:$us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2"
+TreasureDotLolCertificateArn: "arn:aws:acm:us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2"
 
 # secrets
-TdkApiEnvSecretArn: "arn:aws:secretsmanager:us-west-2:$665230337498:secret:tdkApiEnv-M2Lsr7"
+TdkApiEnvSecretArn: "arn:aws:secretsmanager:us-west-2:665230337498:secret:tdkApiEnv-M2Lsr7"
 
 # rpc node endpoints and chain ids
 

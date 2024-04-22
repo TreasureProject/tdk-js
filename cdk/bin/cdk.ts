@@ -23,7 +23,7 @@ export interface DeploymentConfig
 	readonly AWSRegion: string;
 
 	// domain
-  readonly TdkApiCertificateArn: string;
+  readonly TreasureDotLolCertificateArn: string;
 
   // secrets
   readonly TdkApiEnvSecretArn: string;
@@ -62,7 +62,7 @@ function getConfig()
     AWSAccountID: ensureString(unparsedEnv, "AWSAccountID"),
     AWSRegion: ensureString(unparsedEnv, "AWSRegion"),
 
-    TdkApiCertificateArn:  ensureString(unparsedEnv, "TdkApiCertificateArn"),
+    TreasureDotLolCertificateArn:  ensureString(unparsedEnv, "TreasureDotLolCertificateArn"),
 
     TdkApiEnvSecretArn: ensureString(unparsedEnv, "TdkApiEnvSecretArn"),
 

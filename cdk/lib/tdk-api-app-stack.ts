@@ -7,7 +7,7 @@ import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patte
 import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { DeploymentConfig } from "../bin/cdk";
-import { Repository } from "aws-cdk-lib/aws-ecr";
+import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 
 export class TdkApiAppStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps, deploymentConfig: DeploymentConfig) {
@@ -21,13 +21,13 @@ export class TdkApiAppStack extends Stack {
       exclude: [ ".env", ".env.example", "cdk*", "cdk-out" ] // ignore output to prevent recursion bug
     });
 
-    // const apiAppRepo = Repository.fromRepositoryArn(this, `${id}-repo`, deploymentConfig.TdkApiAppRepoArn);
-
     const cluster = new Cluster(this, `${id}-cluster`, {
       vpc: new Vpc(this, `${id}-vpc`, {
         maxAzs: 2,
       }),
     });
+
+    const secret = Secret.fromSecretCompleteArn(this, `${id}-secret`, deploymentConfig.TdkApiEnvSecretArn);
 
     const service = new ApplicationLoadBalancedFargateService(
       this,
@@ -37,8 +37,7 @@ export class TdkApiAppStack extends Stack {
         cpu: 512,
         desiredCount: 2,
         taskImageOptions: {
-          image: ContainerImage.fromEcrRepository(apiDockerImage.repository),
-          // image: ContainerImage.fromEcrRepository(apiAppRepo),
+          image: ContainerImage.fromDockerImageAsset(apiDockerImage),
           containerPort: 8080,
           taskRole: new Role(this, `${id}-ecs-task`, {
             assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com"),
@@ -60,7 +59,7 @@ export class TdkApiAppStack extends Stack {
         certificate: Certificate.fromCertificateArn(
           this,
           `${id}-cert`,
-          deploymentConfig.TdkApiCertificateArn,
+          deploymentConfig.TreasureDotLolCertificateArn,
         ),
       },
     );
