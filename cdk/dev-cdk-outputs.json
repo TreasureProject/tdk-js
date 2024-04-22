@@ -5,6 +5,7 @@
     "noumenadevdeploymentConfigGithubOIDCProviderArn": "arn:aws:iam::665230337498:oidc-provider/token.actions.githubusercontent.com",
     "noumenadevdeploymentConfigAWSRegion": "us-west-2",
     "noumenadevdeploymentConfigTdkApiEnvSecretArn": "arn:aws:secretsmanager:us-west-2:$665230337498:secret:tdkApiEnv-M2Lsr7",
+    "noumenadevdeploymentConfigTdkApiAppRepoArn": "none",
     "noumenadevdeploymentConfigAWSAccountID": "665230337498",
     "noumenadevdeploymentConfigVersion": "0.0.1",
     "noumenadevgithuboidcgithubactionsrolearn": "arn:aws:iam::665230337498:role/noumena-dev-githuboidc-github-actions",

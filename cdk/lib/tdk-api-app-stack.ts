@@ -15,9 +15,10 @@ export class TdkApiAppStack extends Stack {
 
     const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
       assetName: `${id}-docker-asset`,
-      directory: "../",
+      directory: "../", // context as repo root dir
       file: "./apps/api/Dockerfile",
-      exclude: [ ".env", ".env.example" ]
+      cacheDisabled: true,
+      exclude: [ ".env", ".env.example", "cdk*", "cdk-out" ] // ignore output to prevent recursion bug
     });
 
     // const apiAppRepo = Repository.fromRepositoryArn(this, `${id}-repo`, deploymentConfig.TdkApiAppRepoArn);
