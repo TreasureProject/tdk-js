@@ -12,7 +12,12 @@ import { env } from "~/utils/env";
 import { getErrorMessage } from "~/utils/error";
 
 type State = {
-  status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL";
+  status:
+    | "IDLE"
+    | "LOADING"
+    | "SENDING_EMAIL"
+    | "CONFIRM_EMAIL"
+    | "CONFIRMING_EMAIL";
   email?: string;
   error?: string;
 };
@@ -21,6 +26,7 @@ type Action =
   | { type: "RESET" }
   | { type: "START_EMAIL_LOGIN"; email: string }
   | { type: "SHOW_EMAIL_CONFIRMATION" }
+  | { type: "CONFIRM_EMAIL" }
   | { type: "FINISH_EMAIL_LOGIN" }
   | { type: "START_SSO_LOGIN" }
   | { type: "FINISH_SSO_LOGIN"; email?: string }
@@ -46,6 +52,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         status: "CONFIRM_EMAIL",
+        error: undefined,
+      };
+    case "CONFIRM_EMAIL":
+      return {
+        ...state,
+        status: "CONFIRMING_EMAIL",
         error: undefined,
       };
     case "FINISH_EMAIL_LOGIN":
@@ -236,6 +248,7 @@ export const useLogin = ({
     },
     finishEmailLogin: async (verificationCode: string) => {
       try {
+        dispatch({ type: "CONFIRM_EMAIL" });
         await connectSmartWallet({
           connectPersonalWallet: async (embeddedWallet) => {
             const authResult = await embeddedWallet.authenticate({

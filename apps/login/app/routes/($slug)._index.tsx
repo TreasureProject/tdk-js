@@ -10,6 +10,7 @@ import {
   GoogleLogoIcon,
   TDKAPI,
 } from "@treasure-dev/tdk-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
@@ -83,6 +84,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const InnerLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
+  const [verificationInput, setVerificationInput] = useState<string>("");
   const {
     status,
     error,
@@ -143,25 +145,27 @@ const InnerLoginPage = () => {
                 <div className="flex h-32 items-center justify-center">
                   <SpinnerIcon className="h-8 w-8" />
                 </div>
-              ) : status === "CONFIRM_EMAIL" ? (
-                <div className="my-4 text-center">
+              ) : status === "CONFIRM_EMAIL" ||
+                status === "CONFIRMING_EMAIL" ? (
+                <div className="my-4 space-y-4 text-center">
                   <img className="mx-auto w-20" src={emailImg} />
-                  <p className="mt-4 font-medium">
-                    We&apos;ve sent you an email
-                  </p>
-                  <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
-                    We&apos;ve sent a code to your email. Please enter it below
-                    to confirm your login.
-                  </p>
+                  <div className="space-y-1.5">
+                    <p className="font-medium">We&apos;ve sent you an email</p>
+                    <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
+                      We&apos;ve sent a code to your email. Please enter it
+                      below to confirm your login.
+                    </p>
+                  </div>
                   <ClientOnly>
                     {() => (
                       <VerificationInput
                         length={6}
                         placeholder=""
                         autoFocus
+                        onChange={setVerificationInput}
                         onComplete={finishEmailLogin}
                         classNames={{
-                          container: "mx-auto mt-4",
+                          container: "mx-auto",
                           character:
                             "rounded text-lg flex items-center justify-center bg-white bg-white border border-night-200 text-night-1200",
                           characterInactive: "bg-white",
@@ -171,6 +175,13 @@ const InnerLoginPage = () => {
                       />
                     )}
                   </ClientOnly>
+                  <Button
+                    className="w-full"
+                    onClick={() => finishEmailLogin(verificationInput)}
+                    disabled={status === "CONFIRMING_EMAIL"}
+                  >
+                    {status === "CONFIRMING_EMAIL" ? "Verifying..." : "Verify"}
+                  </Button>
                 </div>
               ) : (
                 <>
