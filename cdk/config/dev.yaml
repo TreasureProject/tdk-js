@@ -17,4 +17,4 @@ TdkApiEnvSecretArn: "arn:aws:secretsmanager:us-west-2:$665230337498:secret:tdkAp
 
 # misc
 GithubOIDCProviderArn: "arn:aws:iam::665230337498:oidc-provider/token.actions.githubusercontent.com"
-TdkApiAppRepoArn: ""
+TdkApiAppRepoArn: "none"
