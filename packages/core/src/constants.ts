@@ -133,8 +133,8 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerAfarit: "0x5aa865ac69f481d43a7c67cde7d20781733eb612",
     HarvesterAsiterra: "0x88bf661446c8f5a7072c0f75193dae0e18ae40bc",
     NftHandlerAsiterra: "0x2ef99434b0be1511ed2a1589dc987e48298e059e",
-    HarvesterEmberwing: zeroAddress,
-    NftHandlerEmberwing: zeroAddress,
+    HarvesterEmberwing: "0x36882e71d11eadd9f869b0fd70d18d5045939986",
+    NftHandlerEmberwing: "0x22cafc3819a35cddbdafb6417db5e8fcd5ca49e7",
     HarvesterEmerion: "0x587dc30014e10b56907237d4880a9bf8b9518150",
     NftHandlerEmerion: "0x02d1922d34724a09eb1533b6276fb7e4775a1b37",
     HarvesterKameji: "0xdf9f9ca6ee5c3024b64dcecbadc462c0b896147a",
@@ -147,7 +147,7 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
     // Treasure Misc
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
-    ManagedAccountFactory: zeroAddress,
+    ManagedAccountFactory: "0x463effB51873C7720c810AC7Fb2e145Ec2f8Cc60",
     // Zeeverse
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
