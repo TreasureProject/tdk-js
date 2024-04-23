@@ -11,14 +11,21 @@ export class TdkEcrStack extends cdk.Stack {
 
     this.repo = new ecr.Repository(this, "api");
 
-    const githubProvider = new iam.OpenIdConnectProvider(
-      this,
-      "githubProvider",
-      {
-        url: "https://token.actions.githubusercontent.com",
-        clientIds: ["sts.amazonaws.com"],
-      },
-    );
+    // const githubProvider = new iam.OpenIdConnectProvider(
+    //   this,
+    //   "githubProvider",
+    //   {
+    //     url: "https://token.actions.githubusercontent.com",
+    //     clientIds: ["sts.amazonaws.com"],
+    //   },
+    // );
+
+    const githubProvider =
+      iam.OpenIdConnectProvider.fromOpenIdConnectProviderArn(
+        this,
+        "githubProvider",
+        "arn:aws:iam::884078395586:oidc-provider/token.actions.githubusercontent.com",
+      );
 
     const githubPrincipal = new iam.OpenIdConnectPrincipal(
       githubProvider,
