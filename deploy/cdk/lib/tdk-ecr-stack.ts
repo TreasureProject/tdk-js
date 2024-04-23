@@ -24,7 +24,7 @@ export class TdkEcrStack extends cdk.Stack {
       iam.OpenIdConnectProvider.fromOpenIdConnectProviderArn(
         this,
         "githubProvider",
-        "arn:aws:iam::884078395586:oidc-provider/token.actions.githubusercontent.com",
+        `arn:aws:iam::${this.account}:oidc-provider/token.actions.githubusercontent.com`,
       );
 
     const githubPrincipal = new iam.OpenIdConnectPrincipal(
