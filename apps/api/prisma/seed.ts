@@ -59,6 +59,7 @@ const CALL_TARGETS: Record<string, Contract[]> = {
     "NftHandlerEmberwing",
     "ZeeverseZee",
     "ZeeverseItems",
+    "BulkTransferHelper",
   ],
 };
 

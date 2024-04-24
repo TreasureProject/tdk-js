@@ -148,6 +148,8 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
     ManagedAccountFactory: "0x463effB51873C7720c810AC7Fb2e145Ec2f8Cc60",
+    BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
+    TreasureConduit: "0x8bf85fa9213647ec3485afd9dd5888b4db017434",
     // Zeeverse
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
@@ -189,8 +191,17 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
     ManagedAccountFactory: "0xae7f7e9286f5f9ede167a19d1d605df4fdbc417b",
+    BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
+    TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",
     // Zeeverse
     ZeeverseZee: "0xb1af672c7e0e8880c066ecc24930a12ff2ee8534",
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
   },
+};
+
+export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
+  [arbitrum.id]:
+    "0x086a11794a945fb10a6199cca4e0d7ff6d25513b000000000000000000000001",
+  [arbitrumSepolia.id]:
+    "0xc51f27cf93531be66671dd0543cf22b475d00873000000000000000000000001",
 };
