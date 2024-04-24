@@ -9,75 +9,97 @@ import { TDKAPI } from "@treasure-dev/tdk-core";
 import { getContractAddress } from "@treasure-dev/tdk-react";
 import { useEffect, useMemo, useReducer, useRef } from "react";
 import { env } from "~/utils/env";
+import { getErrorMessage } from "~/utils/error";
+
+type Status = "IDLE" | "CONFIRM_EMAIL" | "START_SESSION";
 
 type State = {
-  status: "IDLE" | "LOADING" | "SENDING_EMAIL" | "CONFIRM_EMAIL" | "ERROR";
-  email?: string;
-  error?: string;
+  status: Status;
+  email: string | undefined;
+  error: string | undefined;
+  isLoading: boolean;
 };
 
 type Action =
   | { type: "RESET" }
   | { type: "START_EMAIL_LOGIN"; email: string }
-  | { type: "SHOW_EMAIL_CONFIRMATION" }
+  | { type: "SHOW_CONFIRM_EMAIL" }
+  | { type: "START_CONFIRMING_EMAIL" }
   | { type: "FINISH_EMAIL_LOGIN" }
   | { type: "START_SSO_LOGIN" }
   | { type: "FINISH_SSO_LOGIN"; email?: string }
   | { type: "START_CUSTOM_AUTH_LOGIN"; email: string }
   | { type: "FINISH_CUSTOM_AUTH_LOGIN" }
-  | { type: "ERROR"; error: string };
+  | { type: "ERROR"; error: string; status?: Status };
+
+const DEFAULT_STATE: State = {
+  status: "IDLE",
+  email: undefined,
+  error: undefined,
+  isLoading: false,
+};
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "RESET":
-      return {
-        status: "IDLE",
-        email: undefined,
-        error: undefined,
-      };
+      return DEFAULT_STATE;
     case "START_EMAIL_LOGIN":
       return {
         ...state,
-        status: "SENDING_EMAIL",
         email: action.email,
+        isLoading: true,
       };
-    case "SHOW_EMAIL_CONFIRMATION":
+    case "SHOW_CONFIRM_EMAIL":
       return {
         ...state,
         status: "CONFIRM_EMAIL",
+        error: undefined,
+        isLoading: false,
+      };
+    case "START_CONFIRMING_EMAIL":
+      return {
+        ...state,
+        isLoading: true,
       };
     case "FINISH_EMAIL_LOGIN":
       return {
         ...state,
-        status: "LOADING",
+        status: "START_SESSION",
+        error: undefined,
+        isLoading: true,
       };
     case "START_SSO_LOGIN":
       return {
         ...state,
-        status: "LOADING",
+        isLoading: true,
       };
     case "FINISH_SSO_LOGIN":
       return {
         ...state,
-        status: "LOADING",
         email: action.email,
+        status: "START_SESSION",
+        error: undefined,
+        isLoading: true,
       };
     case "START_CUSTOM_AUTH_LOGIN":
       return {
         ...state,
-        status: "LOADING",
         email: action.email,
+        isLoading: true,
       };
     case "FINISH_CUSTOM_AUTH_LOGIN":
       return {
         ...state,
-        status: "LOADING",
+        status: "START_SESSION",
+        error: undefined,
+        isLoading: true,
       };
     case "ERROR":
       return {
         ...state,
-        status: "ERROR",
+        status: action.status ?? state.status,
         error: action.error,
+        isLoading: false,
       };
   }
 };
@@ -90,9 +112,6 @@ type Props = {
   approvedCallTargets: string[];
 };
 
-const DEFAULT_ERROR_MESSAGE =
-  "Sorry, we were unable to log you in. Please contact support.";
-
 export const useLogin = ({
   project,
   chainId,
@@ -100,9 +119,7 @@ export const useLogin = ({
   backendWallet,
   approvedCallTargets,
 }: Props) => {
-  const [state, dispatch] = useReducer(reducer, {
-    status: "IDLE",
-  });
+  const [state, dispatch] = useReducer(reducer, DEFAULT_STATE);
   const { connect: connectSmartWallet } = useSmartWallet(embeddedWallet(), {
     factoryAddress: getContractAddress(chainId, "ManagedAccountFactory"),
     gasless: true,
@@ -149,7 +166,11 @@ export const useLogin = ({
               "Error deploying smart wallet and creating session key:",
               err,
             );
-            dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+            dispatch({
+              type: "ERROR",
+              error: `An error occurred while deploying your Treasure account: ${getErrorMessage(err)}`,
+              status: "IDLE",
+            });
             return;
           }
 
@@ -162,7 +183,11 @@ export const useLogin = ({
           authToken = await authenticateSmartWallet();
         } catch (err) {
           console.error("Error logging in smart account:", err);
-          dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+          dispatch({
+            type: "ERROR",
+            error: `An error occurred while authenticating your Treasure account: ${getErrorMessage(err)}`,
+            status: "IDLE",
+          });
           return;
         }
 
@@ -193,7 +218,11 @@ export const useLogin = ({
               await createSessionKey();
             } catch (err) {
               console.error("Error creating new session key:", err);
-              dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+              dispatch({
+                type: "ERROR",
+                error: `An error occurred while starting your Treasure account session: ${getErrorMessage(err)}`,
+                status: "IDLE",
+              });
               return;
             }
           } else {
@@ -221,12 +250,13 @@ export const useLogin = ({
       await connectSmartWallet({
         connectPersonalWallet: async (embeddedWallet) => {
           await embeddedWallet.sendVerificationEmail({ email });
-          dispatch({ type: "SHOW_EMAIL_CONFIRMATION" });
+          dispatch({ type: "SHOW_CONFIRM_EMAIL" });
         },
       });
     },
     finishEmailLogin: async (verificationCode: string) => {
       try {
+        dispatch({ type: "START_CONFIRMING_EMAIL" });
         await connectSmartWallet({
           connectPersonalWallet: async (embeddedWallet) => {
             const authResult = await embeddedWallet.authenticate({
@@ -241,7 +271,10 @@ export const useLogin = ({
         });
       } catch (err) {
         console.error("Error finishing email login:", err);
-        dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+        dispatch({
+          type: "ERROR",
+          error: `An error occurred while confirming your email: ${getErrorMessage(err)}`,
+        });
       }
     },
     logInWithSSO: async (strategy: EmbeddedWalletOauthStrategy) => {
@@ -254,15 +287,37 @@ export const useLogin = ({
             });
             await embeddedWallet.connect({ authResult });
             didConnect.current = true;
-            dispatch({
-              type: "FINISH_SSO_LOGIN",
-              email: authResult.user?.authDetails.email,
-            });
+
+            const email = authResult.user?.authDetails.email;
+            if (email) {
+              dispatch({
+                type: "FINISH_SSO_LOGIN",
+                email,
+              });
+            } else {
+              dispatch({
+                type: "ERROR",
+                error:
+                  "An error occurred while logging in: No email address found",
+                status: "IDLE",
+              });
+            }
           },
         });
       } catch (err) {
         console.error(`Error logging in with ${strategy}:`, err);
-        dispatch({ type: "ERROR", error: DEFAULT_ERROR_MESSAGE });
+
+        const errorMessage = getErrorMessage(err);
+        if (errorMessage === "User closed login window") {
+          // User cancelled login
+          dispatch({ type: "RESET" });
+          return;
+        }
+
+        dispatch({
+          type: "ERROR",
+          error: `An error occurred while logging in: ${errorMessage}`,
+        });
       }
     },
     logInWithCustomAuth: async (email: string, password: string) => {

@@ -1,12 +1,12 @@
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
 import "@treasure-dev/tdk-react/dist/index.css";
+import "@treasure-project/tailwind-config/fonts.css";
 import "~/globals.css";
 
 export default function App() {
@@ -22,7 +22,6 @@ export default function App() {
       <body>
         <Outlet />
         <ScrollRestoration />
-        <LiveReload />
         <Scripts />
       </body>
     </html>

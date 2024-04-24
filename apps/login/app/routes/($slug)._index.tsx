@@ -4,14 +4,18 @@ import { useLoaderData } from "@remix-run/react";
 import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import {
+  Button,
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
+  GoogleLogoIcon,
   TDKAPI,
-} from "@treasure-dev/tdk-core";
-import { Button } from "@treasure-dev/tdk-react";
+} from "@treasure-dev/tdk-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
+import emailImg from "~/assets/email.webp";
+import logoImg from "~/assets/logo.svg";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
 import { useLogin } from "~/hooks/useLogin";
 
@@ -72,18 +76,19 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   }
 
   if (project.slug === "app" || project.customAuth) {
-    return [{ title: `Log in to ${data?.project.name}` }];
+    return [{ title: `Connect to ${data?.project.name}` }];
   }
 
-  return [{ title: `${project.name} | Log in with Treasure` }];
+  return [{ title: `Connect to ${project.name} | Treasure Connect` }];
 };
 
 const InnerLoginPage = () => {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
+  const [verificationInput, setVerificationInput] = useState<string>("");
   const {
     status,
     error,
-    reset,
+    isLoading,
     startEmailLogin,
     finishEmailLogin,
     logInWithSSO,
@@ -96,11 +101,7 @@ const InnerLoginPage = () => {
     approvedCallTargets: project.callTargets,
   });
 
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-  } = useForm<LoginForm>();
+  const { register, handleSubmit } = useForm<LoginForm>();
 
   const onSubmit = handleSubmit(async ({ email, password }) => {
     if (password) {
@@ -110,127 +111,151 @@ const InnerLoginPage = () => {
     }
   });
 
-  const isInputDisabled = status === "SENDING_EMAIL";
-
   return (
-    <>
+    <div className="h-full overflow-hidden">
       <div className="fixed inset-0 bg-[url(/img/background.png)] bg-cover bg-center" />
-      <div className="relative flex h-full items-center justify-center p-6">
-        <div className="mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-white">
-          <div
-            className="h-64 bg-slate-800 bg-cover bg-center"
-            style={{
-              backgroundImage: `url('${
-                project.cover || "/img/default_cover.png"
-              }')`,
-            }}
-          />
-          <form className="space-y-5 p-8" onSubmit={onSubmit}>
-            <div className="font-semibold">
-              {project.slug === "app" || project.customAuth ? (
-                <h1 className="text-2xl">Log in to {project.name}</h1>
+      <div className="relative grid h-full place-items-center p-6">
+        <div className="bg-honey-25 relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl shadow-xl shadow-black/20">
+          <form onSubmit={onSubmit} className="space-y-2">
+            <div className="flex h-16 items-center justify-between px-5 pt-5">
+              <div className="flex items-center gap-2">
+                <img
+                  src={
+                    project.icon ??
+                    "https://images.treasure.lol/tdk/login/treasure_icon.png"
+                  }
+                  alt=""
+                  className="bg-honey-200 h-14 w-14 shrink-0 rounded-lg p-1"
+                />
+                <div>
+                  <h1 className="text-night-600 text-sm">Connect to</h1>
+                  <h2 className="font-medium">{project.name}</h2>
+                </div>
+              </div>
+              <img src={logoImg} alt="" className="h-8 w-auto" />
+            </div>
+            <div className="w-full px-5 pb-5">
+              {error ? (
+                <p className="bg-ruby-300 text-ruby-900 border-ruby-400 mt-4 rounded-lg border px-3 py-2 text-sm">
+                  {error}
+                </p>
+              ) : null}
+              {status === "START_SESSION" ? (
+                <div className="flex h-32 flex-col items-center justify-center gap-3">
+                  <SpinnerIcon className="h-8 w-8" />
+                  <p className="text-night-1000">Starting session...</p>
+                </div>
+              ) : status === "CONFIRM_EMAIL" ? (
+                <div className="my-4 space-y-4 text-center">
+                  <img className="mx-auto w-20" src={emailImg} />
+                  <div className="space-y-1.5">
+                    <p className="font-medium">We&apos;ve sent you an email</p>
+                    <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
+                      We&apos;ve sent a code to your email. Please enter it
+                      below to confirm your login.
+                    </p>
+                  </div>
+                  <ClientOnly>
+                    {() => (
+                      <VerificationInput
+                        length={6}
+                        placeholder=""
+                        autoFocus
+                        onChange={setVerificationInput}
+                        onComplete={finishEmailLogin}
+                        classNames={{
+                          container: "mx-auto",
+                          character:
+                            "rounded text-lg flex items-center justify-center bg-white bg-white border border-night-200 text-night-1200",
+                          characterInactive: "bg-white",
+                          characterSelected:
+                            "border-ruby-900 outline-ruby-900 text-night-1200",
+                        }}
+                      />
+                    )}
+                  </ClientOnly>
+                  <Button
+                    className="w-full"
+                    onClick={() => finishEmailLogin(verificationInput)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Verifying..." : "Verify"}
+                  </Button>
+                </div>
               ) : (
                 <>
-                  <h2 className="leading-4">Log in with Treasure to play</h2>
-                  <h1 className="text-3xl">{project.name}</h1>
-                </>
-              )}
-            </div>
-            {error ? <div>{error}</div> : null}
-            {status === "LOADING" ? (
-              <div className="flex h-32 items-center justify-center">
-                <SpinnerIcon className="h-8 w-8" />
-              </div>
-            ) : status === "CONFIRM_EMAIL" ? (
-              <div className="space-y-2 px-8 text-center">
-                <p className="text-sm">
-                  Please check your email inbox and enter the 6-digit
-                  verification code to continue:
-                </p>
-                <ClientOnly>
-                  {() => (
-                    <VerificationInput
-                      length={6}
-                      placeholder=""
-                      autoFocus
-                      onComplete={finishEmailLogin}
-                      classNames={{
-                        container: "mx-auto",
-                        character: "rounded bg-white",
-                        characterInactive: "bg-white",
-                        characterSelected: "border-[#DC2626] outline-[#DC2626]",
-                      }}
-                    />
-                  )}
-                </ClientOnly>
-                <span className="block text-center">or</span>
-                <Button
-                  variant="secondary"
-                  className="text-slate-800 hover:text-slate-700"
-                  onClick={reset}
-                >
-                  Go back
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-2">
-                  <div className="space-y-1">
-                    <label htmlFor="email" className="block font-semibold">
-                      Email
-                    </label>
-                    <input
-                      {...register("email", { required: true })}
-                      id="email"
-                      type="email"
-                      className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
-                      disabled={isInputDisabled}
-                    />
-                  </div>
-                  {project.customAuth ? (
+                  {!project.customAuth ? (
                     <>
-                      <div className="space-y-1">
-                        <label
-                          htmlFor="password"
-                          className="block font-semibold"
+                      <div className="mt-4">
+                        <Button
+                          variant="secondary"
+                          className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
+                          onClick={() => logInWithSSO("google")}
+                          disabled={isLoading}
                         >
-                          Password
-                        </label>
-                        <input
-                          {...register("password", { required: true })}
-                          id="password"
-                          type="password"
-                          className="w-full rounded-lg border border-[#dcdcdc] px-2.5 py-1.5 outline-[#DC2626] disabled:cursor-not-allowed"
-                          disabled={isInputDisabled}
-                        />
+                          <GoogleLogoIcon className="text-night-700 h-6 w-6" />
+                          <span className="sr-only">Continue with Google</span>
+                        </Button>
+                      </div>
+                      <div className="mt-4 flex items-center">
+                        <hr className="border-night-100 flex-1 border-t" />
+                        <p className="text-night-600 mx-2.5 text-center">or</p>
+                        <hr className="border-night-100 flex-1 border-t" />
                       </div>
                     </>
                   ) : null}
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isInputDisabled}
-                  >
-                    Sign in
-                  </Button>
-                  {!project.customAuth ? (
+                  <div className="mt-4 space-y-4">
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="email"
+                        className="text-night-1200 block text-sm font-semibold"
+                      >
+                        Email
+                      </label>
+                      <input
+                        {...register("email", { required: true })}
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email address..."
+                        className="outline-ruby-900 border-night-200 w-full rounded-lg border px-3 py-2.5 disabled:cursor-not-allowed"
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {project.customAuth ? (
+                      <>
+                        <div className="space-y-1.5">
+                          <label
+                            htmlFor="password"
+                            className="text-night-1200 block text-sm font-semibold"
+                          >
+                            Password
+                          </label>
+                          <input
+                            {...register("password", { required: true })}
+                            id="password"
+                            type="password"
+                            placeholder="Your Password"
+                            className="outline-ruby-900 border-night-200 w-full rounded-lg border px-2.5 py-1.5 disabled:cursor-not-allowed"
+                            disabled={isLoading}
+                          />
+                        </div>
+                      </>
+                    ) : null}
                     <Button
-                      variant="secondary"
-                      className="flex w-full items-center justify-center gap-2 text-slate-800 hover:text-slate-700"
-                      onClick={() => logInWithSSO("google")}
-                      disabled={isInputDisabled}
+                      type="submit"
+                      className="w-full"
+                      disabled={isLoading}
                     >
-                      <img src="/img/google.svg" />
-                      Continue with Google
+                      Connect
                     </Button>
-                  ) : null}
-                </div>
-              </>
-            )}
+                  </div>
+                </>
+              )}
+            </div>
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
