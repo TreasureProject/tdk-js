@@ -1,3 +1,13 @@
+import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  size?: 'small' | 'medium' | 'large';
+  color?: 'primary' | 'secondary' | 'tertiary';
+  className?: string;
+  children: React.ReactNode;
+}
+
 export function Button() {
   return (
     <button

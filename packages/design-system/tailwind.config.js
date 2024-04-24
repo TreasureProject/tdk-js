@@ -2,6 +2,29 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    borderRadius: {
+      '4xl': '32px',
+    },
+    backgroundImage: {
+      backgroundImage: {
+        'bottom-card-gradient':
+          'linear-gradient(180deg, rgba(13, 20, 32, 0.00) 0%, rgba(13, 20, 32, 0.33) 59.16%, rgba(13, 20, 32, 0.83) 73.26%, #0D1420 100%)',
+        'dark-gradient': 'linear-gradient(180deg, #131D2E 0%, #0D1420 100%)',
+        'dark-gradient-rev': 'linear-gradient(180deg, #0D1420 0%, #131D2E 100%)',
+        'faded-base-gradient': 'linear-gradient(180deg, #0A111C 0%, #0D1420 100%)',
+        'banner-base-gradient':
+          'linear-gradient(90deg, #101827 0%, rgba(16, 24, 39, 0.75) 26.99%, rgba(16, 24, 39, 0.00) 50.62%, rgba(16, 24, 39, 0.00) 100%)',
+        'base-bright-gradient':
+          'radial-gradient(247.11% 84.74% at 50% 15.26%, #0E1725 0%, #1F2D45 100%)',
+        'level-gradient': 'linear-gradient(270deg, #131D2E 0%, rgba(19, 29, 46, 0.00) 100%)',
+        'ruby-gradient': 'linear-gradient(180deg, #0A101A 0%, #1B1018 100%)',
+        'ruby-radial': 'radial-gradient(50% 50% at 50% 50%, #1B1018 0%, #0A111C 100%)',
+        'ruby-700-radial': 'radial-gradient(50% 50% at 50% 50%, #241E2E 0%, #131D2E 100%)',
+        'gold-gradient': 'linear-gradient(180deg, #0E1521 0%, #1F2225 100%)',
+        'silver-gradient': 'linear-gradient(180deg, #0E1521 0%, #171E2A 100%)',
+        'bronze-gradient': 'linear-gradient(180deg, #0E1521 0%, #1C1B20 100%)',
+      },
+    },
     colors: {
       ruby: {
         100: '#FFD6D6',
@@ -86,8 +109,8 @@ module.exports = {
         900: '#0C4B25',
         1000: '#0C3720',
       },
-      'black-00': '#000000',
-      'cream-01': '#FFFFF5',
+      black: '#000000',
+      cream: '#FFFFF5',
     },
   },
   plugins: [],
