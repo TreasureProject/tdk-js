@@ -12,8 +12,8 @@ env:
   AWS_REGION: us-west-2
   AWS_ROLE_ARN: arn:aws:iam::665230337498:role/tdk-github-actions-role
   ECR_REPOSITORY: tdk-ecr-stack-apic8550315-hzfii5kpayda
-  ECS_CLUSTER: tdk-api-stack-cluster611F8AFF-3mpR3WcbH0ni
-  ECS_SERVICE: tdk-api-stack-serviceService8587F09F-PDvooGO58iWa
+  ECS_CLUSTER: tdk-api-stack-cluster611F8AFF-MBDWBMyVUQEH
+  ECS_SERVICE: tdk-api-stack-serviceService8587F09F-W5rdwJAFA34L
   ECS_TASK_DEFINITION: ./apps/api/.aws/task-definition.json
   CONTAINER_NAME: web
 permissions:

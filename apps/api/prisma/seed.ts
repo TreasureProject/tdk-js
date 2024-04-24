@@ -38,8 +38,11 @@ const REDIRECT_URIS: Record<string, Record<Environment, string[]>> = {
       "http://localhost:5174",
       "http://localhost:3000/harvesters/zeeverse",
     ],
-    dev: ["https://tdk-examples-harvester.vercel.app"],
-    prod: ["https://play.zee-verse.com"],
+    dev: [
+      "https://tdk-examples-harvester.vercel.app",
+      "https://bridgeworld-staging.treasure.lol/harvesters/zeeverse",
+    ],
+    prod: ["https://bridgeworld.treasure.lol/harvesters/zeeverse"],
   },
 };
 

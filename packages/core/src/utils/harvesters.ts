@@ -301,7 +301,7 @@ export const getHarvesterInfo = async ({
         chainId,
         address: charactersStakingRulesAddress ?? zeroAddress,
         abi: charactersStakingRulesAbi,
-        functionName: "zeeAddress",
+        functionName: "nftAddress",
       },
     ],
   });
