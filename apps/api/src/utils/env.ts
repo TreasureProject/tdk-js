@@ -47,6 +47,10 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
       "",
     THIRDWEB_SECRET_KEY:
       process.env.THIRDWEB_SECRET_KEY ?? remoteEnv?.THIRDWEB_SECRET_KEY ?? "",
+    TROVE_API_URL:
+      process.env.TROVE_API_URL ??
+      remoteEnv?.TROVE_API_URL ??
+      "https://trove-api.treasure.lol",
     TROVE_API_KEY: process.env.TROVE_API_KEY ?? remoteEnv?.TROVE_API_KEY ?? "",
     ZEEVERSE_API_URL:
       process.env.ZEEVERSE_API_URL ?? "https://api.zee-verse.com",

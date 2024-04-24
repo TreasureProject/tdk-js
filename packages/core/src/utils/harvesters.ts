@@ -124,11 +124,9 @@ const fetchIndexedHarvester = async ({
 export const getHarvesterInfo = async ({
   chainId,
   harvesterAddress,
-  // tokenApiKey,
 }: {
   chainId: SupportedChainId;
   harvesterAddress: AddressString;
-  tokenApiKey?: string;
 }): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
 
@@ -360,11 +358,13 @@ export const getHarvesterUserInfo = async ({
     charactersAddress,
   },
   userAddress,
+  inventoryApiUrl,
   inventoryApiKey,
 }: {
   chainId: SupportedChainId;
   harvesterInfo: HarvesterInfo;
   userAddress: AddressString;
+  inventoryApiUrl?: string;
   inventoryApiKey?: string;
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
@@ -544,10 +544,11 @@ export const getHarvesterUserInfo = async ({
   let userInventoryLegions: InventoryToken[] = [];
   let userStakedCharacters: Token[] = [];
   let userStakedLegions: Token[] = [];
-  if (inventoryApiKey) {
+  if (inventoryApiUrl && inventoryApiKey) {
     const [stakedTokens, inventoryTokens = []] = await Promise.all([
       fetchTokens({
         chainId,
+        apiUrl: inventoryApiUrl,
         apiKey: inventoryApiKey,
         tokens: [
           ...indexedHarvester.userStakedCharacters.map(
@@ -566,6 +567,7 @@ export const getHarvesterUserInfo = async ({
       }),
       fetchUserInventory({
         chainId,
+        apiUrl: inventoryApiUrl,
         apiKey: inventoryApiKey,
         userAddress,
         collectionAddresses: [
@@ -658,11 +660,13 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   chainId,
   harvesterAddress,
   userAddress,
+  inventoryApiUrl,
   inventoryApiKey,
 }: {
   chainId: SupportedChainId;
   harvesterAddress: string;
   userAddress?: string;
+  inventoryApiUrl?: string;
   inventoryApiKey?: string;
 }): Promise<HarvesterCorruptionRemovalInfo> => {
   const corruptionRemovalAddress = getContractAddress(
@@ -714,10 +718,11 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
             args: [userAddress, operator as AddressString],
           })),
         }),
-        ...(inventoryApiKey
+        ...(inventoryApiUrl && inventoryApiKey
           ? [
               fetchUserInventory({
                 chainId,
+                apiUrl: inventoryApiUrl,
                 apiKey: inventoryApiKey,
                 userAddress,
                 collectionAddresses: corruptionRemovalRecipes.flatMap(
