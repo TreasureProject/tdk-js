@@ -4,6 +4,7 @@ import { arbitrumSepolia } from "viem/chains";
 
 import type {
   CorruptionRemoval,
+  HarvesterCorruptionRemovalInfo,
   HarvesterInfo,
   HarvesterUserInfo,
   InventoryToken,
@@ -663,7 +664,11 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   harvesterAddress: string;
   userAddress?: string;
   inventoryApiKey?: string;
-}) => {
+}): Promise<HarvesterCorruptionRemovalInfo> => {
+  const corruptionRemovalAddress = getContractAddress(
+    chainId,
+    "CorruptionRemoval",
+  );
   const corruptionRemovalRecipes = await fetchCorruptionRemovalRecipes({
     chainId,
     buildingAddress: harvesterAddress,
@@ -671,35 +676,83 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
 
   let userCorruptionRemovals: CorruptionRemoval[] = [];
   let userInventoryCorruptionRemovalRecipeItems: InventoryToken[] = [];
+  let userApprovalsCorruptionRemovalRecipeItems: Record<
+    string,
+    {
+      operator: string;
+      approved: boolean;
+    }
+  > = {};
   if (userAddress) {
-    const [corruptionRemovals, inventoryTokens = []] = await Promise.all([
-      fetchCorruptionRemovals({
-        chainId,
-        buildingAddress: harvesterAddress,
-        userAddress,
-      }),
-      ...(inventoryApiKey
-        ? [
-            fetchUserInventory({
-              chainId,
-              apiKey: inventoryApiKey,
-              userAddress,
-              collectionAddresses: corruptionRemovalRecipes.flatMap(
-                ({ items }) => items.map(({ address }) => address),
-              ),
-            }),
-          ]
-        : []),
-    ]);
+    // Prep mapping of addresses to operator for Corruption removal approval
+    const addressesToOperator: Record<string, string> = {};
+    corruptionRemovalRecipes.forEach(({ items }) => {
+      items.forEach(({ address, customHandler }) => {
+        if (!addressesToOperator[address]) {
+          addressesToOperator[address.toLowerCase()] = (
+            customHandler ?? corruptionRemovalAddress
+          ).toLowerCase();
+        }
+      });
+    });
+    const addressesAndOperators = Object.entries(addressesToOperator);
+
+    const [corruptionRemovals, approvals, inventoryTokens = []] =
+      await Promise.all([
+        fetchCorruptionRemovals({
+          chainId,
+          buildingAddress: harvesterAddress,
+          userAddress,
+        }),
+        readContracts(config, {
+          contracts: addressesAndOperators.map(([address, operator]) => ({
+            chainId,
+            address: address as AddressString,
+            // TODO: change this to be generic
+            abi: erc1155Abi,
+            functionName: "isApprovedForAll",
+            args: [userAddress, operator as AddressString],
+          })),
+        }),
+        ...(inventoryApiKey
+          ? [
+              fetchUserInventory({
+                chainId,
+                apiKey: inventoryApiKey,
+                userAddress,
+                collectionAddresses: corruptionRemovalRecipes.flatMap(
+                  ({ items }) => items.map(({ address }) => address),
+                ),
+              }),
+            ]
+          : []),
+      ]);
 
     userCorruptionRemovals = corruptionRemovals;
     // TODO: filter Corruption Removal recipe item inventory to only include relevant token IDs
     userInventoryCorruptionRemovalRecipeItems = inventoryTokens;
+    userApprovalsCorruptionRemovalRecipeItems = approvals.reduce(
+      (acc, { result }, i) => ({
+        ...acc,
+        [addressesAndOperators[i][0]]: {
+          operator: addressesAndOperators[i][1],
+          approved: !!result,
+        },
+      }),
+      {} as Record<
+        string,
+        {
+          operator: string;
+          approved: boolean;
+        }
+      >,
+    );
   }
 
   return {
     corruptionRemovalRecipes,
     userInventoryCorruptionRemovalRecipeItems,
+    userApprovalsCorruptionRemovalRecipeItems,
     userCorruptionRemovals,
   };
 };

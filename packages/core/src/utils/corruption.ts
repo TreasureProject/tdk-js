@@ -67,15 +67,15 @@ export const fetchCorruptionRemovalRecipes = async ({
             );
 
           return {
-            address,
+            address: address.toLowerCase(),
             tokenIds: tokenIds.map((tokenId) => Number(tokenId)),
             amount: Number(erc1155Amount),
-            customHandler,
+            customHandler: customHandler.toLowerCase(),
           };
         }
 
         return {
-          address: itemAddress,
+          address: itemAddress.toLowerCase(),
           tokenIds: [Number(itemId)],
           amount: Number(amount),
         };

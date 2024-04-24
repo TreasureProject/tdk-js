@@ -192,6 +192,13 @@ export const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
 export const readHarvesterCorruptionRemovalReplySchema = Type.Object({
   corruptionRemovalRecipes: Type.Array(corruptionRemovalRecipeSchema),
   userInventoryCorruptionRemovalRecipeItems: Type.Array(inventoryTokenSchema),
+  userApprovalsCorruptionRemovalRecipeItems: Type.Record(
+    Type.String(),
+    Type.Object({
+      operator: Type.String(),
+      approved: Type.Boolean(),
+    }),
+  ),
   userCorruptionRemovals: Type.Array(corruptionRemovalSchema),
 });
 
@@ -203,6 +210,9 @@ export type CorruptionRemovalRecipe = Static<
 export type CorruptionRemoval = Static<typeof corruptionRemovalSchema>;
 export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
 export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
+export type HarvesterCorruptionRemovalInfo = Static<
+  typeof readHarvesterCorruptionRemovalReplySchema
+>;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
 export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
 export type ReadHarvesterCorruptionRemovalParams = Static<
