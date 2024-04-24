@@ -93,6 +93,7 @@ const InnerLoginPage = () => {
     finishEmailLogin,
     logInWithSSO,
     logInWithCustomAuth,
+    reset,
   } = useLogin({
     project: project.slug,
     chainId,
@@ -174,13 +175,24 @@ const InnerLoginPage = () => {
                       />
                     )}
                   </ClientOnly>
-                  <Button
-                    className="w-full"
-                    onClick={() => finishEmailLogin(verificationInput)}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Verifying..." : "Verify"}
-                  </Button>
+                  <div>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={() => finishEmailLogin(verificationInput)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Verifying..." : "Verify"}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => reset()}
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -188,6 +200,7 @@ const InnerLoginPage = () => {
                     <>
                       <div className="mt-4">
                         <Button
+                          type="button"
                           variant="secondary"
                           className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
                           onClick={() => logInWithSSO("google")}
@@ -244,6 +257,7 @@ const InnerLoginPage = () => {
                     <Button
                       type="submit"
                       className="w-full"
+                      size="lg"
                       disabled={isLoading}
                     >
                       Connect
