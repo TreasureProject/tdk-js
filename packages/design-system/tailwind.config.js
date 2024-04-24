@@ -2,6 +2,16 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    boxShadow: {
+      'ds-base': '0px 0px 164px 0px #0E1625, 0px 16px 40px 0px rgba(0, 0, 0, 0.20)',
+      'ds-base-md': '0px 10px 48px 0px rgba(0, 0, 0, 0.25)',
+      'ds-xs': '0px 1px 2px 0px rgba(14, 22, 37, 0.24)',
+      'ds-sm': '0px 2px 4px 0px rgba(14, 22, 37, 0.04)',
+      'ds-md': '0px 16px 32px -12px rgba(14, 22, 37, 0.10)',
+      'ds-lg': '0px 16px 40px -8px rgba(14, 22, 37, 0.16)',
+      'ds-xl': '0px 24px 56px -4px rgba(14, 22, 37, 0.25)',
+      'ds-xxl': '0px 40px 96px -8px rgba(14, 22, 37, 0.20)',
+    },
     borderRadius: {
       '4xl': '32px',
     },
