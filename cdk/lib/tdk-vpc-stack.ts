@@ -1,4 +1,4 @@
-import { CfnOutput, Stack, type StackProps } from "aws-cdk-lib";
+import { Stack, type StackProps } from "aws-cdk-lib";
 import { SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
 import type { Construct } from "constructs";
 
@@ -13,12 +13,12 @@ export class TdkVpcStack extends Stack {
       subnetConfiguration: [
         {
           cidrMask: 20,
-          name: 'tdk-public-1',
+          name: "tdk-public-1",
           subnetType: SubnetType.PUBLIC,
         },
         {
           cidrMask: 28,
-          name: 'tdk-isolated-1',
+          name: "tdk-isolated-1",
           subnetType: SubnetType.PRIVATE_ISOLATED,
         },
       ],

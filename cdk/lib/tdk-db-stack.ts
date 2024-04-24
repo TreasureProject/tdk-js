@@ -1,4 +1,8 @@
-import { type StackProps as CdkStackProps, Stack, CfnOutput } from "aws-cdk-lib";
+import {
+  type StackProps as CdkStackProps,
+  CfnOutput,
+  Stack,
+} from "aws-cdk-lib";
 import type { Vpc } from "aws-cdk-lib/aws-ec2";
 import {
   InstanceClass,
@@ -31,11 +35,11 @@ export class TdkDbStack extends Stack {
     const port = 5432;
 
     const dbSecret = new Secret(this, `${id}-DbSecret`, {
-      secretName: 'noumena-tdk-db',
+      secretName: "noumena-tdk-db",
       description: "TDK DB master user credentials",
       generateSecretString: {
-        secretStringTemplate: JSON.stringify({ username: 'postgres' }),
-        generateStringKey: 'password',
+        secretStringTemplate: JSON.stringify({ username: "postgres" }),
+        generateStringKey: "password",
         passwordLength: 16,
         excludePunctuation: true,
       },
@@ -70,7 +74,7 @@ export class TdkDbStack extends Stack {
     new CfnOutput(this, `${id}-DbCluster-Hostname`, {
       exportName: `${id}-DbCluster-Hostname`,
       value: dbCluster.clusterEndpoint.hostname,
-      description: 'Cluster endpoint',
+      description: "Cluster endpoint",
     });
   }
 }
