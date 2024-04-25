@@ -113,7 +113,7 @@ export const TreasureProvider = ({ children, ...config }: Props) => {
   } = config;
   const {
     loginDomain = DEFAULT_TDK_LOGIN_DOMAIN,
-    redirectUri = window.location.href,
+    redirectUri = window.location.origin + window.location.pathname,
   } = authConfig ?? {};
   const [state, dispatch] = useReducer(reducer, {
     project,
