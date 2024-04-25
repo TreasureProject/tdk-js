@@ -49,6 +49,8 @@ export type Contract =
   | "ARB"
   | "PaymentsModule"
   | "ManagedAccountFactory"
+  | "BulkTransferHelper"
+  | "TreasureConduit"
   | PriceFeedContract
   | BridgeworldContract
   | ZeeverseContract;

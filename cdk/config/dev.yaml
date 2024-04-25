@@ -1,0 +1,19 @@
+# project, deployment, etc
+App: "noumena"
+Environment: "dev"
+Version: "0.0.1"
+
+# aws account
+AWSAccountID: "665230337498"
+AWSRegion: "us-west-2"
+
+# domain
+FastifyAppAPICertificateName: "48316235-afa5-4ad7-91e1-b429f1da54e2"
+CloudflareZoneId: ""
+DomainName: "treasure.lol"
+
+# secret names
+FastifyAppEcrSecretName: "tdkApiEnv-M2Lsr7"
+# rpc node endpoints and chain ids
+
+# misc

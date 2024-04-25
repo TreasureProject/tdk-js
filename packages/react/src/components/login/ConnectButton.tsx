@@ -44,7 +44,7 @@ export const ConnectButton = (props?: Props) => {
         <DropdownMenuContent className="tdk-w-[var(--radix-dropdown-menu-trigger-width)]">
           <DropdownMenuItem>
             <button
-              className="tdk-flex tdk-items-center tdk-gap-1 tdk-w-full"
+              className="tdk-flex tdk-items-center tdk-gap-1 tdk-w-full tdk-px-2 tdk-py-1.5"
               onClick={() => copy(address ?? "")}
             >
               <CopyIcon className="tdk-w-5 tdk-h-5" />
@@ -53,7 +53,7 @@ export const ConnectButton = (props?: Props) => {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <button
-              className="tdk-flex tdk-items-center tdk-gap-1 tdk-text-ruby-800 tdk-w-full"
+              className="tdk-flex tdk-items-center tdk-gap-1 tdk-text-ruby-800 tdk-w-full tdk-px-2 tdk-py-1.5"
               onClick={() => logOut()}
             >
               <ExitIcon className="tdk-w-5 tdk-h-5" />

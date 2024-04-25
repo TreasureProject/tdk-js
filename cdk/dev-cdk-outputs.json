@@ -1,0 +1,8 @@
+{
+  "noumena-dev-Tdk-Vpc": {
+    "ExportsOutputRefnoumenadevTdkVpcVpctdkisolated1Subnet1Subnet8364A5D88D7F9E9C": "subnet-00c0ee7ac1d3d13f9",
+    "ExportsOutputRefnoumenadevTdkVpcVpctdkisolated1Subnet2Subnet789A2C332306C68E": "subnet-02a61f8f8d62a87db",
+    "ExportsOutputFnGetAttnoumenadevTdkVpcVpc32B59360CidrBlock680B3FBA": "10.0.0.0/16",
+    "ExportsOutputRefnoumenadevTdkVpcVpc32B59360BAD21E7B": "vpc-0f5d6c3d5d88921ce"
+  }
+}
