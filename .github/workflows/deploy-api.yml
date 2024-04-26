@@ -1,35 +1,28 @@
 name: Deploy API
 on:
   workflow_dispatch:
-    # inputs:
-    #   environment:
-    #     type: choice
-    #     description: Select environment
-    #     options:
-    #       - development
-    #       - production
-env:
-  AWS_REGION: us-east-1
-  AWS_ROLE_ARN: arn:aws:iam::884078395586:role/tdk-github-actions-role
-  ECR_REPOSITORY: tdk-ecr-stack-apic8550315-kxtpkwrkp53m
-  ECS_CLUSTER: tdk-api-stack-cluster611F8AFF-6zsiAp2CeUS9
-  ECS_SERVICE: tdk-api-stack-serviceService8587F09F-zEnKY5v6uv4e
-  ECS_TASK_DEFINITION: ./apps/api/.aws/task-definition.json
-  CONTAINER_NAME: web
+    inputs:
+      environment:
+        type: choice
+        description: Select environment
+        options:
+          - development
+          - production
 permissions:
   id-token: write
   contents: read
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
@@ -46,13 +39,13 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
+          task-definition: ./apps/api/.aws/task-definition-${{ inputs.environment }}.json
+          container-name: web
           image: ${{ steps.build-image.outputs.image }}
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
           wait-for-service-stability: true
