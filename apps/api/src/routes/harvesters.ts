@@ -40,10 +40,10 @@ export const harvestersRoutes =
       async (req, reply) => {
         const {
           chainId,
-          // params: { id },
+          params: { id },
         } = req;
 
-        const harvesterAddress = "0x36882e71d11eadd9f869b0fd70d18d5045939986"; // id as AddressString;
+        const harvesterAddress = id as AddressString;
         const harvesterInfo = await getHarvesterInfo({
           chainId,
           harvesterAddress,

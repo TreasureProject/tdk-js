@@ -24,7 +24,5 @@ export const withChain = async (app: FastifyInstance) => {
       chainId && (SUPPORTED_CHAIN_IDS as number[]).includes(chainId)
         ? (chainId as SupportedChainId)
         : DEFAULT_TDK_CHAIN_ID;
-
-    req.chainId = DEFAULT_TDK_CHAIN_ID;
   });
 };
