@@ -12,14 +12,14 @@ export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
 
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/v2.1.3/gn",
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
   [arbitrumSepolia.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-dev/live/gn",
 } as const;
 
 export const BRIDGEWORLD_CORRUPTION_API_URL = {
   [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption/v1.4.0/gn",
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption/live/gn",
   [arbitrumSepolia.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
 } as const;
