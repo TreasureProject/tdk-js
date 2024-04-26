@@ -1,101 +1,130 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
 import { Tags } from "aws-cdk-lib";
-import * as fs from "fs";
-import yaml from "js-yaml";
-import * as path from "path";
 import "source-map-support/register";
 
+import { TdkApiAppStack } from "../lib/tdk-api-app-stack";
 import { TdkDbStack } from "../lib/tdk-db-stack";
+import { TdkGithubOidcStack } from "../lib/tdk-github-oidc-stack";
 import { TdkVpcStack } from "../lib/tdk-vpc-stack";
 
-export interface DeploymentConfig {
-  // project, deployment, etc
-  readonly App: string;
-  readonly Environment: string;
-  readonly Version: string;
+export interface DeploymentParameters {
+  // IAM
+  readonly githubOidcProviderId: string | undefined;
 
-  // aws account
-  readonly AWSAccountID: string;
-  readonly AWSRegion: string;
+  // Domains
+  readonly treasureDotLolCertificateId: string;
 
-  // domain
+  // API app
+  readonly apiEnvSecretId: string;
+  readonly apiTasksCount: number;
 }
 
-function ensureString(
+interface DeploymentConfig {
+  readonly app: string;
+  readonly environment: string;
+  readonly awsAccountId: string;
+  readonly awsRegion: string;
+  readonly parameters: DeploymentParameters;
+}
+
+export const ensureString = (
   object: { [name: string]: string },
   propName: string,
-): string {
-  if (!object[propName] || object[propName].trim().length === 0)
+) => {
+  if (!object[propName] || object[propName].trim().length === 0) {
     throw new Error(`${propName} does not exist or is empty`);
+  }
+
   return object[propName];
-}
+};
 
 const app = new cdk.App();
 
-function getConfig() {
+export const getConfig = (): DeploymentConfig => {
   const env = app.node.tryGetContext("env");
   if (!env) {
-    console.log(
-      "no -c env=XXX parameter supplied - defaulting to dev enviroment",
-    );
     throw new Error(
-      "No env parameter found in context. Please specify the environment to deploy to!",
+      "No env parameter found in context. Please specify the environment using -c env=XXX",
     );
   }
-  console.log("Using env:", env);
 
-  const unparsedEnv = yaml.load(
-    fs.readFileSync(path.resolve(`./config/${env}.yaml`), "utf8"),
-  );
-  console.log("using env config:", unparsedEnv);
+  const rawConfig = app.node.tryGetContext(env);
+  console.log(`Using ${env} environment variables:`, rawConfig);
+  const rawParameters = rawConfig.parameters;
 
-  const deploymentConfig: DeploymentConfig = {
-    App: ensureString(unparsedEnv, "App"),
-    Environment: ensureString(unparsedEnv, "Environment"),
-    Version: ensureString(unparsedEnv, "Version"),
+  return {
+    app: ensureString(rawConfig, "app"),
+    environment: ensureString(rawConfig, "environment"),
+    awsAccountId: ensureString(rawConfig, "awsAccountId"),
+    awsRegion: ensureString(rawConfig, "awsRegion"),
+    parameters: {
+      githubOidcProviderId: rawParameters.githubOidcProviderId,
+      treasureDotLolCertificateId: ensureString(
+        rawParameters,
+        "treasureDotLolCertificateId",
+      ),
+      apiEnvSecretId: ensureString(rawParameters, "apiEnvSecretId"),
+      apiTasksCount: rawParameters.apiTasksCount ?? 2,
+    },
+  };
+};
 
-    AWSAccountID: ensureString(unparsedEnv, "AWSAccountID"),
-    AWSRegion: ensureString(unparsedEnv, "AWSRegion"),
+(async () => {
+  const {
+    app: appName,
+    environment,
+    awsAccountId,
+    awsRegion,
+    parameters,
+  } = getConfig();
+
+  const prefix = `${appName}-${environment}`;
+  const awsEnv = {
+    account: awsAccountId,
+    region: awsRegion,
   };
 
-  return deploymentConfig;
-}
+  Tags.of(app).add("app", appName);
+  Tags.of(app).add("environment", environment);
 
-async function Main() {
-  const deploymentConfig: DeploymentConfig = getConfig();
-
-  Tags.of(app).add("app", deploymentConfig.App);
-  Tags.of(app).add("environment", deploymentConfig.Environment);
+  // GITHUB OIDC
+  const tdkGithubOidcStack = new TdkGithubOidcStack(
+    app,
+    `${prefix}-github-oidc`,
+    {
+      env: awsEnv,
+      description: `${prefix} TDK Github OIDC Stack`,
+    },
+    parameters,
+  );
+  Tags.of(tdkGithubOidcStack).add("stack", "tdk-github-oidc");
 
   // VPC
-  const vpcStack = new TdkVpcStack(
-    app,
-    `${deploymentConfig.App}-${deploymentConfig.Environment}-Tdk-Vpc`,
-    {
-      env: {
-        account: deploymentConfig.AWSAccountID,
-        region: deploymentConfig.AWSRegion,
-      },
-      description: `${deploymentConfig.App}-${deploymentConfig.Environment} VPCs for all TDK stacks`,
-    },
-  );
-  Tags.of(vpcStack).add("stack", "tdk-vpc");
+  const tdkVpcStack = new TdkVpcStack(app, `${prefix}-tdk-vpc`, {
+    env: awsEnv,
+    description: `${prefix} VPCs for all TDK stacks`,
+  });
+  Tags.of(tdkVpcStack).add("stack", "tdk-vpc");
 
   // DB
-  const dbStack = new TdkDbStack(
-    app,
-    `${deploymentConfig.App}-${deploymentConfig.Environment}-Tdk-Db`,
-    {
-      env: {
-        account: deploymentConfig.AWSAccountID,
-        region: deploymentConfig.AWSRegion,
-      },
-      description: `${deploymentConfig.App}-${deploymentConfig.Environment} TDK Db Stack`,
-      vpc: vpcStack.vpc,
-    },
-  );
-  Tags.of(dbStack).add("stack", "tdk-db");
-}
+  const tdkDbStack = new TdkDbStack(app, `${prefix}-tdk-db`, {
+    env: awsEnv,
+    description: `${prefix} TDK DB Stack`,
+    vpc: tdkVpcStack.vpc,
+  });
+  Tags.of(tdkDbStack).add("stack", "tdk-db");
 
-Main();
+  // API APP
+  const tdkApiAppStack = new TdkApiAppStack(
+    app,
+    `${prefix}-tdk-api-app`,
+    {
+      env: awsEnv,
+      description: `${prefix} TDK API App`,
+      vpc: tdkVpcStack.vpc,
+    },
+    parameters,
+  );
+  Tags.of(tdkApiAppStack).add("stack", "tdk-api-app");
+})();

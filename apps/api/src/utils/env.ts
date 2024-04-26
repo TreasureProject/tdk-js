@@ -7,7 +7,7 @@ import "dotenv/config";
 import type { TdkApiEnv } from "../types";
 
 const client = new SecretsManagerClient({
-  region: "us-east-1",
+  region: "us-west-2",
 });
 
 export const getEnv = async (): Promise<TdkApiEnv> => {

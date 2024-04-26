@@ -58,6 +58,19 @@
     "@aws-cdk/aws-cloudwatch-actions:changeLambdaPermissionLogicalIdForLambdaAction": true,
     "@aws-cdk/aws-codepipeline:crossAccountKeysDefaultValueToFalse": true,
     "@aws-cdk/aws-codepipeline:defaultPipelineTypeToV2": true,
-    "@aws-cdk/aws-kms:reduceCrossAccountRegionPolicyScope": true
+    "@aws-cdk/aws-kms:reduceCrossAccountRegionPolicyScope": true,
+    "dev": {
+      "app": "noumena",
+      "environment": "dev",
+      "awsAccountId": "665230337498",
+      "awsRegion": "us-west-2",
+      "parameters": {
+        "githubOidcProviderId": "token.actions.githubusercontent.com",
+        "treasureDotLolCertificateId": "48316235-afa5-4ad7-91e1-b429f1da54e2",
+        "apiEnvSecretId": "tdkApiEnv-M2Lsr7",
+        "apiTasksCount": 2
+      }
+    },
+    "prod": {}
   }
 }

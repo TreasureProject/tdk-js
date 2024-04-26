@@ -28,13 +28,16 @@ interface StackProps extends CdkStackProps {
 }
 
 export class TdkDbStack extends Stack {
+  public readonly secret: Secret;
+
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
     const { vpc } = props;
     const port = 5432;
+    const identifier = "noumena-tdk-db";
 
-    const dbSecret = new Secret(this, `${id}-DbSecret`, {
+    this.secret = new Secret(this, `${id}-secret`, {
       secretName: "noumena-tdk-db",
       description: "TDK DB master user credentials",
       generateSecretString: {
@@ -46,7 +49,7 @@ export class TdkDbStack extends Stack {
     });
 
     // Create security group
-    const dbSg = new SecurityGroup(this, `${id}-SecurityGroup`, { vpc });
+    const dbSg = new SecurityGroup(this, `${id}-securitygroup`, { vpc });
 
     // Add inbound rule to security group for VPC
     dbSg.addIngressRule(
@@ -55,26 +58,28 @@ export class TdkDbStack extends Stack {
       `Allow port ${port} for database connection from only within the VPC (${vpc.vpcId})`,
     );
 
-    const dbCluster = new DatabaseCluster(this, `${id}-DbCluster`, {
+    const dbCluster = new DatabaseCluster(this, `${id}-cluster`, {
       vpc,
       vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
       engine: DatabaseClusterEngine.auroraPostgres({
         version: AuroraPostgresEngineVersion.VER_15_5,
       }),
-      writer: ClusterInstance.provisioned("noumena-tdk-db-writer", {
-        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MEDIUM),
+      writer: ClusterInstance.provisioned(`${id}-writer`, {
+        instanceIdentifier: `${identifier}-writer`,
+        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.LARGE),
       }),
       port,
       securityGroups: [dbSg],
       defaultDatabaseName: "noumenatdkdb",
-      credentials: Credentials.fromSecret(dbSecret),
+      clusterIdentifier: identifier,
+      credentials: Credentials.fromSecret(this.secret),
     });
 
     // OUTPUTS
     new CfnOutput(this, `${id}-DbCluster-Hostname`, {
       exportName: `${id}-DbCluster-Hostname`,
       value: dbCluster.clusterEndpoint.hostname,
-      description: "Cluster endpoint",
+      description: "DB cluster endpoint",
     });
   }
 }
