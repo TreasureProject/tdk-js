@@ -30,8 +30,12 @@ export class TdkApiAppStack extends Stack {
   ) {
     super(scope, id, props);
 
-    const { treasureDotLolCertificateId, apiEnvSecretId, apiTasksCount } =
-      config.parameters;
+    const {
+      treasureDotLolCertificateId,
+      dbSecretName,
+      apiEnvSecretName,
+      apiTasksCount,
+    } = config.parameters;
 
     const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
       assetName: `${id}-docker-asset`,
@@ -50,6 +54,7 @@ export class TdkApiAppStack extends Stack {
       {
         cluster,
         publicLoadBalancer: true,
+        assignPublicIp: true,
         cpu: 512,
         memoryLimitMiB: 2048,
         desiredCount: apiTasksCount,
@@ -68,7 +73,8 @@ export class TdkApiAppStack extends Stack {
                     effect: Effect.ALLOW,
                     actions: ["secretsmanager:GetSecretValue"],
                     resources: [
-                      `arn:aws:secretsmanager:${this.region}:${this.account}:secret:${apiEnvSecretId}`,
+                      `arn:aws:secretsmanager:${this.region}:${this.account}:secret:${dbSecretName}-??????`,
+                      `arn:aws:secretsmanager:${this.region}:${this.account}:secret:${apiEnvSecretName}-??????`,
                     ],
                   }),
                 ],
@@ -77,8 +83,8 @@ export class TdkApiAppStack extends Stack {
           }),
           environment: {
             AWS_REGION: config.awsRegion,
-            DATABASE_SECRET_NAME: config.parameters.dbSecretName,
-            API_ENV_SECRET_NAME: config.parameters.apiEnvSecretName,
+            DATABASE_SECRET_NAME: dbSecretName,
+            API_ENV_SECRET_NAME: apiEnvSecretName,
           },
         },
         certificate: Certificate.fromCertificateArn(

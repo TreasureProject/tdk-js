@@ -19,7 +19,6 @@ export interface DeploymentParameters {
   readonly dbSecretName: string;
 
   // API app
-  readonly apiEnvSecretId: string;
   readonly apiEnvSecretName: string;
   readonly apiTasksCount: number;
 }
@@ -69,7 +68,6 @@ export const getConfig = (): DeploymentConfig => {
         "treasureDotLolCertificateId",
       ),
       dbSecretName: ensureString(rawParameters, "dbSecretName"),
-      apiEnvSecretId: ensureString(rawParameters, "apiEnvSecretId"),
       apiEnvSecretName: ensureString(rawParameters, "apiEnvSecretName"),
       apiTasksCount: rawParameters.apiTasksCount ?? 2,
     },

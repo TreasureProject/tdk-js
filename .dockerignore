@@ -1,17 +1,19 @@
 .git/
 .github/
 .husky/
+cdk/
+cdk.out/
 deploy/
 .dockerignore
 .eslintrc
 .gitignore
 .lintstagedrc
+.npmrc
 .prettierignore
 .prettierrc
 
 **/dist/
 **/node_modules/
-**/cdk.out/
 **/.env*
 **/cdk.json
 **/README.md
