@@ -23,22 +23,28 @@ import {
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import type { Construct } from "constructs";
 
+import type { DeploymentParameters } from "../bin/cdk";
+
 interface StackProps extends CdkStackProps {
   vpc: Vpc;
 }
 
-export class TdkDbStack extends Stack {
-  public readonly secret: Secret;
+const PORT = 5432;
+const IDENTIFIER = "noumena-tdk-db";
 
-  constructor(scope: Construct, id: string, props: StackProps) {
+export class TdkDbStack extends Stack {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: StackProps,
+    parameters: DeploymentParameters,
+  ) {
     super(scope, id, props);
 
     const { vpc } = props;
-    const port = 5432;
-    const identifier = "noumena-tdk-db";
 
-    this.secret = new Secret(this, `${id}-secret`, {
-      secretName: "noumena-tdk-db",
+    const secret = new Secret(this, `${id}-secret`, {
+      secretName: parameters.dbSecretName,
       description: "TDK DB master user credentials",
       generateSecretString: {
         secretStringTemplate: JSON.stringify({ username: "postgres" }),
@@ -54,31 +60,31 @@ export class TdkDbStack extends Stack {
     // Add inbound rule to security group for VPC
     dbSg.addIngressRule(
       Peer.ipv4(vpc.vpcCidrBlock),
-      Port.tcp(port),
-      `Allow port ${port} for database connection from only within the VPC (${vpc.vpcId})`,
+      Port.tcp(PORT),
+      `Allow port ${PORT} for database connection from only within the VPC (${vpc.vpcId})`,
     );
 
-    const dbCluster = new DatabaseCluster(this, `${id}-cluster`, {
+    const cluster = new DatabaseCluster(this, `${id}-cluster`, {
       vpc,
       vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
       engine: DatabaseClusterEngine.auroraPostgres({
         version: AuroraPostgresEngineVersion.VER_15_5,
       }),
       writer: ClusterInstance.provisioned(`${id}-writer`, {
-        instanceIdentifier: `${identifier}-writer`,
+        instanceIdentifier: `${IDENTIFIER}-writer`,
         instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.LARGE),
       }),
-      port,
+      port: PORT,
       securityGroups: [dbSg],
       defaultDatabaseName: "noumenatdkdb",
-      clusterIdentifier: identifier,
-      credentials: Credentials.fromSecret(this.secret),
+      clusterIdentifier: IDENTIFIER,
+      credentials: Credentials.fromSecret(secret),
     });
 
     // OUTPUTS
     new CfnOutput(this, `${id}-DbCluster-Hostname`, {
       exportName: `${id}-DbCluster-Hostname`,
-      value: dbCluster.clusterEndpoint.hostname,
+      value: cluster.clusterEndpoint.hostname,
       description: "DB cluster endpoint",
     });
   }

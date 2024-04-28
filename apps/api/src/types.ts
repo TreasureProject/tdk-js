@@ -1,6 +1,15 @@
 import type { PrismaClient } from "@prisma/client";
 import type { Engine } from "@thirdweb-dev/engine";
 
+export type TdkDbSecret = {
+  dbname: string;
+  engine: string;
+  host: string;
+  password: string;
+  port: number;
+  username: string;
+};
+
 export type TdkApiEnv = {
   PORT: string;
   DATABASE_URL: string;

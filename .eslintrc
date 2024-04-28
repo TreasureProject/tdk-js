@@ -29,8 +29,8 @@
     "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
   "ignorePatterns": [
-    "cdk.out/**/*",
-    "node_modules/**/*",
+    "**/cdk.out/**/*",
+    "**/node_modules/**/*",
     "**/build/**/*",
     "**/dist/**/*"
   ],

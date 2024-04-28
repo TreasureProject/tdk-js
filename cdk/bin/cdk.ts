@@ -15,12 +15,16 @@ export interface DeploymentParameters {
   // Domains
   readonly treasureDotLolCertificateId: string;
 
+  // DB
+  readonly dbSecretName: string;
+
   // API app
   readonly apiEnvSecretId: string;
+  readonly apiEnvSecretName: string;
   readonly apiTasksCount: number;
 }
 
-interface DeploymentConfig {
+export interface DeploymentConfig {
   readonly app: string;
   readonly environment: string;
   readonly awsAccountId: string;
@@ -64,20 +68,23 @@ export const getConfig = (): DeploymentConfig => {
         rawParameters,
         "treasureDotLolCertificateId",
       ),
+      dbSecretName: ensureString(rawParameters, "dbSecretName"),
       apiEnvSecretId: ensureString(rawParameters, "apiEnvSecretId"),
+      apiEnvSecretName: ensureString(rawParameters, "apiEnvSecretName"),
       apiTasksCount: rawParameters.apiTasksCount ?? 2,
     },
   };
 };
 
 (async () => {
+  const config = getConfig();
   const {
     app: appName,
     environment,
     awsAccountId,
     awsRegion,
     parameters,
-  } = getConfig();
+  } = config;
 
   const prefix = `${appName}-${environment}`;
   const awsEnv = {
@@ -108,11 +115,16 @@ export const getConfig = (): DeploymentConfig => {
   Tags.of(tdkVpcStack).add("stack", "tdk-vpc");
 
   // DB
-  const tdkDbStack = new TdkDbStack(app, `${prefix}-tdk-db`, {
-    env: awsEnv,
-    description: `${prefix} TDK DB Stack`,
-    vpc: tdkVpcStack.vpc,
-  });
+  const tdkDbStack = new TdkDbStack(
+    app,
+    `${prefix}-tdk-db`,
+    {
+      env: awsEnv,
+      description: `${prefix} TDK DB Stack`,
+      vpc: tdkVpcStack.vpc,
+    },
+    parameters,
+  );
   Tags.of(tdkDbStack).add("stack", "tdk-db");
 
   // API APP
@@ -121,10 +133,10 @@ export const getConfig = (): DeploymentConfig => {
     `${prefix}-tdk-api-app`,
     {
       env: awsEnv,
-      description: `${prefix} TDK API App`,
+      description: `${prefix} TDK API app`,
       vpc: tdkVpcStack.vpc,
     },
-    parameters,
+    config,
   );
   Tags.of(tdkApiAppStack).add("stack", "tdk-api-app");
 })();

@@ -1,7 +1,8 @@
 import type { StackProps as CdkStackProps } from "aws-cdk-lib";
 import { CfnOutput, Stack } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { Vpc } from "aws-cdk-lib/aws-ec2";
+import type { Vpc } from "aws-cdk-lib/aws-ec2";
+import { SubnetType } from "aws-cdk-lib/aws-ec2";
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { Cluster, ContainerImage } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
@@ -14,7 +15,7 @@ import {
 } from "aws-cdk-lib/aws-iam";
 import type { Construct } from "constructs";
 
-import type { DeploymentParameters } from "../bin/cdk";
+import type { DeploymentConfig } from "../bin/cdk";
 
 interface StackProps extends CdkStackProps {
   vpc: Vpc;
@@ -25,12 +26,12 @@ export class TdkApiAppStack extends Stack {
     scope: Construct,
     id: string,
     props: StackProps,
-    parameters: DeploymentParameters,
+    config: DeploymentConfig,
   ) {
     super(scope, id, props);
 
     const { treasureDotLolCertificateId, apiEnvSecretId, apiTasksCount } =
-      parameters;
+      config.parameters;
 
     const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
       assetName: `${id}-docker-asset`,
@@ -40,13 +41,8 @@ export class TdkApiAppStack extends Stack {
       exclude: [".env", ".env.example", "cdk*", "cdk-out"], // ignore output to prevent recursion bug
     });
 
-    // Should use shared VPC but getting error:
-    // ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve ecr registry auth: service call has been retried 3 time(s):
-    // RequestError: send request failed caused by: Post "https://api.ecr.us-west-2.amazonaws.com/": dial tcp 34.223.27.162:443: i/o timeout. Please check your task network configuration.
     const cluster = new Cluster(this, "cluster", {
-      vpc: new Vpc(this, "vpc", {
-        maxAzs: 2,
-      }),
+      vpc: props.vpc,
     });
 
     const service = new ApplicationLoadBalancedFargateService(
@@ -58,6 +54,9 @@ export class TdkApiAppStack extends Stack {
         cpu: 512,
         memoryLimitMiB: 2048,
         desiredCount: apiTasksCount,
+        taskSubnets: {
+          subnetType: SubnetType.PUBLIC,
+        },
         taskImageOptions: {
           image: ContainerImage.fromDockerImageAsset(apiDockerImage),
           containerPort: 8080,
@@ -77,6 +76,11 @@ export class TdkApiAppStack extends Stack {
               }),
             },
           }),
+          environment: {
+            AWS_REGION: config.awsRegion,
+            DATABASE_SECRET_NAME: config.parameters.dbSecretName,
+            API_ENV_SECRET_NAME: config.parameters.apiEnvSecretName,
+          },
         },
         certificate: Certificate.fromCertificateArn(
           this,

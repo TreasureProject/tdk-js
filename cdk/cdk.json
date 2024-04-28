@@ -67,7 +67,9 @@
       "parameters": {
         "githubOidcProviderId": "token.actions.githubusercontent.com",
         "treasureDotLolCertificateId": "48316235-afa5-4ad7-91e1-b429f1da54e2",
+        "dbSecretName": "noumena-tdk-db",
         "apiEnvSecretId": "tdkApiEnv-M2Lsr7",
+        "apiEnvSecretName": "tdkApiEnv",
         "apiTasksCount": 2
       }
     },
