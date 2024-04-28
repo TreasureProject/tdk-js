@@ -1,4 +1,3 @@
-import type { StackProps } from "aws-cdk-lib";
 import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
 import type { IOpenIdConnectProvider } from "aws-cdk-lib/aws-iam";
 import {
@@ -11,23 +10,24 @@ import {
 } from "aws-cdk-lib/aws-iam";
 import type { Construct } from "constructs";
 
-import type { DeploymentParameters } from "../bin/cdk";
+import type { TdkStackProps } from "../bin/cdk";
 
 export class TdkGithubOidcStack extends Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: StackProps,
-    parameters: DeploymentParameters,
-  ) {
+  constructor(scope: Construct, id: string, props: TdkStackProps) {
     super(scope, id, props);
 
+    const {
+      config: {
+        parameters: { githubOidcProviderId },
+      },
+    } = props;
+
     let githubProvider: IOpenIdConnectProvider;
-    if (parameters.githubOidcProviderId) {
+    if (githubOidcProviderId) {
       githubProvider = OpenIdConnectProvider.fromOpenIdConnectProviderArn(
         this,
         `${id}-github-oidc-provider`,
-        `arn:aws:iam::${this.account}:oidc-provider/${parameters.githubOidcProviderId}`,
+        `arn:aws:iam::${this.account}:oidc-provider/${githubOidcProviderId}`,
       );
     } else {
       githubProvider = new OpenIdConnectProvider(

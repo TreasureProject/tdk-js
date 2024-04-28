@@ -8,27 +8,32 @@ import { TdkDbStack } from "../lib/tdk-db-stack";
 import { TdkGithubOidcStack } from "../lib/tdk-github-oidc-stack";
 import { TdkVpcStack } from "../lib/tdk-vpc-stack";
 
-export interface DeploymentParameters {
-  // IAM
-  readonly githubOidcProviderId: string | undefined;
-
-  // Domains
-  readonly treasureDotLolCertificateId: string;
-
-  // DB
-  readonly dbSecretName: string;
-
-  // API app
-  readonly apiEnvSecretName: string;
-  readonly apiTasksCount: number;
-}
-
-export interface DeploymentConfig {
+interface DeploymentConfig {
   readonly app: string;
   readonly environment: string;
   readonly awsAccountId: string;
   readonly awsRegion: string;
-  readonly parameters: DeploymentParameters;
+  readonly parameters: {
+    // IAM
+    readonly githubOidcProviderId: string | undefined;
+
+    // Domains
+    readonly treasureDotLolCertificateId: string;
+
+    // VPC
+    readonly vpcMaxAzs: number;
+
+    // DB
+    readonly dbSecretName: string;
+
+    // API app
+    readonly apiEnvSecretName: string;
+    readonly apiTasksCount: number;
+  };
+}
+
+export interface TdkStackProps extends cdk.StackProps {
+  config: DeploymentConfig;
 }
 
 export const ensureString = (
@@ -67,6 +72,7 @@ export const getConfig = (): DeploymentConfig => {
         rawParameters,
         "treasureDotLolCertificateId",
       ),
+      vpcMaxAzs: rawParameters.vpcMaxAzs ?? 2,
       dbSecretName: ensureString(rawParameters, "dbSecretName"),
       apiEnvSecretName: ensureString(rawParameters, "apiEnvSecretName"),
       apiTasksCount: rawParameters.apiTasksCount ?? 2,
@@ -76,13 +82,7 @@ export const getConfig = (): DeploymentConfig => {
 
 (async () => {
   const config = getConfig();
-  const {
-    app: appName,
-    environment,
-    awsAccountId,
-    awsRegion,
-    parameters,
-  } = config;
+  const { app: appName, environment, awsAccountId, awsRegion } = config;
 
   const prefix = `${appName}-${environment}`;
   const awsEnv = {
@@ -100,41 +100,34 @@ export const getConfig = (): DeploymentConfig => {
     {
       env: awsEnv,
       description: `${prefix} TDK Github OIDC Stack`,
+      config,
     },
-    parameters,
   );
   Tags.of(tdkGithubOidcStack).add("stack", "tdk-github-oidc");
 
   // VPC
   const tdkVpcStack = new TdkVpcStack(app, `${prefix}-tdk-vpc`, {
     env: awsEnv,
-    description: `${prefix} VPCs for all TDK stacks`,
+    description: `${prefix} TDK VPCs`,
+    config,
   });
   Tags.of(tdkVpcStack).add("stack", "tdk-vpc");
 
   // DB
-  const tdkDbStack = new TdkDbStack(
-    app,
-    `${prefix}-tdk-db`,
-    {
-      env: awsEnv,
-      description: `${prefix} TDK DB Stack`,
-      vpc: tdkVpcStack.vpc,
-    },
-    parameters,
-  );
+  const tdkDbStack = new TdkDbStack(app, `${prefix}-tdk-db`, {
+    env: awsEnv,
+    description: `${prefix} TDK DB`,
+    vpc: tdkVpcStack.vpc,
+    config,
+  });
   Tags.of(tdkDbStack).add("stack", "tdk-db");
 
   // API APP
-  const tdkApiAppStack = new TdkApiAppStack(
-    app,
-    `${prefix}-tdk-api-app`,
-    {
-      env: awsEnv,
-      description: `${prefix} TDK API app`,
-      vpc: tdkVpcStack.vpc,
-    },
+  const tdkApiAppStack = new TdkApiAppStack(app, `${prefix}-tdk-api-app`, {
+    env: awsEnv,
+    description: `${prefix} TDK API app`,
     config,
-  );
+    vpc: tdkVpcStack.vpc,
+  });
   Tags.of(tdkApiAppStack).add("stack", "tdk-api-app");
 })();

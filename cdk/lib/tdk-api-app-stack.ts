@@ -1,4 +1,3 @@
-import type { StackProps as CdkStackProps } from "aws-cdk-lib";
 import { CfnOutput, Stack } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import type { Vpc } from "aws-cdk-lib/aws-ec2";
@@ -15,27 +14,30 @@ import {
 } from "aws-cdk-lib/aws-iam";
 import type { Construct } from "constructs";
 
-import type { DeploymentConfig } from "../bin/cdk";
-
-interface StackProps extends CdkStackProps {
-  vpc: Vpc;
-}
+import type { TdkStackProps } from "../bin/cdk";
 
 export class TdkApiAppStack extends Stack {
   constructor(
     scope: Construct,
     id: string,
-    props: StackProps,
-    config: DeploymentConfig,
+    props: TdkStackProps & {
+      vpc: Vpc;
+    },
   ) {
     super(scope, id, props);
 
     const {
-      treasureDotLolCertificateId,
-      dbSecretName,
-      apiEnvSecretName,
-      apiTasksCount,
-    } = config.parameters;
+      config: {
+        awsRegion,
+        parameters: {
+          treasureDotLolCertificateId,
+          dbSecretName,
+          apiEnvSecretName,
+          apiTasksCount,
+        },
+      },
+      vpc,
+    } = props;
 
     const apiDockerImage = new DockerImageAsset(this, `${id}-docker-asset`, {
       assetName: `${id}-docker-asset`,
@@ -45,7 +47,7 @@ export class TdkApiAppStack extends Stack {
     });
 
     const cluster = new Cluster(this, "cluster", {
-      vpc: props.vpc,
+      vpc,
     });
 
     const service = new ApplicationLoadBalancedFargateService(
@@ -82,7 +84,7 @@ export class TdkApiAppStack extends Stack {
             },
           }),
           environment: {
-            AWS_REGION: config.awsRegion,
+            AWS_REGION: awsRegion,
             DATABASE_SECRET_NAME: dbSecretName,
             API_ENV_SECRET_NAME: apiEnvSecretName,
           },

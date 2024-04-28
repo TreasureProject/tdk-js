@@ -67,11 +67,25 @@
       "parameters": {
         "githubOidcProviderId": "token.actions.githubusercontent.com",
         "treasureDotLolCertificateId": "48316235-afa5-4ad7-91e1-b429f1da54e2",
+        "vpcMaxAzs": 2,
         "dbSecretName": "noumena-tdk-db",
         "apiEnvSecretName": "tdkApiEnv",
         "apiTasksCount": 2
       }
     },
-    "prod": {}
+    "prod": {
+      "app": "noumena",
+      "environment": "prod",
+      "awsAccountId": "884078395586",
+      "awsRegion": "us-east-1",
+      "parameters": {
+        "githubOidcProviderId": "token.actions.githubusercontent.com",
+        "treasureDotLolCertificateId": "62f6f766-c92e-4792-a26c-2edfff49194e",
+        "vpcMaxAzs": 3,
+        "dbSecretName": "noumena-tdk-db",
+        "apiEnvSecretName": "tdkApiEnv",
+        "apiTasksCount": 4
+      }
+    }
   }
 }

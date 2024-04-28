@@ -1,8 +1,4 @@
-import {
-  type StackProps as CdkStackProps,
-  CfnOutput,
-  Stack,
-} from "aws-cdk-lib";
+import { CfnOutput, Stack } from "aws-cdk-lib";
 import type { Vpc } from "aws-cdk-lib/aws-ec2";
 import {
   InstanceClass,
@@ -23,11 +19,7 @@ import {
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import type { Construct } from "constructs";
 
-import type { DeploymentParameters } from "../bin/cdk";
-
-interface StackProps extends CdkStackProps {
-  vpc: Vpc;
-}
+import type { TdkStackProps } from "../bin/cdk";
 
 const PORT = 5432;
 const IDENTIFIER = "noumena-tdk-db";
@@ -36,15 +28,21 @@ export class TdkDbStack extends Stack {
   constructor(
     scope: Construct,
     id: string,
-    props: StackProps,
-    parameters: DeploymentParameters,
+    props: TdkStackProps & {
+      vpc: Vpc;
+    },
   ) {
     super(scope, id, props);
 
-    const { vpc } = props;
+    const {
+      vpc,
+      config: {
+        parameters: { dbSecretName },
+      },
+    } = props;
 
     const secret = new Secret(this, `${id}-secret`, {
-      secretName: parameters.dbSecretName,
+      secretName: dbSecretName,
       description: "TDK DB master user credentials",
       generateSecretString: {
         secretStringTemplate: JSON.stringify({ username: "postgres" }),
