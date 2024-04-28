@@ -38,7 +38,6 @@ export class TdkApiAppStack extends Stack {
       directory: "../", // context as repo root dir
       file: "./apps/api/Dockerfile",
       cacheDisabled: true,
-      exclude: [".env", ".env.example", "cdk*", "cdk-out"], // ignore output to prevent recursion bug
     });
 
     const cluster = new Cluster(this, "cluster", {
