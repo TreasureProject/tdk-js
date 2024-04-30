@@ -155,6 +155,7 @@ const harvesterUserInfoSchema = Type.Object({
   userPermitsApproved: Type.Boolean(),
   userBoostersBalances: Type.Record(Type.Number(), Type.Number()),
   userBoostersApproved: Type.Boolean(),
+  userInventoryBoosters: Type.Array(inventoryTokenSchema),
   userTotalBoost: Type.Number(),
   userPermitsMaxStakeable: Type.Number(),
   userPermitsStaked: Type.Number(),
