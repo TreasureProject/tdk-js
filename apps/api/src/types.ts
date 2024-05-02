@@ -3,7 +3,7 @@ import type { Engine } from "@thirdweb-dev/engine";
 import type { ThirdwebClient } from "thirdweb";
 import type { createAuth } from "thirdweb/auth";
 
-type ThirdwebAuth = ReturnType<typeof createAuth>;
+export type ThirdwebAuth = ReturnType<typeof createAuth>;
 
 export type TdkApiEnv = {
   PORT: string;

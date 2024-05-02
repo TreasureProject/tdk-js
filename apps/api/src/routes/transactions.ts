@@ -13,6 +13,7 @@ import {
   readTransactionReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 
 export const transactionsRoutes =
   ({ auth, engine }: TdkApiContext): FastifyPluginAsync =>
@@ -31,9 +32,7 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        const authResult = await auth.verifyJWT({
-          jwt: req.headers.authorization ?? "",
-        });
+        const authResult = await verifyAuth(auth, req);
         if (!authResult.valid) {
           console.error(
             "Error authenticating user for transaction create:",

@@ -9,6 +9,7 @@ import {
   readContractReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 
 export const contractsRoutes =
   ({ auth, engine }: TdkApiContext): FastifyPluginAsync =>
@@ -27,9 +28,7 @@ export const contractsRoutes =
         },
       },
       async (req, reply) => {
-        const authResult = await auth.verifyJWT({
-          jwt: req.headers.authorization ?? "",
-        });
+        const authResult = await verifyAuth(auth, req);
         if (!authResult.valid) {
           console.error(
             "Error authenticating user for contract read:",

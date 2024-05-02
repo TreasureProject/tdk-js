@@ -6,6 +6,7 @@ import {
   readCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 
 export const usersRoutes =
   ({ db, auth }: TdkApiContext): FastifyPluginAsync =>
@@ -22,9 +23,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const authResult = await auth.verifyJWT({
-          jwt: req.headers.authorization ?? "",
-        });
+        const authResult = await verifyAuth(auth, req);
         if (!authResult.valid) {
           console.error(
             "Error authenticating user for user details read:",

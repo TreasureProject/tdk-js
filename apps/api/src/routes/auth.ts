@@ -47,6 +47,7 @@ export const authRoutes =
       async (req, reply) => {
         const payload = await auth.generatePayload({
           address: req.query.address,
+          chainId: req.chainId,
         });
         reply.send(payload);
       },
@@ -64,7 +65,9 @@ export const authRoutes =
         async (req, reply) => {
           const verifiedPayload = await auth.verifyPayload(req.body);
           if (!verifiedPayload.valid) {
-            return reply.code(400).send({ error: "Login failed" });
+            return reply
+              .code(400)
+              .send({ error: `Login failed: ${verifiedPayload.error}` });
           }
 
           const smartAccountAddress = verifiedPayload.payload.address;

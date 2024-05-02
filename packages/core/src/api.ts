@@ -10,16 +10,16 @@ import type {
   LoginReply,
   ReadLoginPayloadReply,
 } from "../../../apps/api/src/schema";
-import {
-  type AuthenciateBody,
-  type AuthenticateReply,
-  type CreateTransactionReply,
-  type ErrorReply,
-  type ReadCurrentUserReply,
-  type ReadHarvesterReply,
-  type ReadLoginPayloadQuerystring,
-  type ReadProjectReply,
-  type ReadTransactionReply,
+import type {
+  AuthenciateBody,
+  AuthenticateReply,
+  CreateTransactionReply,
+  ErrorReply,
+  ReadCurrentUserReply,
+  ReadHarvesterReply,
+  ReadLoginPayloadQuerystring,
+  ReadProjectReply,
+  ReadTransactionReply,
 } from "../../../apps/api/src/schema";
 import {
   DEFAULT_TDK_API_BASE_URI,

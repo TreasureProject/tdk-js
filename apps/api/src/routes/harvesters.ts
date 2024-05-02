@@ -20,6 +20,7 @@ import {
   readHarvesterReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 
 export const harvestersRoutes =
   ({ env, auth }: TdkApiContext): FastifyPluginAsync =>
@@ -54,15 +55,10 @@ export const harvestersRoutes =
         }
 
         // User address is optional for this request
-        let userAddress: AddressString | undefined;
-        if (req.headers.authorization) {
-          const authResult = await auth.verifyJWT({
-            jwt: req.headers.authorization,
-          });
-          if (authResult.valid) {
-            userAddress = authResult.parsedJWT.sub as AddressString;
-          }
-        }
+        const authResult = await verifyAuth(auth, req);
+        const userAddress = authResult.valid
+          ? (authResult.parsedJWT.sub as AddressString)
+          : undefined;
 
         const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
@@ -99,15 +95,10 @@ export const harvestersRoutes =
         } = req;
 
         // User address is optional for this request
-        let userAddress: AddressString | undefined;
-        if (req.headers.authorization) {
-          const authResult = await auth.verifyJWT({
-            jwt: req.headers.authorization,
-          });
-          if (authResult.valid) {
-            userAddress = authResult.parsedJWT.sub as AddressString;
-          }
-        }
+        const authResult = await verifyAuth(auth, req);
+        const userAddress = authResult.valid
+          ? (authResult.parsedJWT.sub as AddressString)
+          : undefined;
 
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
