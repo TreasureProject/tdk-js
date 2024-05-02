@@ -39,6 +39,35 @@ export const baseReplySchema: object = {
 export type ErrorReply = Static<typeof errorReplySchema>;
 
 // Auth
+const loginPayloadSchema = Type.Object({
+  domain: Type.String(),
+  address: Type.String(),
+  statement: Type.String(),
+  uri: Type.Optional(Type.String()),
+  version: Type.String(),
+  chain_id: Type.Optional(Type.String()),
+  nonce: Type.String(),
+  issued_at: Type.String(),
+  expiration_time: Type.String(),
+  invalid_before: Type.String(),
+  resources: Type.Optional(Type.Array(Type.String())),
+});
+
+export const readLoginPayloadQuerystringSchema = Type.Object({
+  address: Type.String(),
+});
+
+export const readLoginPayloadReplySchema = loginPayloadSchema;
+
+export const loginBodySchema = Type.Object({
+  payload: loginPayloadSchema,
+  signature: Type.String(),
+});
+
+export const loginReplySchema = Type.Object({
+  token: Type.String(),
+});
+
 export const authenticateBodySchema = Type.Object({
   email: Type.String(),
   password: Type.String(),
@@ -59,6 +88,12 @@ export const authVerifyReplySchema = Type.Object({
   exp: Type.Optional(Type.Number()),
 });
 
+export type ReadLoginPayloadQuerystring = Static<
+  typeof readLoginPayloadQuerystringSchema
+>;
+export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
+export type LoginBody = Static<typeof loginBodySchema>;
+export type LoginReply = Static<typeof loginReplySchema>;
 export type AuthenciateBody = Static<typeof authenticateBodySchema>;
 export type AuthenticateReply = Static<typeof authenticateReplySchema>;
 export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;

@@ -1,8 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Arbitrum, ArbitrumSepolia } from "@thirdweb-dev/chains";
-import { ThirdwebProvider } from "@thirdweb-dev/react";
 import {
   Button,
   DEFAULT_TDK_APP,
@@ -14,6 +12,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
+import { arbitrum, arbitrumSepolia } from "thirdweb/chains";
 import emailImg from "~/assets/email.webp";
 import logoImg from "~/assets/logo.svg";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
@@ -82,7 +81,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: `Connect to ${project.name} | Treasure Connect` }];
 };
 
-const InnerLoginPage = () => {
+export default function LoginPage() {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
   const [verificationInput, setVerificationInput] = useState<string>("");
   const {
@@ -91,12 +90,12 @@ const InnerLoginPage = () => {
     isLoading,
     startEmailLogin,
     finishEmailLogin,
-    logInWithSSO,
-    logInWithCustomAuth,
+    logInWithSocial,
+    // logInWithCustomAuth,
     reset,
   } = useLogin({
     project: project.slug,
-    chainId,
+    chain: chainId === arbitrumSepolia.id ? arbitrumSepolia : arbitrum,
     redirectUri,
     backendWallet: project.backendWallets[0],
     approvedCallTargets: project.callTargets,
@@ -106,7 +105,7 @@ const InnerLoginPage = () => {
 
   const onSubmit = handleSubmit(async ({ email, password }) => {
     if (password) {
-      await logInWithCustomAuth(email, password);
+      // await logInWithCustomAuth(email, password);
     } else {
       await startEmailLogin(email);
     }
@@ -177,12 +176,16 @@ const InnerLoginPage = () => {
                   </ClientOnly>
                   <div>
                     <Button
-                      className="w-full"
+                      className="flex w-full items-center justify-center"
                       size="lg"
                       onClick={() => finishEmailLogin(verificationInput)}
                       disabled={isLoading}
                     >
-                      {isLoading ? "Verifying..." : "Verify"}
+                      {isLoading ? (
+                        <SpinnerIcon className="h-5 w-5" />
+                      ) : (
+                        "Verify"
+                      )}
                     </Button>
                     <Button
                       variant="ghost"
@@ -203,7 +206,7 @@ const InnerLoginPage = () => {
                           type="button"
                           variant="secondary"
                           className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
-                          onClick={() => logInWithSSO("google")}
+                          onClick={() => logInWithSocial("google")}
                           disabled={isLoading}
                         >
                           <GoogleLogoIcon className="text-night-700 h-6 w-6" />
@@ -256,11 +259,15 @@ const InnerLoginPage = () => {
                     ) : null}
                     <Button
                       type="submit"
-                      className="w-full"
+                      className="flex w-full items-center justify-center"
                       size="lg"
                       disabled={isLoading}
                     >
-                      Connect
+                      {isLoading ? (
+                        <SpinnerIcon className="h-5 w-5" />
+                      ) : (
+                        "Connect"
+                      )}
                     </Button>
                   </div>
                 </>
@@ -270,24 +277,5 @@ const InnerLoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default function LoginPage() {
-  const { chainId } = useLoaderData<typeof loader>();
-  return (
-    <ThirdwebProvider
-      clientId={env.VITE_THIRDWEB_CLIENT_ID}
-      activeChain={chainId}
-      supportedChains={
-        chainId === ArbitrumSepolia.chainId ? [ArbitrumSepolia] : [Arbitrum]
-      }
-      authConfig={{
-        domain: env.VITE_THIRDWEB_AUTH_DOMAIN,
-        authUrl: `${env.VITE_TDK_API_URL}/auth`,
-      }}
-    >
-      <InnerLoginPage />
-    </ThirdwebProvider>
   );
 }
