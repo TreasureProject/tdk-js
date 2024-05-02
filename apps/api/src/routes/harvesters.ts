@@ -7,7 +7,6 @@ import {
 import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";
 
-import { getUser } from "../middleware/auth";
 import "../middleware/chain";
 import type {
   ReadHarvesterCorruptionRemovalParams,
@@ -23,7 +22,7 @@ import {
 import type { TdkApiContext } from "../types";
 
 export const harvestersRoutes =
-  ({ env }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, auth }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Params: ReadHarvesterParams;
@@ -54,12 +53,22 @@ export const harvestersRoutes =
           return reply.code(404).send({ error: "Not found" });
         }
 
-        const user = await getUser(req);
-        const harvesterUserInfo = user?.address
+        // User address is optional for this request
+        let userAddress: AddressString | undefined;
+        if (req.headers.authorization) {
+          const authResult = await auth.verifyJWT({
+            jwt: req.headers.authorization,
+          });
+          if (authResult.valid) {
+            userAddress = authResult.parsedJWT.sub as AddressString;
+          }
+        }
+
+        const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
               chainId,
               harvesterInfo,
-              userAddress: user.address as AddressString,
+              userAddress,
               inventoryApiKey: env.TROVE_API_KEY,
             })
           : undefined;
@@ -88,12 +97,23 @@ export const harvestersRoutes =
           chainId,
           params: { id },
         } = req;
-        const user = await getUser(req);
+
+        // User address is optional for this request
+        let userAddress: AddressString | undefined;
+        if (req.headers.authorization) {
+          const authResult = await auth.verifyJWT({
+            jwt: req.headers.authorization,
+          });
+          if (authResult.valid) {
+            userAddress = authResult.parsedJWT.sub as AddressString;
+          }
+        }
+
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
             chainId,
             harvesterAddress: id,
-            userAddress: user?.address,
+            userAddress,
             inventoryApiKey: env.TROVE_API_KEY,
           });
         reply.send(harvesterCorruptionRemovalInfo);

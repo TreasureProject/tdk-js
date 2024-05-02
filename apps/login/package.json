@@ -13,9 +13,6 @@
     "@remix-run/node": "^2.2.0",
     "@remix-run/react": "^2.2.0",
     "@remix-run/serve": "^2.2.0",
-    "@thirdweb-dev/chains": "^0.1.58",
-    "@thirdweb-dev/react": "^4.1.1",
-    "@thirdweb-dev/wallets": "^2.1.0",
     "@treasure-dev/tdk-api": "*",
     "@treasure-dev/tdk-react": "*",
     "isbot": "^5.1.0",
@@ -24,7 +21,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
     "react-verification-input": "^4.0.0",
-    "remix-utils": "^7.3.0"
+    "remix-utils": "^7.3.0",
+    "thirdweb": "^5.14.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.2.0",

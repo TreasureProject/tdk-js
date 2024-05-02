@@ -6,14 +6,20 @@ import type {
 } from "abitype";
 
 import type {
-  AuthenciateBody,
-  AuthenticateReply,
-  CreateTransactionReply,
-  ErrorReply,
-  ReadCurrentUserReply,
-  ReadHarvesterReply,
-  ReadProjectReply,
-  ReadTransactionReply,
+  LoginBody,
+  LoginReply,
+  ReadLoginPayloadReply,
+} from "../../../apps/api/src/schema";
+import {
+  type AuthenciateBody,
+  type AuthenticateReply,
+  type CreateTransactionReply,
+  type ErrorReply,
+  type ReadCurrentUserReply,
+  type ReadHarvesterReply,
+  type ReadLoginPayloadQuerystring,
+  type ReadProjectReply,
+  type ReadTransactionReply,
 } from "../../../apps/api/src/schema";
 import {
   DEFAULT_TDK_API_BASE_URI,
@@ -125,6 +131,9 @@ export class TDKAPI {
   }
 
   auth = {
+    getLoginPayload: (params: ReadLoginPayloadQuerystring) =>
+      this.get<ReadLoginPayloadReply>("/login/payload", params),
+    logIn: (params: LoginBody) => this.post<LoginReply>("/login", params),
     authenticate: (params: AuthenciateBody) =>
       this.post<AuthenticateReply>(`/auth/authenticate`, params),
   };

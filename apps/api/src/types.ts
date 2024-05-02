@@ -1,5 +1,9 @@
 import type { PrismaClient } from "@prisma/client";
 import type { Engine } from "@thirdweb-dev/engine";
+import type { ThirdwebClient } from "thirdweb";
+import type { createAuth } from "thirdweb/auth";
+
+type ThirdwebAuth = ReturnType<typeof createAuth>;
 
 export type TdkApiEnv = {
   PORT: string;
@@ -17,5 +21,7 @@ export type TdkApiEnv = {
 export type TdkApiContext = {
   env: TdkApiEnv;
   db: PrismaClient;
+  client: ThirdwebClient;
+  auth: ThirdwebAuth;
   engine: Engine;
 };

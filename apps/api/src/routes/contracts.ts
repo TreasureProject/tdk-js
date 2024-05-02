@@ -1,6 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
 
-import { getUser } from "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/project";
 import type { ReadContractBody, ReadContractReply } from "../schema";
@@ -12,7 +11,7 @@ import {
 import type { TdkApiContext } from "../types";
 
 export const contractsRoutes =
-  ({ engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ auth, engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.post<{
       Body: ReadContractBody;
@@ -28,9 +27,17 @@ export const contractsRoutes =
         },
       },
       async (req, reply) => {
-        const user = await getUser(req);
-        if (!user) {
-          return reply.code(401).send({ error: "Unauthorized" });
+        const authResult = await auth.verifyJWT({
+          jwt: req.headers.authorization ?? "",
+        });
+        if (!authResult.valid) {
+          console.error(
+            "Error authenticating user for contract read:",
+            authResult.error,
+          );
+          return reply
+            .code(401)
+            .send({ error: `Unauthorized: ${authResult.error}` });
         }
 
         const {
@@ -46,7 +53,7 @@ export const contractsRoutes =
           );
           reply.send({ result });
         } catch (err) {
-          console.error("Contract read error:", err);
+          console.error("Error reading contract:", err);
           if (err instanceof Error) {
             reply.code(500).send({ error: err.message });
           }
