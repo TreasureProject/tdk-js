@@ -6,17 +6,11 @@ import type { FastifyInstance } from "fastify";
 import type { TdkApiContext } from "../types";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 
-export let getUser: ReturnType<typeof ThirdwebAuth>["getUser"];
-
 export const withAuth = async (
   app: FastifyInstance,
   { env, db, engine }: TdkApiContext,
 ) => {
-  const {
-    authRouter,
-    authMiddleware,
-    getUser: thirdwebGetUser,
-  } = ThirdwebAuth({
+  const { authRouter, authMiddleware } = ThirdwebAuth({
     domain: env.THIRDWEB_AUTH_DOMAIN,
     wallet: new PrivateKeyWallet(env.THIRDWEB_AUTH_PRIVATE_KEY),
     authOptions: {
@@ -112,6 +106,4 @@ export const withAuth = async (
 
   // We add the auth middleware to our app to let us access the user across our API
   app.register(authMiddleware);
-
-  getUser = thirdwebGetUser;
 };

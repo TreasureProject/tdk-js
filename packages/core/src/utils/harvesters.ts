@@ -542,6 +542,7 @@ export const getHarvesterUserInfo = async ({
 
   let userInventoryCharacters: InventoryToken[] = [];
   let userInventoryLegions: InventoryToken[] = [];
+  let userInventoryBoosters: InventoryToken[] = [];
   let userStakedCharacters: Token[] = [];
   let userStakedLegions: Token[] = [];
   if (inventoryApiUrl && inventoryApiKey) {
@@ -571,6 +572,7 @@ export const getHarvesterUserInfo = async ({
         apiKey: inventoryApiKey,
         userAddress,
         collectionAddresses: [
+          contractAddresses.Consumables,
           ...(charactersAddress ? [charactersAddress] : []),
           ...(legionsStakingRulesAddress ? [contractAddresses.Legions] : []),
         ],
@@ -593,6 +595,14 @@ export const getHarvesterUserInfo = async ({
       ({ address }) =>
         address.toLowerCase() === contractAddresses.Legions.toLowerCase(),
     );
+    userInventoryBoosters = inventoryTokens
+      .filter(
+        ({ address, tokenId }) =>
+          address.toLowerCase() ===
+            contractAddresses.Consumables.toLowerCase() &&
+          (BOOSTER_TOKEN_IDS as bigint[]).includes(BigInt(tokenId)),
+      )
+      .sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
   }
 
   return {
@@ -607,6 +617,7 @@ export const getHarvesterUserInfo = async ({
       }),
       {} as Record<number, number>,
     ),
+    userInventoryBoosters,
     userBoostersApproved,
     userPermitsMaxStakeable: Number(userPermitsMaxStakeable),
     userPermitsStaked: Number(userPermitsStaked),

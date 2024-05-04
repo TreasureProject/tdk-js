@@ -2,6 +2,9 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PrismaClient } from "@prisma/client";
 import { Engine } from "@thirdweb-dev/engine";
 import Fastify from "fastify";
+import { createThirdwebClient } from "thirdweb";
+import { createAuth } from "thirdweb/auth";
+import { privateKeyToAccount } from "thirdweb/wallets";
 
 import { withAuth } from "./middleware/auth";
 import { withChain } from "./middleware/chain";
@@ -22,6 +25,7 @@ const main = async () => {
   const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
 
   const env = await getEnv();
+  const client = createThirdwebClient({ secretKey: env.THIRDWEB_SECRET_KEY });
   const ctx: TdkApiContext = {
     env,
     db: new PrismaClient({
@@ -29,6 +33,18 @@ const main = async () => {
         db: {
           url: env.DATABASE_URL,
         },
+      },
+    }),
+    client,
+    auth: createAuth({
+      domain: env.THIRDWEB_AUTH_DOMAIN!,
+      client,
+      adminAccount: privateKeyToAccount({
+        client,
+        privateKey: env.THIRDWEB_AUTH_PRIVATE_KEY!,
+      }),
+      login: {
+        uri: `https://${env.THIRDWEB_AUTH_DOMAIN}`,
       },
     }),
     engine: new Engine({

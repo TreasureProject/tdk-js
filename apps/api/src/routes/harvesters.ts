@@ -7,7 +7,6 @@ import {
 import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";
 
-import { getUser } from "../middleware/auth";
 import "../middleware/chain";
 import type {
   ReadHarvesterCorruptionRemovalParams,
@@ -21,9 +20,10 @@ import {
   readHarvesterReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 
 export const harvestersRoutes =
-  ({ env }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, auth }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Params: ReadHarvesterParams;
@@ -53,12 +53,17 @@ export const harvestersRoutes =
           return reply.code(404).send({ error: "Not found" });
         }
 
-        const user = await getUser(req);
-        const harvesterUserInfo = user?.address
+        // User address is optional for this request
+        const authResult = await verifyAuth(auth, req);
+        const userAddress = authResult.valid
+          ? (authResult.parsedJWT.sub as AddressString)
+          : undefined;
+
+        const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
               chainId,
               harvesterInfo,
-              userAddress: user.address as AddressString,
+              userAddress,
               inventoryApiUrl: env.TROVE_API_URL,
               inventoryApiKey: env.TROVE_API_KEY,
             })
@@ -88,12 +93,18 @@ export const harvestersRoutes =
           chainId,
           params: { id },
         } = req;
-        const user = await getUser(req);
+
+        // User address is optional for this request
+        const authResult = await verifyAuth(auth, req);
+        const userAddress = authResult.valid
+          ? (authResult.parsedJWT.sub as AddressString)
+          : undefined;
+
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
             chainId,
             harvesterAddress: id,
-            userAddress: user?.address,
+            userAddress,
             inventoryApiUrl: env.TROVE_API_URL,
             inventoryApiKey: env.TROVE_API_KEY,
           });
