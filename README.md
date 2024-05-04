@@ -19,14 +19,33 @@ SDK for the Treasure ecosystem
 
 ## Development
 
+### Setup
+
 Install dependencies:
 
 ```bash
 npm install
 ```
 
+Open the `README.md` files for the apps and examples you are contributing to and follow the instructions to finish configuring the packages.
+
 Start watch mode for base workspaces:
 
 ```bash
 npm run dev
+```
+
+Start any apps or examples:
+
+```bash
+$ npm run dev:login
+$ npm run dev:examples:harvester
+```
+
+### Contributing
+
+Before creating a PR, add a [changeset](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md) to your commit:
+
+```bash
+npm run changeset
 ```

@@ -12,8 +12,8 @@
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:api\" \"npm run dev:react\"",
     "dev:core": "npm run dev --prefix ./packages/core",
     "dev:api": "npm run dev --prefix ./apps/api",
-    "dev:login": "npm run dev --prefix ./apps/login",
     "dev:react": "npm run dev --prefix ./packages/react",
+    "dev:login": "npm run dev --prefix ./apps/login",
     "dev:examples:harvester": "npm run dev --prefix ./examples/harvester",
     "dev:examples:payments": "npm run dev --prefix ./examples/payments",
     "start:api": "npm start --prefix ./apps/api",
@@ -22,9 +22,12 @@
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
     "test": "vitest",
+    "package:changeset": "changeset",
+    "package:version": "changeset version",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@tanstack/eslint-plugin-query": "^5.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/node": "^20.8.2",

@@ -1,0 +1,22 @@
+# Miscellaneous
+
+- @alecananian
+
+# Apps
+
+apps/api/ @alecananian
+apps/login/ @alecananian
+
+# Packages
+
+packages/core/ @alecananian
+packages/react/ @alecananian
+
+# Examples
+
+examples/harvester/ @alecananian
+examples/payments/ @alecananian
+
+# Infrastructure
+
+cdk/ @mfar @aphexyuri @alecananian
