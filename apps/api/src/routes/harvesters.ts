@@ -47,7 +47,6 @@ export const harvestersRoutes =
         const harvesterInfo = await getHarvesterInfo({
           chainId,
           harvesterAddress,
-          tokenApiKey: env.TROVE_API_KEY,
         });
 
         if (harvesterInfo.nftHandlerAddress === zeroAddress) {
@@ -65,6 +64,7 @@ export const harvestersRoutes =
               chainId,
               harvesterInfo,
               userAddress,
+              inventoryApiUrl: env.TROVE_API_URL,
               inventoryApiKey: env.TROVE_API_KEY,
             })
           : undefined;
@@ -105,6 +105,7 @@ export const harvestersRoutes =
             chainId,
             harvesterAddress: id,
             userAddress,
+            inventoryApiUrl: env.TROVE_API_URL,
             inventoryApiKey: env.TROVE_API_KEY,
           });
         reply.send(harvesterCorruptionRemovalInfo);

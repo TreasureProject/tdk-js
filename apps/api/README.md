@@ -24,7 +24,7 @@ cp .env.example .env
 Generate database client:
 
 ```bash
-npx prisma generate
+npm run generate
 ```
 
 Create initial tables in database:
@@ -44,3 +44,7 @@ Start server:
 ```bash
 npm run dev
 ```
+
+## Deployment
+
+Run the "Deploy API" GitHub Action from any branch with the desired environment selected.

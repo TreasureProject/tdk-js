@@ -1,14 +1,17 @@
-# Welcome to your CDK TypeScript project
+# TDK CDK
 
-This is a blank project for CDK development with TypeScript.
+CDK stacks to power Treasure Development Kit infrastructure.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Deployment
 
-## Useful commands
+Run the following command to deploy CDK changes to the development environment:
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `npx cdk deploy` deploy this stack to your default AWS account/region
-- `npx cdk diff` compare deployed stack with current state
-- `npx cdk synth` emits the synthesized CloudFormation template
+```bash
+npm run deploy:dev
+```
+
+Run the following command to deploy CDK changes to the production environment:
+
+```bash
+npm run deploy:prod
+```

@@ -5,6 +5,15 @@ import type { createAuth } from "thirdweb/auth";
 
 export type ThirdwebAuth = ReturnType<typeof createAuth>;
 
+export type TdkDbSecret = {
+  dbname: string;
+  engine: string;
+  host: string;
+  password: string;
+  port: number;
+  username: string;
+};
+
 export type TdkApiEnv = {
   PORT: string;
   DATABASE_URL: string;
@@ -14,6 +23,7 @@ export type TdkApiEnv = {
   THIRDWEB_ENGINE_URL: string;
   THIRDWEB_ENGINE_ACCESS_TOKEN: string;
   THIRDWEB_SECRET_KEY: string;
+  TROVE_API_URL: string;
   TROVE_API_KEY: string;
   ZEEVERSE_API_URL: string;
 };

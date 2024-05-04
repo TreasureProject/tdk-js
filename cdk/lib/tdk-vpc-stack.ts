@@ -1,15 +1,23 @@
-import { Stack, type StackProps } from "aws-cdk-lib";
+import { CfnOutput, Stack } from "aws-cdk-lib";
 import { SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
 import type { Construct } from "constructs";
+
+import type { TdkStackProps } from "../bin/cdk";
 
 export class TdkVpcStack extends Stack {
   public readonly vpc: Vpc;
 
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: TdkStackProps) {
     super(scope, id, props);
 
-    this.vpc = new Vpc(this, `${id}-Vpc`, {
-      maxAzs: 2,
+    const {
+      config: {
+        parameters: { vpcMaxAzs },
+      },
+    } = props;
+
+    this.vpc = new Vpc(this, `${id}-vpc`, {
+      maxAzs: vpcMaxAzs,
       subnetConfiguration: [
         {
           cidrMask: 20,
@@ -22,6 +30,12 @@ export class TdkVpcStack extends Stack {
           subnetType: SubnetType.PRIVATE_ISOLATED,
         },
       ],
+    });
+
+    new CfnOutput(this, `${id}-vpc-id`, {
+      exportName: `${id}-vpc-id`,
+      value: this.vpc.vpcId,
+      description: "VPC ID",
     });
   }
 }

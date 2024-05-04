@@ -46,6 +46,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   })();
 
   if (!project) {
+    console.error("Project not found:", slug);
     throw new Response(null, {
       status: 404,
       statusText: "Not Found",
@@ -55,6 +56,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const redirectUri = url.searchParams.get("redirect_uri");
 
   if (!redirectUri || !project.redirectUris.includes(redirectUri)) {
+    console.error(`Invalid redirect URI for ${slug}:`, redirectUri);
     throw new Response(null, {
       status: 403,
       statusText: "Forbidden",

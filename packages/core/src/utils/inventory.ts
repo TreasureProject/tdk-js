@@ -1,7 +1,6 @@
 import { arbitrumSepolia } from "viem/chains";
 
 import type { InventoryToken, Token } from "../../../../apps/api/src/schema";
-import { TROVE_API_URL } from "../constants";
 import type { SupportedChainId } from "../types";
 
 type TokenResponse = {
@@ -31,15 +30,17 @@ const getChainSlug = (chainId: SupportedChainId) =>
 
 export const fetchTokens = async ({
   chainId,
+  apiUrl,
   apiKey,
   tokens,
 }: {
   chainId: SupportedChainId;
+  apiUrl: string;
   apiKey: string;
   tokens: { address: string; tokenId: number | string }[];
 }) => {
   const chainSlug = getChainSlug(chainId);
-  const response = await fetch(`${TROVE_API_URL[chainId]}/batch-tokens`, {
+  const response = await fetch(`${apiUrl}/batch-tokens`, {
     method: "POST",
     body: JSON.stringify({
       ids: Array.from(
@@ -54,7 +55,13 @@ export const fetchTokens = async ({
       "X-API-Key": apiKey,
     },
   });
-  const results = (await response.json()) as TokenResponse[];
+  const results = await response.json();
+  if (!Array.isArray(results)) {
+    throw new Error(
+      `Error fetching tokens: ${results?.message ?? "Unknown error"}`,
+    );
+  }
+
   return (results as TokenResponse[])
     .map(
       ({
@@ -79,6 +86,7 @@ export const fetchTokens = async ({
 
 export const fetchUserInventory = async ({
   chainId,
+  apiUrl,
   apiKey,
   userAddress,
   collectionAddresses = [],
@@ -86,6 +94,7 @@ export const fetchUserInventory = async ({
   projection = "collectionAddr,collectionUrlSlug,queryUserQuantityOwned,metadata,image",
 }: {
   chainId: SupportedChainId;
+  apiUrl: string;
   apiKey: string;
   userAddress: string;
   collectionAddresses?: string[];
@@ -93,7 +102,7 @@ export const fetchUserInventory = async ({
   projection?: string;
 }): Promise<InventoryToken[]> => {
   const chainSlug = getChainSlug(chainId);
-  const url = new URL(`${TROVE_API_URL[chainId]}/tokens-for-user`);
+  const url = new URL(`${apiUrl}/tokens-for-user`);
   url.searchParams.append("userAddress", userAddress);
   url.searchParams.append("projection", projection);
   if (tokens.length > 0) {
@@ -118,7 +127,7 @@ export const fetchUserInventory = async ({
   const results = await response.json();
   if (!Array.isArray(results)) {
     throw new Error(
-      results?.message || "Unknown error fetching user inventory",
+      `Error fetching user inventory: ${results?.message ?? "Unknown error"}`,
     );
   }
 
