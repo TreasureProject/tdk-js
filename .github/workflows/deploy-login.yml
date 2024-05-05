@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - name: Checkout repo
+      - name: Check out repo
         uses: actions/checkout@v4
-      - name: Setup flyctl
+      - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy
         run: flyctl deploy --config ./apps/login/fly.toml --app ${{ vars.LOGIN_APP_NAME }} --remote-only --build-secret dotenv="${{ secrets.LOGIN_ENV }}"
