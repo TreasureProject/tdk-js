@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit",
     "format": "eslint --fix . && prettier --write --ignore-unknown .",
     "lint": "eslint .",
-    "test": "vitest",
+    "test": "vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
     "package:publish": "changeset publish",
