@@ -24,6 +24,7 @@
     "test": "vitest",
     "package:changeset": "changeset",
     "package:version": "changeset version",
+    "package:publish": "changeset publish",
     "prepare": "husky"
   },
   "devDependencies": {

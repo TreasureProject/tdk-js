@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [["@treasure-dev/tdk-core", "@treasure-dev/tdk-react"]],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []
