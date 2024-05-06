@@ -26,3 +26,9 @@ Start server:
 ```bash
 npm run dev
 ```
+
+## Deployment
+
+Merge to the `main` branch to deploy to the development environment.
+
+Add a tag with the `login-v` prefix to deploy to the production environment (e.g., `login-v1.0.0`).
