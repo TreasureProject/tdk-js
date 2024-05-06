@@ -1,20 +1,21 @@
 name: Deploy API
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: Select environment
-        options:
-          - development
-          - production
+  push:
+    paths:
+      - "apps/api/**"
+      - "packages/**"
+    branches:
+      - main
+    tags:
+      - api-v*
 permissions:
   id-token: write
   contents: read
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: "${{ startsWith(github.ref, 'refs/tags/') }} === 'true' ? 'production' : 'development'"
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -39,7 +40,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ./apps/api/.aws/task-definition-${{ inputs.environment }}.json
+          task-definition: ./apps/api/.aws/task-definition-${{ vars.ENVIRONMENT }}.json
           container-name: web
           image: ${{ steps.build-image.outputs.image }}
       - name: Deploy Amazon ECS task definition

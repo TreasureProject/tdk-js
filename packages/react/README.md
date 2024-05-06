@@ -16,3 +16,7 @@ npm i @treasure-dev/tdk-react
 ## Usage
 
 [Documentation](https://tdk-docs.treasure.lol/react/getting-started)
+
+## Deployment
+
+Merge [changeset-bot](https://github.com/apps/changeset-bot)'s versioning PR to the `main` branch to push a new package version to npm.

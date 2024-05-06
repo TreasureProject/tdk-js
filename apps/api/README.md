@@ -47,4 +47,6 @@ npm run dev
 
 ## Deployment
 
-Run the "Deploy API" GitHub Action from any branch with the desired environment selected.
+Merge to the `main` branch to deploy to the development environment.
+
+Add a tag with the `api-v` prefix to deploy to the production environment (e.g., `api-v1.0.0`).
