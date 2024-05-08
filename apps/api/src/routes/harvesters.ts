@@ -23,7 +23,7 @@ import type { TdkApiContext } from "../types";
 import { verifyAuth } from "../utils/auth";
 
 export const harvestersRoutes =
-  ({ env, auth }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, auth, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Params: ReadHarvesterParams;
@@ -47,6 +47,7 @@ export const harvestersRoutes =
         const harvesterInfo = await getHarvesterInfo({
           chainId,
           harvesterAddress,
+          wagmiConfig,
         });
 
         if (harvesterInfo.nftHandlerAddress === zeroAddress) {
@@ -66,6 +67,7 @@ export const harvestersRoutes =
               userAddress,
               inventoryApiUrl: env.TROVE_API_URL,
               inventoryApiKey: env.TROVE_API_KEY,
+              wagmiConfig,
             })
           : undefined;
 
@@ -107,6 +109,7 @@ export const harvestersRoutes =
             userAddress,
             inventoryApiUrl: env.TROVE_API_URL,
             inventoryApiKey: env.TROVE_API_KEY,
+            wagmiConfig,
           });
         reply.send(harvesterCorruptionRemovalInfo);
       },

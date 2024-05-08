@@ -1,4 +1,4 @@
-import { readContracts } from "@wagmi/core";
+import { type Config, readContracts } from "@wagmi/core";
 import { decodeAbiParameters, parseAbiParameters } from "viem";
 
 import type {
@@ -9,7 +9,7 @@ import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
 import { BRIDGEWORLD_CORRUPTION_API_URL } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "./contracts";
-import { config } from "./wagmi";
+import { DEFAULT_WAGMI_CONFIG } from "./wagmi";
 
 const ERC1155_TOKEN_SET_CORRUPTION_HANDLER_ABI_PARAMS = parseAbiParameters(
   "(uint256 amount, address collection, uint256[] tokenIds)",
@@ -18,15 +18,17 @@ const ERC1155_TOKEN_SET_CORRUPTION_HANDLER_ABI_PARAMS = parseAbiParameters(
 export const fetchCorruptionRemovalRecipes = async ({
   chainId,
   buildingAddress,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
 }: {
   chainId: SupportedChainId;
   buildingAddress: string;
+  wagmiConfig?: Config;
 }): Promise<CorruptionRemovalRecipe[]> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
     { result: corruptionRemovalRecipeIds = [] },
     { result: corruptionRemovalRecipeInfo = [] },
-  ] = await readContracts(config, {
+  ] = await readContracts(wagmiConfig, {
     contracts: [
       {
         chainId,
