@@ -1,12 +1,16 @@
 import { createConfig, http } from "@wagmi/core";
-import { arbitrum, arbitrumSepolia } from "viem/chains";
+import type { Transport } from "viem";
 
 import { SUPPORTED_CHAINS } from "../constants";
+import type { SupportedChainId } from "../types";
 
-export const config = createConfig({
+export const DEFAULT_WAGMI_CONFIG = createConfig({
   chains: SUPPORTED_CHAINS,
-  transports: {
-    [arbitrum.id]: http(),
-    [arbitrumSepolia.id]: http(),
-  },
+  transports: SUPPORTED_CHAINS.reduce(
+    (acc, chain) => ({
+      ...acc,
+      [chain.id]: http(),
+    }),
+    {} as Record<SupportedChainId, Transport>,
+  ),
 });

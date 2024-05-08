@@ -67,6 +67,8 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
       process.env.THIRDWEB_AUTH_PRIVATE_KEY ??
       envSecret?.THIRDWEB_AUTH_PRIVATE_KEY ??
       "",
+    THIRDWEB_CLIENT_ID:
+      process.env.THIRDWEB_CLIENT_ID ?? envSecret?.THIRDWEB_CLIENT_ID ?? "",
     THIRDWEB_ENGINE_URL:
       process.env.THIRDWEB_ENGINE_URL ?? envSecret?.THIRDWEB_ENGINE_URL ?? "",
     THIRDWEB_ENGINE_ACCESS_TOKEN:

@@ -1,4 +1,4 @@
-import { readContracts } from "@wagmi/core";
+import { type Config, readContracts } from "@wagmi/core";
 import { erc20Abi, erc721Abi, formatEther, zeroAddress } from "viem";
 import { arbitrumSepolia } from "viem/chains";
 
@@ -29,7 +29,7 @@ import {
   fetchCorruptionRemovals,
 } from "./corruption";
 import { fetchTokens, fetchUserInventory } from "./inventory";
-import { config } from "./wagmi";
+import { DEFAULT_WAGMI_CONFIG } from "./wagmi";
 
 const DEFAULT_BOOSTERS_MAX_STAKEABLE = 10n;
 const DEFAULT_BOOSTERS_LIFETIMES = [
@@ -124,9 +124,11 @@ const fetchIndexedHarvester = async ({
 export const getHarvesterInfo = async ({
   chainId,
   harvesterAddress,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
 }: {
   chainId: SupportedChainId;
   harvesterAddress: AddressString;
+  wagmiConfig?: Config;
 }): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
 
@@ -145,7 +147,7 @@ export const getHarvesterInfo = async ({
     { result: totalBoost = 0n },
     { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
     { result: totalCorruption = 0n },
-  ] = await readContracts(config, {
+  ] = await readContracts(wagmiConfig, {
     contracts: [
       {
         chainId,
@@ -201,7 +203,7 @@ export const getHarvesterInfo = async ({
     { result: boostersStakingRulesAddress = zeroAddress },
     { result: legionsStakingRulesAddress },
     { result: treasuresStakingRulesAddress },
-  ] = await readContracts(config, {
+  ] = await readContracts(wagmiConfig, {
     contracts: [
       {
         chainId,
@@ -261,7 +263,7 @@ export const getHarvesterInfo = async ({
     { result: totalBoostersBoost = 0n },
     { result: boosters = [] },
     { result: charactersAddress = zeroAddress },
-  ] = await readContracts(config, {
+  ] = await readContracts(wagmiConfig, {
     contracts: [
       {
         chainId,
@@ -360,12 +362,14 @@ export const getHarvesterUserInfo = async ({
   userAddress,
   inventoryApiUrl,
   inventoryApiKey,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
 }: {
   chainId: SupportedChainId;
   harvesterInfo: HarvesterInfo;
   userAddress: AddressString;
   inventoryApiUrl?: string;
   inventoryApiKey?: string;
+  wagmiConfig?: Config;
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
@@ -392,7 +396,7 @@ export const getHarvesterUserInfo = async ({
     ],
     indexedHarvester,
   ] = await Promise.all([
-    readContracts(config, {
+    readContracts(wagmiConfig, {
       contracts: [
         {
           chainId,
@@ -673,12 +677,14 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   userAddress,
   inventoryApiUrl,
   inventoryApiKey,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
 }: {
   chainId: SupportedChainId;
   harvesterAddress: string;
   userAddress?: string;
   inventoryApiUrl?: string;
   inventoryApiKey?: string;
+  wagmiConfig?: Config;
 }): Promise<HarvesterCorruptionRemovalInfo> => {
   const corruptionRemovalAddress = getContractAddress(
     chainId,
@@ -687,6 +693,7 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   const corruptionRemovalRecipes = await fetchCorruptionRemovalRecipes({
     chainId,
     buildingAddress: harvesterAddress,
+    wagmiConfig,
   });
 
   let userCorruptionRemovals: CorruptionRemoval[] = [];
@@ -719,7 +726,7 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
           buildingAddress: harvesterAddress,
           userAddress,
         }),
-        readContracts(config, {
+        readContracts(wagmiConfig, {
           contracts: addressesAndOperators.map(([address, operator]) => ({
             chainId,
             address: address as AddressString,
