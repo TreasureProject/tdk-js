@@ -65,7 +65,6 @@
       "awsAccountId": "665230337498",
       "awsRegion": "us-west-2",
       "parameters": {
-        "githubOidcProviderId": "token.actions.githubusercontent.com",
         "treasureDotLolCertificateId": "48316235-afa5-4ad7-91e1-b429f1da54e2",
         "vpcMaxAzs": 2,
         "dbSecretName": "noumena-tdk-db",
