@@ -294,9 +294,51 @@ export type ReadContractReply = Static<typeof readContractReplySchema>;
 
 // Transactions
 export const createTransactionBodySchema = Type.Object({
-  address: Type.String(),
-  functionName: Type.String(),
-  args: Type.Any(),
+  address: Type.String({
+    description: "The address of the contract to call",
+  }),
+  functionName: Type.String({
+    description: "The function to call on the contract",
+  }),
+  args: Type.Array(
+    Type.Union([
+      Type.String({
+        description: "The arguments to call on the function",
+      }),
+      Type.Tuple([Type.String(), Type.String()]),
+      Type.Object({}),
+      Type.Array(Type.Any()),
+      Type.Any(),
+    ]),
+  ),
+  txOverrides: Type.Optional(
+    Type.Object({
+      value: Type.Optional(
+        Type.String({
+          examples: ["10000000000"],
+          description: "Amount of native currency to send",
+        }),
+      ),
+      gas: Type.Optional(
+        Type.String({
+          examples: ["530000"],
+          description: "Gas limit for the transaction",
+        }),
+      ),
+      maxFeePerGas: Type.Optional(
+        Type.String({
+          examples: ["1000000000"],
+          description: "Maximum fee per gas",
+        }),
+      ),
+      maxPriorityFeePerGas: Type.Optional(
+        Type.String({
+          examples: ["1000000000"],
+          description: "Maximum priority fee per gas",
+        }),
+      ),
+    }),
+  ),
 });
 
 export const createTransactionReplySchema = Type.Object({
