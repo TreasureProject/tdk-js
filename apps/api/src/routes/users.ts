@@ -1,5 +1,7 @@
+import { getAllActiveSigners } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/chain";
 import {
   type ErrorReply,
   type ReadCurrentUserReply,
@@ -9,7 +11,7 @@ import type { TdkApiContext } from "../types";
 import { verifyAuth } from "../utils/auth";
 
 export const usersRoutes =
-  ({ db, auth }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, auth, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply | ErrorReply;
@@ -34,15 +36,37 @@ export const usersRoutes =
             .send({ error: `Unauthorized: ${authResult.error}` });
         }
 
-        const dbUser = await db.user.findUnique({
-          where: { smartAccountAddress: authResult.parsedJWT.sub },
-          select: { id: true, smartAccountAddress: true, email: true },
-        });
+        const smartAccountAddress = authResult.parsedJWT.sub;
+
+        const [dbUser, allActiveSigners] = await Promise.all([
+          db.user.findUnique({
+            where: { smartAccountAddress },
+            select: { id: true, smartAccountAddress: true, email: true },
+          }),
+          getAllActiveSigners({
+            chainId: req.chainId,
+            address: smartAccountAddress,
+            wagmiConfig,
+          }),
+        ]);
+
         if (!dbUser) {
           return reply.code(401).send({ error: "Unauthorized" });
         }
 
-        return dbUser;
+        return {
+          ...dbUser,
+          allActiveSigners: allActiveSigners.map((activeSigner) => ({
+            ...activeSigner,
+            approvedTargets: activeSigner.approvedTargets.map((target) =>
+              target.toLowerCase(),
+            ),
+            nativeTokenLimitPerTransaction:
+              activeSigner.nativeTokenLimitPerTransaction.toString(),
+            startTimestamp: activeSigner.startTimestamp.toString(),
+            endTimestamp: activeSigner.endTimestamp.toString(),
+          })),
+        };
       },
     );
   };

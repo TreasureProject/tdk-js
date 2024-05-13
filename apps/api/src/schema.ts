@@ -367,6 +367,16 @@ export const readCurrentUserReplySchema = Type.Object({
   id: Type.String(),
   smartAccountAddress: Type.String(),
   email: nullableStringSchema,
+  allActiveSigners: Type.Array(
+    Type.Object({
+      isAdmin: Type.Boolean(),
+      signer: Type.String(),
+      approvedTargets: Type.Array(Type.String()),
+      nativeTokenLimitPerTransaction: Type.String(),
+      startTimestamp: Type.String(),
+      endTimestamp: Type.String(),
+    }),
+  ),
 });
 
 export type ReadCurrentUserReply = Static<typeof readCurrentUserReplySchema>;
