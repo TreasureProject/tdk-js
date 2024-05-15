@@ -1,5 +1,5 @@
 import { zeroAddress } from "viem";
-import { arbitrum, arbitrumSepolia } from "viem/chains";
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
 
 import type { AddressString, Contract } from "./types";
 
@@ -24,7 +24,12 @@ export const BRIDGEWORLD_CORRUPTION_API_URL = {
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
 } as const;
 
-export const SUPPORTED_CHAINS = [arbitrum, arbitrumSepolia] as const;
+export const SUPPORTED_CHAINS = [
+  arbitrum,
+  arbitrumSepolia,
+  mainnet,
+  sepolia,
+] as const;
 export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
 
 export const TOKEN_IDS = {
@@ -104,7 +109,7 @@ export const TOKEN_IDS = {
 
 export const CONTRACT_ADDRESSES: Record<
   number,
-  Record<Contract, AddressString>
+  Partial<Record<Contract, AddressString>>
 > = {
   [arbitrum.id]: {
     // Tokens
@@ -191,6 +196,11 @@ export const CONTRACT_ADDRESSES: Record<
     // Zeeverse
     ZeeverseZee: "0xb1af672c7e0e8880c066ecc24930a12ff2ee8534",
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
+  },
+  [mainnet.id]: {},
+  [sepolia.id]: {
+    // Tokens
+    MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
   },
 };
 

@@ -95,10 +95,14 @@ export const fetchCorruptionRemovals = async ({
   buildingAddress: string;
   userAddress: string;
 }): Promise<CorruptionRemoval[]> => {
-  const response = await fetch(BRIDGEWORLD_CORRUPTION_API_URL[chainId], {
-    method: "POST",
-    body: JSON.stringify({
-      query: `{
+  const response = await fetch(
+    BRIDGEWORLD_CORRUPTION_API_URL[
+      chainId as keyof typeof BRIDGEWORLD_CORRUPTION_API_URL
+    ],
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: `{
         removals(
           where: {
             building: "${buildingAddress.toLowerCase()}"
@@ -115,8 +119,9 @@ export const fetchCorruptionRemovals = async ({
           status
         }
       }`,
-    }),
-  });
+      }),
+    },
+  );
   const {
     data: { removals },
   } = (await response.json()) as {

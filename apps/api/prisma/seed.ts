@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
-import { arbitrum, arbitrumSepolia } from "viem/chains";
+import { arbitrum, arbitrumSepolia, sepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";
 
@@ -46,20 +46,33 @@ const REDIRECT_URIS: Record<string, Record<Environment, string[]>> = {
   },
 };
 
-const CALL_TARGETS: Record<string, Contract[]> = {
-  app: [],
-  realm: ["MAGIC"],
+const CALL_TARGETS: Record<string, [number, Contract][]> = {
+  app: [
+    [arbitrumSepolia.id, "MAGIC"],
+    [sepolia.id, "MAGIC"],
+  ],
+  realm: [[arbitrumSepolia.id, "MAGIC"]],
   zeeverse: [
-    "MAGIC",
-    "Consumables",
-    "Legions",
-    "CorruptionRemoval",
-    "ERC1155TokenSetCorruptionHandler",
-    "HarvesterEmberwing",
-    "NftHandlerEmberwing",
-    "ZeeverseZee",
-    "ZeeverseItems",
-    "BulkTransferHelper",
+    [arbitrumSepolia.id, "MAGIC"],
+    [arbitrumSepolia.id, "Consumables"],
+    [arbitrumSepolia.id, "Legions"],
+    [arbitrumSepolia.id, "CorruptionRemoval"],
+    [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
+    [arbitrumSepolia.id, "HarvesterEmberwing"],
+    [arbitrumSepolia.id, "NftHandlerEmberwing"],
+    [arbitrumSepolia.id, "ZeeverseZee"],
+    [arbitrumSepolia.id, "ZeeverseItems"],
+    [arbitrumSepolia.id, "BulkTransferHelper"],
+    [arbitrum.id, "MAGIC"],
+    [arbitrum.id, "Consumables"],
+    [arbitrum.id, "Legions"],
+    [arbitrum.id, "CorruptionRemoval"],
+    [arbitrum.id, "ERC1155TokenSetCorruptionHandler"],
+    [arbitrum.id, "HarvesterEmberwing"],
+    [arbitrum.id, "NftHandlerEmberwing"],
+    [arbitrum.id, "ZeeverseZee"],
+    [arbitrum.id, "ZeeverseItems"],
+    [arbitrum.id, "BulkTransferHelper"],
   ],
 };
 
@@ -74,38 +87,28 @@ const createProject = ({
   slug: string;
   metadata: ProjectMetadata;
   redirectUris?: string[];
-  callTargets?: Contract[];
+  callTargets?: [number, Contract][];
 }) => {
   const data = {
     ...metadata,
     slug,
     redirectUris,
     callTargets: {
-      connectOrCreate: callTargets.flatMap((contract) => {
-        const testnetCallTarget = {
-          chainId: arbitrumSepolia.id,
-          address: getContractAddress(arbitrumSepolia.id, contract),
-        };
+      connectOrCreate: callTargets.map(([chainId, contract]) => {
+        const address = getContractAddress(chainId, contract);
+        if (!address) {
+          throw new Error(
+            `Contract address not found for ${contract} on chain ${chainId}`,
+          );
+        }
 
-        const mainnetCallTarget = {
-          chainId: arbitrum.id,
-          address: getContractAddress(arbitrum.id, contract),
+        const callTarget = { chainId, address };
+        return {
+          where: {
+            chainId_address: callTarget,
+          },
+          create: callTarget,
         };
-
-        return [
-          {
-            where: {
-              chainId_address: testnetCallTarget,
-            },
-            create: testnetCallTarget,
-          },
-          {
-            where: {
-              chainId_address: mainnetCallTarget,
-            },
-            create: mainnetCallTarget,
-          },
-        ];
       }),
     },
   } as const;

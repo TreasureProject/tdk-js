@@ -59,10 +59,12 @@ const fetchIndexedHarvester = async ({
   harvesterAddress: string;
   userAddress: string;
 }) => {
-  const response = await fetch(BRIDGEWORLD_API_URL[chainId], {
-    method: "POST",
-    body: JSON.stringify({
-      query: `
+  const response = await fetch(
+    BRIDGEWORLD_API_URL[chainId as keyof typeof BRIDGEWORLD_API_URL],
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: `
       {
         harvester(id: "${harvesterAddress.toLowerCase()}") {
           userStakedCharacters: stakedTokens(
@@ -94,8 +96,9 @@ const fetchIndexedHarvester = async ({
         }
       }
       `,
-    }),
-  });
+      }),
+    },
+  );
   const {
     data: { harvester },
   } = (await response.json()) as {
