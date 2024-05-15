@@ -16,6 +16,8 @@ const client = new SecretsManagerClient({
 });
 
 const getSecretJson = async (name: string) => {
+  console.log("Fetching secret:", name);
+
   try {
     const response = await client.send(
       new GetSecretValueCommand({
@@ -35,6 +37,7 @@ const getSecretJson = async (name: string) => {
 
 const getDatabaseUrl = async () => {
   if (process.env.DATABASE_URL) {
+    console.log("Using database connection string from environment");
     return process.env.DATABASE_URL;
   }
 
@@ -42,9 +45,11 @@ const getDatabaseUrl = async () => {
     | TdkDbSecret
     | undefined;
   if (!secret) {
+    console.error("No database connection string found");
     return undefined;
   }
 
+  console.log("Using database connection string from secret");
   const { engine, username, password, host, port, dbname } = secret;
   return `${engine}://${username}:${password}@${host}:${port}/${dbname}`;
 };
