@@ -90,7 +90,26 @@ const main = async () => {
     app.register(harvestersRoutes(ctx)),
   ]);
 
-  app.get("/healthcheck", async (_, reply) => reply.send("OK"));
+  app.get("/healthcheck", async (_, reply) => {
+    try {
+      await ctx.db.$queryRaw`SELECT 1`;
+    } catch (err) {
+      return reply
+        .code(500)
+        .send({ status: "error", message: "Error connecting to database" });
+    }
+
+    try {
+      await ctx.engine.default.getJson();
+    } catch (err) {
+      return reply.code(500).send({
+        status: "error",
+        message: "Error connecting to Thirdweb Engine",
+      });
+    }
+
+    reply.send({ status: "ok" });
+  });
 
   // Start server
   await app.ready();
