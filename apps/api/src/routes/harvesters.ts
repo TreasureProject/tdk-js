@@ -8,6 +8,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";
 
 import "../middleware/chain";
+import "../middleware/swagger";
 import type {
   ReadHarvesterCorruptionRemovalParams,
   ReadHarvesterCorruptionRemovalReply,
@@ -32,6 +33,9 @@ export const harvestersRoutes =
       "/harvesters/:id",
       {
         schema: {
+          summary: "Get Harvester details",
+          description:
+            "Get Harvester details including user info if valid authorization token is provided",
           response: {
             200: readHarvesterReplySchema,
           },
@@ -85,6 +89,9 @@ export const harvestersRoutes =
       "/harvesters/:id/corruption-removal",
       {
         schema: {
+          summary: "Get Harvester Corruption Removal",
+          description:
+            "Get Corruption Removal recipes for Harvester including user info if valid authorization token is provided",
           response: {
             200: readHarvesterCorruptionRemovalReplySchema,
           },

@@ -3,6 +3,7 @@ import { DEFAULT_TDK_CHAIN_ID, decodeAuthToken } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/project";
+import "../middleware/swagger";
 import type {
   LoginBody,
   LoginReply,
@@ -38,6 +39,8 @@ export const authRoutes =
       "/login/payload",
       {
         schema: {
+          summary: "Generate login payload",
+          description: "Generate a login payload for a given wallet address",
           querystring: readLoginPayloadQuerystringSchema,
           response: {
             200: readLoginPayloadReplySchema,
@@ -56,6 +59,8 @@ export const authRoutes =
         "/login",
         {
           schema: {
+            summary: "Log in",
+            description: "Log in with a signed payload",
             body: loginBodySchema,
             response: {
               200: loginReplySchema,
@@ -151,6 +156,9 @@ export const authRoutes =
         "/auth/authenticate",
         {
           schema: {
+            summary: "Log in via third party",
+            description:
+              "Start login session with custom authentication method",
             body: authenticateBodySchema,
             response: {
               200: authenticateReplySchema,
@@ -188,6 +196,9 @@ export const authRoutes =
       "/auth/verify",
       {
         schema: {
+          summary: "Verify third-party login",
+          description:
+            "Verify login session started via custom authentication method",
           body: authVerifyBodySchema,
           response: {
             200: authVerifyReplySchema,

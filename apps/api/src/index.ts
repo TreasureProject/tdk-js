@@ -17,7 +17,6 @@ import { withErrorHandler } from "./middleware/error";
 import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
 import { authRoutes } from "./routes/auth";
-import { contractsRoutes } from "./routes/contracts";
 import { harvestersRoutes } from "./routes/harvesters";
 import { projectsRoutes } from "./routes/projects";
 import { transactionsRoutes } from "./routes/transactions";
@@ -87,7 +86,6 @@ const main = async () => {
     app.register(authRoutes(ctx)),
     app.register(usersRoutes(ctx)),
     app.register(projectsRoutes(ctx)),
-    app.register(contractsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes(ctx)),
   ]);

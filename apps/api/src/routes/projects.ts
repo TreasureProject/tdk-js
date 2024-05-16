@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
+import "../middleware/swagger";
 import {
   type ReadProjectParams,
   type ReadProjectReply,
@@ -18,6 +19,8 @@ export const projectsRoutes =
       "/projects/:slug",
       {
         schema: {
+          summary: "Get project details",
+          description: "Get project details to power login experience",
           response: {
             200: readProjectReplySchema,
           },

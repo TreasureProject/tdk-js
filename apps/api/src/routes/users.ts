@@ -2,6 +2,7 @@ import { getAllActiveSigners } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
+import "../middleware/swagger";
 import {
   type ErrorReply,
   type ReadCurrentUserReply,
@@ -19,6 +20,9 @@ export const usersRoutes =
       "/users/me",
       {
         schema: {
+          summary: "Get current user",
+          description: "Get current user profile details and on-chain sessions",
+          security: [{ authToken: [] }],
           response: {
             200: readCurrentUserReplySchema,
           },

@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
 import "../middleware/project";
+import "../middleware/swagger";
 import {
   type CreateTransactionBody,
   type CreateTransactionReply,
@@ -25,6 +26,9 @@ export const transactionsRoutes =
       "/transactions",
       {
         schema: {
+          summary: "Write contract",
+          description: "Call a contract write function",
+          security: [{ authToken: [] }],
           body: createTransactionBodySchema,
           response: {
             200: createTransactionReplySchema,
@@ -71,6 +75,8 @@ export const transactionsRoutes =
       "/transactions/:queueId",
       {
         schema: {
+          summary: "Get transaction",
+          description: "Get transaction status by queue ID",
           response: {
             200: readTransactionReplySchema,
           },
