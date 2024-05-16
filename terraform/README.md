@@ -59,7 +59,7 @@ brew install terragrunt
 To initialize the TerraGrunt configuration for a specific environment and resource:
 
 ```bash
-cd environments/developments/gke
+cd environments/developments/aurora
 terragrunt init
 ```
 ### Setup Prod MFA script and login to prod cli before continue
@@ -75,7 +75,7 @@ aws configure --profile dev
 To see the execution plan for a specific environment and resource:
 
 ```bash
-cd environments/developments/gke
+cd environments/developments/aurora
 terragrunt plan
 ```
 
@@ -83,7 +83,7 @@ terragrunt plan
 To apply the changes for a specific environment and resource:
 
 ```bash
-cd environments/developments/gke
+cd environments/developments/aurora
 terragrunt apply
 ```
 
@@ -91,7 +91,7 @@ terragrunt apply
 To destroy the resources for a specific environment and resource:
 
 ```bash
-cd environments/developments/gke
+cd environments/developments/aurora
 terragrunt destroy
 ```
 
