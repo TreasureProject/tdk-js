@@ -33,4 +33,10 @@ locals {
   cloudflare_zone_id  = "43c53e4c8555e49c1a70efd4c949fb02" #treasure.lol
   desired_count       = 2
   dns_name            = "tdk-api-dev1"
+
+  //////////////////
+  //// Github OIDC
+  //////////////////
+  iam_role_prefix = "${local.environment}-${local.project_name}"
+  github_project  = "TreasureProject/tdk-js" # gitHubOrg/gitHubRepo
 }
