@@ -1,41 +1,19 @@
 resource "aws_ecr_repository" "identity" {
-  name = var.ecs_prefix
+  name         = var.ecs_prefix
+  force_delete = true
 }
 
-# get authorization credentials to push to ecr
-data "aws_ecr_authorization_token" "token" {}
+resource "null_resource" "build_image" {
+  triggers = {
+    image_hash = filemd5("${path.module}/${local.deep_blue}/apps/api/Dockerfile") # i know i know i know, will fix the path later
+  }
 
-# configure docker provider
-# provider "docker" {
-#   registry_auth {
-#       address = data.aws_ecr_authorization_token.token.proxy_endpoint
-#       username = data.aws_ecr_authorization_token.token.user_name
-#       password  = data.aws_ecr_authorization_token.token.password
-#     }
-# }
+  provisioner "local-exec" {
+    command = <<-EOT
+      aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${aws_ecr_repository.identity.repository_url}
+      docker buildx build --push  --platform linux/arm64 --tag ${aws_ecr_repository.identity.repository_url}:init  -f ./${local.deep_blue}/apps/api/Dockerfile ./${local.deep_blue}
+    EOT
+  }
 
-# build docker image
-# resource "docker_image" "my-docker-image" {
-#   name = "${data.aws_ecr_authorization_token.token.proxy_endpoint}/var.ecs_prefix:init"
-#   build {
-#     context = "${path.module}/../../../apps/api/Dockerfile"
-#   }
-#   platform = "linux/arm64"
-# }
-
-
-# resource "null_resource" "docker_image" {
-#   triggers = {
-#     image_hash = filemd5("${path.module}/../../apps/api/Dockerfile")
-#   }
-
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#       docker build -t ${aws_ecr_repository.identity.repository_url}:latest .
-#       aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${aws_ecr_repository.identity.repository_url}
-#       docker push ${aws_ecr_repository.identity.repository_url}:latest
-#     EOT
-#   }
-
-#   depends_on = [aws_ecr_repository.identity]
-# }
+  depends_on = [aws_ecr_repository.identity]
+}

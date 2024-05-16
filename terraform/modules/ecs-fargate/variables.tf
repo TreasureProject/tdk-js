@@ -96,3 +96,14 @@ variable "dns_name" {
   description = "dns name to be created under *.treasure.lol"
 }
 
+variable "image_tag" {
+  type        = string
+  default     = "init"
+  description = "image tag for ecs deployment, can be overriden from fargate caller"
+}
+
+variable "api_env_secret_name" {
+  type        = string
+  default     = "tdkApiEnv"
+  description = "Api Secret name in secret manager"
+}

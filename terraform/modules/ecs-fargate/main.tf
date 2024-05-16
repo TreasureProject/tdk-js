@@ -12,6 +12,7 @@ locals {
     Cluster   = local.cluster_name
   }
   account_id = data.aws_caller_identity.current.account_id
+  deep_blue  = "../../../../../../.."
 }
 ################################################################################
 # Cluster
@@ -47,6 +48,7 @@ module "ecs_cluster" {
 ################################################################################
 
 module "ecs_service" {
+  #depends_on = [module.ecs_cluster, null_resource.build_image]
   source = "terraform-aws-modules/ecs/aws//modules/service"
 
   name                  = local.service_name
@@ -69,7 +71,7 @@ module "ecs_service" {
       cpu       = var.task_cpu
       memory    = var.task_memory
       essential = true
-      image     = "665230337498.dkr.ecr.us-west-2.amazonaws.com/cdk-hnb659fds-container-assets-665230337498-us-west-2:08d18deb1899b0a8c1283dd99c200a25777974c7" # "665230337498.dkr.ecr.us-west-2.amazonaws.com/cdk-hnb659fds-container-assets-665230337498-us-west-2:3c5b506204d8ec6aeb576fc16e00b27b5e985482"
+      image     = "${aws_ecr_repository.identity.repository_url}:${var.image_tag}" # "665230337498.dkr.ecr.us-west-2.amazonaws.com/cdk-hnb659fds-container-assets-665230337498-us-west-2:3c5b506204d8ec6aeb576fc16e00b27b5e985482"
       port_mappings = [
         {
           name          = local.container_name
@@ -80,7 +82,8 @@ module "ecs_service" {
       ]
       environment = [
         { name = "AWS_REGION", value = var.region },
-        { name = "DATABASE_SECRET_NAME", value = var.aurora_secret_name }
+        { name = "DATABASE_SECRET_NAME", value = var.aurora_secret_name },
+        { name = "API_ENV_SECRET_NAME", value = var.api_env_secret_name }
       ]
 
       readonly_root_filesystem  = true
