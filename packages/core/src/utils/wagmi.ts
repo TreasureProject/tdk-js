@@ -1,4 +1,4 @@
-import { createConfig, http } from "@wagmi/core";
+import { http, createConfig } from "@wagmi/core";
 import type { Transport } from "viem";
 
 import { SUPPORTED_CHAINS } from "../constants";
