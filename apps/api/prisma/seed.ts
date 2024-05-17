@@ -4,76 +4,113 @@ import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia, sepolia } from "viem/chains";
 
 type Environment = "local" | "dev" | "prod";
-
 type ProjectMetadata = Omit<Prisma.ProjectCreateInput, "slug">;
 
-const METADATA: Record<string, ProjectMetadata> = {
+const PROJECT_DATA: Record<
+  string,
+  {
+    metadata: ProjectMetadata;
+    redirectUris: Record<Environment, string[]>;
+    callTargets: [number, Contract][];
+  }
+> = {
   app: {
-    name: "Treasure",
+    metadata: {
+      name: "Treasure",
+    },
+    redirectUris: {
+      local: ["http://localhost:3000"],
+      dev: ["https://app-testnet.treasure.lol"],
+      prod: ["https://app.treasure.lol"],
+    },
+    callTargets: [],
+  },
+  bitmates: {
+    metadata: {
+      name: "Bitmates",
+    },
+    redirectUris: {
+      local: [],
+      dev: [],
+      prod: [],
+    },
+    callTargets: [[arbitrumSepolia.id, "MAGIC"]],
+  },
+  harness: {
+    metadata: {
+      name: "TDK Harness",
+    },
+    redirectUris: {
+      local: [],
+      dev: [],
+      prod: [],
+    },
+    callTargets: [
+      [arbitrumSepolia.id, "MAGIC"],
+      [arbitrumSepolia.id, "Consumables"],
+      [arbitrumSepolia.id, "Legions"],
+      [arbitrumSepolia.id, "CorruptionRemoval"],
+      [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
+      [arbitrumSepolia.id, "HarvesterEmberwing"],
+      [arbitrumSepolia.id, "NftHandlerEmberwing"],
+      [arbitrumSepolia.id, "ZeeverseZee"],
+      [arbitrumSepolia.id, "ZeeverseItems"],
+      [arbitrumSepolia.id, "BulkTransferHelper"],
+      [sepolia.id, "MAGIC"],
+    ],
   },
   realm: {
-    name: "Realm",
+    metadata: {
+      name: "Realm",
+    },
+    redirectUris: {
+      local: [],
+      dev: [],
+      prod: [],
+    },
+    callTargets: [[arbitrumSepolia.id, "MAGIC"]],
   },
   zeeverse: {
-    name: "Zeeverse",
-    cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
-    icon: "https://images.treasure.lol/tdk/login/zeeverse_icon.png",
-    color: "#8fd24f",
-  },
-};
-
-const REDIRECT_URIS: Record<string, Record<Environment, string[]>> = {
-  app: {
-    local: ["http://localhost:3000"],
-    dev: ["https://app-testnet.treasure.lol"],
-    prod: ["https://app.treasure.lol"],
-  },
-  realm: {
-    local: ["http://localhost:3000"],
-    dev: ["https://app-testnet.treasure.lol"],
-    prod: ["https://app.treasure.lol"],
-  },
-  zeeverse: {
-    local: [
-      "http://localhost:5174",
-      "http://localhost:3000/harvesters/zeeverse",
+    metadata: {
+      name: "Zeeverse",
+      cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
+      icon: "https://images.treasure.lol/tdk/login/zeeverse_icon.png",
+      color: "#8fd24f",
+    },
+    redirectUris: {
+      local: [
+        "http://localhost:5174",
+        "http://localhost:3000/harvesters/zeeverse",
+      ],
+      dev: [
+        "https://tdk-examples-harvester.vercel.app",
+        "https://bridgeworld-staging.treasure.lol/harvesters/zeeverse",
+      ],
+      prod: ["https://bridgeworld.treasure.lol/harvesters/zeeverse"],
+    },
+    callTargets: [
+      [arbitrumSepolia.id, "MAGIC"],
+      [arbitrumSepolia.id, "Consumables"],
+      [arbitrumSepolia.id, "Legions"],
+      [arbitrumSepolia.id, "CorruptionRemoval"],
+      [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
+      [arbitrumSepolia.id, "HarvesterEmberwing"],
+      [arbitrumSepolia.id, "NftHandlerEmberwing"],
+      [arbitrumSepolia.id, "ZeeverseZee"],
+      [arbitrumSepolia.id, "ZeeverseItems"],
+      [arbitrumSepolia.id, "BulkTransferHelper"],
+      [arbitrum.id, "MAGIC"],
+      [arbitrum.id, "Consumables"],
+      [arbitrum.id, "Legions"],
+      [arbitrum.id, "CorruptionRemoval"],
+      [arbitrum.id, "ERC1155TokenSetCorruptionHandler"],
+      [arbitrum.id, "HarvesterEmberwing"],
+      [arbitrum.id, "NftHandlerEmberwing"],
+      [arbitrum.id, "ZeeverseZee"],
+      [arbitrum.id, "ZeeverseItems"],
+      [arbitrum.id, "BulkTransferHelper"],
     ],
-    dev: [
-      "https://tdk-examples-harvester.vercel.app",
-      "https://bridgeworld-staging.treasure.lol/harvesters/zeeverse",
-    ],
-    prod: ["https://bridgeworld.treasure.lol/harvesters/zeeverse"],
   },
-};
-
-const CALL_TARGETS: Record<string, [number, Contract][]> = {
-  app: [
-    [arbitrumSepolia.id, "MAGIC"],
-    [sepolia.id, "MAGIC"],
-  ],
-  realm: [[arbitrumSepolia.id, "MAGIC"]],
-  zeeverse: [
-    [arbitrumSepolia.id, "MAGIC"],
-    [arbitrumSepolia.id, "Consumables"],
-    [arbitrumSepolia.id, "Legions"],
-    [arbitrumSepolia.id, "CorruptionRemoval"],
-    [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
-    [arbitrumSepolia.id, "HarvesterEmberwing"],
-    [arbitrumSepolia.id, "NftHandlerEmberwing"],
-    [arbitrumSepolia.id, "ZeeverseZee"],
-    [arbitrumSepolia.id, "ZeeverseItems"],
-    [arbitrumSepolia.id, "BulkTransferHelper"],
-    [arbitrum.id, "MAGIC"],
-    [arbitrum.id, "Consumables"],
-    [arbitrum.id, "Legions"],
-    [arbitrum.id, "CorruptionRemoval"],
-    [arbitrum.id, "ERC1155TokenSetCorruptionHandler"],
-    [arbitrum.id, "HarvesterEmberwing"],
-    [arbitrum.id, "NftHandlerEmberwing"],
-    [arbitrum.id, "ZeeverseZee"],
-    [arbitrum.id, "ZeeverseItems"],
-    [arbitrum.id, "BulkTransferHelper"],
-  ],
 };
 
 const prisma = new PrismaClient();
@@ -102,12 +139,11 @@ const createProject = ({
           );
         }
 
-        const callTarget = { chainId, address };
         return {
           where: {
-            chainId_address: callTarget,
+            chainId_address: { chainId, address },
           },
-          create: callTarget,
+          create: { chainId, address },
         };
       }),
     },
@@ -124,12 +160,15 @@ const createProject = ({
   const environment = (args[0] as Environment) ?? "local";
 
   try {
-    for (const slug of Object.keys(METADATA)) {
+    for (const [
+      slug,
+      { metadata, redirectUris, callTargets },
+    ] of Object.entries(PROJECT_DATA)) {
       await createProject({
         slug,
-        metadata: METADATA[slug],
-        redirectUris: REDIRECT_URIS[slug][environment],
-        callTargets: CALL_TARGETS[slug],
+        metadata,
+        redirectUris: redirectUris[environment],
+        callTargets,
       });
     }
 
