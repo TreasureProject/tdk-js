@@ -14,7 +14,7 @@ permissions:
   id-token: write
   contents: read
 env:
-  ECR_REPOSITORY: 665230337498.dkr.ecr.us-west-2.amazonaws.com/development-identity
+  ECR_REPOSITORY: development-identity
   AWS_ROLE_ARN: arn:aws:iam::665230337498:role/development-identity-github-actions
   AWS_REGION: us-west-2
   ECS_SERVICE: development-identity-service
