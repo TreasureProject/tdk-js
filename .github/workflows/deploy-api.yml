@@ -49,7 +49,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ./apps/api/.aws/task-definition-${{ env.ENVIRONMENT }}.json
-          container-name: web
+          container-name: development-identity
           image: ${{ steps.build-image.outputs.image }}
           environment-variables: |
             AWS_REGION=${{ env.AWS_REGION }}
