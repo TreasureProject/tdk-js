@@ -7,10 +7,10 @@ import type { SupportedChainId } from "../types";
 export const DEFAULT_WAGMI_CONFIG = createConfig({
   chains: SUPPORTED_CHAINS,
   transports: SUPPORTED_CHAINS.reduce(
-    (acc, chain) => ({
-      ...acc,
-      [chain.id]: http(),
-    }),
+    (acc, chain) => {
+      acc[chain.id] = http();
+      return acc;
+    },
     {} as Record<SupportedChainId, Transport>,
   ),
 });

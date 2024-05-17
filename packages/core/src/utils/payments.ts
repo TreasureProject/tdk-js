@@ -1,10 +1,10 @@
 import type { Currency, Token } from "../types";
 
 export enum PaymentsPriceType {
-  STATIC,
-  PRICED_IN_ERC20,
-  PRICED_IN_USD,
-  PRICED_IN_GAS_TOKEN,
+  STATIC = 0,
+  PRICED_IN_ERC20 = 1,
+  PRICED_IN_USD = 2,
+  PRICED_IN_GAS_TOKEN = 3,
 }
 
 export const getPaymentsPriceType = (

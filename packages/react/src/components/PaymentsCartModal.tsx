@@ -111,6 +111,7 @@ const PaymentsCartModalContents = ({
           {t("payments.cart.title", { context: isSuccess ? "success" : "" })}
         </h1>
         <button
+          type="button"
           className="tdk-flex tdk-h-10 tdk-w-10 tdk-items-center tdk-justify-center tdk-rounded-full tdk-border tdk-border-[#5E6470] tdk-text-[#5E6470] hover:tdk-border-night-200 hover:tdk-bg-night-200 hover:tdk-text-night-900 tdk-transition-colors"
           onClick={onClose}
         >
@@ -169,6 +170,7 @@ const PaymentsCartModalContents = ({
                       />
                       {!isSuccess ? (
                         <button
+                          type="button"
                           className="tdk-group tdk-flex tdk-h-9 tdk-w-9 tdk-items-center tdk-justify-center tdk-rounded-md tdk-border tdk-border-[#5E6470] hover:tdk-border-night-200 tdk-transition-colors"
                           title={t("common.removeItem")}
                         >
@@ -220,7 +222,7 @@ const PaymentsCartModalContents = ({
               <p className="tdk-text-night-600">
                 {t("payments.cart.optionsTitle")}
               </p>
-              <button className="tdk-text-[#0093D5]">
+              <button type="button" className="tdk-text-[#0093D5]">
                 {t("common.moreInfo")}
               </button>
             </div>
@@ -228,6 +230,7 @@ const PaymentsCartModalContents = ({
               {paymentTokens.map((token, i) => (
                 <li key={token}>
                   <button
+                    type="button"
                     className={cn(
                       "tdk-group tdk-flex tdk-w-full tdk-items-center tdk-justify-between tdk-gap-6 md:tdk-gap-8 tdk-p-3 md:tdk-p-4 tdk-transition-colors",
                       token === selectedToken && "tdk-bg-[#101D2F]",

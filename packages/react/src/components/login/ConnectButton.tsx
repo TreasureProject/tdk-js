@@ -29,7 +29,10 @@ export const ConnectButton = (props?: Props) => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none">
+          <button
+            type="button"
+            className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
+          >
             <div>
               <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium block">
                 {account?.email}
@@ -44,6 +47,7 @@ export const ConnectButton = (props?: Props) => {
         <DropdownMenuContent className="tdk-w-[var(--radix-dropdown-menu-trigger-width)]">
           <DropdownMenuItem>
             <button
+              type="button"
               className="tdk-flex tdk-items-center tdk-gap-1 tdk-w-full tdk-px-2 tdk-py-1.5"
               onClick={() => copy(address ?? "")}
             >
@@ -53,6 +57,7 @@ export const ConnectButton = (props?: Props) => {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <button
+              type="button"
               className="tdk-flex tdk-items-center tdk-gap-1 tdk-text-ruby-800 tdk-w-full tdk-px-2 tdk-py-1.5"
               onClick={() => logOut()}
             >

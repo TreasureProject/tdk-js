@@ -171,6 +171,7 @@ export const App = () => {
                   {formatEther(paymentAmount)} {paymentToken}
                 </p>
                 <button
+                  type="button"
                   className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
                   disabled={isLoading || !makePayment}
                   onClick={makePayment}
@@ -202,6 +203,7 @@ export const App = () => {
                     </div>
                     <div className="bg-ruby-800 text-honey-50 flex items-center gap-1 rounded-md text-center">
                       <button
+                        type="button"
                         className="px-4 text-lg font-bold"
                         onClick={() =>
                           setSelectedProducts((curr) => ({
@@ -216,6 +218,7 @@ export const App = () => {
                         {selectedProducts[id] || 0}
                       </span>
                       <button
+                        type="button"
                         className="px-4 text-lg font-bold"
                         onClick={() =>
                           setSelectedProducts((curr) => ({
@@ -231,6 +234,7 @@ export const App = () => {
                 ))}
             </div>
             <button
+              type="button"
               className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 mt-3 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
               disabled={numSelectedProducts === 0}
               onClick={() => setIsCheckingOut(true)}
