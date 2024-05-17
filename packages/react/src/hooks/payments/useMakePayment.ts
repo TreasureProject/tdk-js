@@ -35,7 +35,6 @@ type Params = {
   onError?: OnErrorFn;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const useMakePayment = (params: Params) => {
   // export const useMakePayment = ({
   //   paymentToken,

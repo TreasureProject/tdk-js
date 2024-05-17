@@ -148,7 +148,9 @@ export const getHarvesterInfo = async ({
     { result: totalEmissionsActivated = 0n },
     { result: totalMagicStaked = 0n },
     { result: totalBoost = 0n },
-    { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
+    {
+      result: [, , , , , corruptionMaxGenerated = 0n] = [],
+    },
     { result: totalCorruption = 0n },
   ] = await readContracts(wagmiConfig, {
     contracts: [
@@ -393,7 +395,9 @@ export const getHarvesterUserInfo = async ({
       { result: userLegionsMaxWeightStakeable = 0n },
       { result: userLegionsWeightStaked = 0n },
       { result: userMagicMaxStakeable = 0n },
-      { result: [userMagicStaked] = [0n] },
+      {
+        result: [userMagicStaked] = [0n],
+      },
       { result: userTotalBoost = 0n },
       { result: userMagicRewardsClaimable = 0n },
     ],
@@ -641,8 +645,9 @@ export const getHarvesterUserInfo = async ({
         ({ attributes }) =>
           Number(
             (
-              (attributes.find(({ type }) => type === "Staking Boost")
-                ?.value as string | undefined) ?? "0"
+              (attributes.find(({ type }) => type === "Staking Boost")?.value as
+                | string
+                | undefined) ?? "0"
             ).replace("%", ""),
           ) / 100,
       ),
@@ -659,8 +664,9 @@ export const getHarvesterUserInfo = async ({
         ({ attributes }) =>
           Number(
             (
-              (attributes.find(({ type }) => type === "Staking Boost")
-                ?.value as string | undefined) ?? "0"
+              (attributes.find(({ type }) => type === "Staking Boost")?.value as
+                | string
+                | undefined) ?? "0"
             ).replace("%", ""),
           ) / 100,
       ),

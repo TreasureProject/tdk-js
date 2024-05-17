@@ -4,7 +4,7 @@ import { Engine } from "@thirdweb-dev/engine";
 import type { SupportedChainId } from "@treasure-dev/tdk-core";
 import { SUPPORTED_CHAINS } from "@treasure-dev/tdk-core";
 import type { Transport } from "@wagmi/core";
-import { createConfig, fallback, http } from "@wagmi/core";
+import { http, createConfig, fallback } from "@wagmi/core";
 import Fastify from "fastify";
 import { createThirdwebClient } from "thirdweb";
 import { createAuth } from "thirdweb/auth";
