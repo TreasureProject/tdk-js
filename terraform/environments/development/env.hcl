@@ -1,6 +1,11 @@
 # Set common variables for the environment. This is automatically pulled in in the root terragrunt.hcl configuration to
 # feed forward to the child modules.
 locals {
+
+  //////////////////
+  //// Shared
+  //////////////////
+
   environment        = "development"
   project_name       = "identity"
   region             = "us-west-2"
@@ -28,15 +33,19 @@ locals {
   //// ECS
   //////////////////
 
-  ecs_prefix          = "${local.environment}-${local.project_name}"
-  ssl_certificate_arn = "arn:aws:acm:us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2"
-  cloudflare_zone_id  = "43c53e4c8555e49c1a70efd4c949fb02" #treasure.lol
-  desired_count       = 2
-  dns_name            = "tdk-api-dev1"
+  ecs_prefix               = "${local.environment}-${local.project_name}"
+  ssl_certificate_arn      = "arn:aws:acm:us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2"
+  cloudflare_zone_id       = "43c53e4c8555e49c1a70efd4c949fb02" #treasure.lol
+  desired_count            = 1
+  autoscaling_min_capacity = 1
+  autoscaling_max_capacity = 2
+
+  dns_name = "tdk-api-dev1"
 
   //////////////////
   //// Github OIDC
   //////////////////
+
   iam_role_prefix = "${local.environment}-${local.project_name}"
   github_project  = "TreasureProject/tdk-js" # gitHubOrg/gitHubRepo
 }

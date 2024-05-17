@@ -19,12 +19,12 @@ locals {
 ################################################################################
 
 module "ecs_cluster" {
-  source                    = "terraform-aws-modules/ecs/aws//modules/cluster"
-  version                   = "5.11.1"
-  create_task_exec_iam_role = true
-  create_task_exec_policy   = true
-  cluster_name              = local.cluster_name
-
+  source                                = "terraform-aws-modules/ecs/aws//modules/cluster"
+  version                               = "5.11.1"
+  create_task_exec_iam_role             = true
+  create_task_exec_policy               = true
+  cluster_name                          = local.cluster_name
+  default_capacity_provider_use_fargate = true
   # Capacity provider
   fargate_capacity_providers = {
     FARGATE = {
@@ -60,6 +60,10 @@ module "ecs_service" {
   cpu           = var.fargate_cpu
   memory        = var.fargate_memory
   desired_count = var.desired_count
+  # Auto Scaling
+  enable_autoscaling       = true
+  autoscaling_min_capacity = var.autoscaling_min_capacity
+  autoscaling_max_capacity = var.autoscaling_max_capacity
   # Enables ECS Exec
   enable_execute_command = true
 
@@ -67,7 +71,6 @@ module "ecs_service" {
   container_definitions = {
 
     (local.container_name) = {
-
       cpu       = var.task_cpu
       memory    = var.task_memory
       essential = true

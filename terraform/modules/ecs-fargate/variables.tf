@@ -107,3 +107,15 @@ variable "api_env_secret_name" {
   default     = "tdkApiEnv"
   description = "Api Secret name in secret manager"
 }
+
+variable "autoscaling_min_capacity" {
+  type        = number
+  default     = 1
+  description = "auto scaling min"
+}
+
+variable "autoscaling_max_capacity" {
+  type        = number
+  default     = 1
+  description = "auto scaling max"
+}

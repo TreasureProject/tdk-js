@@ -11,7 +11,7 @@ resource "null_resource" "build_image" {
   provisioner "local-exec" {
     command = <<-EOT
       aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${aws_ecr_repository.identity.repository_url}
-      docker buildx build --push  --platform linux/arm64 --tag ${aws_ecr_repository.identity.repository_url}:init  -f ./${local.deep_blue}/apps/api/Dockerfile ./${local.deep_blue}
+      docker buildx build --push  --platform linux/amd64 --tag ${aws_ecr_repository.identity.repository_url}:init  -f ./${local.deep_blue}/apps/api/Dockerfile ./${local.deep_blue}
     EOT
   }
 
