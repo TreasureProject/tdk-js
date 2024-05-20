@@ -3,6 +3,7 @@ locals {
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
 
   aws_profile = local.account_vars.locals.aws_profile_name
+  region      = local.account_vars.locals.aws_region
 }
 
 terraform {
@@ -60,6 +61,7 @@ generate "provider" {
     }
     provider "aws" {
       profile = "${local.aws_profile}"
+      region = "${local.region}"
     }
     
 EOF

@@ -14,6 +14,6 @@ resource "cloudflare_record" "identity" {
   name    = var.dns_name        #"dns_name.treasure.lol"
   value   = module.alb.dns_name # alb dns address
   type    = "CNAME"
-  ttl     = 300
-  proxied = false
+  ttl     = var.dns_ttl
+  proxied = var.cloudflare_proxy_enabled
 }

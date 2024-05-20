@@ -119,3 +119,15 @@ variable "autoscaling_max_capacity" {
   default     = 1
   description = "auto scaling max"
 }
+
+variable "cloudflare_proxy_enabled" {
+  type        = bool
+  default     = false
+  description = "enabled cloudflare proxy"
+}
+
+variable "dns_ttl" {
+  type        = number
+  default     = 1 # auto
+  description = "dns record ttl"
+}
