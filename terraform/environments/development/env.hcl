@@ -34,13 +34,14 @@ locals {
   //////////////////
 
   ecs_prefix               = "${local.environment}-${local.project_name}"
-  ssl_certificate_arn      = "arn:aws:acm:us-west-2:665230337498:certificate/48316235-afa5-4ad7-91e1-b429f1da54e2"
-  cloudflare_zone_id       = "43c53e4c8555e49c1a70efd4c949fb02" #treasure.lol
+  ssl_certificate_arn      = "arn:aws:acm:us-west-2:665230337498:certificate/765df216-00a8-4a1e-959a-67b05ab60ba8" #spellcaster scm cert
+  cloudflare_zone_id       = "437a7f6f5de5431979d32b9b319e27c6"                                                    #spellcaster.lol
+  cloudflare_secret_name   = "cloudFlare/SpellcasterLolDns"
   desired_count            = 1
   autoscaling_min_capacity = 1
   autoscaling_max_capacity = 2
 
-  dns_name = "tdk-api-dev1"
+  dns_name = "tdk-api-dev"
 
   //////////////////
   //// Github OIDC

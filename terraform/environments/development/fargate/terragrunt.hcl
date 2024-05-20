@@ -25,6 +25,7 @@ inputs = {
   autoscaling_min_capacity = local.environment_vars.locals.autoscaling_min_capacity
   autoscaling_max_capacity = local.environment_vars.locals.autoscaling_max_capacity
   dns_name                 = local.environment_vars.locals.dns_name
+  cloudflare_secret_name   = local.environment_vars.locals.cloudflare_secret_name
 }
 
 dependency "aurora" {
