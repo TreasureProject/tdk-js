@@ -7,7 +7,6 @@ on:
       - "packages/**"
     branches:
       - main
-      - terraform
     tags:
       - api-v*
 permissions:
