@@ -41,7 +41,7 @@ locals {
   autoscaling_min_capacity = 1
   autoscaling_max_capacity = 2
 
-  dns_name = "tdk-api-dev"
+  dns_name = "tdk-api"
 
   //////////////////
   //// Github OIDC

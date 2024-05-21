@@ -45,7 +45,14 @@ locals {
   task_cpu                 = "2048"
   task_memory              = "4096"
   dns_name                 = "tdk-api1"
-
+  fargate_capacity_providers = {
+    FARGATE = {
+      default_capacity_provider_strategy = {
+        weight = 100
+        base   = 3
+      }
+    }
+  }
   //////////////////
   //// Github OIDC
   //////////////////
