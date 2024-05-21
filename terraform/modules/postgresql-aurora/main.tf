@@ -12,9 +12,9 @@ locals {
 }
 
 resource "random_password" "master_password" {
-  length           = 20
+  length           = 25
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  override_special = "!#$_"
 }
 
 module "aurora" {

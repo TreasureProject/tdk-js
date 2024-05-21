@@ -131,3 +131,20 @@ variable "dns_ttl" {
   default     = 1 # auto
   description = "dns record ttl"
 }
+
+variable "fargate_capacity_providers" {
+  type = map(any)
+  default = {
+    FARGATE = {
+      default_capacity_provider_strategy = {
+        weight = 50
+        base   = 20
+      }
+    }
+    FARGATE_SPOT = {
+      default_capacity_provider_strategy = {
+        weight = 50
+      }
+    }
+  }
+}

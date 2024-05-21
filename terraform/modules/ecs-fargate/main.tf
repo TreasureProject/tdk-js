@@ -26,19 +26,7 @@ module "ecs_cluster" {
   cluster_name                          = local.cluster_name
   default_capacity_provider_use_fargate = true
   # Capacity provider
-  fargate_capacity_providers = {
-    FARGATE = {
-      default_capacity_provider_strategy = {
-        weight = 50
-        base   = 20
-      }
-    }
-    FARGATE_SPOT = {
-      default_capacity_provider_strategy = {
-        weight = 50
-      }
-    }
-  }
+  fargate_capacity_providers = var.fargate_capacity_providers
 
   tags = local.tags
 }
