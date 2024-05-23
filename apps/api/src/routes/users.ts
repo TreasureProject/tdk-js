@@ -1,6 +1,7 @@
 import { getAllActiveSigners } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import {
@@ -9,10 +10,9 @@ import {
   readCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { verifyAuth } from "../utils/auth";
 
 export const usersRoutes =
-  ({ db, auth, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply | ErrorReply;
@@ -29,27 +29,23 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const authResult = await verifyAuth(auth, req);
-        if (!authResult.valid) {
+        const { chainId, userAddress, authError } = req;
+        if (!userAddress) {
           console.error(
             "Error authenticating user for user details read:",
-            authResult.error,
+            authError,
           );
-          return reply
-            .code(401)
-            .send({ error: `Unauthorized: ${authResult.error}` });
+          return reply.code(401).send({ error: `Unauthorized: ${authError}` });
         }
-
-        const smartAccountAddress = authResult.parsedJWT.sub;
 
         const [dbUser, allActiveSigners] = await Promise.all([
           db.user.findUnique({
-            where: { smartAccountAddress },
+            where: { smartAccountAddress: userAddress },
             select: { id: true, smartAccountAddress: true, email: true },
           }),
           getAllActiveSigners({
-            chainId: req.chainId,
-            address: smartAccountAddress,
+            chainId,
+            address: userAddress,
             wagmiConfig,
           }),
         ]);
@@ -58,7 +54,7 @@ export const usersRoutes =
           return reply.code(401).send({ error: "Unauthorized" });
         }
 
-        return {
+        reply.send({
           ...dbUser,
           allActiveSigners: allActiveSigners.map((activeSigner) => ({
             ...activeSigner,
@@ -70,7 +66,7 @@ export const usersRoutes =
             startTimestamp: activeSigner.startTimestamp.toString(),
             endTimestamp: activeSigner.endTimestamp.toString(),
           })),
-        };
+        });
       },
     );
   };

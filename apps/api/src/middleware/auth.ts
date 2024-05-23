@@ -1,14 +1,24 @@
 import type { Prisma } from "@prisma/client";
 import { PrivateKeyWallet } from "@thirdweb-dev/auth/evm";
 import { ThirdwebAuth } from "@thirdweb-dev/auth/fastify";
+import type { AddressString } from "@treasure-dev/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 import type { TdkApiContext } from "../types";
+import { verifyAuth } from "../utils/auth";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
+
+declare module "fastify" {
+  interface FastifyRequest {
+    userAddress: AddressString | undefined;
+    overrideUserAddress: AddressString | undefined;
+    authError: string | undefined;
+  }
+}
 
 export const withAuth = async (
   app: FastifyInstance,
-  { env, db, engine }: TdkApiContext,
+  { env, db, auth, engine }: TdkApiContext,
 ) => {
   const { authRouter, authMiddleware } = ThirdwebAuth({
     domain: env.THIRDWEB_AUTH_DOMAIN,
@@ -106,4 +116,23 @@ export const withAuth = async (
 
   // We add the auth middleware to our app to let us access the user across our API
   app.register(authMiddleware);
+
+  // Parse JWT header and obtain user address in middleware
+  app.decorateRequest("userAddress", undefined);
+  app.decorateRequest("overrideUserAddress", undefined);
+  app.decorateRequest("authError", undefined);
+  app.addHook("onRequest", async (req) => {
+    if (req.headers.authorization) {
+      const authResult = await verifyAuth(auth, req);
+      if (authResult.valid) {
+        req.userAddress = authResult.parsedJWT.sub as AddressString;
+      } else {
+        req.authError = authResult.error;
+      }
+    }
+
+    req.overrideUserAddress = req.headers["x-account-address"]?.toString() as
+      | AddressString
+      | undefined;
+  });
 };
