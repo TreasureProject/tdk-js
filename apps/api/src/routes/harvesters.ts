@@ -7,6 +7,7 @@ import {
 import type { FastifyPluginAsync } from "fastify";
 import { zeroAddress } from "viem";
 
+import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import type {
@@ -21,10 +22,9 @@ import {
   readHarvesterReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { verifyAuth } from "../utils/auth";
 
 export const harvestersRoutes =
-  ({ env, auth, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Params: ReadHarvesterParams;
@@ -45,6 +45,8 @@ export const harvestersRoutes =
         const {
           chainId,
           params: { id },
+          userAddress: authUserAddress,
+          overrideUserAddress,
         } = req;
 
         const harvesterAddress = id as AddressString;
@@ -58,12 +60,7 @@ export const harvestersRoutes =
           return reply.code(404).send({ error: "Not found" });
         }
 
-        // User address is optional for this request
-        const authResult = await verifyAuth(auth, req);
-        const userAddress = authResult.valid
-          ? (authResult.parsedJWT.sub as AddressString)
-          : undefined;
-
+        const userAddress = overrideUserAddress ?? authUserAddress;
         const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
               chainId,
@@ -101,19 +98,15 @@ export const harvestersRoutes =
         const {
           chainId,
           params: { id },
+          userAddress: authUserAddress,
+          overrideUserAddress,
         } = req;
-
-        // User address is optional for this request
-        const authResult = await verifyAuth(auth, req);
-        const userAddress = authResult.valid
-          ? (authResult.parsedJWT.sub as AddressString)
-          : undefined;
 
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
             chainId,
             harvesterAddress: id,
-            userAddress,
+            userAddress: overrideUserAddress ?? authUserAddress,
             inventoryApiUrl: env.TROVE_API_URL,
             inventoryApiKey: env.TROVE_API_KEY,
             wagmiConfig,
