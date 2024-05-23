@@ -3,7 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia, sepolia } from "viem/chains";
 
-type Environment = "local" | "dev" | "prod";
+type RemoteEnvironment = "dev" | "prod";
+type Environment = "local" | RemoteEnvironment;
 type ProjectMetadata = Omit<Prisma.ProjectCreateInput, "slug">;
 
 const PROJECT_DATA: Record<
@@ -11,7 +12,7 @@ const PROJECT_DATA: Record<
   {
     metadata: ProjectMetadata;
     redirectUris: Record<Environment, string[]>;
-    callTargets: [number, Contract][];
+    callTargets: Record<RemoteEnvironment, [number, Contract][]>;
   }
 > = {
   app: {
@@ -23,7 +24,10 @@ const PROJECT_DATA: Record<
       dev: ["https://app-testnet.treasure.lol"],
       prod: ["https://app.treasure.lol"],
     },
-    callTargets: [],
+    callTargets: {
+      dev: [],
+      prod: [],
+    },
   },
   bitmates: {
     metadata: {
@@ -34,7 +38,10 @@ const PROJECT_DATA: Record<
       dev: [],
       prod: [],
     },
-    callTargets: [[arbitrumSepolia.id, "MAGIC"]],
+    callTargets: {
+      dev: [],
+      prod: [],
+    },
   },
   harness: {
     metadata: {
@@ -45,19 +52,22 @@ const PROJECT_DATA: Record<
       dev: [],
       prod: [],
     },
-    callTargets: [
-      [arbitrumSepolia.id, "MAGIC"],
-      [arbitrumSepolia.id, "Consumables"],
-      [arbitrumSepolia.id, "Legions"],
-      [arbitrumSepolia.id, "CorruptionRemoval"],
-      [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
-      [arbitrumSepolia.id, "HarvesterEmberwing"],
-      [arbitrumSepolia.id, "NftHandlerEmberwing"],
-      [arbitrumSepolia.id, "ZeeverseZee"],
-      [arbitrumSepolia.id, "ZeeverseItems"],
-      [arbitrumSepolia.id, "BulkTransferHelper"],
-      [sepolia.id, "MAGIC"],
-    ],
+    callTargets: {
+      dev: [
+        [arbitrumSepolia.id, "MAGIC"],
+        [arbitrumSepolia.id, "Consumables"],
+        [arbitrumSepolia.id, "Legions"],
+        [arbitrumSepolia.id, "CorruptionRemoval"],
+        [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
+        [arbitrumSepolia.id, "HarvesterEmberwing"],
+        [arbitrumSepolia.id, "NftHandlerEmberwing"],
+        [arbitrumSepolia.id, "ZeeverseZee"],
+        [arbitrumSepolia.id, "ZeeverseItems"],
+        [arbitrumSepolia.id, "BulkTransferHelper"],
+        [sepolia.id, "MAGIC"],
+      ],
+      prod: [],
+    },
   },
   realm: {
     metadata: {
@@ -68,14 +78,15 @@ const PROJECT_DATA: Record<
       dev: [],
       prod: [],
     },
-    callTargets: [[arbitrumSepolia.id, "MAGIC"]],
+    callTargets: {
+      dev: [],
+      prod: [],
+    },
   },
   zeeverse: {
     metadata: {
       name: "Zeeverse",
-      cover: "https://images.treasure.lol/tdk/login/zeeverse_cover.png",
       icon: "https://images.treasure.lol/tdk/login/zeeverse_icon.png",
-      color: "#8fd24f",
     },
     redirectUris: {
       local: [
@@ -88,34 +99,42 @@ const PROJECT_DATA: Record<
       ],
       prod: ["https://bridgeworld.treasure.lol/harvesters/zeeverse"],
     },
-    callTargets: [
-      [arbitrumSepolia.id, "MAGIC"],
-      [arbitrumSepolia.id, "Consumables"],
-      [arbitrumSepolia.id, "Legions"],
-      [arbitrumSepolia.id, "CorruptionRemoval"],
-      [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
-      [arbitrumSepolia.id, "HarvesterEmberwing"],
-      [arbitrumSepolia.id, "NftHandlerEmberwing"],
-      [arbitrumSepolia.id, "ZeeverseZee"],
-      [arbitrumSepolia.id, "ZeeverseItems"],
-      [arbitrumSepolia.id, "BulkTransferHelper"],
-      [arbitrum.id, "MAGIC"],
-      [arbitrum.id, "Consumables"],
-      [arbitrum.id, "Legions"],
-      [arbitrum.id, "CorruptionRemoval"],
-      [arbitrum.id, "ERC1155TokenSetCorruptionHandler"],
-      [arbitrum.id, "HarvesterEmberwing"],
-      [arbitrum.id, "NftHandlerEmberwing"],
-      [arbitrum.id, "ZeeverseZee"],
-      [arbitrum.id, "ZeeverseItems"],
-      [arbitrum.id, "BulkTransferHelper"],
-    ],
+    callTargets: {
+      dev: [
+        [arbitrumSepolia.id, "MAGIC"],
+        [arbitrumSepolia.id, "VEE"],
+        [arbitrumSepolia.id, "Consumables"],
+        [arbitrumSepolia.id, "Legions"],
+        [arbitrumSepolia.id, "CorruptionRemoval"],
+        [arbitrumSepolia.id, "ERC1155TokenSetCorruptionHandler"],
+        [arbitrumSepolia.id, "HarvesterEmberwing"],
+        [arbitrumSepolia.id, "NftHandlerEmberwing"],
+        [arbitrumSepolia.id, "ZeeverseZee"],
+        [arbitrumSepolia.id, "ZeeverseItems"],
+        [arbitrumSepolia.id, "ZeeverseVeeClaimer"],
+        [arbitrumSepolia.id, "BulkTransferHelper"],
+      ],
+      prod: [
+        [arbitrum.id, "MAGIC"],
+        [arbitrum.id, "VEE"],
+        [arbitrum.id, "Consumables"],
+        [arbitrum.id, "Legions"],
+        [arbitrum.id, "CorruptionRemoval"],
+        [arbitrum.id, "ERC1155TokenSetCorruptionHandler"],
+        [arbitrum.id, "HarvesterEmberwing"],
+        [arbitrum.id, "NftHandlerEmberwing"],
+        [arbitrum.id, "ZeeverseZee"],
+        [arbitrum.id, "ZeeverseItems"],
+        [arbitrum.id, "ZeeverseVeeClaimer"],
+        [arbitrum.id, "BulkTransferHelper"],
+      ],
+    },
   },
 };
 
 const prisma = new PrismaClient();
 
-const createProject = ({
+const createProject = async ({
   slug,
   metadata,
   redirectUris = [],
@@ -160,6 +179,10 @@ const createProject = ({
   const environment = (args[0] as Environment) ?? "local";
 
   try {
+    // Clear all call targets
+    await prisma.callTarget.deleteMany();
+
+    // Upsert projects
     for (const [
       slug,
       { metadata, redirectUris, callTargets },
@@ -168,7 +191,7 @@ const createProject = ({
         slug,
         metadata,
         redirectUris: redirectUris[environment],
-        callTargets,
+        callTargets: callTargets[environment === "local" ? "dev" : environment],
       });
     }
 

@@ -9,11 +9,12 @@ export type OnSuccessFn = (data?: TransactionReceipt) => void;
 export type OnErrorFn = (error?: Error) => void;
 
 // Contracts
+type TokenContract = "MAGIC" | "ARB" | "VEE";
 export type PriceFeedContract =
   | "MAGICUSDPriceFeed"
   | "ARBUSDPriceFeed"
   | "ETHUSDPriceFeed";
-export type BridgeworldContract =
+type BridgeworldContract =
   // General
   | "Middleman"
   // Tokens
@@ -43,14 +44,13 @@ export type BridgeworldContract =
   // Gameplay
   | "CorruptionRemoval"
   | "ERC1155TokenSetCorruptionHandler";
-export type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems";
+type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems" | "ZeeverseVeeClaimer";
 export type Contract =
-  | "MAGIC"
-  | "ARB"
   | "PaymentsModule"
   | "ManagedAccountFactory"
   | "BulkTransferHelper"
   | "TreasureConduit"
+  | TokenContract
   | PriceFeedContract
   | BridgeworldContract
   | ZeeverseContract;

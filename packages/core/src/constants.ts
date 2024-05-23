@@ -145,6 +145,7 @@ export const CONTRACT_ADDRESSES: Record<
     // Tokens
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
     ARB: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+    VEE: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
     // Price feeds
     MAGICUSDPriceFeed: "0x47e55ccec6582838e173f252d08afd8116c2202d",
     ARBUSDPriceFeed: "0xb2a824043730fe05f3da2efafa1cbbe83fa548d6",
@@ -183,11 +184,13 @@ export const CONTRACT_ADDRESSES: Record<
     // Zeeverse
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
+    ZeeverseVeeClaimer: "0x1cebdde81a9e4cd377bc7da5000797407cf9a58a",
   },
   [arbitrumSepolia.id]: {
     // Tokens
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
     ARB: zeroAddress,
+    VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
     // Price feeds
     MAGICUSDPriceFeed: "0x0fb99723aee6f420bead13e6bbb79b7e6f034298",
     ARBUSDPriceFeed: zeroAddress,
@@ -226,6 +229,7 @@ export const CONTRACT_ADDRESSES: Record<
     // Zeeverse
     ZeeverseZee: "0xb1af672c7e0e8880c066ecc24930a12ff2ee8534",
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
+    ZeeverseVeeClaimer: "0xf7abce65b1e683b7a42113f69ef76ee35cabbddc",
   },
   [mainnet.id]: {},
   [sepolia.id]: {
