@@ -3,7 +3,7 @@ import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
 
 import type { AddressString, Contract } from "./types";
 
-export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
+const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
 
 export const DEFAULT_TDK_API_BASE_URI = "https://tdk-api.treasure.lol";
 export const DEFAULT_TDK_APP = "app";
@@ -204,7 +204,7 @@ export const CONTRACT_ADDRESSES: Record<
   },
 };
 
-export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
+const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
   [arbitrum.id]:
     "0x086a11794a945fb10a6199cca4e0d7ff6d25513b000000000000000000000001",
   [arbitrumSepolia.id]:
