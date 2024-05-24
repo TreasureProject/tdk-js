@@ -50,6 +50,7 @@ export type Contract =
   | "ManagedAccountFactory"
   | "BulkTransferHelper"
   | "TreasureConduit"
+  | "RubyNFT"
   | TokenContract
   | PriceFeedContract
   | BridgeworldContract

@@ -1,6 +1,10 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
-import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
+import {
+  type Contract,
+  getContractAddress,
+  treasureRuby,
+} from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia, sepolia } from "viem/chains";
 
 type RemoteEnvironment = "dev" | "prod";
@@ -20,12 +24,12 @@ const PROJECT_DATA: Record<
       name: "Treasure",
     },
     redirectUris: {
-      local: ["http://localhost:3000"],
+      local: ["http://localhost:3000", "http://localhost:5174"],
       dev: ["https://app-testnet.treasure.lol"],
       prod: ["https://app.treasure.lol"],
     },
     callTargets: {
-      dev: [],
+      dev: [[treasureRuby.id, "RubyNFT"]],
       prod: [],
     },
   },

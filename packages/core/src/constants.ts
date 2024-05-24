@@ -241,6 +241,7 @@ export const CONTRACT_ADDRESSES: Record<
   [treasureRuby.id]: {
     // Treasure Misc
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
+    RubyNFT: "0x76c3b527b711a3b6aa01e4f76ec34b41a671ca29",
   },
 };
 
