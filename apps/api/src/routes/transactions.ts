@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/project";
 import "../middleware/swagger";
@@ -14,10 +15,9 @@ import {
   readTransactionReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { verifyAuth } from "../utils/auth";
 
 export const transactionsRoutes =
-  ({ auth, engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.post<{
       Body: CreateTransactionBody;
@@ -36,18 +36,21 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        const authResult = await verifyAuth(auth, req);
-        if (!authResult.valid) {
+        const {
+          chainId,
+          backendWallet,
+          userAddress,
+          authError,
+          body: postBody,
+        } = req;
+        if (!userAddress) {
           console.error(
             "Error authenticating user for transaction create:",
-            authResult.error,
+            authError,
           );
-          return reply
-            .code(401)
-            .send({ error: `Unauthorized: ${authResult.error}` });
+          return reply.code(401).send({ error: `Unauthorized: ${authError}` });
         }
 
-        const { chainId, backendWallet, body: postBody } = req;
         const { address, ...body } = postBody;
         try {
           const { result } = await engine.contract.write(
@@ -56,7 +59,7 @@ export const transactionsRoutes =
             backendWallet,
             body,
             false,
-            authResult.parsedJWT.sub,
+            userAddress,
           );
           reply.send(result);
         } catch (err) {

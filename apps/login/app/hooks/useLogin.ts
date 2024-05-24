@@ -185,7 +185,9 @@ export const useLogin = ({
         );
         return dispatch({
           type: "ERROR",
-          error: `An error occurred while deploying your Treasure account: ${getErrorMessage(err)}`,
+          error: `An error occurred while deploying your Treasure account: ${getErrorMessage(
+            err,
+          )}`,
           status: "IDLE",
         });
       }
@@ -213,7 +215,9 @@ export const useLogin = ({
       console.error("Error logging in smart account:", err);
       return dispatch({
         type: "ERROR",
-        error: `An error occurred while authenticating your Treasure account: ${getErrorMessage(err)}`,
+        error: `An error occurred while authenticating your Treasure account: ${getErrorMessage(
+          err,
+        )}`,
         status: "IDLE",
       });
     }
@@ -252,7 +256,9 @@ export const useLogin = ({
           console.error("Error creating new session key:", err);
           return dispatch({
             type: "ERROR",
-            error: `An error occurred while starting your Treasure account session: ${getErrorMessage(err)}`,
+            error: `An error occurred while starting your Treasure account session: ${getErrorMessage(
+              err,
+            )}`,
             status: "IDLE",
           });
         }
@@ -298,7 +304,9 @@ export const useLogin = ({
         console.error("Error finishing email login:", err);
         dispatch({
           type: "ERROR",
-          error: `An error occurred while confirming your email: ${getErrorMessage(err)}`,
+          error: `An error occurred while confirming your email: ${getErrorMessage(
+            err,
+          )}`,
         });
       }
     },

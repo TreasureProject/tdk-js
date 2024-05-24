@@ -34,12 +34,10 @@ export const Button = (props: Props) => {
   );
 
   if (props.as === "link") {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { as: _, variant: __, ...linkProps } = props;
     return <a {...linkProps} className={className} />;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { as: _, variant: __, ...buttonProps } = props;
   return <button {...buttonProps} className={className} />;
 };

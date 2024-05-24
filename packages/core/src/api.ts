@@ -135,7 +135,7 @@ export class TDKAPI {
       this.get<ReadLoginPayloadReply>("/login/payload", params),
     logIn: (params: LoginBody) => this.post<LoginReply>("/login", params),
     authenticate: (params: AuthenciateBody) =>
-      this.post<AuthenticateReply>(`/auth/authenticate`, params),
+      this.post<AuthenticateReply>("/auth/authenticate", params),
   };
 
   project = {
@@ -169,7 +169,7 @@ export class TDKAPI {
       options: { waitForCompletion?: boolean } = { waitForCompletion: true },
     ) => {
       const result = await this.post<CreateTransactionReply>(
-        `/transactions`,
+        "/transactions",
         params,
       );
       if (!options.waitForCompletion) {
@@ -192,15 +192,15 @@ export class TDKAPI {
         transaction.status !== "mined"
       );
 
-      if (transaction.status == "errored") {
+      if (transaction.status === "errored") {
         throw new APIError(transaction.errorMessage || "Transaction error");
       }
 
-      if (transaction.status == "cancelled") {
+      if (transaction.status === "cancelled") {
         throw new APIError("Transaction cancelled");
       }
 
-      if (transaction.status != "mined") {
+      if (transaction.status !== "mined") {
         throw new APIError("Transaction timed out");
       }
 

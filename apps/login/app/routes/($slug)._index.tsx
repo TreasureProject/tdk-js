@@ -149,7 +149,7 @@ export default function LoginPage() {
                 </div>
               ) : status === "CONFIRM_EMAIL" ? (
                 <div className="my-4 space-y-4 text-center">
-                  <img className="mx-auto w-20" src={emailImg} />
+                  <img className="mx-auto w-20" src={emailImg} alt="" />
                   <div className="space-y-1.5">
                     <p className="font-medium">We&apos;ve sent you an email</p>
                     <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
