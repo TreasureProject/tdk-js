@@ -2,12 +2,7 @@
   "name": "@treasure-dev/tdk-core",
   "version": "0.2.4",
   "description": "Treasure Development Kit for TypeScript/JavaScript-based projects",
-  "keywords": [
-    "treasure",
-    "tdk",
-    "bridgeworld",
-    "arbitrum"
-  ],
+  "keywords": ["treasure", "tdk", "bridgeworld", "arbitrum"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TreasureProject/tdk-js.git",
@@ -27,9 +22,7 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": [
-    "./dist"
-  ],
+  "files": ["./dist"],
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"

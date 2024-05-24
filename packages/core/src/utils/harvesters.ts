@@ -148,7 +148,9 @@ export const getHarvesterInfo = async ({
     { result: totalEmissionsActivated = 0n },
     { result: totalMagicStaked = 0n },
     { result: totalBoost = 0n },
-    { result: [, , , , , corruptionMaxGenerated = 0n] = [] },
+    {
+      result: [, , , , , corruptionMaxGenerated = 0n] = [],
+    },
     { result: totalCorruption = 0n },
   ] = await readContracts(wagmiConfig, {
     contracts: [
@@ -310,10 +312,10 @@ export const getHarvesterInfo = async ({
   });
 
   const boostersLifetimesMap = boostersLifetimes.reduce(
-    (acc, curr, i) => ({
-      ...acc,
-      [BOOSTER_TOKEN_IDS[i].toString()]: Number(curr),
-    }),
+    (acc, curr, i) => {
+      acc[BOOSTER_TOKEN_IDS[i].toString()] = Number(curr);
+      return acc;
+    },
     {} as Record<string, number>,
   );
 
@@ -393,7 +395,9 @@ export const getHarvesterUserInfo = async ({
       { result: userLegionsMaxWeightStakeable = 0n },
       { result: userLegionsWeightStaked = 0n },
       { result: userMagicMaxStakeable = 0n },
-      { result: [userMagicStaked] = [0n] },
+      {
+        result: [userMagicStaked] = [0n],
+      },
       { result: userTotalBoost = 0n },
       { result: userMagicRewardsClaimable = 0n },
     ],
@@ -618,10 +622,10 @@ export const getHarvesterUserInfo = async ({
     userPermitsBalance: Number(userPermitsBalance),
     userPermitsApproved,
     userBoostersBalances: BOOSTER_TOKEN_IDS.reduce(
-      (acc, id, i) => ({
-        ...acc,
-        [Number(id)]: Number(userBoostersBalances[i]),
-      }),
+      (acc, id, i) => {
+        acc[Number(id)] = Number(userBoostersBalances[i]);
+        return acc;
+      },
       {} as Record<number, number>,
     ),
     userInventoryBoosters,
@@ -641,8 +645,9 @@ export const getHarvesterUserInfo = async ({
         ({ attributes }) =>
           Number(
             (
-              (attributes.find(({ type }) => type === "Staking Boost")
-                ?.value as string | undefined) ?? "0"
+              (attributes.find(({ type }) => type === "Staking Boost")?.value as
+                | string
+                | undefined) ?? "0"
             ).replace("%", ""),
           ) / 100,
       ),
@@ -659,8 +664,9 @@ export const getHarvesterUserInfo = async ({
         ({ attributes }) =>
           Number(
             (
-              (attributes.find(({ type }) => type === "Staking Boost")
-                ?.value as string | undefined) ?? "0"
+              (attributes.find(({ type }) => type === "Staking Boost")?.value as
+                | string
+                | undefined) ?? "0"
             ).replace("%", ""),
           ) / 100,
       ),
@@ -711,15 +717,15 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   if (userAddress) {
     // Prep mapping of addresses to operator for Corruption removal approval
     const addressesToOperator: Record<string, string> = {};
-    corruptionRemovalRecipes.forEach(({ items }) => {
-      items.forEach(({ address, customHandler }) => {
+    for (const { items } of corruptionRemovalRecipes) {
+      for (const { address, customHandler } of items) {
         if (!addressesToOperator[address]) {
           addressesToOperator[address.toLowerCase()] = (
             customHandler ?? corruptionRemovalAddress
           ).toLowerCase();
         }
-      });
-    });
+      }
+    }
     const addressesAndOperators = Object.entries(addressesToOperator);
 
     const [corruptionRemovals, approvals, inventoryTokens = []] =
@@ -758,13 +764,13 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
     // TODO: filter Corruption Removal recipe item inventory to only include relevant token IDs
     userInventoryCorruptionRemovalRecipeItems = inventoryTokens;
     userApprovalsCorruptionRemovalRecipeItems = approvals.reduce(
-      (acc, { result }, i) => ({
-        ...acc,
-        [addressesAndOperators[i][0]]: {
+      (acc, { result }, i) => {
+        acc[addressesAndOperators[i][0]] = {
           operator: addressesAndOperators[i][1],
           approved: !!result,
-        },
-      }),
+        };
+        return acc;
+      },
       {} as Record<
         string,
         {

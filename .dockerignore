@@ -5,12 +5,10 @@ cdk/
 cdk.out/
 deploy/
 .dockerignore
-.eslintrc
 .gitignore
 .lintstagedrc
 .npmrc
-.prettierignore
-.prettierrc
+biome.json
 
 **/dist/
 **/node_modules/

@@ -20,8 +20,9 @@
     "start:api": "npm start --prefix ./apps/api",
     "start:login": "npm start --prefix ./apps/login",
     "typecheck": "tsc --noEmit",
-    "format": "eslint --fix . && prettier --write --ignore-unknown .",
-    "lint": "eslint .",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "fix": "biome check --apply .",
     "test": "vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
@@ -29,35 +30,21 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.7.3",
     "@changesets/cli": "^2.27.1",
-    "@tanstack/eslint-plugin-query": "^5.0.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/node": "^20.8.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
     "aws-cdk": "^2.124.0",
     "aws-cdk-lib": "^2.124.0",
     "concurrently": "^8.2.1",
     "constructs": "^10.3.0",
     "esbuild-register": "^3.5.0",
-    "eslint": "^8.50.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^9.0.10",
     "lint-staged": "^15.0.0",
-    "prettier": "^3.0.3",
-    "prettier-plugin-prisma": "^5.0.0",
-    "prettier-plugin-tailwindcss": "^0.5.5",
     "source-map-support": "^0.5.21",
     "tsup": "^8.0.1",
     "tsx": "^4.7.1",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "examples/*"
-  ]
+  "workspaces": ["apps/*", "packages/*", "examples/*"]
 }
