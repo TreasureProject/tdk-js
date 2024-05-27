@@ -3,6 +3,7 @@ import { erc20Abi, erc721Abi } from "viem";
 export * from "./types";
 
 export {
+  CONTRACT_ADDRESSES,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
@@ -10,6 +11,8 @@ export {
   SUPPORTED_CHAINS,
   SUPPORTED_CHAIN_IDS,
   TOKEN_IDS,
+  TREASURE_RUBY_CHAIN_DEFINITION,
+  treasureRuby,
 } from "./constants";
 export { erc20Abi };
 export { erc721Abi };

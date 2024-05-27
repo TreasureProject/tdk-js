@@ -1,14 +1,16 @@
-import { zeroAddress } from "viem";
+import { defineChain, zeroAddress } from "viem";
 import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
 
 import type { AddressString, Contract } from "./types";
 
-export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
-
+// Default values
 export const DEFAULT_TDK_API_BASE_URI = "https://tdk-api.treasure.lol";
 export const DEFAULT_TDK_APP = "app";
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
+
+// APIs
+export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
 
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:
@@ -24,14 +26,41 @@ export const BRIDGEWORLD_CORRUPTION_API_URL = {
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
 } as const;
 
+// Chains
+export const TREASURE_RUBY_CHAIN_DEFINITION = {
+  id: 978_657,
+  name: "Treasure Ruby",
+  nativeCurrency: {
+    name: "MAGIC",
+    symbol: "MAGIC",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc-testnet.treasure.lol/http"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Treasurescan",
+      url: "https://testnet.treasurescan.io",
+      apiUrl: "https://testnet.treasurescan.io/node-api/proxy/api/v2",
+    },
+  },
+  testnet: true,
+};
+export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
+
 export const SUPPORTED_CHAINS = [
   arbitrum,
   arbitrumSepolia,
   mainnet,
   sepolia,
+  treasureRuby,
 ] as const;
 export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
 
+// Tokens
 export const TOKEN_IDS = {
   Consumables: {
     SmallPrism: 1n,
@@ -107,6 +136,7 @@ export const TOKEN_IDS = {
   },
 } as const;
 
+// Contracts
 export const CONTRACT_ADDRESSES: Record<
   number,
   Partial<Record<Contract, AddressString>>
@@ -115,6 +145,7 @@ export const CONTRACT_ADDRESSES: Record<
     // Tokens
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
     ARB: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+    VEE: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
     // Price feeds
     MAGICUSDPriceFeed: "0x47e55ccec6582838e173f252d08afd8116c2202d",
     ARBUSDPriceFeed: "0xb2a824043730fe05f3da2efafa1cbbe83fa548d6",
@@ -147,17 +178,19 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
     // Treasure Misc
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
-    ManagedAccountFactory: "0x463effB51873C7720c810AC7Fb2e145Ec2f8Cc60",
+    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x8bf85fa9213647ec3485afd9dd5888b4db017434",
     // Zeeverse
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
+    ZeeverseVeeClaimer: "0x1cebdde81a9e4cd377bc7da5000797407cf9a58a",
   },
   [arbitrumSepolia.id]: {
     // Tokens
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
     ARB: zeroAddress,
+    VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
     // Price feeds
     MAGICUSDPriceFeed: "0x0fb99723aee6f420bead13e6bbb79b7e6f034298",
     ARBUSDPriceFeed: zeroAddress,
@@ -190,17 +223,25 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerThundermane: "0x00a191804f5bc4942828ae8cde937a4b644d53cf",
     // Treasure Misc
     PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
-    ManagedAccountFactory: "0xae7f7e9286f5f9ede167a19d1d605df4fdbc417b",
+    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",
     // Zeeverse
     ZeeverseZee: "0xb1af672c7e0e8880c066ecc24930a12ff2ee8534",
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
+    ZeeverseVeeClaimer: "0xf7abce65b1e683b7a42113f69ef76ee35cabbddc",
   },
   [mainnet.id]: {},
   [sepolia.id]: {
     // Tokens
     MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
+    // Treasure Misc
+    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
+  },
+  [treasureRuby.id]: {
+    // Treasure Misc
+    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
+    RubyNFT: "0x76c3b527b711a3b6aa01e4f76ec34b41a671ca29",
   },
 };
 
