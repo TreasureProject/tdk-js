@@ -117,6 +117,10 @@ const PROJECT_DATA: Record<
         [arbitrumSepolia.id, "ZeeverseItems"],
         [arbitrumSepolia.id, "ZeeverseVeeClaimer"],
         [arbitrumSepolia.id, "BulkTransferHelper"],
+        [sepolia.id, "CRV"],
+        [sepolia.id, "VEE"],
+        [sepolia.id, "ZeeverseLlama"],
+        [sepolia.id, "ZeeverseLlamaEvolve"],
       ],
       prod: [
         [arbitrum.id, "MAGIC"],

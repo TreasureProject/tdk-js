@@ -9,7 +9,7 @@ export type OnSuccessFn = (data?: TransactionReceipt) => void;
 export type OnErrorFn = (error?: Error) => void;
 
 // Contracts
-type TokenContract = "MAGIC" | "ARB" | "VEE";
+type TokenContract = "MAGIC" | "ARB" | "VEE" | "CRV";
 export type PriceFeedContract =
   | "MAGICUSDPriceFeed"
   | "ARBUSDPriceFeed"
@@ -44,7 +44,12 @@ type BridgeworldContract =
   // Gameplay
   | "CorruptionRemoval"
   | "ERC1155TokenSetCorruptionHandler";
-type ZeeverseContract = "ZeeverseZee" | "ZeeverseItems" | "ZeeverseVeeClaimer";
+type ZeeverseContract =
+  | "ZeeverseZee"
+  | "ZeeverseItems"
+  | "ZeeverseVeeClaimer"
+  | "ZeeverseLlama"
+  | "ZeeverseLlamaEvolve";
 export type Contract =
   | "PaymentsModule"
   | "ManagedAccountFactory"

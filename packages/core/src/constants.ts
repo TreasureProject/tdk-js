@@ -235,8 +235,13 @@ export const CONTRACT_ADDRESSES: Record<
   [sepolia.id]: {
     // Tokens
     MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
+    VEE: "0x3398ddf47c19f20e7d048727ea7989e0a71d8cde",
+    CRV: "0x5cd16a4b0e4c33445fdbb4ba145c13d4c1ad711f",
     // Treasure Misc
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
+    // Zeeverse
+    ZeeverseLlama: "0xd60a53b298a468d2aa3880614b3ebd4515814fc6",
+    ZeeverseLlamaEvolve: "0xa8f6f8a7225cf735851acc417e29cc2d1b092dc4",
   },
   [treasureRuby.id]: {
     // Treasure Misc
