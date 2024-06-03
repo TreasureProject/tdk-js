@@ -5,7 +5,7 @@ import {
   getContractAddress,
   treasureRuby,
 } from "@treasure-dev/tdk-core";
-import { arbitrum, arbitrumSepolia, sepolia } from "viem/chains";
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
 
 type RemoteEnvironment = "dev" | "prod";
 type Environment = "local" | RemoteEnvironment;
@@ -135,6 +135,9 @@ const PROJECT_DATA: Record<
         [arbitrum.id, "ZeeverseItems"],
         [arbitrum.id, "ZeeverseVeeClaimer"],
         [arbitrum.id, "BulkTransferHelper"],
+        [mainnet.id, "CRV"],
+        [mainnet.id, "ZeeverseLlama"],
+        [mainnet.id, "ZeeverseLlamaEvolve"],
       ],
     },
   },

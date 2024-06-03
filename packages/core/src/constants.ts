@@ -231,7 +231,15 @@ export const CONTRACT_ADDRESSES: Record<
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
     ZeeverseVeeClaimer: "0xf7abce65b1e683b7a42113f69ef76ee35cabbddc",
   },
-  [mainnet.id]: {},
+  [mainnet.id]: {
+    // Tokens
+    CRV: "0xd533a949740bb3306d119cc777fa900ba034cd52",
+    // Treasure Misc
+    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
+    // Zeeverse
+    ZeeverseLlama: "0xba955e13208d877f2cf8f2f21dd200bf795063a1",
+    ZeeverseLlamaEvolve: "0xa8f6f8a7225cf735851acc417e29cc2d1b092dc4",
+  },
   [sepolia.id]: {
     // Tokens
     MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
