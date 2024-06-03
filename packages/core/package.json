@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-core",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Treasure Development Kit for TypeScript/JavaScript-based projects",
   "keywords": [
     "treasure",
