@@ -17,13 +17,12 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm install changeset
+        run: npm ci
       - name: Create release PR or publish to npm
         uses: changesets/action@v1
         with:
           version: npm run package:version
           publish: |
-            npm ci
             npm run generate
             npm run build:create
             npm run package:publish
