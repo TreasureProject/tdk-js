@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - fix/npm-publish
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
