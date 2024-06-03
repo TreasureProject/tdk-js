@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - fix/npm-publish
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
@@ -15,6 +16,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Install dependencies
+        run: npm install changeset
       - name: Create release PR or publish to npm
         uses: changesets/action@v1
         with:
