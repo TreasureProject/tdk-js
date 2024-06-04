@@ -34,7 +34,7 @@ locals {
   //////////////////
 
   ecs_prefix               = "${local.environment}-${local.project_name}"
-  ssl_certificate_arn      = "arn:aws:acm:us-east-1:884078395586:certificate/62f6f766-c92e-4792-a26c-2edfff49194e"
+  ssl_certificate_arn      = "arn:aws:acm:us-east-1:884078395586:certificate/6b2b52a3-5ff1-4c43-a839-bf94d079d231"
   cloudflare_zone_id       = "43c53e4c8555e49c1a70efd4c949fb02" #treasure.lol
   cloudflare_proxy_enabled = true
   desired_count            = 3

@@ -122,7 +122,7 @@ variable "autoscaling_max_capacity" {
 
 variable "cloudflare_proxy_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "enabled cloudflare proxy"
 }
 
