@@ -22,3 +22,9 @@ jobs:
         run: flyctl deploy --config ./apps/login/fly.toml --app ${{ vars.LOGIN_APP_NAME }} --remote-only --build-secret dotenv="${{ secrets.LOGIN_ENV }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Purge Cloudflare Cache
+        uses: jakejarvis/cloudflare-purge-action@master
+        if: vars.ENVIRONMENT == 'production'
+        env:
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
