@@ -30,7 +30,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.7.3",
+    "@biomejs/biome": "^1.8.0",
     "@changesets/cli": "^2.27.1",
     "@types/node": "^20.8.2",
     "aws-cdk": "^2.124.0",

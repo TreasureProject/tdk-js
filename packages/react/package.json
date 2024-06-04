@@ -2,12 +2,7 @@
   "name": "@treasure-dev/tdk-react",
   "version": "0.2.6",
   "description": "Treasure Development Kit for React-based projects",
-  "keywords": [
-    "treasure",
-    "tdk",
-    "bridgeworld",
-    "arbitrum"
-  ],
+  "keywords": ["treasure", "tdk", "bridgeworld", "arbitrum"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TreasureProject/tdk-js.git",
@@ -31,9 +26,7 @@
       "require": "./dist/*.css"
     }
   },
-  "files": [
-    "./dist"
-  ],
+  "files": ["./dist"],
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"
