@@ -11,6 +11,11 @@ import { isContractDeployed } from "thirdweb/utils";
 import type { Account, InAppWalletSocialAuth } from "thirdweb/wallets";
 import { createWallet, smartWallet } from "thirdweb/wallets";
 import { preAuthenticate } from "thirdweb/wallets/embedded";
+import {
+  getDateDaysFromNow,
+  getDateHoursFromNow,
+  getDateYearsFromNow,
+} from "~/utils/date";
 import { env } from "~/utils/env";
 import { getErrorMessage } from "~/utils/error";
 
@@ -162,8 +167,8 @@ export const useLogin = ({
       sessionKeyAddress: backendWallet,
       permissions: {
         approvedTargets: approvedCallTargets,
-        permissionStartTimestamp: new Date(Date.now() - 5 * 60 * 1000),
-        permissionEndTimestamp: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        permissionStartTimestamp: getDateHoursFromNow(-1),
+        permissionEndTimestamp: getDateDaysFromNow(1),
       },
     });
 
@@ -232,12 +237,18 @@ export const useLogin = ({
         callTarget.toLowerCase(),
       );
       const hasActiveSession = activeSigners.some(
-        ({ signer, approvedTargets: signerApprovedTargets }) => {
+        ({ signer, approvedTargets: signerApprovedTargets, endTimestamp }) => {
           const normalizedSignerApprovedTargets = signerApprovedTargets.map(
             (callTarget) => callTarget.toLowerCase(),
           );
           return (
+            // Expiration date is at least 1 hour in the future
+            endTimestamp > getDateHoursFromNow(1).getTime() &&
+            // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
+            endTimestamp <= getDateYearsFromNow(10).getTime() &&
+            // Expected backend wallet is signer
             signer.toLowerCase() === backendWallet.toLowerCase() &&
+            // All requested call targets are approved
             normalizedApprovedTargets.every((callTarget) =>
               normalizedSignerApprovedTargets.includes(callTarget),
             )
