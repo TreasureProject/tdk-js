@@ -241,11 +241,12 @@ export const useLogin = ({
           const normalizedSignerApprovedTargets = signerApprovedTargets.map(
             (callTarget) => callTarget.toLowerCase(),
           );
+          const endDate = new Date(Number(endTimestamp) * 1000);
           return (
             // Expiration date is at least 1 hour in the future
-            endTimestamp > getDateHoursFromNow(1).getTime() &&
+            endDate > getDateHoursFromNow(1) &&
             // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
-            endTimestamp <= getDateYearsFromNow(10).getTime() &&
+            endDate <= getDateYearsFromNow(10) &&
             // Expected backend wallet is signer
             signer.toLowerCase() === backendWallet.toLowerCase() &&
             // All requested call targets are approved
