@@ -1,4 +1,4 @@
-import { TDKAPI, getContractAddress } from "@treasure-dev/tdk-core";
+import { TDKAPI, getContractAddress } from "@treasure-dev/tdk-react";
 import { useMemo, useReducer } from "react";
 import type { Chain } from "thirdweb";
 import { type ThirdwebClient, getContract, sendTransaction } from "thirdweb";

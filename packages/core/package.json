@@ -28,6 +28,8 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "@wagmi/core": "^2.9.1",
+    "abitype": "^1.0.2",
     "decimal.js-light": "^2.5.1",
     "jwt-decode": "^4.0.0",
     "viem": "^2.7.6"
