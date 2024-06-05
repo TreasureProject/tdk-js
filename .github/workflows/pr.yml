@@ -14,8 +14,6 @@ jobs:
         run: npm ci
       - name: Generate code
         run: npm run generate
-      - name: Check types
-        run: npm run typecheck
       - name: Lint code
         run: npm run lint
       - name: Analyze code
@@ -24,3 +22,5 @@ jobs:
         run: npm test
       - name: Build code
         run: npm run build
+      - name: Check types
+        run: npm run typecheck
