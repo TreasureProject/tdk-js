@@ -21,7 +21,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: npm run package:version
-          publish: npm run generate && npm run build:react && npm run package:publish
+          publish: npm run build:core && npm run build:react && npm run package:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

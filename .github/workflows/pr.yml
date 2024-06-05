@@ -14,11 +14,13 @@ jobs:
         run: npm ci
       - name: Generate code
         run: npm run generate
-      - name: Build packages
-        run: npm run build:react
+      - name: Lint code
+        run: npm run lint
+      - name: Analyze code
+        run: npm run knip
+      - name: Test code
+        run: npm test
+      - name: Build code
+        run: npm run build
       - name: Check types
         run: npm run typecheck
-      - name: Run linter
-        run: npm run lint
-      - name: Run tests
-        run: npm test

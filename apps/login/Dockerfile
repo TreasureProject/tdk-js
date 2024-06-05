@@ -24,6 +24,10 @@ RUN npm install --include=dev
 RUN --mount=type=secret,id=dotenv,dst=env \
     tr ' ' '\n' < env > ./apps/login/.env
 
+# Build packages
+RUN npm run build:core
+RUN npm run build:react
+
 # Build application
 RUN npm run build:login
 
