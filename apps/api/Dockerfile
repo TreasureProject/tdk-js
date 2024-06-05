@@ -18,6 +18,9 @@ COPY . .
 # Install dependencies
 RUN npm install --include=dev
 
+# Build packages
+RUN npm run build:core
+
 # Build application
 RUN npm run build:api
 
