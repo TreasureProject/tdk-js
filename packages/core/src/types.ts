@@ -1,5 +1,6 @@
 import type { TransactionReceipt } from "viem";
 
+import type { TDKAPI } from "./api";
 import type { SUPPORTED_CHAIN_IDS } from "./constants";
 
 // General transactions
@@ -67,3 +68,14 @@ export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";
 // Payments
 export type Token = "ARB" | "MAGIC" | "ETH" | AddressString;
 export type Currency = Token | "USD";
+
+// API
+export type Project = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["project"]["findBySlug"]>
+>;
+export type Transaction = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["transaction"]["get"]>
+>;
+export type User = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["user"]["me"]>
+>;

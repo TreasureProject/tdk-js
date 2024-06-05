@@ -1,4 +1,8 @@
-import { TDKAPI, getContractAddress } from "@treasure-dev/tdk-core";
+import {
+  type Project,
+  TDKAPI,
+  getContractAddress,
+} from "@treasure-dev/tdk-core";
 import { useMemo, useReducer } from "react";
 import type { Chain } from "thirdweb";
 import { type ThirdwebClient, getContract, sendTransaction } from "thirdweb";
@@ -112,11 +116,9 @@ const reducer = (state: State, action: Action): State => {
 };
 
 type Props = {
-  project: string;
+  project: Project;
   chain: Chain;
   redirectUri: string;
-  backendWallet: string;
-  approvedCallTargets: string[];
 };
 
 const client: ThirdwebClient = {
@@ -124,24 +126,24 @@ const client: ThirdwebClient = {
   secretKey: undefined,
 };
 
-export const useLogin = ({
-  project,
-  chain,
-  redirectUri,
-  backendWallet,
-  approvedCallTargets,
-}: Props) => {
+export const useLogin = ({ project, chain, redirectUri }: Props) => {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE);
 
   const tdk = useMemo(
     () =>
       new TDKAPI({
         baseUri: env.VITE_TDK_API_URL,
-        project,
+        project: project.slug,
         chainId: chain.id,
       }),
     [project, chain.id],
   );
+
+  const backendWallet = project.backendWallets[0];
+  const approvedCallTargets = project.callTargets;
+  const nativeTokenLimitPerTransaction = 0;
+  const requiresSession =
+    approvedCallTargets.length > 0 || nativeTokenLimitPerTransaction > 0;
 
   const connectSmartWallet = async (inAppAccount: Account) => {
     const wallet = smartWallet({
@@ -167,6 +169,7 @@ export const useLogin = ({
       sessionKeyAddress: backendWallet,
       permissions: {
         approvedTargets: approvedCallTargets,
+        nativeTokenLimitPerTransaction,
         permissionStartTimestamp: getDateHoursFromNow(-1),
         permissionEndTimestamp: getDateDaysFromNow(1),
       },
@@ -176,7 +179,7 @@ export const useLogin = ({
     let didCreateSession = false;
 
     // If smart wallet isn't deployed yet, create a new session to bundle the two txs
-    if (!isDeployed) {
+    if (!isDeployed && requiresSession) {
       try {
         console.debug("Deploying smart wallet and creating session key");
         await sendTransaction({
@@ -228,7 +231,7 @@ export const useLogin = ({
     }
 
     // Check active signers to see if requested session is already available
-    if (!didCreateSession) {
+    if (!didCreateSession && requiresSession) {
       console.debug("Checking for existing sessions");
       const activeSigners = await getAllActiveSigners({
         contract: smartAccountContract,
@@ -277,6 +280,10 @@ export const useLogin = ({
       } else {
         console.debug("Using existing session key");
       }
+    } else if (!requiresSession) {
+      console.debug(
+        "Session not required by project, skipping session creation",
+      );
     }
 
     // Redirect back to project
