@@ -12,12 +12,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import VerificationInput from "react-verification-input";
 import { ClientOnly } from "remix-utils/client-only";
-import { arbitrum, arbitrumSepolia } from "thirdweb/chains";
 import emailImg from "~/assets/email.webp";
 import logoImg from "~/assets/logo.svg";
 import { SpinnerIcon } from "~/components/SpinnerIcon";
 import { useLogin } from "~/hooks/useLogin";
 
+import { CHAIN_ID_TO_CHAIN_MAPPING } from "~/utils/chain";
 import { env } from "../utils/env";
 
 type LoginForm = {
@@ -87,6 +87,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function LoginPage() {
   const { project, chainId, redirectUri } = useLoaderData<typeof loader>();
+  const chain =
+    CHAIN_ID_TO_CHAIN_MAPPING[chainId] ??
+    CHAIN_ID_TO_CHAIN_MAPPING[DEFAULT_TDK_CHAIN_ID];
+
   const [verificationInput, setVerificationInput] = useState<string>("");
   const {
     status,
@@ -98,11 +102,9 @@ export default function LoginPage() {
     // logInWithCustomAuth,
     reset,
   } = useLogin({
-    project: project.slug,
-    chain: chainId === arbitrumSepolia.id ? arbitrumSepolia : arbitrum,
+    project,
+    chain,
     redirectUri,
-    backendWallet: project.backendWallets[0],
-    approvedCallTargets: project.callTargets,
   });
 
   const { register, handleSubmit } = useForm<LoginForm>();

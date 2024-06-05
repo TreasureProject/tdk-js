@@ -87,6 +87,21 @@ const PROJECT_DATA: Record<
       prod: [],
     },
   },
+  smolbound: {
+    metadata: {
+      name: "Smolbound",
+      icon: "https://images.treasure.lol/tdk/login/smolbound_icon.png",
+    },
+    redirectUris: {
+      local: [],
+      dev: [],
+      prod: [],
+    },
+    callTargets: {
+      dev: [],
+      prod: [],
+    },
+  },
   zeeverse: {
     metadata: {
       name: "Zeeverse",
