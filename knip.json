@@ -1,4 +1,3 @@
 {
-  "ignore": ["./apps/login/postcss.config.mjs"],
-  "ignoreDependencies": ["copyfiles"]
+  "ignore": ["./apps/login/postcss.config.mjs"]
 }
