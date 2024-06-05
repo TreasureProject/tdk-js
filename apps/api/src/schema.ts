@@ -1,15 +1,9 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { SUPPORTED_CHAINS } from "@treasure-dev/tdk-core";
 
 // Shared
-export const ethereumAddressSchema = Type.RegExp("/^0x[a-fA-F0-9]{40}$/g");
-export const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
+const nullableStringSchema = Type.Union([Type.String(), Type.Null()]);
 
-export const chainIdSchema = Type.Union(
-  SUPPORTED_CHAINS.map(({ id }) => Type.Literal(id)),
-);
-
-export const errorReplySchema = Type.Object({
+const errorReplySchema = Type.Object({
   error: Type.String(),
 });
 
@@ -354,7 +348,7 @@ const harvesterUserInfoSchema = Type.Object({
   }),
 });
 
-export const readHarvesterParamsSchema = Type.Object({
+const readHarvesterParamsSchema = Type.Object({
   id: Type.String(),
 });
 
@@ -363,7 +357,7 @@ export const readHarvesterReplySchema = Type.Composite([
   Type.Partial(harvesterUserInfoSchema),
 ]);
 
-export const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
+const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
   id: Type.String(),
 });
 
@@ -401,7 +395,7 @@ export type ReadHarvesterCorruptionRemovalReply = Static<
 >;
 
 // Projects
-export const readProjectParamsSchema = Type.Object({
+const readProjectParamsSchema = Type.Object({
   slug: Type.String(),
 });
 
@@ -419,20 +413,6 @@ export const readProjectReplySchema = Type.Object({
 
 export type ReadProjectParams = Static<typeof readProjectParamsSchema>;
 export type ReadProjectReply = Static<typeof readProjectReplySchema>;
-
-// Contracts
-export const readContractBodySchema = Type.Object({
-  address: Type.String(),
-  functionName: Type.String(),
-  args: Type.Optional(Type.Any()),
-});
-
-export const readContractReplySchema = Type.Object({
-  result: Type.Any(),
-});
-
-export type ReadContractBody = Static<typeof readContractBodySchema>;
-export type ReadContractReply = Static<typeof readContractReplySchema>;
 
 // Transactions
 export const createTransactionBodySchema = Type.Object({
@@ -493,7 +473,7 @@ export const createTransactionReplySchema = Type.Object({
   }),
 });
 
-export const readTransactionParamsSchema = Type.Object({
+const readTransactionParamsSchema = Type.Object({
   queueId: Type.String(),
 });
 

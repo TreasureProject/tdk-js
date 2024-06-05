@@ -9,6 +9,7 @@
       "node_modules/",
       ".dockerignore",
       ".gitignore",
+      "./**/*/package.json",
       "package-lock.json"
     ]
   },

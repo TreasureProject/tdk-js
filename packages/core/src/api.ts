@@ -32,7 +32,7 @@ BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
-export class APIError extends Error {
+class APIError extends Error {
   statusCode?: number;
 }
 

@@ -9,9 +9,6 @@ export const DEFAULT_TDK_APP = "app";
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
 
-// APIs
-export const PLATFORM_API_BASE_URI = "https://trove-api.treasure.lol";
-
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
@@ -258,7 +255,7 @@ export const CONTRACT_ADDRESSES: Record<
   },
 };
 
-export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
+const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
   [arbitrum.id]:
     "0x086a11794a945fb10a6199cca4e0d7ff6d25513b000000000000000000000001",
   [arbitrumSepolia.id]:
