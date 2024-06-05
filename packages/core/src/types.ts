@@ -50,7 +50,8 @@ type ZeeverseContract =
   | "ZeeverseItems"
   | "ZeeverseVeeClaimer"
   | "ZeeverseLlama"
-  | "ZeeverseLlamaEvolve";
+  | "ZeeverseLlamaEvolve"
+  | "ZeeverseGame";
 export type Contract =
   | "PaymentsModule"
   | "ManagedAccountFactory"
