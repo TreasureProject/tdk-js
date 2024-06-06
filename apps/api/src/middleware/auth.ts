@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import * as Sentry from "@sentry/node";
 import { PrivateKeyWallet } from "@thirdweb-dev/auth/evm";
 import { ThirdwebAuth } from "@thirdweb-dev/auth/fastify";
 import type { AddressString } from "@treasure-dev/tdk-core";
@@ -126,6 +127,10 @@ export const withAuth = async (
       const authResult = await verifyAuth(auth, req);
       if (authResult.valid) {
         req.userAddress = authResult.parsedJWT.sub as AddressString;
+        Sentry.setUser({
+          id: (authResult.parsedJWT.ctx as { id: string } | undefined)?.id,
+          username: req.userAddress,
+        });
       } else {
         req.authError = authResult.error;
       }
@@ -134,5 +139,8 @@ export const withAuth = async (
     req.overrideUserAddress = req.headers["x-account-address"]?.toString() as
       | AddressString
       | undefined;
+    if (req.overrideUserAddress) {
+      Sentry.setUser({ username: req.overrideUserAddress });
+    }
   });
 };

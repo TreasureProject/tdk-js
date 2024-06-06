@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import type { FastifyInstance } from "fastify";
 
 import type { TdkApiContext } from "../types";
@@ -40,6 +41,10 @@ export const withProject = async (
         if (project.backendWallets.length > 0) {
           req.backendWallet = project.backendWallets[0].address;
         }
+
+        Sentry.setContext("project", {
+          slug: projectId,
+        });
       }
     }
 
