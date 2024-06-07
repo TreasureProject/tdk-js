@@ -147,14 +147,14 @@ variable "fargate_capacity_providers" {
       }
     }
   }
+}
 
-  variable "sentry_dsn" {
-    type        = string
-    description = "Sentry Data Source Name"
-  }
+variable "sentry_dsn" {
+  type        = string
+  description = "Sentry Data Source Name"
+}
 
-  variable "sentry_environment" {
-    type        = string
-    description = "Sentry environment name"
-  }
+variable "sentry_environment" {
+  type        = string
+  description = "Sentry environment name"
 }
