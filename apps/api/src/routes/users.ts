@@ -10,6 +10,7 @@ import {
   readCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { TdkError } from "../utils/error";
 
 export const usersRoutes =
   ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
@@ -31,11 +32,11 @@ export const usersRoutes =
       async (req, reply) => {
         const { chainId, userAddress, authError } = req;
         if (!userAddress) {
-          console.error(
-            "Error authenticating user for user details read:",
-            authError,
-          );
-          return reply.code(401).send({ error: `Unauthorized: ${authError}` });
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { authError },
+          });
         }
 
         const [dbUser, allActiveSigners] = await Promise.all([
@@ -51,7 +52,11 @@ export const usersRoutes =
         ]);
 
         if (!dbUser) {
-          return reply.code(401).send({ error: "Unauthorized" });
+          throw new TdkError({
+            code: "TDK_NOT_FOUND",
+            message: "User not found",
+            data: { userAddress },
+          });
         }
 
         reply.send({
