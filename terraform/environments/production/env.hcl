@@ -45,6 +45,8 @@ locals {
   task_cpu                 = "2048"
   task_memory              = "4096"
   dns_name                 = "tdk-api"
+  sentry_dsn               = "https://1d29f791f2eb32a9f4c2643ba8d0ab44@o4507380693532672.ingest.us.sentry.io/4507380752449536"
+  sentry_environment       = production
   fargate_capacity_providers = {
     FARGATE = {
       default_capacity_provider_strategy = {
