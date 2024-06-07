@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { ApiError } from "@thirdweb-dev/engine";
 
 type ErrorCode =
   | "TDK_UNAUTHORIZED"
@@ -37,3 +38,15 @@ export class TdkError extends Error {
     Sentry.setExtra("error", this);
   }
 }
+
+export const parseEngineErrorMessage = (err: ApiError | Error) => {
+  if (err instanceof ApiError && err.body.error?.message) {
+    return err.body.error.message as string;
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  return undefined;
+};

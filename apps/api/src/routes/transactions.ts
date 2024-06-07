@@ -15,7 +15,7 @@ import {
   readTransactionReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { TdkError } from "../utils/error";
+import { TdkError, parseEngineErrorMessage } from "../utils/error";
 
 export const transactionsRoutes =
   ({ engine }: TdkApiContext): FastifyPluginAsync =>
@@ -66,8 +66,14 @@ export const transactionsRoutes =
         } catch (err) {
           throw new TdkError({
             code: "TDK_CREATE_TRANSACTION",
-            message: `Error creating transaction: ${err.message}`,
-            data: postBody,
+            message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            data: {
+              chainId,
+              backendWallet,
+              userAddress,
+              address,
+              ...body,
+            },
           });
         }
       },
@@ -95,7 +101,7 @@ export const transactionsRoutes =
         } catch (err) {
           throw new TdkError({
             code: "TDK_READ_TRANSACTION",
-            message: `Error fetching transaction: ${err.message}`,
+            message: `Error fetching transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
             data: { queueId },
           });
         }
