@@ -42,7 +42,7 @@ locals {
   autoscaling_max_capacity = 2
   dns_name                 = "tdk-api"
   sentry_dsn               = "https://1d29f791f2eb32a9f4c2643ba8d0ab44@o4507380693532672.ingest.us.sentry.io/4507380752449536"
-  sentry_environment       = development
+  sentry_environment       = "development"
 
   //////////////////
   //// Github OIDC
