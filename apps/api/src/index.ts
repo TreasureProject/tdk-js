@@ -1,5 +1,8 @@
+import "./instrument";
+
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PrismaClient } from "@prisma/client";
+import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
 import type { SupportedChainId } from "@treasure-dev/tdk-core";
 import { SUPPORTED_CHAINS } from "@treasure-dev/tdk-core";
@@ -74,6 +77,7 @@ const main = async () => {
   };
 
   // Middleware
+  Sentry.setupFastifyErrorHandler(app);
   await withSwagger(app);
   await withCors(app);
   await withErrorHandler(app);

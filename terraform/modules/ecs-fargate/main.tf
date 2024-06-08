@@ -74,7 +74,9 @@ module "ecs_service" {
       environment = [
         { name = "AWS_REGION", value = var.region },
         { name = "DATABASE_SECRET_NAME", value = var.aurora_secret_name },
-        { name = "API_ENV_SECRET_NAME", value = var.api_env_secret_name }
+        { name = "API_ENV_SECRET_NAME", value = var.api_env_secret_name },
+        { name = "SENTRY_DSN", value = var.sentry_dsn },
+        { name = "SENTRY_ENVIRONMENT", value = var.sentry_environment }
       ]
 
       readonly_root_filesystem  = true

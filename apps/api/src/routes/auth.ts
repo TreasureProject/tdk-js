@@ -27,6 +27,7 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
+import { TdkError } from "../utils/error";
 import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
 
 export const authRoutes =
@@ -182,7 +183,11 @@ export const authRoutes =
         }
 
         if (!token) {
-          return reply.code(401).send({ error: "Unauthorized" });
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { projectId },
+          });
         }
 
         reply.send({
@@ -228,7 +233,11 @@ export const authRoutes =
         }
 
         if (!result.userId || !result.email) {
-          return reply.code(401).send({ error: "Unauthorized" });
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { projectId },
+          });
         }
 
         return reply.send(result);

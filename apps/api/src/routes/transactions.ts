@@ -15,6 +15,7 @@ import {
   readTransactionReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { TdkError, parseEngineErrorMessage } from "../utils/error";
 
 export const transactionsRoutes =
   ({ engine }: TdkApiContext): FastifyPluginAsync =>
@@ -44,11 +45,11 @@ export const transactionsRoutes =
           body: postBody,
         } = req;
         if (!userAddress) {
-          console.error(
-            "Error authenticating user for transaction create:",
-            authError,
-          );
-          return reply.code(401).send({ error: `Unauthorized: ${authError}` });
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { authError },
+          });
         }
 
         const { address, ...body } = postBody;
@@ -63,10 +64,17 @@ export const transactionsRoutes =
           );
           reply.send(result);
         } catch (err) {
-          console.error("Contract write error:", err);
-          if (err instanceof Error) {
-            reply.code(500).send({ error: err.message });
-          }
+          throw new TdkError({
+            code: "TDK_CREATE_TRANSACTION",
+            message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            data: {
+              chainId,
+              backendWallet,
+              userAddress,
+              address,
+              ...body,
+            },
+          });
         }
       },
     );
@@ -86,14 +94,16 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
+        const { queueId } = req.params;
         try {
-          const data = await engine.transaction.status(req.params.queueId);
+          const data = await engine.transaction.status(queueId);
           reply.send(data.result);
         } catch (err) {
-          console.error("Transaction status error:", err);
-          if (err instanceof Error) {
-            reply.code(500).send({ error: err.message });
-          }
+          throw new TdkError({
+            code: "TDK_READ_TRANSACTION",
+            message: `Error fetching transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            data: { queueId },
+          });
         }
       },
     );

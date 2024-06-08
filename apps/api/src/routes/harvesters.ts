@@ -22,6 +22,7 @@ import {
   readHarvesterReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { TdkError } from "../utils/error";
 
 export const harvestersRoutes =
   ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
@@ -57,7 +58,11 @@ export const harvestersRoutes =
         });
 
         if (harvesterInfo.nftHandlerAddress === zeroAddress) {
-          return reply.code(404).send({ error: "Not found" });
+          throw new TdkError({
+            code: "TDK_NOT_FOUND",
+            message: "NftHandler not found",
+            data: { harvesterAddress },
+          });
         }
 
         const userAddress = overrideUserAddress ?? authUserAddress;

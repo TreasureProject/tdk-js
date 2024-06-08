@@ -8,6 +8,7 @@ import {
   readProjectReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { TdkError } from "../utils/error";
 
 export const projectsRoutes =
   ({ env, db }: TdkApiContext): FastifyPluginAsync =>
@@ -27,7 +28,7 @@ export const projectsRoutes =
         },
       },
       async ({ chainId, params: { slug } }, reply) => {
-        const project = await db.project.findUniqueOrThrow({
+        const project = await db.project.findUnique({
           where: { slug },
           select: {
             slug: true,
@@ -55,6 +56,14 @@ export const projectsRoutes =
             },
           },
         });
+        if (!project) {
+          throw new TdkError({
+            code: "TDK_NOT_FOUND",
+            message: "Project not found",
+            data: { slug },
+          });
+        }
+
         const backendWallets = project.backendWallets.map(
           ({ address }) => address,
         );
