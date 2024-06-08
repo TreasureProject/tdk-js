@@ -84,3 +84,4 @@ jobs:
           environment: ${{ vars.ENVIRONMENT }}
           working_directory: ./apps/api
           sourcemaps: ./dist
+          ignore_missing: true
