@@ -27,7 +27,7 @@
     "test": "vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
-    "package:publish": "changeset publish",
+    "package:publish": "npm run build:core && npm run build:react && changeset publish",
     "prepare": "husky"
   },
   "devDependencies": {
