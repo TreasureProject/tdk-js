@@ -11,6 +11,7 @@ export {
   SUPPORTED_CHAINS,
   SUPPORTED_CHAIN_IDS,
   TOKEN_IDS,
+  TREASURE_CONDUIT_KEYS,
   TREASURE_RUBY_CHAIN_DEFINITION,
   treasureRuby,
 } from "./constants";
@@ -36,6 +37,11 @@ export {
   getCurrencyAddress,
   getTokenAddress,
 } from "./utils/currency";
+export {
+  getDateHoursFromNow,
+  getDateDaysFromNow,
+  getDateYearsFromNow,
+} from "./utils/date";
 export {
   fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,

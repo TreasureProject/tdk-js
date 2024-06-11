@@ -1,94 +1,32 @@
 import {
   DEFAULT_TDK_API_BASE_URI,
-  DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
-  DEFAULT_TDK_LOGIN_DOMAIN,
   TDKAPI,
-  decodeAuthToken,
 } from "@treasure-dev/tdk-core";
 import type { PropsWithChildren } from "react";
-import { createContext, useContext, useEffect, useReducer } from "react";
-
+import { createContext, useContext, useMemo } from "react";
 import {
-  clearStoredAuthToken,
-  getStoredAuthToken,
-  setStoredAuthToken,
-} from "./utils/store";
+  type ThirdwebClient,
+  createThirdwebClient,
+  defineChain,
+} from "thirdweb";
+import type { Chain as ThirdwebChain } from "thirdweb/chains";
+import { ThirdwebProvider } from "thirdweb/react";
 
 type Config = {
+  clientId: string;
   project: string;
   chainId?: number;
   apiUri?: string;
-  authConfig?: {
-    loginDomain?: string;
-    redirectUri?: string;
-  };
-};
-
-type State = {
-  project: string;
-  chainId: number;
-  apiUri: string;
-  authConfig: {
-    loginDomain: string;
-    redirectUri: string;
-  };
-  status: "IDLE" | "AUTHENTICATING" | "AUTHENTICATED";
-  tdk: TDKAPI;
-  isAuthenticated: boolean;
-  authToken?: string;
-  address?: string;
-  account?: {
-    email: string;
-  };
 };
 
 type ContextValues = {
-  onStartAuth: () => void;
-  onCompleteAuth: (authToken: string) => void;
-  logOut: () => void;
+  tdk: TDKAPI;
+  thirdwebClient: ThirdwebClient;
+  thirdwebChain: ThirdwebChain;
 };
 
-type Action =
-  | { type: "START_AUTH" }
-  | { type: "COMPLETE_AUTH"; authToken: string }
-  | { type: "RESET_AUTH" };
-
-const Context = createContext({} as State & ContextValues);
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "START_AUTH":
-      return {
-        ...state,
-        status: "AUTHENTICATING",
-      };
-    case "COMPLETE_AUTH": {
-      setStoredAuthToken(action.authToken);
-      state.tdk.setAuthToken(action.authToken);
-      const decodedAuthToken = decodeAuthToken(action.authToken);
-      return {
-        ...state,
-        status: "AUTHENTICATED",
-        isAuthenticated: true,
-        authToken: action.authToken,
-        address: decodedAuthToken.sub,
-        account: decodedAuthToken.ctx,
-      };
-    }
-    case "RESET_AUTH":
-      clearStoredAuthToken();
-      state.tdk.clearAuthToken();
-      return {
-        ...state,
-        status: "IDLE",
-        isAuthenticated: false,
-        authToken: undefined,
-        address: undefined,
-        account: undefined,
-      };
-  }
-};
+const Context = createContext({} as ContextValues);
 
 export const useTreasure = () => {
   const context = useContext(Context);
@@ -106,69 +44,38 @@ type Props = PropsWithChildren<Config>;
 
 export const TreasureProvider = ({ children, ...config }: Props) => {
   const {
-    project = DEFAULT_TDK_APP,
-    chainId = DEFAULT_TDK_CHAIN_ID,
+    clientId,
+    project: projectId,
+    chainId: rawChainId = DEFAULT_TDK_CHAIN_ID,
     apiUri = DEFAULT_TDK_API_BASE_URI,
-    authConfig,
   } = config;
-  const {
-    loginDomain = DEFAULT_TDK_LOGIN_DOMAIN,
-    redirectUri = window.location.origin + window.location.pathname,
-  } = authConfig ?? {};
-  const [state, dispatch] = useReducer(reducer, {
-    project,
-    chainId,
-    apiUri,
-    authConfig: {
-      loginDomain,
-      redirectUri,
-    },
-    status: "IDLE",
-    tdk: new TDKAPI({
-      baseUri: config.apiUri,
-      project,
-      chainId: config.chainId,
-    }),
-    isAuthenticated: false,
-  });
 
-  useEffect(() => {
-    let authToken: string | null | undefined;
+  const chainId = Number(rawChainId);
 
-    // Check browser query params
-    if (window.location.search) {
-      authToken = new URLSearchParams(window.location.search).get(
-        "tdk_auth_token",
-      );
-    }
-
-    // Check local storage
-    if (!authToken) {
-      authToken = getStoredAuthToken();
-    }
-
-    // Mark as logged in if we have a valid match
-    if (authToken) {
-      const exp = decodeAuthToken(authToken).exp ?? 0;
-      if (exp * 1000 > Date.now()) {
-        dispatch({ type: "COMPLETE_AUTH", authToken });
-      } else {
-        clearStoredAuthToken();
-      }
-    }
-  }, []);
+  const tdk = useMemo(
+    () =>
+      new TDKAPI({
+        baseUri: apiUri,
+        project: projectId,
+        chainId,
+      }),
+    [apiUri, chainId, projectId],
+  );
 
   return (
-    <Context.Provider
-      value={{
-        ...state,
-        onStartAuth: () => dispatch({ type: "START_AUTH" }),
-        onCompleteAuth: (authToken) =>
-          dispatch({ type: "COMPLETE_AUTH", authToken }),
-        logOut: () => dispatch({ type: "RESET_AUTH" }),
-      }}
-    >
-      {children}
-    </Context.Provider>
+    <ThirdwebProvider>
+      <Context.Provider
+        value={{
+          tdk,
+          thirdwebClient: useMemo(
+            () => createThirdwebClient({ clientId }),
+            [clientId],
+          ),
+          thirdwebChain: useMemo(() => defineChain(chainId), [chainId]),
+        }}
+      >
+        {children}
+      </Context.Provider>
+    </ThirdwebProvider>
   );
 };

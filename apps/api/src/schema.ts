@@ -37,79 +37,6 @@ const EXAMPLE_WALLET_ADDRESS = "0x0eB5B03c0303f2F47cD81d7BE4275AF8Ed347576";
 const EXAMPLE_QUEUE_ID = "5b6c941c-35ba-4c54-92db-41b39cd06b2d";
 const EXAMPLE_EMAIL_ADDRESS = "example@treasure.lol";
 
-// Auth
-const loginPayloadSchema = Type.Object({
-  domain: Type.String(),
-  address: Type.String(),
-  statement: Type.String(),
-  uri: Type.Optional(Type.String()),
-  version: Type.String(),
-  chain_id: Type.Optional(Type.String()),
-  nonce: Type.String(),
-  issued_at: Type.String(),
-  expiration_time: Type.String(),
-  invalid_before: Type.String(),
-  resources: Type.Optional(Type.Array(Type.String())),
-});
-
-export const readLoginPayloadQuerystringSchema = Type.Object({
-  address: Type.String({
-    description: "Smart wallet address used to generate payload",
-    examples: [EXAMPLE_WALLET_ADDRESS],
-  }),
-});
-
-export const readLoginPayloadReplySchema = loginPayloadSchema;
-
-export const loginBodySchema = Type.Object({
-  payload: loginPayloadSchema,
-  signature: Type.String(),
-});
-
-export const loginReplySchema = Type.Object({
-  token: Type.String({
-    description: "Authorization token for the logged in user",
-  }),
-});
-
-export const authenticateBodySchema = Type.Object({
-  email: Type.String({
-    description: "Email address for the custom auth method",
-    examples: [EXAMPLE_EMAIL_ADDRESS],
-  }),
-  password: Type.String({
-    description: "Password for the custom auth method",
-  }),
-});
-
-export const authenticateReplySchema = Type.Object({
-  projectId: Type.String(),
-  token: Type.String({
-    description: "Authorization token for the custom auth method",
-  }),
-});
-
-export const authVerifyBodySchema = Type.Object({
-  payload: Type.String(),
-});
-
-export const authVerifyReplySchema = Type.Object({
-  userId: Type.String(),
-  email: Type.String(),
-  exp: Type.Optional(Type.Number()),
-});
-
-export type ReadLoginPayloadQuerystring = Static<
-  typeof readLoginPayloadQuerystringSchema
->;
-export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
-export type LoginBody = Static<typeof loginBodySchema>;
-export type LoginReply = Static<typeof loginReplySchema>;
-export type AuthenciateBody = Static<typeof authenticateBodySchema>;
-export type AuthenticateReply = Static<typeof authenticateReplySchema>;
-export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
-export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;
-
 // Harvesters
 const tokenSchema = Type.Object({
   address: Type.String({
@@ -491,7 +418,7 @@ export type ReadTransactionParams = Static<typeof readTransactionParamsSchema>;
 export type ReadTransactionReply = Static<typeof readTransactionReplySchema>;
 
 // Users
-export const readCurrentUserReplySchema = Type.Object({
+const userSchema = Type.Object({
   id: Type.String(),
   smartAccountAddress: Type.String(),
   email: nullableStringSchema,
@@ -507,4 +434,80 @@ export const readCurrentUserReplySchema = Type.Object({
   ),
 });
 
+export const readCurrentUserReplySchema = userSchema;
+
 export type ReadCurrentUserReply = Static<typeof readCurrentUserReplySchema>;
+
+// Auth
+const loginPayloadSchema = Type.Object({
+  domain: Type.String(),
+  address: Type.String(),
+  statement: Type.String(),
+  uri: Type.Optional(Type.String()),
+  version: Type.String(),
+  chain_id: Type.Optional(Type.String()),
+  nonce: Type.String(),
+  issued_at: Type.String(),
+  expiration_time: Type.String(),
+  invalid_before: Type.String(),
+  resources: Type.Optional(Type.Array(Type.String())),
+});
+
+export const readLoginPayloadQuerystringSchema = Type.Object({
+  address: Type.String({
+    description: "Smart wallet address used to generate payload",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
+});
+
+export const readLoginPayloadReplySchema = loginPayloadSchema;
+
+export const loginBodySchema = Type.Object({
+  payload: loginPayloadSchema,
+  signature: Type.String(),
+});
+
+export const loginReplySchema = Type.Object({
+  token: Type.String({
+    description: "Authorization token for the logged in user",
+  }),
+  user: userSchema,
+});
+
+export const authenticateBodySchema = Type.Object({
+  email: Type.String({
+    description: "Email address for the custom auth method",
+    examples: [EXAMPLE_EMAIL_ADDRESS],
+  }),
+  password: Type.String({
+    description: "Password for the custom auth method",
+  }),
+});
+
+export const authenticateReplySchema = Type.Object({
+  projectId: Type.String(),
+  token: Type.String({
+    description: "Authorization token for the custom auth method",
+  }),
+});
+
+export const authVerifyBodySchema = Type.Object({
+  payload: Type.String(),
+});
+
+export const authVerifyReplySchema = Type.Object({
+  userId: Type.String(),
+  email: Type.String(),
+  exp: Type.Optional(Type.Number()),
+});
+
+export type ReadLoginPayloadQuerystring = Static<
+  typeof readLoginPayloadQuerystringSchema
+>;
+export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
+export type LoginBody = Static<typeof loginBodySchema>;
+export type LoginReply = Static<typeof loginReplySchema>;
+export type AuthenciateBody = Static<typeof authenticateBodySchema>;
+export type AuthenticateReply = Static<typeof authenticateReplySchema>;
+export type AuthVerifyBody = Static<typeof authVerifyBodySchema>;
+export type AuthVerifyReply = Static<typeof authVerifyReplySchema>;

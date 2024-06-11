@@ -1,5 +1,9 @@
 import type { Prisma } from "@prisma/client";
-import { DEFAULT_TDK_CHAIN_ID, decodeAuthToken } from "@treasure-dev/tdk-core";
+import {
+  DEFAULT_TDK_CHAIN_ID,
+  decodeAuthToken,
+  getAllActiveSigners,
+} from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/project";
@@ -31,7 +35,7 @@ import { TdkError } from "../utils/error";
 import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
 
 export const authRoutes =
-  ({ env, auth, db, engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Querystring: ReadLoginPayloadQuerystring;
@@ -77,7 +81,12 @@ export const authRoutes =
             .send({ error: `Login failed: ${verifiedPayload.error}` });
         }
 
-        const smartAccountAddress = verifiedPayload.payload.address;
+        const { payload } = verifiedPayload;
+        const {
+          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
+          address: smartAccountAddress,
+        } = payload;
+
         let user = await db.user.upsert({
           where: {
             smartAccountAddress,
@@ -90,8 +99,8 @@ export const authRoutes =
           },
           select: {
             id: true,
+            smartAccountAddress: true,
             email: true,
-            treasureTag: true,
           },
         });
 
@@ -100,10 +109,7 @@ export const authRoutes =
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
-          } = await engine.account.getAllAdmins(
-            verifiedPayload.payload.chain_id ?? DEFAULT_TDK_CHAIN_ID.toString(),
-            smartAccountAddress,
-          );
+          } = await engine.account.getAllAdmins(chainId, smartAccountAddress);
 
           // Look up any possible associated email addresses (for embedded wallets)
           const embeddedWalletUser = await fetchEmbeddedWalletUser(
@@ -112,7 +118,6 @@ export const authRoutes =
           );
           if (embeddedWalletUser) {
             const { email } = embeddedWalletUser;
-            let updateData: Prisma.UserUpdateInput = { email };
 
             // Check if email was migrated from TreasureTag system, and delete existing record if so
             const existingUser = await db.user.findUnique({
@@ -120,10 +125,6 @@ export const authRoutes =
               select: { id: true },
             });
             if (existingUser) {
-              updateData = {
-                ...updateData,
-                treasureTag: updateData.treasureTag,
-              };
               await db.user.delete({ where: { id: existingUser.id } });
             }
 
@@ -132,22 +133,44 @@ export const authRoutes =
               where: {
                 id: user.id,
               },
-              data: updateData,
+              data: { email },
               select: {
                 id: true,
+                smartAccountAddress: true,
                 email: true,
-                treasureTag: true,
               },
             });
           }
         }
 
         // Add user data to JWT payload's context
-        const authToken = await auth.generateJWT({
-          payload: verifiedPayload.payload,
-          context: user,
+        const [authToken, allActiveSigners] = await Promise.all([
+          auth.generateJWT({
+            payload,
+            context: user,
+          }),
+          getAllActiveSigners({
+            chainId: Number(chainId),
+            address: user.smartAccountAddress,
+            wagmiConfig,
+          }),
+        ]);
+        reply.send({
+          token: authToken,
+          user: {
+            ...user,
+            allActiveSigners: allActiveSigners.map((activeSigner) => ({
+              ...activeSigner,
+              approvedTargets: activeSigner.approvedTargets.map((target) =>
+                target.toLowerCase(),
+              ),
+              nativeTokenLimitPerTransaction:
+                activeSigner.nativeTokenLimitPerTransaction.toString(),
+              startTimestamp: activeSigner.startTimestamp.toString(),
+              endTimestamp: activeSigner.endTimestamp.toString(),
+            })),
+          },
         });
-        reply.send({ token: authToken });
       },
     );
 

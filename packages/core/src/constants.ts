@@ -256,7 +256,7 @@ export const CONTRACT_ADDRESSES: Record<
   },
 };
 
-const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
+export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
   [arbitrum.id]:
     "0x086a11794a945fb10a6199cca4e0d7ff6d25513b000000000000000000000001",
   [arbitrumSepolia.id]:
