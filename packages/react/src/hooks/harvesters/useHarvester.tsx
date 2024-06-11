@@ -23,9 +23,10 @@ export const useHarvester = ({
   contract,
   userAddress,
 }: Props) => {
-  const { address, tdk } = useTreasure();
+  const { tdk, user } = useTreasure();
   const contractAddresses = getContractAddresses(chainId);
-  const smartAccountAddress = (address ?? zeroAddress) as AddressString;
+  const smartAccountAddress = (user?.smartAccountAddress ??
+    zeroAddress) as AddressString;
   const harvesterAddress = contract.startsWith("0x")
     ? (contract as AddressString)
     : contractAddresses[contract as Contract];

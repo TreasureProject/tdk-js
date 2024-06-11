@@ -97,7 +97,7 @@ const main = async () => {
   app.get("/healthcheck", async (_, reply) => {
     try {
       await ctx.db.$queryRaw`SELECT 1`;
-    } catch (err) {
+    } catch (_) {
       return reply
         .code(500)
         .send({ status: "error", message: "Error connecting to database" });
@@ -105,7 +105,7 @@ const main = async () => {
 
     try {
       await ctx.engine.default.getJson();
-    } catch (err) {
+    } catch (_) {
       return reply.code(500).send({
         status: "error",
         message: "Error connecting to Thirdweb Engine",

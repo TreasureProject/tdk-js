@@ -418,25 +418,37 @@ export type ReadTransactionParams = Static<typeof readTransactionParamsSchema>;
 export type ReadTransactionReply = Static<typeof readTransactionReplySchema>;
 
 // Users
+const sessionSchema = Type.Object({
+  isAdmin: Type.Boolean(),
+  signer: Type.String(),
+  approvedTargets: Type.Array(Type.String()),
+  nativeTokenLimitPerTransaction: Type.String(),
+  startTimestamp: Type.String(),
+  endTimestamp: Type.String(),
+});
+
 const userSchema = Type.Object({
   id: Type.String(),
   smartAccountAddress: Type.String(),
   email: nullableStringSchema,
-  allActiveSigners: Type.Array(
-    Type.Object({
-      isAdmin: Type.Boolean(),
-      signer: Type.String(),
-      approvedTargets: Type.Array(Type.String()),
-      nativeTokenLimitPerTransaction: Type.String(),
-      startTimestamp: Type.String(),
-      endTimestamp: Type.String(),
-    }),
-  ),
+  allActiveSigners: Type.Array(sessionSchema),
 });
 
 export const readCurrentUserReplySchema = userSchema;
 
+export const readCurrentUserSessionsQuerystringSchema = Type.Object({
+  chainId: Type.Number(),
+});
+
+export const readCurrentUserSessionsReplySchema = Type.Array(sessionSchema);
+
 export type ReadCurrentUserReply = Static<typeof readCurrentUserReplySchema>;
+export type ReadCurrentUserSessionsQuerystring = Static<
+  typeof readCurrentUserSessionsQuerystringSchema
+>;
+export type ReadCurrentUserSessionsReply = Static<
+  typeof readCurrentUserSessionsReplySchema
+>;
 
 // Auth
 const loginPayloadSchema = Type.Object({

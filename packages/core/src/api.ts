@@ -8,6 +8,8 @@ import type {
 import type {
   LoginBody,
   LoginReply,
+  ReadCurrentUserSessionsQuerystring,
+  ReadCurrentUserSessionsReply,
   ReadLoginPayloadReply,
 } from "../../../apps/api/src/schema";
 import type {
@@ -21,11 +23,7 @@ import type {
   ReadProjectReply,
   ReadTransactionReply,
 } from "../../../apps/api/src/schema";
-import {
-  DEFAULT_TDK_API_BASE_URI,
-  DEFAULT_TDK_APP,
-  DEFAULT_TDK_CHAIN_ID,
-} from "./constants";
+import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -38,23 +36,19 @@ class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
-  projectId: string;
   chainId: number;
   authToken?: string;
 
   constructor({
     baseUri = DEFAULT_TDK_API_BASE_URI,
-    project = DEFAULT_TDK_APP,
     chainId = DEFAULT_TDK_CHAIN_ID,
     authToken,
   }: {
     baseUri?: string;
-    project?: string;
     chainId?: number;
     authToken?: string;
   }) {
     this.baseUri = baseUri;
-    this.projectId = project;
     this.chainId = chainId;
     this.authToken = authToken;
   }
@@ -66,7 +60,6 @@ export class TDKAPI {
         ...(this.authToken
           ? { Authorization: `Bearer ${this.authToken}` }
           : undefined),
-        ...(this.projectId ? { "x-project-id": this.projectId } : undefined),
         ...(this.chainId
           ? { "x-chain-id": this.chainId.toString() }
           : undefined),
@@ -90,14 +83,14 @@ export class TDKAPI {
 
   async get<T>(
     path: string,
-    params?: Record<string, string>,
+    params?: Record<string, string | number>,
     options?: RequestInit,
   ): Promise<T> {
     let pathWithParams = path;
     if (params) {
       const searchParams = new URLSearchParams();
       for (const key in params) {
-        searchParams.append(key, params[key]);
+        searchParams.append(key, params[key].toString());
       }
 
       pathWithParams += `?${searchParams}`;
@@ -145,6 +138,8 @@ export class TDKAPI {
 
   user = {
     me: () => this.get<ReadCurrentUserReply>("/users/me"),
+    getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
+      this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
   };
 
   transaction = {

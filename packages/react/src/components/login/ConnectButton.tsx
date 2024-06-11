@@ -1,11 +1,11 @@
-import { truncateEthAddress } from "@treasure-dev/tdk-core";
+import { getContractAddress, truncateEthAddress } from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
 import { ConnectButton as ThirdwebConnectButton } from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
 import { useCopyToClipboard } from "usehooks-ts";
 
+import { defineChain } from "thirdweb";
 import { useTreasure } from "../../context";
-import { useTreasureConnect } from "../../hooks/connect/useTreasureConnect";
 import { CopyIcon } from "../../icons/CopyIcon";
 import { ExitIcon } from "../../icons/ExitIcon";
 import { TreasureIcon } from "../../icons/TreasureIcon";
@@ -23,62 +23,36 @@ const wallets = [
     },
   }),
 ];
-
 export const ConnectButton = () => {
-  const { tdk, thirdwebClient, thirdwebChain } = useTreasure();
-  const {
-    project,
-    factoryAddress,
-    sponsorGas,
-    isAuthenticated,
-    user,
-    requiresSession,
-    hasActiveSession,
-    authenticate,
-    logOut,
-    createSession,
-  } = useTreasureConnect();
+  const { app, chainId, tdk, thirdwebClient, user, authenticate, logOut } =
+    useTreasure();
+  const factoryAddress = getContractAddress(chainId, "ManagedAccountFactory");
   const { t } = useTranslation();
   const [, copy] = useCopyToClipboard();
+
+  const chain = defineChain(chainId);
 
   return (
     <ThirdwebConnectButton
       client={thirdwebClient}
       wallets={wallets}
-      chain={thirdwebChain}
+      chain={chain}
       accountAbstraction={{
-        chain: thirdwebChain,
+        chain,
         factoryAddress,
-        sponsorGas,
+        sponsorGas: true,
       }}
       auth={{
-        isLoggedIn: async (connectedAddress) =>
-          isAuthenticated &&
-          user?.smartAccountAddress.toLowerCase() ===
-            connectedAddress.toLowerCase(),
+        isLoggedIn: async (address) =>
+          user?.smartAccountAddress.toLowerCase() === address.toLowerCase(),
         getLoginPayload: async ({ address }) =>
           tdk.auth.getLoginPayload({ address }),
         doLogin: async (params) => {
           const { token, user } = await tdk.auth.logIn(params);
-          authenticate(token, user);
-
-          if (!requiresSession) {
-            console.debug(
-              "Session not required by project, skipping session creation",
-            );
-            return;
-          }
-
-          if (hasActiveSession) {
-            console.debug("Using existing session key");
-            return;
-          }
-
-          console.debug("Creating new session key");
           try {
-            await createSession();
+            await authenticate(token, user);
           } catch (err) {
-            console.error("Error creating new session key:", err);
+            console.error("Error authenticating user:", err);
             throw err;
           }
         },
@@ -102,10 +76,8 @@ export const ConnectButton = () => {
       }}
       connectModal={{
         size: "compact",
-        title: project?.name ? `Connect to ${project.name}` : "Connect",
-        titleIcon:
-          project?.icon ??
-          "https://images.treasure.lol/tdk/login/treasure_icon.png",
+        title: `Connect to ${app.name}`,
+        titleIcon: app.icon,
         showThirdwebBranding: false,
       }}
       detailsButton={{

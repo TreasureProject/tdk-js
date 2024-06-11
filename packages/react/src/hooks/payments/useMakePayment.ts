@@ -35,7 +35,7 @@ type Params = {
   onError?: OnErrorFn;
 };
 
-export const useMakePayment = (params: Params) => {
+export const useMakePayment = (_params: Params) => {
   // export const useMakePayment = ({
   //   paymentToken,
   //   pricedCurrency,

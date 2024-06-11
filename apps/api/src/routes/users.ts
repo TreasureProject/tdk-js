@@ -7,7 +7,10 @@ import "../middleware/swagger";
 import {
   type ErrorReply,
   type ReadCurrentUserReply,
+  type ReadCurrentUserSessionsQuerystring,
+  type ReadCurrentUserSessionsReply,
   readCurrentUserReplySchema,
+  readCurrentUserSessionsReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { TdkError } from "../utils/error";
@@ -72,6 +75,52 @@ export const usersRoutes =
             endTimestamp: activeSigner.endTimestamp.toString(),
           })),
         });
+      },
+    );
+
+    app.get<{
+      Querystring: ReadCurrentUserSessionsQuerystring;
+      Reply: ReadCurrentUserSessionsReply | ErrorReply;
+    }>(
+      "/users/me/sessions",
+      {
+        schema: {
+          summary: "Get current user's on-chain sessions'",
+          description: "Get current user's on-chain sessions",
+          security: [{ authToken: [] }],
+          response: {
+            200: readCurrentUserSessionsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { userAddress, authError } = req;
+        if (!userAddress) {
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const allActiveSigners = await getAllActiveSigners({
+          chainId: Number(req.query.chainId),
+          address: userAddress,
+          wagmiConfig,
+        });
+
+        reply.send(
+          allActiveSigners.map((activeSigner) => ({
+            ...activeSigner,
+            approvedTargets: activeSigner.approvedTargets.map((target) =>
+              target.toLowerCase(),
+            ),
+            nativeTokenLimitPerTransaction:
+              activeSigner.nativeTokenLimitPerTransaction.toString(),
+            startTimestamp: activeSigner.startTimestamp.toString(),
+            endTimestamp: activeSigner.endTimestamp.toString(),
+          })),
+        );
       },
     );
   };
