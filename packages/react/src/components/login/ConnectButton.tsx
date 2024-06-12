@@ -23,8 +23,14 @@ const wallets = [
     },
   }),
 ];
-export const ConnectButton = () => {
-  const { app, chainId, tdk, thirdwebClient, user, authenticate, logOut } =
+
+type Props = {
+  appName: string;
+  appIconUri?: string;
+};
+
+export const ConnectButton = ({ appName, appIconUri }: Props) => {
+  const { chainId, tdk, thirdwebClient, user, authenticate, logOut } =
     useTreasure();
   const factoryAddress = getContractAddress(chainId, "ManagedAccountFactory");
   const { t } = useTranslation();
@@ -76,8 +82,10 @@ export const ConnectButton = () => {
       }}
       connectModal={{
         size: "compact",
-        title: `Connect to ${app.name}`,
-        titleIcon: app.icon,
+        title: `Connect to ${appName}`,
+        titleIcon:
+          appIconUri ??
+          "https://images.treasure.lol/tdk/login/treasure_icon.png",
         showThirdwebBranding: false,
       }}
       detailsButton={{
@@ -89,10 +97,10 @@ export const ConnectButton = () => {
                 className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
               >
                 <div>
-                  <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium block">
+                  <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium tdk-block">
                     {user?.email}
                   </span>
-                  <span className="tdk-text-xs tdk-text-night-600 block">
+                  <span className="tdk-text-xs tdk-text-night-600 tdk-block">
                     {truncateEthAddress(user?.smartAccountAddress)}
                   </span>
                 </div>

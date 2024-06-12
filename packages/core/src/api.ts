@@ -37,19 +37,23 @@ class APIError extends Error {
 export class TDKAPI {
   baseUri: string;
   chainId: number;
+  backendWallet?: string;
   authToken?: string;
 
   constructor({
     baseUri = DEFAULT_TDK_API_BASE_URI,
     chainId = DEFAULT_TDK_CHAIN_ID,
+    backendWallet,
     authToken,
   }: {
     baseUri?: string;
     chainId?: number;
+    backendWallet?: string;
     authToken?: string;
   }) {
     this.baseUri = baseUri;
     this.chainId = chainId;
+    this.backendWallet = backendWallet;
     this.authToken = authToken;
   }
 

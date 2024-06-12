@@ -25,45 +25,49 @@ export const isSessionRequired = ({
 
 export const validateSession = async ({
   backendWallet,
-  approvedTargets = [],
+  approvedTargets: rawApprovedTargets,
   nativeTokenLimitPerTransaction = 0,
   sessions,
 }: {
-  backendWallet?: string;
-  approvedTargets?: string[];
+  backendWallet: string;
+  approvedTargets: string[];
   nativeTokenLimitPerTransaction?: number;
   sessions: Session[];
 }) => {
+  const approvedTargets = rawApprovedTargets.map((target) =>
+    target.toLowerCase(),
+  );
+
   // Skip check if no session is required
   if (!isSessionRequired({ approvedTargets, nativeTokenLimitPerTransaction })) {
     return true;
   }
 
-  return sessions.some(
-    ({
-      signer,
-      approvedTargets: signerApprovedTargets,
-      startTimestamp,
-      endTimestamp,
-    }) => {
-      const startDate = new Date(Number(startTimestamp) * 1000);
-      const endDate = new Date(Number(endTimestamp) * 1000);
-      return (
-        // Start date has passed
-        startDate < new Date() &&
-        // Expiration date is at least 1 hour in the future
-        endDate > getDateHoursFromNow(1) &&
-        // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
-        endDate <= getDateYearsFromNow(10) &&
-        // Expected backend wallet is signer
-        signer.toLowerCase() === backendWallet?.toLowerCase() &&
-        // All requested targets are approved
-        approvedTargets.every((target) =>
-          signerApprovedTargets.includes(target),
-        )
-      );
-    },
-  );
+  return sessions.some((session) => {
+    const startDate = new Date(Number(session.startTimestamp) * 1000);
+    const endDate = new Date(Number(session.endTimestamp) * 1000);
+    const signerApprovedTargets = session.approvedTargets.map((target) =>
+      target.toLowerCase(),
+    );
+    return (
+      // Start date has passed
+      startDate < new Date() &&
+      // Expiration date is at least 1 hour in the future
+      endDate > getDateHoursFromNow(1) &&
+      // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
+      endDate <= getDateYearsFromNow(10) &&
+      // Expected backend wallet is signer
+      session.signer.toLowerCase() === backendWallet?.toLowerCase() &&
+      // All requested targets are approved
+      approvedTargets.every((target) =>
+        signerApprovedTargets.includes(target),
+      ) &&
+      // Native token limit per transaction is approved
+      (!nativeTokenLimitPerTransaction ||
+        Number(session.nativeTokenLimitPerTransaction) >=
+          nativeTokenLimitPerTransaction)
+    );
+  });
 };
 
 export const createSession = async ({
