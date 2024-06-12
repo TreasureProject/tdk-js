@@ -491,7 +491,7 @@ export const getHarvesterUserInfo = async ({
           abi: charactersStakingRulesAbi,
           // TODO: change this to be generic
           functionName: "levelToUserDepositBoost",
-          args: [50n],
+          args: [100n],
         },
         {
           chainId,
