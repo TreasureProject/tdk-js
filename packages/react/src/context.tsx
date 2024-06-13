@@ -58,7 +58,7 @@ export const useTreasure = () => {
 
 type Props = PropsWithChildren<Config>;
 
-const InnerTreasureProvider = ({
+const TreasureProviderInner = ({
   children,
   apiUri = DEFAULT_TDK_API_BASE_URI,
   chainId = DEFAULT_TDK_CHAIN_ID,
@@ -214,6 +214,6 @@ const InnerTreasureProvider = ({
 
 export const TreasureProvider = (props: Props) => (
   <ThirdwebProvider>
-    <InnerTreasureProvider {...props} />
+    <TreasureProviderInner {...props} />
   </ThirdwebProvider>
 );

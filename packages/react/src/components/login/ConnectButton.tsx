@@ -1,6 +1,9 @@
 import { getContractAddress, truncateEthAddress } from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
-import { ConnectButton as ThirdwebConnectButton } from "thirdweb/react";
+import {
+  ConnectButton as ThirdwebConnectButton,
+  darkTheme,
+} from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
 import { useCopyToClipboard } from "usehooks-ts";
 
@@ -66,19 +69,14 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
           logOut();
         },
       }}
-      theme="dark"
+      theme={darkTheme({
+        colors: {
+          primaryButtonText: "#FFFFFF",
+          primaryButtonBg: "#DC2626",
+        },
+      })}
       connectButton={{
         label: t("login.connect"),
-        style: {
-          color: "#FFFFFF",
-          backgroundColor: "#DC2626",
-        },
-      }}
-      signInButton={{
-        style: {
-          color: "#FFFFFF",
-          backgroundColor: "#DC2626",
-        },
       }}
       connectModal={{
         size: "compact",
