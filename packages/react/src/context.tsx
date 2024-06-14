@@ -4,6 +4,7 @@ import {
   TDKAPI,
   type User,
   createSession,
+  decodeAuthToken,
   validateSession,
 } from "@treasure-dev/tdk-core";
 import type { PropsWithChildren } from "react";
@@ -87,7 +88,10 @@ const TreasureProviderInner = ({
       return false;
     }
 
-    const sessions = await tdk.user.getSessions({ chainId });
+    const sessions =
+      user && user.allActiveSigners.length > 0
+        ? user.allActiveSigners
+        : await tdk.user.getSessions({ chainId });
     return validateSession({
       backendWallet,
       approvedTargets,
@@ -168,7 +172,6 @@ const TreasureProviderInner = ({
     if (!nextUser) {
       try {
         nextUser = await tdk.user.me();
-        setUser(nextUser);
       } catch (err) {
         console.error(
           "[TreasureProvider] Error fetching current user details:",
@@ -178,12 +181,14 @@ const TreasureProviderInner = ({
       }
     }
 
+    // Update user state
     setUser(nextUser);
 
     // Store the auth token
     setStoredAuthToken(authToken);
 
-    onAuthenticated?.(nextUser, startUserSession);
+    // Trigger callback
+    await onAuthenticated?.(nextUser, startUserSession);
   };
 
   // Check local storage for stored auth token
@@ -191,6 +196,17 @@ const TreasureProviderInner = ({
   useEffect(() => {
     const authToken = getStoredAuthToken();
     if (authToken) {
+      // Decode the auth token and immediately set user if not expired
+      const decodedAuthToken = decodeAuthToken(authToken);
+      if (decodedAuthToken.exp > Date.now() / 1000) {
+        setUser({
+          id: decodedAuthToken.ctx.id,
+          email: decodedAuthToken.ctx.email,
+          smartAccountAddress: decodedAuthToken.sub,
+          allActiveSigners: [],
+        });
+      }
+
       authenticate(authToken);
     }
   }, []);

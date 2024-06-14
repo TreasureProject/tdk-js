@@ -2,22 +2,13 @@ import { getContractAddress, truncateEthAddress } from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
 import {
   ConnectButton as ThirdwebConnectButton,
-  darkTheme,
+  lightTheme,
 } from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
-import { useCopyToClipboard } from "usehooks-ts";
 
 import { defineChain } from "thirdweb";
 import { useTreasure } from "../../context";
-import { CopyIcon } from "../../icons/CopyIcon";
-import { ExitIcon } from "../../icons/ExitIcon";
 import { TreasureIcon } from "../../icons/TreasureIcon";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/DropdownMenu";
 
 const wallets = [
   inAppWallet({
@@ -37,7 +28,6 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
     useTreasure();
   const factoryAddress = getContractAddress(chainId, "ManagedAccountFactory");
   const { t } = useTranslation();
-  const [, copy] = useCopyToClipboard();
 
   const chain = defineChain(chainId);
 
@@ -69,10 +59,15 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
           logOut();
         },
       }}
-      theme={darkTheme({
+      theme={lightTheme({
         colors: {
-          primaryButtonText: "#FFFFFF",
+          accentButtonBg: "#DC2626",
+          accentButtonText: "#FFFFFF",
+          accentText: "#DC2626",
           primaryButtonBg: "#DC2626",
+          primaryButtonText: "#FFFFFF",
+          modalBg: "#FFFDF7",
+          modalOverlayBg: "rgba(0, 0, 0, 0.3)",
         },
       })}
       connectButton={{
@@ -85,6 +80,13 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
             <span className="tdk-ml-1">{t("login.connect")}</span>
           </>
         ),
+        style: {
+          minHeight: 40,
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 8,
+          paddingBottom: 8,
+        },
       }}
       connectModal={{
         size: "compact",
@@ -94,61 +96,33 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
           "https://images.treasure.lol/tdk/login/treasure_icon.png",
         showThirdwebBranding: false,
       }}
+      signInButton={{
+        style: {
+          minHeight: 40,
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 8,
+          paddingBottom: 8,
+        },
+      }}
       detailsButton={{
         render: () => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
-              >
-                <div>
-                  <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium tdk-block">
-                    {user?.email}
-                  </span>
-                  <span className="tdk-text-xs tdk-text-night-600 tdk-block">
-                    {truncateEthAddress(user?.smartAccountAddress)}
-                  </span>
-                </div>
-                <TreasureIcon className="tdk-w-8 tdk-h-8 tdk-text-ruby-900" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="tdk-w-[var(--radix-dropdown-menu-trigger-width)]">
-              <DropdownMenuItem>
-                <button
-                  type="button"
-                  className="tdk-flex tdk-items-center tdk-gap-1 tdk-w-full tdk-px-2 tdk-py-1.5"
-                  onClick={() => copy(user?.smartAccountAddress ?? "")}
-                >
-                  <CopyIcon className="tdk-w-5 tdk-h-5" />
-                  {t("common.copyAddress")}
-                </button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button
-                  type="button"
-                  className="tdk-flex tdk-items-center tdk-gap-1 tdk-text-ruby-800 tdk-w-full tdk-px-2 tdk-py-1.5"
-                  onClick={() => logOut()}
-                >
-                  <ExitIcon className="tdk-w-5 tdk-h-5" />
-                  {t("login.disconnect")}
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            type="button"
+            className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
+          >
+            <div>
+              <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium tdk-block">
+                {user?.email}
+              </span>
+              <span className="tdk-text-xs tdk-text-night-600 tdk-block">
+                {truncateEthAddress(user?.smartAccountAddress)}
+              </span>
+            </div>
+            <TreasureIcon className="tdk-w-8 tdk-h-8 tdk-text-ruby-900" />
+          </button>
         ),
       }}
     />
-    // <Button
-    //   as="link"
-    //   href={loginUrl}
-    //   className="tdk-inline-flex tdk-items-center tdk-gap-1"
-    // >
-    //   <TreasureIcon
-    //     className="tdk-w-5 tdk-h-5 tdk-text-white"
-    //     starsFill="#C62222"
-    //   />
-    //   {t("login.connect")}
-    // </Button>
   );
 };

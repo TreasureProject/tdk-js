@@ -5,6 +5,7 @@ export const decodeAuthToken = (token: string) =>
     sub: string;
     exp: number;
     ctx: {
+      id: string;
       email: string;
     };
   }>(token);
