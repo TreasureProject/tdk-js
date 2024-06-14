@@ -76,7 +76,15 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
         },
       })}
       connectButton={{
-        label: t("login.connect"),
+        label: (
+          <>
+            <TreasureIcon
+              className="tdk-w-5 tdk-h-5 tdk-text-white"
+              starsFill="#C62222"
+            />
+            <span className="tdk-ml-1">{t("login.connect")}</span>
+          </>
+        ),
       }}
       connectModal={{
         size: "compact",

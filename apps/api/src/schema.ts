@@ -459,7 +459,7 @@ const userSchema = Type.Object({
 
 export const readCurrentUserReplySchema = userSchema;
 
-export const readCurrentUserSessionsQuerystringSchema = Type.Object({
+const readCurrentUserSessionsQuerystringSchema = Type.Object({
   chainId: Type.Number(),
 });
 
