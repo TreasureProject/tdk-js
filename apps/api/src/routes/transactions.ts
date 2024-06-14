@@ -42,7 +42,7 @@ export const transactionsRoutes =
           backendWallet,
           userAddress,
           authError,
-          body: postBody,
+          body: { address, abi, functionName, args, txOverrides },
         } = req;
         if (!userAddress) {
           throw new TdkError({
@@ -52,13 +52,17 @@ export const transactionsRoutes =
           });
         }
 
-        const { address, ...body } = postBody;
         try {
           const { result } = await engine.contract.write(
             chainId.toString(),
             address,
             backendWallet,
-            body,
+            {
+              abi,
+              functionName,
+              args,
+              txOverrides,
+            },
             false,
             userAddress,
           );
@@ -72,7 +76,8 @@ export const transactionsRoutes =
               backendWallet,
               userAddress,
               address,
-              ...body,
+              functionName,
+              args,
             },
           });
         }

@@ -415,11 +415,34 @@ export type ReadProjectParams = Static<typeof readProjectParamsSchema>;
 export type ReadProjectReply = Static<typeof readProjectReplySchema>;
 
 // Transactions
+const abiTypeSchema = Type.Object({
+  type: Type.Optional(Type.String()),
+  name: Type.Optional(Type.String()),
+  stateMutability: Type.Optional(Type.String()),
+  components: Type.Optional(
+    Type.Array(
+      Type.Object({
+        type: Type.Optional(Type.String()),
+        name: Type.Optional(Type.String()),
+        internalType: Type.Optional(Type.String()),
+      }),
+    ),
+  ),
+});
+
+const abiSchema = Type.Object({
+  type: Type.String(),
+  name: Type.Optional(Type.String()),
+  inputs: Type.Array(abiTypeSchema),
+  stateMutability: Type.Optional(Type.String()),
+});
+
 export const createTransactionBodySchema = Type.Object({
   address: Type.String({
     description: "The address of the contract to call",
     examples: [EXAMPLE_CONTRACT_ADDRESS],
   }),
+  abi: Type.Optional(Type.Array(abiSchema)),
   functionName: Type.String({
     description: "The function to call on the contract",
     examples: ["transfer"],
