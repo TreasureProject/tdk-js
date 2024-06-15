@@ -160,7 +160,10 @@ export class TDKAPI {
         >;
         backendWallet?: string;
       },
-      options: { waitForCompletion?: boolean } = { waitForCompletion: true },
+      {
+        includeAbi = false,
+        waitForCompletion = true,
+      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
     ) => {
       const result = await this.post<
         CreateTransactionBody,
@@ -168,12 +171,12 @@ export class TDKAPI {
       >("/transactions", {
         ...params,
         // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        abi: params.abi as any,
+        ...(includeAbi ? { abi: params.abi as any } : {}),
         // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
         args: params.args as any,
         backendWallet: params.backendWallet ?? this.backendWallet,
       });
-      if (!options.waitForCompletion) {
+      if (!waitForCompletion) {
         return result;
       }
 
