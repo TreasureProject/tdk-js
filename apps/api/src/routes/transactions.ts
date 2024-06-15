@@ -2,7 +2,6 @@ import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
 import "../middleware/chain";
-import "../middleware/project";
 import "../middleware/swagger";
 import {
   type CreateTransactionBody,
@@ -18,7 +17,7 @@ import type { TdkApiContext } from "../types";
 import { TdkError, parseEngineErrorMessage } from "../utils/error";
 
 export const transactionsRoutes =
-  ({ engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ engine, env }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.post<{
       Body: CreateTransactionBody;
@@ -39,10 +38,16 @@ export const transactionsRoutes =
       async (req, reply) => {
         const {
           chainId,
-          backendWallet,
           userAddress,
           authError,
-          body: { address, abi, functionName, args, txOverrides },
+          body: {
+            address,
+            abi,
+            functionName,
+            args,
+            txOverrides,
+            backendWallet: overrideBackendWallet,
+          },
         } = req;
         if (!userAddress) {
           throw new TdkError({
@@ -52,6 +57,8 @@ export const transactionsRoutes =
           });
         }
 
+        const backendWallet =
+          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
           const { result } = await engine.contract.write(
             chainId.toString(),

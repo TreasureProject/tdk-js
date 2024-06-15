@@ -1,12 +1,9 @@
-import type { Prisma } from "@prisma/client";
 import {
   DEFAULT_TDK_CHAIN_ID,
-  decodeAuthToken,
   getAllActiveSigners,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
-import "../middleware/project";
 import "../middleware/swagger";
 import type {
   LoginBody,
@@ -15,15 +12,7 @@ import type {
   ReadLoginPayloadReply,
 } from "../schema";
 import {
-  type AuthVerifyBody,
-  type AuthVerifyReply,
-  type AuthenciateBody,
-  type AuthenticateReply,
   type ErrorReply,
-  authVerifyBodySchema,
-  authVerifyReplySchema,
-  authenticateBodySchema,
-  authenticateReplySchema,
   loginBodySchema,
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
@@ -31,8 +20,6 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
-import { TdkError } from "../utils/error";
-import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
 
 export const authRoutes =
   ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
@@ -171,99 +158,6 @@ export const authRoutes =
             })),
           },
         });
-      },
-    );
-
-    app.post<{
-      Body: AuthenciateBody;
-      Reply: AuthenticateReply | ErrorReply;
-    }>(
-      "/auth/authenticate",
-      {
-        schema: {
-          summary: "Log in via third party",
-          description: "Start login session with custom authentication method",
-          body: authenticateBodySchema,
-          response: {
-            200: authenticateReplySchema,
-          },
-        },
-      },
-      async (req, reply) => {
-        const { projectId } = req;
-        let token: string | undefined;
-        if (projectId === "zeeverse") {
-          const {
-            body: { email, password },
-          } = req;
-          token = (
-            await logInWithZeeverse({
-              apiUrl: env.ZEEVERSE_API_URL,
-              email,
-              password,
-            })
-          ).item.access_token;
-        }
-
-        if (!token) {
-          throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
-            message: "Unauthorized",
-            data: { projectId },
-          });
-        }
-
-        reply.send({
-          projectId,
-          token,
-        });
-      },
-    );
-
-    app.post<{ Body: AuthVerifyBody; Reply: AuthVerifyReply | ErrorReply }>(
-      "/auth/verify",
-      {
-        schema: {
-          summary: "Verify third-party login",
-          description:
-            "Verify login session started via custom authentication method",
-          body: authVerifyBodySchema,
-          response: {
-            200: authVerifyReplySchema,
-          },
-        },
-      },
-      async (req, reply) => {
-        const {
-          body: { payload },
-        } = req;
-        const { projectId, token } = JSON.parse(payload) as AuthenticateReply;
-        const result: AuthVerifyReply = {
-          userId: "",
-          email: "",
-          exp: 0,
-        };
-        if (projectId === "zeeverse") {
-          const { user } = await verifyZeeverseToken({
-            apiUrl: env.ZEEVERSE_API_URL,
-            token,
-          });
-          if (user.email_verified_at) {
-            result.userId = user.id;
-            result.email = user.email;
-            result.exp = decodeAuthToken(token).exp;
-          }
-        }
-
-        if (!result.userId || !result.email) {
-          throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
-            message: "Unauthorized",
-            data: { projectId },
-          });
-        }
-
-        return reply.send(result);
       },
     );
   };
