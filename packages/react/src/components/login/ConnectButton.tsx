@@ -1,5 +1,4 @@
 import {
-  getContractAddress,
   getContractAddresses,
   truncateEthAddress,
 } from "@treasure-dev/tdk-core";
