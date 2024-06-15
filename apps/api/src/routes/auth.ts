@@ -4,6 +4,7 @@ import {
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/chain";
 import "../middleware/swagger";
 import type {
   LoginBody,

@@ -10,6 +10,7 @@ import {
 } from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
 
+import { useMemo } from "react";
 import { defineChain } from "thirdweb";
 import { useTreasure } from "../../context";
 import { TreasureIcon } from "../../icons/TreasureIcon";
@@ -17,7 +18,7 @@ import { TreasureIcon } from "../../icons/TreasureIcon";
 const wallets = [
   inAppWallet({
     auth: {
-      options: ["email", "google", "apple", "facebook"],
+      options: ["email", "google", "apple"],
     },
   }),
 ];
@@ -37,9 +38,7 @@ export const ConnectButton = ({
     useTreasure();
   const contractAddresses = getContractAddresses(chainId);
   const { t } = useTranslation();
-
-  const chain = defineChain(chainId);
-
+  const chain = useMemo(() => defineChain(chainId), [chainId]);
   return (
     <ThirdwebConnectButton
       client={thirdwebClient}

@@ -78,6 +78,18 @@ const TreasureProviderInner = ({
   );
   const wallet = useActiveWallet();
 
+  const logOut = () => {
+    // Clear the TDK client's auth token
+    tdk.clearAuthToken();
+
+    // Clear the stored auth token and user
+    clearStoredAuthToken();
+    setUser(undefined);
+
+    // Disconnect any active wallet
+    wallet?.disconnect();
+  };
+
   const validateUserSession = async ({
     chainId,
     approvedTargets,
@@ -119,7 +131,7 @@ const TreasureProviderInner = ({
       );
     }
 
-    createSession({
+    return createSession({
       client: thirdwebClient,
       chainId,
       address: account.address,
@@ -148,19 +160,21 @@ const TreasureProviderInner = ({
 
     // Create new session, if needed
     console.debug("[TreasureProvider] Creating new session");
-    await createUserSession(sessionConfig);
-  };
-
-  const logOut = () => {
-    // Clear the TDK client's auth token
-    tdk.clearAuthToken();
-
-    // Clear the stored auth token and user
-    clearStoredAuthToken();
-    setUser(undefined);
-
-    // Disconnect any active wallet
-    wallet?.disconnect();
+    try {
+      const session = await createUserSession(sessionConfig);
+      // Optimistically update the user sessions
+      setUser((user) =>
+        user
+          ? {
+              ...user,
+              allActiveSigners: [...user.allActiveSigners, session],
+            }
+          : undefined,
+      );
+    } catch (err) {
+      console.error("[TreasureProvider] Error creating user session:", err);
+      logOut();
+    }
   };
 
   const authenticate = async (authToken: string, user?: User) => {
