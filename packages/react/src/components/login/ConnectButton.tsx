@@ -1,4 +1,8 @@
-import { getContractAddress, truncateEthAddress } from "@treasure-dev/tdk-core";
+import {
+  getContractAddress,
+  getContractAddresses,
+  truncateEthAddress,
+} from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
 import {
   ConnectButton as ThirdwebConnectButton,
@@ -32,7 +36,7 @@ export const ConnectButton = ({
 }: Props) => {
   const { chainId, tdk, thirdwebClient, user, authenticate, logOut } =
     useTreasure();
-  const factoryAddress = getContractAddress(chainId, "ManagedAccountFactory");
+  const contractAddresses = getContractAddresses(chainId);
   const { t } = useTranslation();
 
   const chain = defineChain(chainId);
@@ -44,7 +48,7 @@ export const ConnectButton = ({
       chain={chain}
       accountAbstraction={{
         chain,
-        factoryAddress,
+        factoryAddress: contractAddresses.ManagedAccountFactory,
         sponsorGas: true,
       }}
       auth={{
@@ -144,6 +148,20 @@ export const ConnectButton = ({
           </button>
         ),
       }}
+      supportedTokens={
+        contractAddresses.MAGIC
+          ? {
+              [chainId]: [
+                {
+                  address: contractAddresses.MAGIC,
+                  name: "MAGIC",
+                  symbol: "MAGIC",
+                  icon: "https://images.treasure.lol/tdk/login/magic.png",
+                },
+              ],
+            }
+          : undefined
+      }
     />
   );
 };
