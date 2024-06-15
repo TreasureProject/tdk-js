@@ -129,21 +129,21 @@ const client: ThirdwebClient = {
 export const useLogin = ({ project, chain, redirectUri }: Props) => {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE);
 
-  const tdk = useMemo(
-    () =>
-      new TDKAPI({
-        baseUri: env.VITE_TDK_API_URL,
-        project: project.slug,
-        chainId: chain.id,
-      }),
-    [project, chain.id],
-  );
-
   const backendWallet = project.backendWallets[0];
   const approvedCallTargets = project.callTargets;
   const nativeTokenLimitPerTransaction = 0;
   const requiresSession =
     approvedCallTargets.length > 0 || nativeTokenLimitPerTransaction > 0;
+
+  const tdk = useMemo(
+    () =>
+      new TDKAPI({
+        baseUri: env.VITE_TDK_API_URL,
+        chainId: chain.id,
+        backendWallet,
+      }),
+    [chain.id, backendWallet],
+  );
 
   const connectSmartWallet = async (inAppAccount: Account) => {
     const wallet = smartWallet({
