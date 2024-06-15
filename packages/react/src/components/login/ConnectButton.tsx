@@ -2,6 +2,7 @@ import { getContractAddress, truncateEthAddress } from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
 import {
   ConnectButton as ThirdwebConnectButton,
+  darkTheme,
   lightTheme,
 } from "thirdweb/react";
 import { inAppWallet } from "thirdweb/wallets";
@@ -21,9 +22,14 @@ const wallets = [
 type Props = {
   appName: string;
   appIconUri?: string;
+  theme?: "light" | "dark";
 };
 
-export const ConnectButton = ({ appName, appIconUri }: Props) => {
+export const ConnectButton = ({
+  appName,
+  appIconUri,
+  theme = "light",
+}: Props) => {
   const { chainId, tdk, thirdwebClient, user, authenticate, logOut } =
     useTreasure();
   const factoryAddress = getContractAddress(chainId, "ManagedAccountFactory");
@@ -59,17 +65,32 @@ export const ConnectButton = ({ appName, appIconUri }: Props) => {
           logOut();
         },
       }}
-      theme={lightTheme({
-        colors: {
-          accentButtonBg: "#DC2626",
-          accentButtonText: "#FFFFFF",
-          accentText: "#DC2626",
-          primaryButtonBg: "#DC2626",
-          primaryButtonText: "#FFFFFF",
-          modalBg: "#FFFDF7",
-          modalOverlayBg: "rgba(0, 0, 0, 0.3)",
-        },
-      })}
+      theme={
+        theme === "dark"
+          ? darkTheme({
+              colors: {
+                accentButtonBg: "#DC2626",
+                accentButtonText: "#E7E8E9",
+                accentText: "#DC2626",
+                primaryButtonBg: "#DC2626",
+                primaryButtonText: "#E7E8E9",
+                modalBg: "#19253A",
+                modalOverlayBg: "rgba(0, 0, 0, 0.3)",
+                borderColor: "#70747D",
+              },
+            })
+          : lightTheme({
+              colors: {
+                accentButtonBg: "#DC2626",
+                accentButtonText: "#FFFFFF",
+                accentText: "#DC2626",
+                primaryButtonBg: "#DC2626",
+                primaryButtonText: "#FFFFFF",
+                modalBg: "#FFFDF7",
+                modalOverlayBg: "rgba(0, 0, 0, 0.3)",
+              },
+            })
+      }
       connectButton={{
         label: (
           <>
