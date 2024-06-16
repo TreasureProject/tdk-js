@@ -106,28 +106,29 @@ export const authRoutes =
           );
           if (embeddedWalletUser) {
             const { email } = embeddedWalletUser;
+            if (email) {
+              // Check if email was migrated from TreasureTag system, and delete existing record if so
+              const existingUser = await db.user.findUnique({
+                where: { email },
+                select: { id: true },
+              });
+              if (existingUser) {
+                await db.user.delete({ where: { id: existingUser.id } });
+              }
 
-            // Check if email was migrated from TreasureTag system, and delete existing record if so
-            const existingUser = await db.user.findUnique({
-              where: { email },
-              select: { id: true },
-            });
-            if (existingUser) {
-              await db.user.delete({ where: { id: existingUser.id } });
+              // Set user's email address
+              user = await db.user.update({
+                where: {
+                  id: user.id,
+                },
+                data: { email },
+                select: {
+                  id: true,
+                  smartAccountAddress: true,
+                  email: true,
+                },
+              });
             }
-
-            // Set user's email address
-            user = await db.user.update({
-              where: {
-                id: user.id,
-              },
-              data: { email },
-              select: {
-                id: true,
-                smartAccountAddress: true,
-                email: true,
-              },
-            });
           }
         }
 

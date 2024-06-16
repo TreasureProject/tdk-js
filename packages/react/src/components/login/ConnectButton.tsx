@@ -18,7 +18,7 @@ import { TreasureIcon } from "../../icons/TreasureIcon";
 const wallets = [
   inAppWallet({
     auth: {
-      options: ["email", "google", "apple"],
+      options: ["email", "google", "apple", "passkey"],
     },
   }),
 ];
