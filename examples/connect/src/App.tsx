@@ -52,20 +52,20 @@ export const App = () => {
     }
   };
 
-  const handleSendEth = async () => {
-    if (!user?.smartAccountAddress) {
-      return;
-    }
+  // const handleSendEth = async () => {
+  //   if (!user?.smartAccountAddress) {
+  //     return;
+  //   }
 
-    try {
-      await tdk.transaction.sendNative({
-        to: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
-        amount: 100000000000000n,
-      });
-    } catch (err) {
-      console.error("Error sending ETH:", err);
-    }
-  };
+  //   try {
+  //     await tdk.transaction.sendNative({
+  //       to: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
+  //       amount: 100000000000000n,
+  //     });
+  //   } catch (err) {
+  //     console.error("Error sending ETH:", err);
+  //   }
+  // };
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
@@ -131,7 +131,7 @@ export const App = () => {
               <h1 className="text-xl font-medium">Test Transactions</h1>
               <div className="flex flex-wrap gap-2">
                 <Button onClick={handleMintMagic}>Mint 1,000 MAGIC</Button>
-                <Button onClick={handleSendEth}>Send 0.0001 ETH</Button>
+                {/* <Button onClick={handleSendEth}>Send 0.0001 ETH</Button> */}
               </div>
             </div>
           </>
