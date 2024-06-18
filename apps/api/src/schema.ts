@@ -423,6 +423,25 @@ export const createTransactionReplySchema = Type.Object({
   }),
 });
 
+export const createSendNativeTransactionBodySchema = Type.Object({
+  to: Type.String({
+    description: "The recipient address",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
+  amount: Type.String({
+    description: "The amount to send, in wei",
+    examples: ["1000000000000000000"],
+  }),
+  backendWallet: Type.Optional(Type.String()),
+});
+
+export const createSendNativeTransactionReplySchema = Type.Object({
+  queueId: Type.String({
+    description: "The transaction queue ID",
+    examples: [EXAMPLE_QUEUE_ID],
+  }),
+});
+
 const readTransactionParamsSchema = Type.Object({
   queueId: Type.String(),
 });
@@ -436,6 +455,12 @@ export const readTransactionReplySchema = Type.Object({
 export type CreateTransactionBody = Static<typeof createTransactionBodySchema>;
 export type CreateTransactionReply = Static<
   typeof createTransactionReplySchema
+>;
+export type CreateSendNativeTransactionBody = Static<
+  typeof createSendNativeTransactionBodySchema
+>;
+export type CreateSendNativeTransactionReply = Static<
+  typeof createSendNativeTransactionReplySchema
 >;
 export type ReadTransactionParams = Static<typeof readTransactionParamsSchema>;
 export type ReadTransactionReply = Static<typeof readTransactionReplySchema>;

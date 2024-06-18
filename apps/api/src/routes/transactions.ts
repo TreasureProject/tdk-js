@@ -4,11 +4,15 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import {
+  type CreateSendNativeTransactionBody,
+  type CreateSendNativeTransactionReply,
   type CreateTransactionBody,
   type CreateTransactionReply,
   type ErrorReply,
   type ReadTransactionParams,
   type ReadTransactionReply,
+  createSendNativeTransactionBodySchema,
+  createSendNativeTransactionReplySchema,
   createTransactionBodySchema,
   createTransactionReplySchema,
   readTransactionReplySchema,
@@ -85,6 +89,69 @@ export const transactionsRoutes =
               address,
               functionName,
               args,
+            },
+          });
+        }
+      },
+    );
+
+    app.post<{
+      Body: CreateSendNativeTransactionBody;
+      Reply: CreateSendNativeTransactionReply | ErrorReply;
+    }>(
+      "/transactions/send-native",
+      {
+        schema: {
+          summary: "Send native tokens",
+          description:
+            "Send the chain's native (gas) token to the provided recipient",
+          security: [{ authToken: [] }],
+          body: createSendNativeTransactionBodySchema,
+          response: {
+            200: createSendNativeTransactionReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          chainId,
+          userAddress,
+          authError,
+          body: { to, amount, backendWallet: overrideBackendWallet },
+        } = req;
+        if (!userAddress) {
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const backendWallet =
+          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
+        try {
+          const { result } = await engine.backendWallet.sendTransaction(
+            chainId.toString(),
+            backendWallet,
+            {
+              toAddress: to,
+              value: amount,
+              data: "0x",
+            },
+            false,
+            userAddress,
+          );
+          reply.send(result);
+        } catch (err) {
+          throw new TdkError({
+            code: "TDK_CREATE_TRANSACTION",
+            message: `Error creating native send transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            data: {
+              chainId,
+              backendWallet,
+              userAddress,
+              to,
+              amount,
             },
           });
         }

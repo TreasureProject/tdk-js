@@ -6,6 +6,8 @@ import type {
 } from "abitype";
 
 import type {
+  CreateSendNativeTransactionBody,
+  CreateSendNativeTransactionReply,
   CreateTransactionBody,
   LoginBody,
   LoginReply,
@@ -176,21 +178,44 @@ export class TDKAPI {
         args: params.args as any,
         backendWallet: params.backendWallet ?? this.backendWallet,
       });
-      if (!waitForCompletion) {
-        return result;
-      }
 
+      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+    },
+    sendNative: async (
+      params: {
+        to: string;
+        amount: bigint;
+        backendWallet?: string;
+      },
+      {
+        waitForCompletion = true,
+      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
+    ) => {
+      const result = await this.post<
+        CreateSendNativeTransactionBody,
+        CreateSendNativeTransactionReply
+      >("/transactions/send-native", {
+        ...params,
+        amount: params.amount.toString(),
+        backendWallet: params.backendWallet ?? this.backendWallet,
+      });
+
+      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+    },
+    get: (queueId: string) =>
+      this.get<ReadTransactionReply>(`/transactions/${queueId}`),
+    wait: async (queueId: string, maxRetries = 15, retryMs = 2_500) => {
       let retries = 0;
       let transaction: ReadTransactionReply;
       do {
         if (retries > 0) {
-          await new Promise((r) => setTimeout(r, 2_500));
+          await new Promise((r) => setTimeout(r, retryMs));
         }
 
-        transaction = await this.transaction.get(result.queueId);
+        transaction = await this.transaction.get(queueId);
         retries += 1;
       } while (
-        retries < 15 &&
+        retries < maxRetries &&
         transaction.status !== "errored" &&
         transaction.status !== "cancelled" &&
         transaction.status !== "mined"
@@ -210,8 +235,6 @@ export class TDKAPI {
 
       return transaction;
     },
-    get: (queueId: string) =>
-      this.get<ReadTransactionReply>(`/transactions/${queueId}`),
   };
 
   harvester = {

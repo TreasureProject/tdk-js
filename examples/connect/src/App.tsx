@@ -2,15 +2,17 @@ import {
   type AddressString,
   Button,
   ConnectButton,
+  formatAmount,
   getContractAddress,
   useTreasure,
 } from "@treasure-dev/tdk-react";
+import { formatEther, parseEther } from "viem";
 
 export const App = () => {
   const { tdk, chainId, user } = useTreasure();
   const magicAddress = getContractAddress(chainId, "MAGIC");
 
-  const handleMintMagic = async () => {
+  const handleMintMagic = async (amount: number) => {
     if (!user?.smartAccountAddress) {
       return;
     }
@@ -42,7 +44,7 @@ export const App = () => {
           functionName: "mint",
           args: [
             user.smartAccountAddress as AddressString,
-            1000000000000000000000n,
+            parseEther(amount.toString()),
           ],
         },
         { includeAbi: true },
@@ -52,20 +54,20 @@ export const App = () => {
     }
   };
 
-  // const handleSendEth = async () => {
-  //   if (!user?.smartAccountAddress) {
-  //     return;
-  //   }
+  const handleSendEth = async (amount: number) => {
+    if (!user?.smartAccountAddress) {
+      return;
+    }
 
-  //   try {
-  //     await tdk.transaction.sendNative({
-  //       to: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
-  //       amount: 100000000000000n,
-  //     });
-  //   } catch (err) {
-  //     console.error("Error sending ETH:", err);
-  //   }
-  // };
+    try {
+      await tdk.transaction.sendNative({
+        to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
+        amount: parseEther(amount.toString()),
+      });
+    } catch (err) {
+      console.error("Error sending ETH:", err);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
@@ -87,7 +89,13 @@ export const App = () => {
                       (a, b) => Number(b.endTimestamp) - Number(a.endTimestamp),
                     )
                     .map(
-                      ({ signer, isAdmin, endTimestamp, approvedTargets }) => (
+                      ({
+                        signer,
+                        isAdmin,
+                        endTimestamp,
+                        approvedTargets,
+                        nativeTokenLimitPerTransaction,
+                      }) => (
                         <li key={signer}>
                           <p className="font-medium">
                             {signer}{" "}
@@ -117,6 +125,16 @@ export const App = () => {
                                   ))}
                                 </ul>
                               </div>
+                              <p>
+                                <span className="font-medium">
+                                  Native token limit per transaction:
+                                </span>{" "}
+                                {formatAmount(
+                                  formatEther(
+                                    BigInt(nativeTokenLimitPerTransaction),
+                                  ),
+                                )}
+                              </p>
                             </>
                           ) : null}
                         </li>
@@ -130,8 +148,12 @@ export const App = () => {
             <div className="space-y-1">
               <h1 className="text-xl font-medium">Test Transactions</h1>
               <div className="flex flex-wrap gap-2">
-                <Button onClick={handleMintMagic}>Mint 1,000 MAGIC</Button>
-                {/* <Button onClick={handleSendEth}>Send 0.0001 ETH</Button> */}
+                <Button onClick={() => handleMintMagic(1000)}>
+                  Mint 1,000 MAGIC
+                </Button>
+                <Button onClick={() => handleSendEth(0.0001)}>
+                  Send 0.0001 ETH
+                </Button>
               </div>
             </div>
           </>

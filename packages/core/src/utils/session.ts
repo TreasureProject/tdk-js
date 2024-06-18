@@ -13,25 +13,26 @@ import {
   getDateYearsFromNow,
 } from "./date";
 
+import { formatEther } from "viem";
 import type { Session } from "../types";
 
 export const isSessionRequired = ({
   approvedTargets = [],
-  nativeTokenLimitPerTransaction = 0,
+  nativeTokenLimitPerTransaction = 0n,
 }: {
   approvedTargets?: string[];
-  nativeTokenLimitPerTransaction?: number;
+  nativeTokenLimitPerTransaction?: bigint;
 }) => approvedTargets.length > 0 || nativeTokenLimitPerTransaction > 0;
 
 export const validateSession = async ({
   backendWallet,
   approvedTargets: rawApprovedTargets,
-  nativeTokenLimitPerTransaction = 0,
+  nativeTokenLimitPerTransaction = 0n,
   sessions,
 }: {
   backendWallet: string;
   approvedTargets: string[];
-  nativeTokenLimitPerTransaction?: number;
+  nativeTokenLimitPerTransaction?: bigint;
   sessions: Session[];
 }) => {
   const approvedTargets = rawApprovedTargets.map((target) =>
@@ -68,7 +69,7 @@ export const validateSession = async ({
       ) &&
       // Native token limit per transaction is approved
       (!nativeTokenLimitPerTransaction ||
-        Number(session.nativeTokenLimitPerTransaction) >=
+        BigInt(session.nativeTokenLimitPerTransaction) >=
           nativeTokenLimitPerTransaction)
     );
   });
@@ -81,7 +82,7 @@ export const createSession = async ({
   account,
   backendWallet,
   approvedTargets,
-  nativeTokenLimitPerTransaction,
+  nativeTokenLimitPerTransaction: nativeTokenLimitPerTransactionBI = 0n,
 }: {
   client: ThirdwebClient;
   chainId: number;
@@ -89,13 +90,16 @@ export const createSession = async ({
   account: Account;
   backendWallet: string;
   approvedTargets: string[];
-  nativeTokenLimitPerTransaction?: number;
+  nativeTokenLimitPerTransaction?: bigint;
 }): Promise<Session> => {
   const contract = getContract({
     client,
     chain: defineChain(chainId),
     address,
   });
+  const nativeTokenLimitPerTransaction = formatEther(
+    nativeTokenLimitPerTransactionBI,
+  );
   const startDate = getDateHoursFromNow(-1);
   const endDate = getDateDaysFromNow(1);
   const transaction = addSessionKey({
@@ -119,7 +123,6 @@ export const createSession = async ({
     startTimestamp: Math.floor(startDate.getTime() / 1000).toString(),
     endTimestamp: Math.floor(endDate.getTime() / 1000).toString(),
     approvedTargets,
-    nativeTokenLimitPerTransaction:
-      nativeTokenLimitPerTransaction?.toString() ?? "0",
+    nativeTokenLimitPerTransaction,
   };
 };
