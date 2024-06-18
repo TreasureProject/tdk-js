@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 0.2.8
+
+### Patch Changes
+
+- fd71069: Fixed Zee userCharacterMaxBoost value
+
 ## 0.2.7
 
 ### Patch Changes
