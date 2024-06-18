@@ -10,7 +10,7 @@ import {
 import { erc20Abi, formatEther, zeroAddress, zeroHash } from "viem";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
-import { useTreasure } from "../../context";
+import { useTreasure } from "../../contexts/treasure";
 
 type Props = {
   chainId?: number;

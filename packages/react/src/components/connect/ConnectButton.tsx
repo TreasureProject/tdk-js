@@ -12,7 +12,7 @@ import { inAppWallet } from "thirdweb/wallets";
 
 import { useMemo } from "react";
 import { defineChain } from "thirdweb";
-import { useTreasure } from "../../context";
+import { useTreasure } from "../../contexts/treasure";
 import { TreasureIcon } from "../../icons/TreasureIcon";
 
 const wallets = [

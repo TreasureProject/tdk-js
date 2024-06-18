@@ -15,7 +15,7 @@ import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
-} from "./utils/store";
+} from "../utils/store";
 
 type SessionConfig = {
   chainId: number;
@@ -39,8 +39,8 @@ type ContextValues = {
   thirdwebClient: ThirdwebClient;
   user?: User;
   authenticate: (authToken: string, user?: User) => Promise<void>;
-  logOut: () => void;
   startUserSession: StartUserSessionFn;
+  logOut: () => void;
 };
 
 const Context = createContext({} as ContextValues);
