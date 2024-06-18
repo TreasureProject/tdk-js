@@ -16,7 +16,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     onAuthenticated={async (_, startUserSession) => {
       await startUserSession({
         chainId: 421614,
-        approvedTargets: ["0x55d0cf68a1afe0932aff6f36c87efa703508191c"],
+        approvedTargets: [
+          "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
+          "0xE647b2c46365741e85268ceD243113d08F7E00B8",
+        ],
         nativeTokenLimitPerTransaction: parseEther("1"),
       });
     }}
