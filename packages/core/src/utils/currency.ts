@@ -33,6 +33,7 @@ export const formatAmount = (value: string | number, toLocale = true) => {
 
   return rounded.toString();
 };
+
 export const getTokenAddress = (chainId: number, token: Token) => {
   const contractAddresses = getContractAddresses(chainId);
   switch (token) {

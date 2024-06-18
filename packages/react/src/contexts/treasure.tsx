@@ -20,7 +20,7 @@ import {
 type SessionConfig = {
   chainId: number;
   approvedTargets: string[];
-  nativeTokenLimitPerTransaction?: number;
+  nativeTokenLimitPerTransaction?: bigint;
 };
 
 type StartUserSessionFn = (sessionConfig: SessionConfig) => void;

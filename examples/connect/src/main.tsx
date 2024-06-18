@@ -2,6 +2,7 @@ import { TreasureProvider } from "@treasure-dev/tdk-react";
 import "@treasure-dev/tdk-react/dist/index.css";
 import "@treasure-project/tailwind-config/fonts.css";
 import ReactDOM from "react-dom/client";
+import { parseEther } from "viem";
 
 import { App } from "./App.tsx";
 import "./index.css";
@@ -16,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       await startUserSession({
         chainId: 421614,
         approvedTargets: ["0x55d0cf68a1afe0932aff6f36c87efa703508191c"],
-        nativeTokenLimitPerTransaction: 1,
+        nativeTokenLimitPerTransaction: parseEther("1"),
       });
     }}
   >
