@@ -1,8 +1,10 @@
-import type { Prisma } from "@prisma/client";
-import { DEFAULT_TDK_CHAIN_ID, decodeAuthToken } from "@treasure-dev/tdk-core";
+import {
+  DEFAULT_TDK_CHAIN_ID,
+  getAllActiveSigners,
+} from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
-import "../middleware/project";
+import "../middleware/chain";
 import "../middleware/swagger";
 import type {
   LoginBody,
@@ -11,15 +13,7 @@ import type {
   ReadLoginPayloadReply,
 } from "../schema";
 import {
-  type AuthVerifyBody,
-  type AuthVerifyReply,
-  type AuthenciateBody,
-  type AuthenticateReply,
   type ErrorReply,
-  authVerifyBodySchema,
-  authVerifyReplySchema,
-  authenticateBodySchema,
-  authenticateReplySchema,
   loginBodySchema,
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
@@ -27,11 +21,9 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
-import { TdkError } from "../utils/error";
-import { logInWithZeeverse, verifyZeeverseToken } from "../utils/zeeverse";
 
 export const authRoutes =
-  ({ env, auth, db, engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Querystring: ReadLoginPayloadQuerystring;
@@ -77,7 +69,12 @@ export const authRoutes =
             .send({ error: `Login failed: ${verifiedPayload.error}` });
         }
 
-        const smartAccountAddress = verifiedPayload.payload.address;
+        const { payload } = verifiedPayload;
+        const {
+          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
+          address: smartAccountAddress,
+        } = payload;
+
         let user = await db.user.upsert({
           where: {
             smartAccountAddress,
@@ -90,8 +87,8 @@ export const authRoutes =
           },
           select: {
             id: true,
+            smartAccountAddress: true,
             email: true,
-            treasureTag: true,
           },
         });
 
@@ -100,10 +97,7 @@ export const authRoutes =
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
-          } = await engine.account.getAllAdmins(
-            verifiedPayload.payload.chain_id ?? DEFAULT_TDK_CHAIN_ID.toString(),
-            smartAccountAddress,
-          );
+          } = await engine.account.getAllAdmins(chainId, smartAccountAddress);
 
           // Look up any possible associated email addresses (for embedded wallets)
           const embeddedWalletUser = await fetchEmbeddedWalletUser(
@@ -112,135 +106,60 @@ export const authRoutes =
           );
           if (embeddedWalletUser) {
             const { email } = embeddedWalletUser;
-            let updateData: Prisma.UserUpdateInput = { email };
+            if (email) {
+              // Check if email was migrated from TreasureTag system, and delete existing record if so
+              const existingUser = await db.user.findUnique({
+                where: { email },
+                select: { id: true },
+              });
+              if (existingUser) {
+                await db.user.delete({ where: { id: existingUser.id } });
+              }
 
-            // Check if email was migrated from TreasureTag system, and delete existing record if so
-            const existingUser = await db.user.findUnique({
-              where: { email },
-              select: { id: true },
-            });
-            if (existingUser) {
-              updateData = {
-                ...updateData,
-                treasureTag: updateData.treasureTag,
-              };
-              await db.user.delete({ where: { id: existingUser.id } });
+              // Set user's email address
+              user = await db.user.update({
+                where: {
+                  id: user.id,
+                },
+                data: { email },
+                select: {
+                  id: true,
+                  smartAccountAddress: true,
+                  email: true,
+                },
+              });
             }
-
-            // Set user's email address
-            user = await db.user.update({
-              where: {
-                id: user.id,
-              },
-              data: updateData,
-              select: {
-                id: true,
-                email: true,
-                treasureTag: true,
-              },
-            });
           }
         }
 
         // Add user data to JWT payload's context
-        const authToken = await auth.generateJWT({
-          payload: verifiedPayload.payload,
-          context: user,
-        });
-        reply.send({ token: authToken });
-      },
-    );
-
-    app.post<{
-      Body: AuthenciateBody;
-      Reply: AuthenticateReply | ErrorReply;
-    }>(
-      "/auth/authenticate",
-      {
-        schema: {
-          summary: "Log in via third party",
-          description: "Start login session with custom authentication method",
-          body: authenticateBodySchema,
-          response: {
-            200: authenticateReplySchema,
-          },
-        },
-      },
-      async (req, reply) => {
-        const { projectId } = req;
-        let token: string | undefined;
-        if (projectId === "zeeverse") {
-          const {
-            body: { email, password },
-          } = req;
-          token = (
-            await logInWithZeeverse({
-              apiUrl: env.ZEEVERSE_API_URL,
-              email,
-              password,
-            })
-          ).item.access_token;
-        }
-
-        if (!token) {
-          throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
-            message: "Unauthorized",
-            data: { projectId },
-          });
-        }
-
+        const [authToken, allActiveSigners] = await Promise.all([
+          auth.generateJWT({
+            payload,
+            context: user,
+          }),
+          getAllActiveSigners({
+            chainId: Number(chainId),
+            address: user.smartAccountAddress,
+            wagmiConfig,
+          }),
+        ]);
         reply.send({
-          projectId,
-          token,
-        });
-      },
-    );
-
-    app.post<{ Body: AuthVerifyBody; Reply: AuthVerifyReply | ErrorReply }>(
-      "/auth/verify",
-      {
-        schema: {
-          summary: "Verify third-party login",
-          description:
-            "Verify login session started via custom authentication method",
-          body: authVerifyBodySchema,
-          response: {
-            200: authVerifyReplySchema,
+          token: authToken,
+          user: {
+            ...user,
+            allActiveSigners: allActiveSigners.map((activeSigner) => ({
+              ...activeSigner,
+              approvedTargets: activeSigner.approvedTargets.map((target) =>
+                target.toLowerCase(),
+              ),
+              nativeTokenLimitPerTransaction:
+                activeSigner.nativeTokenLimitPerTransaction.toString(),
+              startTimestamp: activeSigner.startTimestamp.toString(),
+              endTimestamp: activeSigner.endTimestamp.toString(),
+            })),
           },
-        },
-      },
-      async (req, reply) => {
-        const {
-          body: { payload },
-        } = req;
-        const { projectId, token } = JSON.parse(payload) as AuthenticateReply;
-        const result: AuthVerifyReply = {
-          userId: "",
-          email: "",
-          exp: 0,
-        };
-        if (projectId === "zeeverse") {
-          const { user } = await verifyZeeverseToken({
-            apiUrl: env.ZEEVERSE_API_URL,
-            token,
-          });
-          if (user.email_verified_at) {
-            result.userId = user.id;
-            result.email = user.email;
-            result.exp = decodeAuthToken(token).exp;
-          }
-        }
-
-        if (!result.userId || !result.email) {
-          throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
-            message: "Unauthorized",
-            data: { projectId },
-          });
-        }
-
-        return reply.send(result);
+        });
       },
     );
   };

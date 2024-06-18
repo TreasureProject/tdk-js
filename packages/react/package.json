@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
-    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@tanstack/react-query": "^5.18.1",
     "@treasure-dev/tdk-core": "*",
     "clsx": "^2.0.0",
@@ -48,7 +47,7 @@
     "react": "^18.2.0",
     "react-i18next": "^13.3.1",
     "tailwind-merge": "^2.0.0",
-    "usehooks-ts": "^3.0.2",
+    "thirdweb": "^5.28.0",
     "viem": "^2.7.6",
     "wagmi": "^2.5.6"
   },

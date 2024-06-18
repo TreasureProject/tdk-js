@@ -6,13 +6,14 @@ import type {
 } from "abitype";
 
 import type {
+  CreateTransactionBody,
   LoginBody,
   LoginReply,
+  ReadCurrentUserSessionsQuerystring,
+  ReadCurrentUserSessionsReply,
   ReadLoginPayloadReply,
 } from "../../../apps/api/src/schema";
 import type {
-  AuthenciateBody,
-  AuthenticateReply,
   CreateTransactionReply,
   ErrorReply,
   ReadCurrentUserReply,
@@ -21,11 +22,7 @@ import type {
   ReadProjectReply,
   ReadTransactionReply,
 } from "../../../apps/api/src/schema";
-import {
-  DEFAULT_TDK_API_BASE_URI,
-  DEFAULT_TDK_APP,
-  DEFAULT_TDK_CHAIN_ID,
-} from "./constants";
+import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -38,24 +35,24 @@ class APIError extends Error {
 
 export class TDKAPI {
   baseUri: string;
-  projectId: string;
   chainId: number;
+  backendWallet?: string;
   authToken?: string;
 
   constructor({
     baseUri = DEFAULT_TDK_API_BASE_URI,
-    project = DEFAULT_TDK_APP,
     chainId = DEFAULT_TDK_CHAIN_ID,
+    backendWallet,
     authToken,
   }: {
     baseUri?: string;
-    project?: string;
     chainId?: number;
+    backendWallet?: string;
     authToken?: string;
   }) {
     this.baseUri = baseUri;
-    this.projectId = project;
     this.chainId = chainId;
+    this.backendWallet = backendWallet;
     this.authToken = authToken;
   }
 
@@ -66,7 +63,6 @@ export class TDKAPI {
         ...(this.authToken
           ? { Authorization: `Bearer ${this.authToken}` }
           : undefined),
-        ...(this.projectId ? { "x-project-id": this.projectId } : undefined),
         ...(this.chainId
           ? { "x-chain-id": this.chainId.toString() }
           : undefined),
@@ -90,14 +86,14 @@ export class TDKAPI {
 
   async get<T>(
     path: string,
-    params?: Record<string, string>,
+    params?: Record<string, string | number>,
     options?: RequestInit,
   ): Promise<T> {
     let pathWithParams = path;
     if (params) {
       const searchParams = new URLSearchParams();
       for (const key in params) {
-        searchParams.append(key, params[key]);
+        searchParams.append(key, params[key].toString());
       }
 
       pathWithParams += `?${searchParams}`;
@@ -106,12 +102,8 @@ export class TDKAPI {
     return this.fetch(pathWithParams, options);
   }
 
-  async post<T>(
-    path: string,
-    body?: unknown,
-    options?: RequestInit,
-  ): Promise<T> {
-    return this.fetch<T>(path, {
+  async post<T, U>(path: string, body?: T, options?: RequestInit): Promise<U> {
+    return this.fetch<U>(path, {
       method: "POST",
       ...(body ? { body: JSON.stringify(body) } : undefined),
       ...options,
@@ -133,9 +125,8 @@ export class TDKAPI {
   auth = {
     getLoginPayload: (params: ReadLoginPayloadQuerystring) =>
       this.get<ReadLoginPayloadReply>("/login/payload", params),
-    logIn: (params: LoginBody) => this.post<LoginReply>("/login", params),
-    authenticate: (params: AuthenciateBody) =>
-      this.post<AuthenticateReply>("/auth/authenticate", params),
+    logIn: (params: LoginBody) =>
+      this.post<LoginBody, LoginReply>("/login", params),
   };
 
   project = {
@@ -145,6 +136,8 @@ export class TDKAPI {
 
   user = {
     me: () => this.get<ReadCurrentUserReply>("/users/me"),
+    getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
+      this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
   };
 
   transaction = {
@@ -165,14 +158,25 @@ export class TDKAPI {
           ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
           "inputs"
         >;
+        backendWallet?: string;
       },
-      options: { waitForCompletion?: boolean } = { waitForCompletion: true },
+      {
+        includeAbi = false,
+        waitForCompletion = true,
+      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
     ) => {
-      const result = await this.post<CreateTransactionReply>(
-        "/transactions",
-        params,
-      );
-      if (!options.waitForCompletion) {
+      const result = await this.post<
+        CreateTransactionBody,
+        CreateTransactionReply
+      >("/transactions", {
+        ...params,
+        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+        ...(includeAbi ? { abi: params.abi as any } : {}),
+        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+        args: params.args as any,
+        backendWallet: params.backendWallet ?? this.backendWallet,
+      });
+      if (!waitForCompletion) {
         return result;
       }
 

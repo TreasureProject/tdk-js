@@ -17,7 +17,6 @@ import { withAuth } from "./middleware/auth";
 import { withChain } from "./middleware/chain";
 import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
-import { withProject } from "./middleware/project";
 import { withSwagger } from "./middleware/swagger";
 import { authRoutes } from "./routes/auth";
 import { harvestersRoutes } from "./routes/harvesters";
@@ -82,7 +81,6 @@ const main = async () => {
   await withCors(app);
   await withErrorHandler(app);
   await withChain(app);
-  await withProject(app, ctx);
   await withAuth(app, ctx);
 
   // Routes
@@ -97,7 +95,7 @@ const main = async () => {
   app.get("/healthcheck", async (_, reply) => {
     try {
       await ctx.db.$queryRaw`SELECT 1`;
-    } catch (err) {
+    } catch (_) {
       return reply
         .code(500)
         .send({ status: "error", message: "Error connecting to database" });
@@ -105,7 +103,7 @@ const main = async () => {
 
     try {
       await ctx.engine.default.getJson();
-    } catch (err) {
+    } catch (_) {
       return reply.code(500).send({
         status: "error",
         message: "Error connecting to Thirdweb Engine",

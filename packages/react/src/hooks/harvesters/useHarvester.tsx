@@ -10,7 +10,7 @@ import {
 import { erc20Abi, formatEther, zeroAddress, zeroHash } from "viem";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
-import { useTreasure } from "../../context";
+import { useTreasure } from "../../contexts/treasure";
 
 type Props = {
   chainId?: number;
@@ -23,9 +23,10 @@ export const useHarvester = ({
   contract,
   userAddress,
 }: Props) => {
-  const { address, tdk } = useTreasure();
+  const { tdk, user } = useTreasure();
   const contractAddresses = getContractAddresses(chainId);
-  const smartAccountAddress = (address ?? zeroAddress) as AddressString;
+  const smartAccountAddress = (user?.smartAccountAddress ??
+    zeroAddress) as AddressString;
   const harvesterAddress = contract.startsWith("0x")
     ? (contract as AddressString)
     : contractAddresses[contract as Contract];

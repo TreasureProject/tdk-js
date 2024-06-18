@@ -28,6 +28,9 @@
       },
       "style": {
         "noNonNullAssertion": "warn"
+      },
+      "correctness": {
+        "noUnusedVariables": "error"
       }
     }
   }

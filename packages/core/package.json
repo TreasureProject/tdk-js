@@ -39,6 +39,7 @@
     "abitype": "^1.0.2",
     "decimal.js-light": "^2.5.1",
     "jwt-decode": "^4.0.0",
+    "thirdweb": "^5.29.1",
     "viem": "^2.7.6"
   },
   "engines": {

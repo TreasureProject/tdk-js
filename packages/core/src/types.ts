@@ -80,3 +80,6 @@ export type Transaction = Awaited<
 export type User = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["user"]["me"]>
 >;
+export type Session = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["user"]["getSessions"]>
+>[number];

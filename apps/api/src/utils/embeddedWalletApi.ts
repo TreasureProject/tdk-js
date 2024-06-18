@@ -11,7 +11,9 @@ export const fetchEmbeddedWalletUser = async (
     },
   );
   const embeddedWalletUsers = (await embeddedWalletResponse.json()) as {
-    email: string;
+    userId: string;
+    email?: string;
+    phone?: string;
   }[];
   return embeddedWalletUsers.length > 0 ? embeddedWalletUsers[0] : undefined;
 };

@@ -11,6 +11,7 @@ export {
   SUPPORTED_CHAINS,
   SUPPORTED_CHAIN_IDS,
   TOKEN_IDS,
+  TREASURE_CONDUIT_KEYS,
   TREASURE_RUBY_CHAIN_DEFINITION,
   treasureRuby,
 } from "./constants";
@@ -37,6 +38,11 @@ export {
   getTokenAddress,
 } from "./utils/currency";
 export {
+  getDateHoursFromNow,
+  getDateDaysFromNow,
+  getDateYearsFromNow,
+} from "./utils/date";
+export {
   fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
@@ -44,3 +50,8 @@ export {
 export { decodeAuthToken } from "./utils/jwt";
 export { createLoginUrl } from "./utils/login";
 export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
+export {
+  createSession,
+  isSessionRequired,
+  validateSession,
+} from "./utils/session";
