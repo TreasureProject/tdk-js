@@ -1,5 +1,5 @@
 # Treasure Development Kit
- 
+
 SDK for the Treasure ecosystem
 
 ## Apps
@@ -14,6 +14,7 @@ SDK for the Treasure ecosystem
 
 ## Examples
 
+- [Connect](./examples/connect) ([Demo](https://tdk-examples-connect.vercel.app))
 - [Harvester](./examples/harvester) ([Demo](https://tdk-examples-harvester.vercel.app))
 - [Payments](./examples/payments)
 
@@ -35,11 +36,10 @@ Start watch mode for base workspaces:
 npm run dev
 ```
 
-Start any apps or examples:
+Start any supplemental apps:
 
 ```bash
 $ npm run dev:login
-$ npm run dev:examples:harvester
 ```
 
 ### Contributing
