@@ -11,7 +11,7 @@ import {
   validateSession,
 } from "@treasure-dev/tdk-core";
 import type { PropsWithChildren } from "react";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   type Chain,
   type ThirdwebClient,
@@ -25,6 +25,7 @@ import {
   useActiveWalletConnectionStatus,
   useAutoConnect,
   useIsAutoConnecting,
+  useSwitchActiveWalletChain,
 } from "thirdweb/react";
 import type { Account } from "thirdweb/wallets";
 import {
@@ -58,7 +59,10 @@ type ContextValues = {
   isConnecting: boolean;
   logIn: (account: Account) => void;
   logOut: () => void;
-  startUserSession: (options: SessionOptions) => void;
+  startUserSession: (
+    options: SessionOptions,
+    overrideAccount?: Account,
+  ) => void;
 };
 
 const Context = createContext({} as ContextValues);
@@ -102,6 +106,7 @@ const TreasureProviderInner = ({
   );
   const wallet = useActiveWallet();
   const walletStatus = useActiveWalletConnectionStatus();
+  const switchWalletChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
   const chain = useMemo(() => defineChain(chainId), [chainId]);
   const contractAddresses = useMemo(
@@ -131,17 +136,18 @@ const TreasureProviderInner = ({
     });
   };
 
-  const createUserSession = async ({
-    chainId,
-    backendWallet,
-    approvedTargets,
-    nativeTokenLimitPerTransaction,
-  }: SessionOptions) => {
-    const account = await wallet?.getAccount();
+  const createUserSession = async (
+    {
+      chainId,
+      backendWallet,
+      approvedTargets,
+      nativeTokenLimitPerTransaction,
+    }: SessionOptions,
+    overrideAccount?: Account,
+  ) => {
+    const account = overrideAccount ?? (await wallet?.getAccount());
     if (!account) {
-      throw new Error(
-        "Unable to create user session: connected account not found",
-      );
+      throw new Error("Active wallet account not found");
     }
 
     return createSession({
@@ -155,7 +161,10 @@ const TreasureProviderInner = ({
     });
   };
 
-  const startUserSession = async (options: SessionOptions) => {
+  const startUserSession = async (
+    options: SessionOptions,
+    overrideAccount?: Account,
+  ) => {
     // Skip session creation if not required by app
     if (options.approvedTargets.length === 0) {
       console.debug("[TreasureProvider] Session not required by app");
@@ -172,7 +181,7 @@ const TreasureProviderInner = ({
     // Create new session, if needed
     console.debug("[TreasureProvider] Creating new session");
     try {
-      const session = await createUserSession(options);
+      const session = await createUserSession(options, overrideAccount);
       // Optimistically update the user sessions
       setUser((user) =>
         user
@@ -232,10 +241,13 @@ const TreasureProviderInner = ({
 
     // Start user session if configured
     if (sessionOptions) {
-      await startUserSession({
-        ...sessionOptions,
-        chainId,
-      });
+      await startUserSession(
+        {
+          ...sessionOptions,
+          chainId,
+        },
+        account,
+      );
     }
 
     // Update user state
@@ -245,6 +257,12 @@ const TreasureProviderInner = ({
     // Trigger completion callback
     onConnect?.(nextUser);
   };
+
+  // Switch the Thirdweb SDK's chain if the provider's chain changes
+  useEffect(() => {
+    console.debug("[TreasureProvider] Switching chain:", chain.id);
+    switchWalletChain(chain);
+  }, [switchWalletChain, chain]);
 
   // Attempt an automatic background connection
   useAutoConnect({
