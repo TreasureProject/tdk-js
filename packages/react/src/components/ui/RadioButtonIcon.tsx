@@ -24,7 +24,7 @@ export const RadioButtonIcon = ({
       className={cn(
         "tdk-h-4 tdk-w-4 tdk-rounded-full tdk-border-2 tdk-transition-colors",
         selected
-          ? "tdk-bg-ruby-900  tdk-border-[#192B44]"
+          ? "tdk-bg-ruby-900 tdk-border-[#192B44]"
           : "tdk-border-transparent tdk-bg-transparent",
         innerClassName,
       )}

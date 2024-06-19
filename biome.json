@@ -31,6 +31,9 @@
       },
       "correctness": {
         "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "useSortedClasses": "error"
       }
     }
   }

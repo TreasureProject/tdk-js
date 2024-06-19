@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   darkTheme,
   lightTheme,
@@ -17,9 +17,14 @@ type Props = {
 };
 
 export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
-  const { chain, contractAddresses, thirdwebClient, logIn } = useTreasure();
+  const { chain, contractAddresses, thirdwebClient, logIn, logOut } =
+    useTreasure();
   const { connect } = useConnectModal();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
+  const [{ status, description }, setState] = useState<{
+    status: "idle" | "loading" | "error";
+    description?: string;
+  }>({ status: "idle" });
 
   const modalTheme = useMemo(
     () =>
@@ -69,10 +74,13 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
     });
     const account = (wallet as Wallet).getAccount();
     if (account) {
+      setState({ status: "loading", description: "Starting session..." });
       try {
         await logIn(account);
-      } catch {
-        // TODO: popup?
+        setState({ status: "idle" });
+      } catch (err) {
+        logOut();
+        setState({ status: "error", description: (err as Error).message });
       }
     }
   };
@@ -99,5 +107,5 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
       // },
     });
 
-  return { openConnectModal, openAccountModal };
+  return { status, description, openConnectModal, openAccountModal };
 };

@@ -89,24 +89,24 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-        <h1 className="text-ruby-900 text-2xl font-semibold">
+        <h1 className="font-semibold text-2xl text-ruby-900">
           Payments Examples
         </h1>
         <ConnectButton />
       </header>
       <main>
         {!isConnected ? (
-          <p className="border-honey-200 bg-honey-50 rounded-lg border-2 p-4 text-center text-lg font-medium">
+          <p className="rounded-lg border-2 border-honey-200 bg-honey-50 p-4 text-center font-medium text-lg">
             Connect your wallet to continue.
           </p>
         ) : (
           <>
-            <h2 className="text-ruby-900 mb-2 text-xl font-medium">
+            <h2 className="mb-2 font-medium text-ruby-900 text-xl">
               Payments Module Demo
             </h2>
             <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
-              <div className="bg-night-900 text-night-300 space-y-4 rounded-lg p-4">
-                <h2 className="text-honey-200 text-xl font-semibold">
+              <div className="space-y-4 rounded-lg bg-night-900 p-4 text-night-300">
+                <h2 className="font-semibold text-honey-200 text-xl">
                   Parameters
                 </h2>
                 <div>
@@ -161,7 +161,7 @@ export const App = () => {
                   </select>
                 </div>
               </div>
-              <div className="border-honey-200 bg-honey-50 space-y-3 rounded-lg border-2 p-4">
+              <div className="space-y-3 rounded-lg border-2 border-honey-200 bg-honey-50 p-4">
                 <p>
                   <span className="font-medium">Cost:</span> {pricedAmount}{" "}
                   {pricedCurrency}
@@ -172,7 +172,7 @@ export const App = () => {
                 </p>
                 <button
                   type="button"
-                  className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
+                  className="cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 disabled:cursor-not-allowed hover:bg-ruby-1000 hover:text-white sm:text-base disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2"
                   disabled={isLoading || !makePayment}
                   onClick={makePayment}
                 >
@@ -184,7 +184,7 @@ export const App = () => {
                 </button>
               </div>
             </div>
-            <h2 className="text-ruby-900 mb-1 mt-6 text-xl font-medium">
+            <h2 className="mt-6 mb-1 font-medium text-ruby-900 text-xl">
               Payments Checkout Modal Demo
             </h2>
             <p className="mb-1">Select items for purchase:</p>
@@ -194,17 +194,17 @@ export const App = () => {
                 .map(([id, { name, image, usdPrice }]) => (
                   <div
                     key={id}
-                    className="bg-honey-400 space-y-1 rounded-md p-2 pb-1 text-left"
+                    className="space-y-1 rounded-md bg-honey-400 p-2 pb-1 text-left"
                   >
                     <img src={image} alt="" className="rounded-md" />
                     <div className="flex items-start justify-between gap-2">
                       <span>{name}</span>
                       <span>${usdPrice}</span>
                     </div>
-                    <div className="bg-ruby-800 text-honey-50 flex items-center gap-1 rounded-md text-center">
+                    <div className="flex items-center gap-1 rounded-md bg-ruby-800 text-center text-honey-50">
                       <button
                         type="button"
-                        className="px-4 text-lg font-bold"
+                        className="px-4 font-bold text-lg"
                         onClick={() =>
                           setSelectedProducts((curr) => ({
                             ...curr,
@@ -219,7 +219,7 @@ export const App = () => {
                       </span>
                       <button
                         type="button"
-                        className="px-4 text-lg font-bold"
+                        className="px-4 font-bold text-lg"
                         onClick={() =>
                           setSelectedProducts((curr) => ({
                             ...curr,
@@ -235,7 +235,7 @@ export const App = () => {
             </div>
             <button
               type="button"
-              className="border-ruby-900 focus:ring-ruby-500 bg-ruby-900 hover:bg-ruby-1000 mt-3 cursor-pointer rounded-lg border-2 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors duration-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
+              className="mt-3 cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 disabled:cursor-not-allowed hover:bg-ruby-1000 hover:text-white sm:text-base disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2"
               disabled={numSelectedProducts === 0}
               onClick={() => setIsCheckingOut(true)}
             >

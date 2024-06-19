@@ -72,7 +72,7 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="text-ruby-900 text-2xl font-semibold">
+        <h1 className="font-semibold text-2xl text-ruby-900">
           TDK Connect Example
         </h1>
         <ConnectButton appName="Treasure" />
@@ -81,9 +81,9 @@ export const App = () => {
         {user ? (
           <>
             <div>
-              <h1 className="text-xl font-medium">Active Sessions</h1>
+              <h1 className="font-medium text-xl">Active Sessions</h1>
               {user.allActiveSigners.length > 0 ? (
-                <ul className="text-sm space-y-3">
+                <ul className="space-y-3 text-sm">
                   {user.allActiveSigners
                     .sort(
                       (a, b) => Number(b.endTimestamp) - Number(a.endTimestamp),
@@ -100,7 +100,7 @@ export const App = () => {
                           <p className="font-medium">
                             {signer}{" "}
                             {isAdmin ? (
-                              <span className="font-medium uppercase bg-ruby-900 rounded text-white px-1 text-xs">
+                              <span className="rounded bg-ruby-900 px-1 font-medium text-white text-xs uppercase">
                                 Admin
                               </span>
                             ) : (
@@ -119,7 +119,7 @@ export const App = () => {
                                 <span className="font-medium">
                                   Approved targets:
                                 </span>
-                                <ul className="pl-6 list-disc">
+                                <ul className="list-disc pl-6">
                                   {approvedTargets.map((target) => (
                                     <li key={target}>{target}</li>
                                   ))}
@@ -146,7 +146,7 @@ export const App = () => {
               )}
             </div>
             <div className="space-y-1">
-              <h1 className="text-xl font-medium">Test Transactions</h1>
+              <h1 className="font-medium text-xl">Test Transactions</h1>
               <div className="flex flex-wrap gap-2">
                 <Button onClick={() => handleMintMagic(1000)}>
                   Mint 1,000 MAGIC

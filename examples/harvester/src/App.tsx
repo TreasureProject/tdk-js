@@ -139,7 +139,7 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="text-ruby-900 text-2xl font-semibold">
+        <h1 className="font-semibold text-2xl text-ruby-900">
           TDK Harvester Example
         </h1>
         <TreasureConnectButton />
