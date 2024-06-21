@@ -104,9 +104,9 @@ const TreasureProviderInner = ({
     () => createThirdwebClient({ clientId }),
     [clientId],
   );
-  const wallet = useActiveWallet();
-  const walletStatus = useActiveWalletConnectionStatus();
-  const switchWalletChain = useSwitchActiveWalletChain();
+  const activeWallet = useActiveWallet();
+  const activeWalletStatus = useActiveWalletConnectionStatus();
+  const switchActiveWalletChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
   const chain = useMemo(() => defineChain(chainId), [chainId]);
   const contractAddresses = useMemo(
@@ -118,47 +118,7 @@ const TreasureProviderInner = ({
     setUser(undefined);
     tdk.clearAuthToken();
     clearStoredAuthToken();
-    wallet?.disconnect();
-  };
-
-  const validateUserSession = async ({
-    chainId,
-    backendWallet,
-    approvedTargets,
-    nativeTokenLimitPerTransaction,
-  }: SessionOptions) => {
-    const sessions = await tdk.user.getSessions({ chainId });
-    return validateSession({
-      backendWallet,
-      approvedTargets,
-      nativeTokenLimitPerTransaction,
-      sessions,
-    });
-  };
-
-  const createUserSession = async (
-    {
-      chainId,
-      backendWallet,
-      approvedTargets,
-      nativeTokenLimitPerTransaction,
-    }: SessionOptions,
-    overrideAccount?: Account,
-  ) => {
-    const account = overrideAccount ?? (await wallet?.getAccount());
-    if (!account) {
-      throw new Error("Active wallet account not found");
-    }
-
-    return createSession({
-      client: thirdwebClient,
-      chainId,
-      address: account.address,
-      account,
-      backendWallet,
-      approvedTargets,
-      nativeTokenLimitPerTransaction,
-    });
+    activeWallet?.disconnect();
   };
 
   const startUserSession = async (
@@ -172,7 +132,11 @@ const TreasureProviderInner = ({
     }
 
     // Skip session creation if user has an active session already
-    const hasActiveSession = await validateUserSession(options);
+    const sessions = await tdk.user.getSessions({ chainId });
+    const hasActiveSession = await validateSession({
+      ...options,
+      sessions,
+    });
     if (hasActiveSession) {
       console.debug("[TreasureProvider] Using existing session");
       return;
@@ -180,8 +144,19 @@ const TreasureProviderInner = ({
 
     // Create new session, if needed
     console.debug("[TreasureProvider] Creating new session");
+    const account = overrideAccount ?? (await activeWallet?.getAccount());
+    if (!account) {
+      throw new Error("Active wallet account not found");
+    }
+
     try {
-      const session = await createUserSession(options, overrideAccount);
+      const session = await createSession({
+        ...options,
+        client: thirdwebClient,
+        chainId,
+        address: account.address,
+        account,
+      });
       // Optimistically update the user sessions
       setUser((user) =>
         user
@@ -261,8 +236,8 @@ const TreasureProviderInner = ({
   // Switch the Thirdweb SDK's chain if the provider's chain changes
   useEffect(() => {
     console.debug("[TreasureProvider] Switching chain:", chain.id);
-    switchWalletChain(chain);
-  }, [switchWalletChain, chain]);
+    switchActiveWalletChain(chain);
+  }, [switchActiveWalletChain, chain]);
 
   // Attempt an automatic background connection
   useAutoConnect({
@@ -300,7 +275,9 @@ const TreasureProviderInner = ({
         thirdwebClient,
         user,
         isConnecting:
-          isAutoConnecting || walletStatus === "connecting" || isAuthenticating,
+          isAutoConnecting ||
+          activeWalletStatus === "connecting" ||
+          isAuthenticating,
         logIn: async (account: Account) => {
           setIsAuthenticating(true);
           try {
