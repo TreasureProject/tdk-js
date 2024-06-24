@@ -15,7 +15,7 @@ npm i @treasure-dev/tdk-react
 
 ## Usage
 
-[Documentation](https://tdk-docs.treasure.lol/react/getting-started)
+[Documentation](https://docs.treasure.lol/tdk/react/getting-started)
 
 ## Deployment
 

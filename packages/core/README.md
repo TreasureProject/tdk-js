@@ -14,7 +14,7 @@ npm i @treasure-dev/tdk-core
 
 ## Usage
 
-[Documentation](https://tdk-docs.treasure.lol/core/getting-started)
+[Documentation](https://docs.treasure.lol/tdk/core/getting-started)
 
 ## Deployment
 
