@@ -119,9 +119,9 @@ export default function LoginPage() {
 
   return (
     <div className="h-full overflow-hidden">
-      <div className="fixed inset-0 bg-[url(/img/background.png)] bg-cover bg-center" />
+      <div className="fixed inset-0 bg-[url(/img/background.png)] bg-center bg-cover" />
       <div className="relative grid h-full place-items-center p-6">
-        <div className="bg-honey-25 relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl shadow-xl shadow-black/20">
+        <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl bg-honey-25 shadow-black/20 shadow-xl">
           <form onSubmit={onSubmit} className="space-y-2">
             <div className="flex h-16 items-center justify-between px-5 pt-5">
               <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function LoginPage() {
                     "https://images.treasure.lol/tdk/login/treasure_icon.png"
                   }
                   alt=""
-                  className="bg-honey-200 h-14 w-14 shrink-0 rounded-lg p-1"
+                  className="h-14 w-14 shrink-0 rounded-lg bg-honey-200 p-1"
                 />
                 <div>
                   <h1 className="text-night-600 text-sm">Connect to</h1>
@@ -142,7 +142,7 @@ export default function LoginPage() {
             </div>
             <div className="w-full px-5 pb-5">
               {error ? (
-                <p className="bg-ruby-300 text-ruby-900 border-ruby-400 mt-4 rounded-lg border px-3 py-2 text-sm">
+                <p className="mt-4 rounded-lg border border-ruby-400 bg-ruby-300 px-3 py-2 text-ruby-900 text-sm">
                   {error}
                 </p>
               ) : null}
@@ -156,7 +156,7 @@ export default function LoginPage() {
                   <img className="mx-auto w-20" src={emailImg} alt="" />
                   <div className="space-y-1.5">
                     <p className="font-medium">We&apos;ve sent you an email</p>
-                    <p className="text-night-500 mx-auto mt-2 max-w-sm text-sm">
+                    <p className="mx-auto mt-2 max-w-sm text-night-500 text-sm">
                       We&apos;ve sent a code to your email. Please enter it
                       below to confirm your login.
                     </p>
@@ -211,18 +211,18 @@ export default function LoginPage() {
                         <Button
                           type="button"
                           variant="secondary"
-                          className="border-night-200 bg-honey-50 flex w-full items-center justify-center border"
+                          className="flex w-full items-center justify-center border border-night-200 bg-honey-50"
                           onClick={() => logInWithSocial("google")}
                           disabled={isLoading}
                         >
-                          <GoogleLogoIcon className="text-night-700 h-6 w-6" />
+                          <GoogleLogoIcon className="h-6 w-6 text-night-700" />
                           <span className="sr-only">Continue with Google</span>
                         </Button>
                       </div>
                       <div className="mt-4 flex items-center">
-                        <hr className="border-night-100 flex-1 border-t" />
-                        <p className="text-night-600 mx-2.5 text-center">or</p>
-                        <hr className="border-night-100 flex-1 border-t" />
+                        <hr className="flex-1 border-night-100 border-t" />
+                        <p className="mx-2.5 text-center text-night-600">or</p>
+                        <hr className="flex-1 border-night-100 border-t" />
                       </div>
                     </>
                   ) : null}
@@ -230,7 +230,7 @@ export default function LoginPage() {
                     <div className="space-y-1.5">
                       <label
                         htmlFor="email"
-                        className="text-night-1200 block text-sm font-semibold"
+                        className="block font-semibold text-night-1200 text-sm"
                       >
                         Email
                       </label>
@@ -239,7 +239,7 @@ export default function LoginPage() {
                         id="email"
                         type="email"
                         placeholder="Enter your email address..."
-                        className="outline-ruby-900 border-night-200 w-full rounded-lg border px-3 py-2.5 disabled:cursor-not-allowed"
+                        className="w-full rounded-lg border border-night-200 px-3 py-2.5 outline-ruby-900 disabled:cursor-not-allowed"
                         disabled={isLoading}
                       />
                     </div>
@@ -248,7 +248,7 @@ export default function LoginPage() {
                         <div className="space-y-1.5">
                           <label
                             htmlFor="password"
-                            className="text-night-1200 block text-sm font-semibold"
+                            className="block font-semibold text-night-1200 text-sm"
                           >
                             Password
                           </label>
@@ -257,7 +257,7 @@ export default function LoginPage() {
                             id="password"
                             type="password"
                             placeholder="Your Password"
-                            className="outline-ruby-900 border-night-200 w-full rounded-lg border px-2.5 py-1.5 disabled:cursor-not-allowed"
+                            className="w-full rounded-lg border border-night-200 px-2.5 py-1.5 outline-ruby-900 disabled:cursor-not-allowed"
                             disabled={isLoading}
                           />
                         </div>

@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "fix": "biome check --apply .",
+    "fix": "biome check --write --unsafe .",
     "knip": "knip",
     "test": "vitest run",
     "package:changeset": "changeset",

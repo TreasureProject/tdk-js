@@ -8,8 +8,8 @@ import { addSessionKey } from "thirdweb/extensions/erc4337";
 import type { Account } from "thirdweb/wallets";
 
 import {
-  getDateDaysFromNow,
   getDateHoursFromNow,
+  getDateSecondsFromNow,
   getDateYearsFromNow,
 } from "./date";
 
@@ -28,11 +28,13 @@ export const validateSession = async ({
   backendWallet,
   approvedTargets: rawApprovedTargets,
   nativeTokenLimitPerTransaction = 0n,
+  sessionMinDurationLeftSec = 3_600, // 1 hour
   sessions,
 }: {
   backendWallet: string;
   approvedTargets: string[];
   nativeTokenLimitPerTransaction?: bigint;
+  sessionMinDurationLeftSec?: number;
   sessions: Session[];
 }) => {
   const approvedTargets = rawApprovedTargets.map((target) =>
@@ -44,9 +46,9 @@ export const validateSession = async ({
     return true;
   }
 
-  const todayDate = new Date();
-  const hourDate = getDateHoursFromNow(1);
-  const distantFutureDate = getDateYearsFromNow(10);
+  const nowDate = new Date();
+  const minEndDate = getDateSecondsFromNow(sessionMinDurationLeftSec);
+  const maxEndDate = getDateYearsFromNow(10);
   return sessions.some((session) => {
     const startDate = new Date(Number(session.startTimestamp) * 1000);
     const endDate = new Date(Number(session.endTimestamp) * 1000);
@@ -54,15 +56,15 @@ export const validateSession = async ({
       target.toLowerCase(),
     );
     return (
-      // Start date has passed
-      startDate < todayDate &&
-      // Expiration date is at least 1 hour in the future
-      endDate > hourDate &&
-      // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
-      // This check is to prevent sessions from being created with timestamps in milliseconds
-      endDate <= distantFutureDate &&
       // Expected backend wallet is signer
       session.signer.toLowerCase() === backendWallet?.toLowerCase() &&
+      // Start date has passed
+      startDate < nowDate &&
+      // Expiration date meets minimum time requirements
+      endDate >= minEndDate &&
+      // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
+      // This check is to prevent sessions from being created with timestamps in milliseconds
+      endDate <= maxEndDate &&
       // All requested targets are approved
       approvedTargets.every((target) =>
         signerApprovedTargets.includes(target),
@@ -78,30 +80,30 @@ export const validateSession = async ({
 export const createSession = async ({
   client,
   chainId,
-  address,
   account,
   backendWallet,
   approvedTargets,
   nativeTokenLimitPerTransaction: nativeTokenLimitPerTransactionBI = 0n,
+  sessionDurationSec = 86_400, // 1 day
 }: {
   client: ThirdwebClient;
   chainId: number;
-  address: string;
   account: Account;
   backendWallet: string;
   approvedTargets: string[];
   nativeTokenLimitPerTransaction?: bigint;
+  sessionDurationSec?: number;
 }): Promise<Session> => {
   const contract = getContract({
     client,
     chain: defineChain(chainId),
-    address,
+    address: account.address,
   });
   const nativeTokenLimitPerTransaction = formatEther(
     nativeTokenLimitPerTransactionBI,
   );
   const startDate = getDateHoursFromNow(-1);
-  const endDate = getDateDaysFromNow(1);
+  const endDate = getDateSecondsFromNow(sessionDurationSec);
   const transaction = addSessionKey({
     contract,
     account,

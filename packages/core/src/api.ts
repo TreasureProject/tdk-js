@@ -137,7 +137,18 @@ export class TDKAPI {
   };
 
   user = {
-    me: () => this.get<ReadCurrentUserReply>("/users/me"),
+    me: ({ overrideAuthToken }: { overrideAuthToken?: string }) =>
+      this.get<ReadCurrentUserReply>(
+        "/users/me",
+        undefined,
+        overrideAuthToken
+          ? {
+              headers: {
+                Authorization: overrideAuthToken,
+              },
+            }
+          : undefined,
+      ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
   };
