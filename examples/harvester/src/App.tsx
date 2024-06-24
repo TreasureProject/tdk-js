@@ -16,12 +16,13 @@ import { useAccount, useChainId, useReadContracts } from "wagmi";
 const MAGIC_AMOUNT = parseEther("1000");
 
 export const App = () => {
-  const { address, tdk } = useTreasure();
+  const { tdk, user } = useTreasure();
   const { address: eoaAddress = zeroAddress, isConnected: isEOAConnected } =
     useAccount();
   const chainId = useChainId();
   const contractAddresses = useContractAddresses();
-  const smartAccountAddress = (address ?? zeroAddress) as AddressString;
+  const smartAccountAddress = (user?.smartAccountAddress ??
+    zeroAddress) as AddressString;
 
   const {
     data: {
@@ -38,7 +39,7 @@ export const App = () => {
     refetch: refetchHarvesterData,
   } = useHarvester({
     chainId,
-    contract: "HarvesterEmerion",
+    contract: "HarvesterEmberwing",
     userAddress: eoaAddress,
   });
 
@@ -61,7 +62,7 @@ export const App = () => {
       },
     ],
     query: {
-      enabled: !!address,
+      enabled: !!user?.smartAccountAddress,
       select: (data) => ({
         eoaMagic: data[0].result ?? 0n,
         eoaPermits: data[1].result ?? 0n,
@@ -142,14 +143,15 @@ export const App = () => {
         <h1 className="font-semibold text-2xl text-ruby-900">
           TDK Harvester Example
         </h1>
-        <TreasureConnectButton />
+        <TreasureConnectButton appName="Zeeverse" />
       </header>
       <main className="space-y-6">
-        {address ? (
+        {user?.smartAccountAddress ? (
           <>
             <div className="space-y-2">
               <h2>
-                <span className="font-semibold">Smart Account:</span> {address}
+                <span className="font-semibold">Smart Account:</span>{" "}
+                {user.smartAccountAddress}
               </h2>
               <ul className="list-disc px-8">
                 <li>{formatEther(smartAccountMagic)} MAGIC balance</li>

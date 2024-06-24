@@ -3,14 +3,12 @@ import {
   Button,
   ConnectButton,
   formatAmount,
-  getContractAddress,
   useTreasure,
 } from "@treasure-dev/tdk-react";
 import { formatEther, parseEther } from "viem";
 
 export const App = () => {
-  const { tdk, chainId, user } = useTreasure();
-  const magicAddress = getContractAddress(chainId, "MAGIC");
+  const { tdk, user, contractAddresses } = useTreasure();
 
   const handleMintMagic = async (amount: number) => {
     if (!user?.smartAccountAddress) {
@@ -20,7 +18,7 @@ export const App = () => {
     try {
       await tdk.transaction.create(
         {
-          address: magicAddress,
+          address: contractAddresses.MAGIC,
           abi: [
             {
               inputs: [
