@@ -56,7 +56,7 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
   );
 
   const openConnectModal = async () => {
-    const wallet = await connect({
+    const wallet = (await connect({
       client: thirdwebClient,
       wallets: SUPPORTED_WALLETS,
       chain,
@@ -71,17 +71,14 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
         appIconUri ?? "https://images.treasure.lol/tdk/login/treasure_icon.png",
       showThirdwebBranding: false,
       theme: modalTheme,
-    });
-    const account = (wallet as Wallet).getAccount();
-    if (account) {
-      setState({ status: "loading", description: "Starting session..." });
-      try {
-        await logIn(account);
-        setState({ status: "idle" });
-      } catch (err) {
-        logOut();
-        setState({ status: "error", description: (err as Error).message });
-      }
+    })) as Wallet;
+    setState({ status: "loading", description: "Starting session..." });
+    try {
+      await logIn(wallet);
+      setState({ status: "idle" });
+    } catch (err) {
+      logOut();
+      setState({ status: "error", description: (err as Error).message });
     }
   };
 

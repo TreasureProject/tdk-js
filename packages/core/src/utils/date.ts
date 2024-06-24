@@ -1,3 +1,6 @@
+export const getDateSecondsFromNow = (seconds: number) =>
+  new Date(Date.now() + seconds * 1000);
+
 export const getDateHoursFromNow = (hours: number) =>
   new Date(Date.now() + hours * 60 * 60 * 1000);
 

@@ -27,7 +27,7 @@ import {
   useIsAutoConnecting,
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
-import type { Account } from "thirdweb/wallets";
+import type { Wallet } from "thirdweb/wallets";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
@@ -36,17 +36,20 @@ import {
 import { SUPPORTED_WALLETS } from "../utils/wallet";
 
 type SessionOptions = {
-  chainId: number;
+  wallet?: Wallet;
+  chainId?: number;
   backendWallet: string;
   approvedTargets: string[];
   nativeTokenLimitPerTransaction?: bigint;
+  sessionDurationSec?: number;
+  sessionMinDurationLeftSec?: number;
 };
 
 type Config = {
   apiUri?: string;
   chainId?: number;
   clientId: string;
-  sessionOptions?: Omit<SessionOptions, "chainId">;
+  sessionOptions?: Omit<SessionOptions, "account" | "chainId">;
   onConnect?: (user: User) => void;
 };
 
@@ -57,12 +60,9 @@ type ContextValues = {
   thirdwebClient: ThirdwebClient;
   user?: User;
   isConnecting: boolean;
-  logIn: (account: Account) => void;
+  logIn: (wallet: Wallet) => void;
   logOut: () => void;
-  startUserSession: (
-    options: SessionOptions,
-    overrideAccount?: Account,
-  ) => void;
+  startUserSession: (options: SessionOptions) => void;
 };
 
 const Context = createContext({} as ContextValues);
@@ -121,15 +121,16 @@ const TreasureProviderInner = ({
     activeWallet?.disconnect();
   };
 
-  const startUserSession = async (
-    options: SessionOptions,
-    overrideAccount?: Account,
-  ) => {
+  const startUserSession = async (options: SessionOptions) => {
     // Skip session creation if not required by app
     if (options.approvedTargets.length === 0) {
       console.debug("[TreasureProvider] Session not required by app");
       return;
     }
+
+    const wallet = options.wallet ?? activeWallet;
+    const walletChainId = wallet?.getChain()?.id;
+    const chainId = options.chainId ?? walletChainId ?? chain.id;
 
     // Skip session creation if user has an active session already
     const sessions = await tdk.user.getSessions({ chainId });
@@ -142,34 +143,40 @@ const TreasureProviderInner = ({
       return;
     }
 
-    // Create new session, if needed
-    console.debug("[TreasureProvider] Creating new session");
-    const account = overrideAccount ?? (await activeWallet?.getAccount());
-    if (!account) {
-      throw new Error("Active wallet account not found");
+    // Session needs to be created, so a valid wallet is required
+    if (!wallet) {
+      throw new Error("Wallet required for session creation");
     }
 
+    // Switch chains if requested session chain is different
+    if (chainId !== walletChainId) {
+      console.debug(
+        "[TreasureProvider] Switching chains for session creation:",
+        chainId,
+      );
+      await wallet.switchChain(defineChain(chainId));
+    }
+
+    const account = wallet.getAccount();
+    if (!account) {
+      throw new Error("Wallet account required for session creation");
+    }
+
+    console.debug("[TreasureProvider] Creating new session");
     try {
-      const session = await createSession({
+      await createSession({
         ...options,
         client: thirdwebClient,
         chainId,
-        address: account.address,
         account,
       });
-      // Optimistically update the user sessions
-      setUser((user) =>
-        user
-          ? { ...user, allActiveSigners: [...user.allActiveSigners, session] }
-          : undefined,
-      );
     } catch (err) {
       console.error("[TreasureProvider] Error creating user session:", err);
       throw err;
     }
   };
 
-  const logIn = async (account: Account) => {
+  const logIn = async (wallet: Wallet) => {
     let nextUser: User | undefined;
 
     // Check for existing stored auth token
@@ -191,6 +198,11 @@ const TreasureProviderInner = ({
     }
 
     if (!nextUser) {
+      const account = wallet.getAccount();
+      if (!account) {
+        throw new Error("Wallet account not found");
+      }
+
       // Generate login payload for user
       console.debug("[TreasureProvider] Generating login payload");
       const payload = await tdk.auth.getLoginPayload({
@@ -216,13 +228,11 @@ const TreasureProviderInner = ({
 
     // Start user session if configured
     if (sessionOptions) {
-      await startUserSession(
-        {
-          ...sessionOptions,
-          chainId,
-        },
-        account,
-      );
+      await startUserSession({
+        ...sessionOptions,
+        wallet,
+        chainId,
+      });
     }
 
     // Update user state
@@ -250,18 +260,15 @@ const TreasureProviderInner = ({
     },
     timeout: 5_000,
     onConnect: async (wallet) => {
-      const account = wallet.getAccount();
-      if (account) {
-        setIsAuthenticating(true);
-        try {
-          await logIn(account);
-        } catch (err) {
-          console.debug(
-            "[TreasureProvider] Error logging in with auto-connect:",
-            err,
-          );
-          setIsAuthenticating(false);
-        }
+      setIsAuthenticating(true);
+      try {
+        await logIn(wallet);
+      } catch (err) {
+        console.debug(
+          "[TreasureProvider] Error logging in with auto-connect:",
+          err,
+        );
+        setIsAuthenticating(false);
       }
     },
   });
@@ -278,10 +285,10 @@ const TreasureProviderInner = ({
           isAutoConnecting ||
           activeWalletStatus === "connecting" ||
           isAuthenticating,
-        logIn: async (account: Account) => {
+        logIn: async (wallet: Wallet) => {
           setIsAuthenticating(true);
           try {
-            await logIn(account);
+            await logIn(wallet);
           } catch (err) {
             setIsAuthenticating(false);
             throw err;
