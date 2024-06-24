@@ -49,7 +49,7 @@ type Config = {
   apiUri?: string;
   chainId?: number;
   clientId: string;
-  sessionOptions?: Omit<SessionOptions, "account" | "chainId">;
+  sessionOptions?: Omit<SessionOptions, "wallet" | "chainId">;
   onConnect?: (user: User) => void;
 };
 
