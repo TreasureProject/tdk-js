@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-react
 
+## 1.0.0
+
+### Major Changes
+
+- 5fa7564: Updated primary login method to connect modal flow
+
+### Patch Changes
+
+- Updated dependencies [5fa7564]
+  - @treasure-dev/tdk-core@1.0.0
+
 ## 0.2.8
 
 ### Patch Changes
