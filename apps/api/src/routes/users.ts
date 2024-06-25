@@ -24,8 +24,8 @@ export const usersRoutes =
       "/users/me",
       {
         schema: {
-          summary: "Get current user",
-          description: "Get current user profile details and on-chain sessions",
+          summary: "Get user",
+          description: "Get current user profile details",
           security: [{ authToken: [] }],
           response: {
             200: readCurrentUserReplySchema,
@@ -85,7 +85,7 @@ export const usersRoutes =
       "/users/me/sessions",
       {
         schema: {
-          summary: "Get current user's on-chain sessions'",
+          summary: "Get user sessions",
           description: "Get current user's on-chain sessions",
           security: [{ authToken: [] }],
           response: {

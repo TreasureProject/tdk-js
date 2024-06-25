@@ -20,7 +20,7 @@ export const projectsRoutes =
       "/projects/:slug",
       {
         schema: {
-          summary: "Get project details",
+          summary: "Get project",
           description: "Get project details to power login experience",
           response: {
             200: readProjectReplySchema,

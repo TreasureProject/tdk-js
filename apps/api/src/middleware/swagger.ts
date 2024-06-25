@@ -8,6 +8,7 @@ export const withSwagger = async (app: FastifyInstance) => {
   await app.register(swagger, {
     mode: "dynamic",
     openapi: {
+      openapi: "3.1.0",
       info: {
         title: "Treasure Development Kit API",
         description:
@@ -33,6 +34,7 @@ export const withSwagger = async (app: FastifyInstance) => {
       const nextSchema = { ...schema };
 
       if (url.startsWith("/auth") || url.startsWith("/login")) {
+        nextSchema.deprecated = url.startsWith("/auth");
         nextSchema.tags = ["auth"];
       } else if (url.startsWith("/harvesters")) {
         nextSchema.tags = ["harvesters"];

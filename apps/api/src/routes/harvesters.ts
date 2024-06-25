@@ -34,7 +34,7 @@ export const harvestersRoutes =
       "/harvesters/:id",
       {
         schema: {
-          summary: "Get Harvester details",
+          summary: "Get Harvester",
           description:
             "Get Harvester details including user info if valid authorization token is provided",
           response: {
