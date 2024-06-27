@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 1.0.1
+
+### Patch Changes
+
+- 1ae01e6: Fixed wallet disconnect not dismissing account modal
+  - @treasure-dev/tdk-core@1.0.1
+
 ## 1.0.0
 
 ### Major Changes
