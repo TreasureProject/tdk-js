@@ -98,10 +98,9 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
             ],
           }
         : undefined,
-      // TODO: upgrade thirdweb and uncomment
-      // onDisconnect: () => {
-      //   logOut();
-      // },
+      onDisconnect: () => {
+        logOut();
+      },
     });
 
   return { status, description, openConnectModal, openAccountModal };

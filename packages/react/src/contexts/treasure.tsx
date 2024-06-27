@@ -268,10 +268,13 @@ const TreasureProviderInner = ({
           "[TreasureProvider] Error logging in with auto-connect:",
           err,
         );
-        setIsAuthenticating(false);
       }
+
+      setIsAuthenticating(false);
     },
   });
+
+  console.log({ isAutoConnecting, activeWalletStatus, isAuthenticating });
 
   return (
     <Context.Provider
@@ -289,6 +292,7 @@ const TreasureProviderInner = ({
           setIsAuthenticating(true);
           try {
             await logIn(wallet);
+            setIsAuthenticating(false);
           } catch (err) {
             setIsAuthenticating(false);
             throw err;

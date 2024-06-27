@@ -23,7 +23,7 @@
     "@sentry/profiling-node": "^8.7.0",
     "@sinclair/typebox": "^0.32.5",
     "@thirdweb-dev/auth": "^4.1.4",
-    "@thirdweb-dev/engine": "^0.0.9",
+    "@thirdweb-dev/engine": "^0.0.11",
     "@treasure-dev/tdk-core": "*",
     "@wagmi/core": "^2.9.1",
     "dotenv": "^16.3.1",
