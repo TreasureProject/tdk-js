@@ -397,7 +397,7 @@ export const createTransactionBodySchema = Type.Object({
     description: "The address of the contract to call",
     examples: [EXAMPLE_CONTRACT_ADDRESS],
   }),
-  abi: Type.Optional(Type.Array(abiSchema)),
+  abi: Type.Optional(Type.Union([Type.Array(abiSchema), Type.Null()])),
   functionName: Type.String({
     description: "The function to call on the contract",
     examples: ["transfer"],

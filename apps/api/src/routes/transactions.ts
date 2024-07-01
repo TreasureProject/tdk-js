@@ -69,12 +69,13 @@ export const transactionsRoutes =
             address,
             backendWallet,
             {
-              abi,
+              abi: abi && abi.length > 0 ? abi : undefined,
               functionName,
               args,
               txOverrides,
             },
             false,
+            undefined,
             userAddress,
           );
           reply.send(result);
