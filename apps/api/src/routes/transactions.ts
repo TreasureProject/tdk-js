@@ -69,7 +69,12 @@ export const transactionsRoutes =
             address,
             backendWallet,
             {
-              abi: abi && abi.length > 0 ? abi : undefined,
+              abi:
+                typeof abi === "string" && abi.length > 0
+                  ? JSON.parse(abi)
+                  : Array.isArray(abi) && abi.length > 0
+                    ? abi
+                    : undefined,
               functionName,
               args,
               txOverrides,
