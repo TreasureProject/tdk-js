@@ -25,6 +25,7 @@ import { transactionsRoutes } from "./routes/transactions";
 import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { getEnv } from "./utils/env";
+import { magicSwapRoutes } from "./routes/magic-swap";
 
 const main = async () => {
   const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
@@ -59,18 +60,15 @@ const main = async () => {
     wagmiConfig: env.THIRDWEB_CLIENT_ID
       ? createConfig({
           chains: SUPPORTED_CHAINS,
-          transports: SUPPORTED_CHAINS.reduce(
-            (acc, chain) => {
-              acc[chain.id] = fallback([
-                http(
-                  `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-                ),
-                http(),
-              ]);
-              return acc;
-            },
-            {} as Record<SupportedChainId, Transport>,
-          ),
+          transports: SUPPORTED_CHAINS.reduce((acc, chain) => {
+            acc[chain.id] = fallback([
+              http(
+                `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`
+              ),
+              http(),
+            ]);
+            return acc;
+          }, {} as Record<SupportedChainId, Transport>),
         })
       : undefined,
   };
@@ -90,6 +88,7 @@ const main = async () => {
     app.register(projectsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes(ctx)),
+    app.register(magicSwapRoutes(ctx)),
   ]);
 
   app.get("/healthcheck", async (_, reply) => {

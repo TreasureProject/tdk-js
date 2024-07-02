@@ -1,7 +1,7 @@
 import { arbitrumSepolia } from "viem/chains";
 
 import type { InventoryToken, Token } from "../../../../apps/api/src/schema";
-import type { SupportedChainId } from "../types";
+import type { CollectionResponse, SupportedChainId } from "../types";
 
 type TokenResponse = {
   collectionAddr: string;
@@ -28,6 +28,8 @@ type InventoryTokenResponse = TokenResponse & {
 const getChainSlug = (chainId: SupportedChainId) =>
   chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
 
+export type FetchTokenItem = Awaited<ReturnType<typeof fetchTokens>>[number];
+
 export const fetchTokens = async ({
   chainId,
   apiUrl,
@@ -46,9 +48,9 @@ export const fetchTokens = async ({
       ids: Array.from(
         new Set(
           tokens.map(
-            ({ address, tokenId }) => `${chainSlug}/${address}/${tokenId}`,
-          ),
-        ),
+            ({ address, tokenId }) => `${chainSlug}/${address}/${tokenId}`
+          )
+        )
       ),
     }),
     headers: {
@@ -58,7 +60,7 @@ export const fetchTokens = async ({
   const results = await response.json();
   if (!Array.isArray(results)) {
     throw new Error(
-      `Error fetching tokens: ${results?.message ?? "Unknown error"}`,
+      `Error fetching tokens: ${results?.message ?? "Unknown error"}`
     );
   }
 
@@ -79,9 +81,36 @@ export const fetchTokens = async ({
           type,
           value,
         })),
-      }),
+      })
     )
     .sort((a, b) => a.tokenId - b.tokenId);
+};
+
+export const fetchCollections = async ({
+  chainId,
+  apiUrl,
+  apiKey,
+  addresses,
+}: {
+  chainId: SupportedChainId;
+  apiUrl: string;
+  apiKey: string;
+  addresses: string[];
+}) => {
+  const chainSlug = getChainSlug(chainId);
+  const url = new URL(`${apiUrl}/batch-collections`);
+  url.searchParams.set(
+    "slugs",
+    addresses.map((address) => `${chainSlug}/${address}`).join(",")
+  );
+  const response = await fetch(url, {
+    headers: {
+      "X-API-Key": apiKey,
+    },
+  });
+  const results = (await response.json()) as CollectionResponse[];
+
+  return results;
 };
 
 export const fetchUserInventory = async ({
@@ -110,12 +139,12 @@ export const fetchUserInventory = async ({
       "ids",
       tokens
         .map(({ address, tokenId }) => `${chainSlug}/${address}/${tokenId}`)
-        .join(","),
+        .join(",")
     );
   } else if (collectionAddresses.length > 0) {
     url.searchParams.append(
       "slugs",
-      collectionAddresses.map((address) => `${chainSlug}/${address}`).join(","),
+      collectionAddresses.map((address) => `${chainSlug}/${address}`).join(",")
     );
   }
 
@@ -127,7 +156,7 @@ export const fetchUserInventory = async ({
   const results = await response.json();
   if (!Array.isArray(results)) {
     throw new Error(
-      `Error fetching user inventory: ${results?.message ?? "Unknown error"}`,
+      `Error fetching user inventory: ${results?.message ?? "Unknown error"}`
     );
   }
 
@@ -151,7 +180,7 @@ export const fetchUserInventory = async ({
           value,
         })),
         balance,
-      }),
+      })
     )
     .sort((a, b) => a.tokenId - b.tokenId);
 };
