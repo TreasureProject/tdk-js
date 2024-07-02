@@ -26,7 +26,7 @@ const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
       body: JSON.stringify({
         query: getPairs,
       }),
-    }
+    },
   );
   const {
     data: { pairs },
@@ -43,7 +43,7 @@ const fetchStats = async ({ chainId }: { chainId: SupportedChainId }) => {
       body: JSON.stringify({
         query: getStats,
       }),
-    }
+    },
   );
   const { data } = (await response.json()) as {
     data: {
@@ -87,17 +87,17 @@ const fetchPairAssociatedData = async ({
       pairTokens.flatMap(({ vaultCollections }) =>
         vaultCollections.flatMap(
           ({ collection: { id: address }, tokenIds }) =>
-            tokenIds?.map((tokenId) => ({ address, tokenId })) ?? []
-        )
-      )
+            tokenIds?.map((tokenId) => ({ address, tokenId })) ?? [],
+        ),
+      ),
     ),
   ];
 
   const collectionAddresses = [
     ...new Set(
       pairTokens.flatMap(({ vaultCollections }) =>
-        vaultCollections.map(({ collection: { id } }) => id)
-      )
+        vaultCollections.map(({ collection: { id } }) => id),
+      ),
     ),
   ];
 
@@ -116,16 +116,22 @@ const fetchPairAssociatedData = async ({
     }),
   ]);
 
-  const collectionsMap = collections.reduce((acc, collection) => {
-    acc[collection.collectionAddr.toLowerCase()] = collection;
-    return acc;
-  }, {} as Record<string, CollectionResponse>);
+  const collectionsMap = collections.reduce(
+    (acc, collection) => {
+      acc[collection.collectionAddr.toLowerCase()] = collection;
+      return acc;
+    },
+    {} as Record<string, CollectionResponse>,
+  );
 
-  const tokensMap = tokens.reduce((acc, token) => {
-    const collection = (acc[token.address.toLowerCase()] ??= {});
-    collection[token.tokenId] = token;
-    return acc;
-  }, {} as Record<string, Record<string, FetchTokenItem>>);
+  const tokensMap = tokens.reduce(
+    (acc, token) => {
+      const collection = (acc[token.address.toLowerCase()] ??= {});
+      collection[token.tokenId] = token;
+      return acc;
+    },
+    {} as Record<string, Record<string, FetchTokenItem>>,
+  );
 
   return { collectionsMap, tokensMap };
 };
@@ -133,7 +139,7 @@ const fetchPairAssociatedData = async ({
 const createPoolTokenCollection = (
   collection: Collection,
   tokenIds: string[],
-  collectionsMap: Record<string, CollectionResponse>
+  collectionsMap: Record<string, CollectionResponse>,
 ): PoolTokenCollection => {
   const {
     urlSlug = "",
@@ -156,14 +162,14 @@ const createPoolTokenCollection = (
 const createTokenMetadata = (
   token: Token,
   collectionsMap: Record<string, CollectionResponse>,
-  tokensMap: Record<string, Record<string, FetchTokenItem>>
+  tokensMap: Record<string, Record<string, FetchTokenItem>>,
 ) => {
   if (token.isNFT) {
     const vaultCollectionAddresses = token.vaultCollections.map(
-      ({ collection: { id } }) => id
+      ({ collection: { id } }) => id,
     );
     const vaultTokenIds = token.vaultCollections.flatMap(
-      ({ tokenIds }) => tokenIds ?? []
+      ({ tokenIds }) => tokenIds ?? [],
     );
     const vaultCollection = vaultCollectionAddresses[0]
       ? collectionsMap[vaultCollectionAddresses[0]]
@@ -192,7 +198,7 @@ const createTokenMetadata = (
       vaultToken
     ) {
       const type = vaultToken?.attributes.find(
-        ({ type }) => type.toLowerCase() === "type"
+        ({ type }) => type.toLowerCase() === "type",
       )?.value;
       if (type) {
         return {
@@ -217,11 +223,11 @@ export const createPoolToken = (
   token: Token,
   collectionsMap: Record<string, CollectionResponse>,
   tokensMap: Record<string, Record<string, FetchTokenItem>>,
-  magicUSD: number
+  magicUSD: number,
 ): PoolToken => {
   const tokenCollections =
     token.vaultCollections.map(({ collection, tokenIds }) =>
-      createPoolTokenCollection(collection, tokenIds ?? [], collectionsMap)
+      createPoolTokenCollection(collection, tokenIds ?? [], collectionsMap),
     ) ?? [];
   const { name, image } = createTokenMetadata(token, collectionsMap, tokensMap);
   const symbol = token.isNFT ? name : token.symbol.toUpperCase();
@@ -261,7 +267,7 @@ const createPoolFromPair = (
   collectionsMap: Record<string, CollectionResponse>,
   tokensMap: Record<string, Record<string, FetchTokenItem>>,
   magicUSD: number,
-  reserves?: [bigint, bigint]
+  reserves?: [bigint, bigint],
 ) => {
   const token0 = {
     ...createPoolToken(pair.token0, collectionsMap, tokensMap, magicUSD),
@@ -279,7 +285,7 @@ const createPoolFromPair = (
   const volume24h = Number(pair.dayData[0]?.volumeUSD ?? 0);
   const volume1w = pair.dayData.reduce(
     (total, { volumeUSD }) => total + Number(volumeUSD),
-    0
+    0,
   );
   return {
     ...pair,
@@ -342,7 +348,7 @@ export const fetchPools = async ({
       magicUSD,
       reserve?.status === "success"
         ? [reserve.result[0], reserve.result[1]]
-        : undefined
+        : undefined,
     );
   });
 

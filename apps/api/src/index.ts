@@ -60,15 +60,18 @@ const main = async () => {
     wagmiConfig: env.THIRDWEB_CLIENT_ID
       ? createConfig({
           chains: SUPPORTED_CHAINS,
-          transports: SUPPORTED_CHAINS.reduce((acc, chain) => {
-            acc[chain.id] = fallback([
-              http(
-                `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`
-              ),
-              http(),
-            ]);
-            return acc;
-          }, {} as Record<SupportedChainId, Transport>),
+          transports: SUPPORTED_CHAINS.reduce(
+            (acc, chain) => {
+              acc[chain.id] = fallback([
+                http(
+                  `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+                ),
+                http(),
+              ]);
+              return acc;
+            },
+            {} as Record<SupportedChainId, Transport>,
+          ),
         })
       : undefined,
   };

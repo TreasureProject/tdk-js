@@ -31,6 +31,6 @@ export const magicSwapRoutes =
         reply.send({
           pools,
         });
-      }
+      },
     );
   };
