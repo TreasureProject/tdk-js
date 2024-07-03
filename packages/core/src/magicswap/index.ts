@@ -237,7 +237,10 @@ const createPoolToken = (
     name,
     symbol,
     image:
-      image ?? (token.isNFT ? "" : `/img/tokens/${symbol.toLowerCase()}.png`),
+      image ??
+      (token.isNFT
+        ? ""
+        : `https://magicswap.lol/img/tokens/${symbol.toLowerCase()}.png`),
     decimals: Number(token.decimals),
     isMAGIC: symbol.toLowerCase() === "magic",
     collections: tokenCollections,
