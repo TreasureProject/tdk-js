@@ -1,5 +1,5 @@
-import { CollectionResponse } from "../types";
-import { InventoryTokenItem } from "../utils/inventory";
+import type { CollectionResponse } from "../types";
+import type { InventoryTokenItem } from "../utils/inventory";
 
 export type Token = {
   id: string;

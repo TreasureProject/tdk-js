@@ -1,23 +1,27 @@
+import { type Config, readContracts } from "@wagmi/core";
+import { parseUnits } from "viem";
+import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
 import { MAGICSWAPV2_API_URL } from "../constants";
-import { AddressString, CollectionResponse, SupportedChainId } from "../types";
-import { getPairs, getStats } from "./graph-queries";
+import {
+  type AddressString,
+  CollectionResponse,
+  type SupportedChainId,
+} from "../types";
 import {
   InventoryTokenItem,
   fetchCollections,
   fetchTokens,
 } from "../utils/inventory";
-import { Config, readContracts } from "@wagmi/core";
 import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
-import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
-import { parseUnits } from "viem";
+import { getPairs, getStats } from "./graph-queries";
 import type {
-  Pair,
   Collection,
+  CollectionsMap,
+  Pair,
+  PoolToken,
   PoolTokenCollection,
   Token,
-  PoolToken,
   TokensByCollectionMap,
-  CollectionsMap,
 } from "./types";
 
 const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
@@ -124,8 +128,12 @@ const fetchPairAssociatedData = async ({
   }, {} as CollectionsMap);
 
   const tokensMap = tokens.reduce((acc, token) => {
-    const collection = (acc[token.address.toLowerCase()] ??= {});
-    collection[token.tokenId] = token;
+    const tokenAddress = token.address.toLowerCase();
+    if (!acc[tokenAddress]) {
+      acc[tokenAddress] = {};
+    }
+
+    acc[tokenAddress][token.tokenId] = token;
     return acc;
   }, {} as TokensByCollectionMap);
 

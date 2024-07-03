@@ -4,8 +4,8 @@ import type { FastifyPluginAsync } from "fastify";
 import "../middleware/chain";
 import "../middleware/swagger";
 
+import { type ErrorReply, type PoolsReply, poolsReplySchema } from "../schema";
 import type { TdkApiContext } from "../types";
-import { ErrorReply, PoolsReply, poolsReplySchema } from "../schema";
 
 export const magicswapRoutes =
   ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>

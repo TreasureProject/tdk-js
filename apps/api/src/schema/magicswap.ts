@@ -1,4 +1,4 @@
-import { Type, Static } from "@sinclair/typebox";
+import { type Static, Type } from "@sinclair/typebox";
 
 // Define the schema for VaultCollections with descriptions
 const vaultCollectionSchema = Type.Object(

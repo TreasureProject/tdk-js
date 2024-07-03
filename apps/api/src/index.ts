@@ -20,12 +20,12 @@ import { withErrorHandler } from "./middleware/error";
 import { withSwagger } from "./middleware/swagger";
 import { authRoutes } from "./routes/auth";
 import { harvestersRoutes } from "./routes/harvesters";
+import { magicswapRoutes } from "./routes/magicswap";
 import { projectsRoutes } from "./routes/projects";
 import { transactionsRoutes } from "./routes/transactions";
 import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { getEnv } from "./utils/env";
-import { magicswapRoutes } from "./routes/magicswap";
 
 const main = async () => {
   const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();

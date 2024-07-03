@@ -110,8 +110,8 @@ export type CollectionResponse = {
   cartridge: null;
   related: string;
   collectionAddr: string;
-  collectionTraitsOverride: {};
-  tagPriority: {};
+  collectionTraitsOverride: object;
+  tagPriority: object;
   quantityListed: number;
   pk2: string;
   partitionId: null;
@@ -127,7 +127,7 @@ export type CollectionResponse = {
   };
   pk1: string;
   chain: string;
-  collectionTraitsValuePriorities: {};
+  collectionTraitsValuePriorities: object;
   sk1: string;
   sk2: string;
   tokensLastSynced: string;

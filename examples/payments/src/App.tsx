@@ -172,7 +172,7 @@ export const App = () => {
                 </p>
                 <button
                   type="button"
-                  className="cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 disabled:cursor-not-allowed hover:bg-ruby-1000 hover:text-white sm:text-base disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2"
+                  className="cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 hover:bg-ruby-1000 hover:text-white focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
                   disabled={isLoading || !makePayment}
                   onClick={makePayment}
                 >
@@ -235,7 +235,7 @@ export const App = () => {
             </div>
             <button
               type="button"
-              className="mt-3 cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 disabled:cursor-not-allowed hover:bg-ruby-1000 hover:text-white sm:text-base disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2"
+              className="mt-3 cursor-pointer rounded-lg border-2 border-ruby-900 bg-ruby-900 px-5 py-2 font-bold text-white text-xs shadow-sm transition-colors duration-500 hover:bg-ruby-1000 hover:text-white focus:outline-none focus:ring-2 focus:ring-ruby-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
               disabled={numSelectedProducts === 0}
               onClick={() => setIsCheckingOut(true)}
             >
