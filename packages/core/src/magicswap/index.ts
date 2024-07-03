@@ -215,7 +215,7 @@ const createTokenMetadata = (
   return { name: token.name, image: undefined };
 };
 
-export const createPoolToken = (
+const createPoolToken = (
   token: Token,
   collectionsMap: CollectionsMap,
   tokensMap: TokensByCollectionMap,

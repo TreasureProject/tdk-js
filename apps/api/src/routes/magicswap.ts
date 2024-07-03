@@ -16,8 +16,8 @@ export const magicswapRoutes =
       "/magicswap/pools",
       {
         schema: {
-          summary: "Get MagicSwap Pools",
-          description: "Get MagicSwap pools aggregated information",
+          summary: "Get Magicswap Pools",
+          description: "Get Magicswap pools aggregated information",
           response: {
             200: poolsReplySchema,
           },

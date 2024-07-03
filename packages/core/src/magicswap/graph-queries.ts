@@ -1,4 +1,4 @@
-export const TOKEN_FRAGMENT = `
+const TOKEN_FRAGMENT = `
   fragment TokenFragment on Token {
     id
     name
@@ -16,18 +16,18 @@ export const TOKEN_FRAGMENT = `
   }
 `;
 
-const TRANSACTION_ITEM_FRAGMENT = `
-  fragment TransactionItemFragment on TransactionItem {
-    id
-    collection {
-      id
-    }
-    tokenId
-    amount
-  }
-`;
+// const TRANSACTION_ITEM_FRAGMENT = `
+//   fragment TransactionItemFragment on TransactionItem {
+//     id
+//     collection {
+//       id
+//     }
+//     tokenId
+//     amount
+//   }
+// `;
 
-export const PAIR_FRAGMENT = `
+const PAIR_FRAGMENT = `
   fragment PairFragment on Pair {
     id
     token0 {
@@ -62,34 +62,34 @@ export const PAIR_FRAGMENT = `
   }
 `;
 
-export const getPairTransactions = `
-  ${TRANSACTION_ITEM_FRAGMENT}
-  query GetPairTransactions($id: String!) {
-    transactions(
-      where: { pair: $id }
-      orderBy: timestamp
-      orderDirection: desc
-    ) {
-      id
-      hash
-      timestamp
-      type
-      user {
-        id
-      }
-      amount0
-      amount1
-      amountUSD
-      isAmount1Out
-      items0 {
-        ...TransactionItemFragment
-      }
-      items1 {
-        ...TransactionItemFragment
-      }
-    }
-  }
-`;
+// export const getPairTransactions = `
+//   ${TRANSACTION_ITEM_FRAGMENT}
+//   query GetPairTransactions($id: String!) {
+//     transactions(
+//       where: { pair: $id }
+//       orderBy: timestamp
+//       orderDirection: desc
+//     ) {
+//       id
+//       hash
+//       timestamp
+//       type
+//       user {
+//         id
+//       }
+//       amount0
+//       amount1
+//       amountUSD
+//       isAmount1Out
+//       items0 {
+//         ...TransactionItemFragment
+//       }
+//       items1 {
+//         ...TransactionItemFragment
+//       }
+//     }
+//   }
+// `;
 
 export const getPairs = `
   ${TOKEN_FRAGMENT}
@@ -101,15 +101,15 @@ export const getPairs = `
   }
 `;
 
-export const getPair = `
-  ${TOKEN_FRAGMENT}
-  ${PAIR_FRAGMENT}
-  query GetPair($id: ID!) {
-    pair(id: $id) {
-      ...PairFragment
-    }
-  }
-`;
+// export const getPair = `
+//   ${TOKEN_FRAGMENT}
+//   ${PAIR_FRAGMENT}
+//   query GetPair($id: ID!) {
+//     pair(id: $id) {
+//       ...PairFragment
+//     }
+//   }
+// `;
 
 export const getStats = `
   query GetStats {
