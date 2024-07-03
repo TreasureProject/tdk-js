@@ -1,21 +1,26 @@
 import { fetchPools } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/chain";
+import "../middleware/swagger";
+
 import type { TdkApiContext } from "../types";
+import { ErrorReply, PoolsReply, poolsReplySchema } from "../schema";
 
 export const magicswapRoutes =
   ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
-    app.get(
+    app.get<{
+      Reply: PoolsReply | ErrorReply;
+    }>(
       "/magic-swap/pools",
       {
         schema: {
-          summary: "Get Magic Swap Pools",
-          // description:
-          //   "Get Harvester details including user info if valid authorization token is provided",
-          // response: {
-          //   200: readHarvesterReplySchema,
-          // },
+          summary: "Get MagicSwap Pools",
+          description: "Get MagicSwap pools aggregated information",
+          response: {
+            200: poolsReplySchema,
+          },
         },
       },
       async (req, reply) => {

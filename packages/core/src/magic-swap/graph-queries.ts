@@ -41,6 +41,8 @@ export const PAIR_FRAGMENT = `
     reserveUSD
     totalSupply
     txCount
+    volume0
+    volume1
     volumeUSD
     lpFee
     protocolFee
@@ -48,7 +50,12 @@ export const PAIR_FRAGMENT = `
     royaltiesBeneficiary
     totalFee
     dayData(first: 7, orderBy: date, orderDirection: desc) {
+      date
+      reserve0
+      reserve1
       reserveUSD
+      volume0
+      volume1
       volumeUSD
       txCount
     }

@@ -2,6 +2,7 @@ import { CollectionResponse } from "../types";
 import { InventoryTokenItem } from "../utils/inventory";
 
 export type Token = {
+  id: string;
   name: string;
   symbol: string;
   isNFT: boolean;
@@ -31,11 +32,19 @@ export type Pair = {
   reserveUSD: string;
   volumeUSD: string;
   lpFee: string;
+  totalSupply: string;
+  txCount: string;
+  protocolFee: string;
+  royaltiesFee: string;
+  royaltiesBeneficiary: string;
+  totalFee: string;
   dayData: {
     volumeUSD: string;
     date: string;
     volume0: string;
     volume1: string;
+    reserveUSD: string;
+    txCount: string;
   }[];
 };
 
