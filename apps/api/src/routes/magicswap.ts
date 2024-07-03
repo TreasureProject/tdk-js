@@ -13,7 +13,7 @@ export const magicswapRoutes =
     app.get<{
       Reply: PoolsReply | ErrorReply;
     }>(
-      "/magic-swap/pools",
+      "/magicswap/pools",
       {
         schema: {
           summary: "Get MagicSwap Pools",

@@ -2,16 +2,8 @@ import { type Config, readContracts } from "@wagmi/core";
 import { parseUnits } from "viem";
 import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
 import { MAGICSWAPV2_API_URL } from "../constants";
-import {
-  type AddressString,
-  CollectionResponse,
-  type SupportedChainId,
-} from "../types";
-import {
-  InventoryTokenItem,
-  fetchCollections,
-  fetchTokens,
-} from "../utils/inventory";
+import type { AddressString, SupportedChainId } from "../types";
+import { fetchCollections, fetchTokens } from "../utils/inventory";
 import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 import { getPairs, getStats } from "./graph-queries";
 import type {
