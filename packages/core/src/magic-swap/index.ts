@@ -2,7 +2,7 @@ import { MAGICSWAPV2_API_URL } from "../constants";
 import { AddressString, CollectionResponse, SupportedChainId } from "../types";
 import { getPairs, getStats } from "./graph-queries";
 import {
-  FetchTokenItem,
+  InventoryTokenItem,
   fetchCollections,
   fetchTokens,
 } from "../utils/inventory";
@@ -16,6 +16,8 @@ import type {
   PoolTokenCollection,
   Token,
   PoolToken,
+  TokensByCollectionMap,
+  CollectionsMap,
 } from "./types";
 
 const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
@@ -116,22 +118,16 @@ const fetchPairAssociatedData = async ({
     }),
   ]);
 
-  const collectionsMap = collections.reduce(
-    (acc, collection) => {
-      acc[collection.collectionAddr.toLowerCase()] = collection;
-      return acc;
-    },
-    {} as Record<string, CollectionResponse>,
-  );
+  const collectionsMap = collections.reduce((acc, collection) => {
+    acc[collection.collectionAddr.toLowerCase()] = collection;
+    return acc;
+  }, {} as CollectionsMap);
 
-  const tokensMap = tokens.reduce(
-    (acc, token) => {
-      const collection = (acc[token.address.toLowerCase()] ??= {});
-      collection[token.tokenId] = token;
-      return acc;
-    },
-    {} as Record<string, Record<string, FetchTokenItem>>,
-  );
+  const tokensMap = tokens.reduce((acc, token) => {
+    const collection = (acc[token.address.toLowerCase()] ??= {});
+    collection[token.tokenId] = token;
+    return acc;
+  }, {} as TokensByCollectionMap);
 
   return { collectionsMap, tokensMap };
 };
@@ -139,7 +135,7 @@ const fetchPairAssociatedData = async ({
 const createPoolTokenCollection = (
   collection: Collection,
   tokenIds: string[],
-  collectionsMap: Record<string, CollectionResponse>,
+  collectionsMap: CollectionsMap,
 ): PoolTokenCollection => {
   const {
     urlSlug = "",
@@ -161,8 +157,8 @@ const createPoolTokenCollection = (
 
 const createTokenMetadata = (
   token: Token,
-  collectionsMap: Record<string, CollectionResponse>,
-  tokensMap: Record<string, Record<string, FetchTokenItem>>,
+  collectionsMap: CollectionsMap,
+  tokensMap: TokensByCollectionMap,
 ) => {
   if (token.isNFT) {
     const vaultCollectionAddresses = token.vaultCollections.map(
@@ -221,8 +217,8 @@ const createTokenMetadata = (
 
 export const createPoolToken = (
   token: Token,
-  collectionsMap: Record<string, CollectionResponse>,
-  tokensMap: Record<string, Record<string, FetchTokenItem>>,
+  collectionsMap: CollectionsMap,
+  tokensMap: TokensByCollectionMap,
   magicUSD: number,
 ): PoolToken => {
   const tokenCollections =
@@ -253,19 +249,10 @@ export const createPoolToken = (
   };
 };
 
-const getPoolAPY = (volume1w: number, reserveUSD: number) => {
-  if (reserveUSD === 0) {
-    return 0;
-  }
-
-  const apr = ((volume1w / 7) * 365 * 0.0025) / reserveUSD;
-  return ((1 + apr / 100 / 3650) ** 3650 - 1) * 100;
-};
-
 const createPoolFromPair = (
   pair: Pair,
-  collectionsMap: Record<string, CollectionResponse>,
-  tokensMap: Record<string, Record<string, FetchTokenItem>>,
+  collectionsMap: CollectionsMap,
+  tokensMap: TokensByCollectionMap,
   magicUSD: number,
   reserves?: [bigint, bigint],
 ) => {
@@ -281,12 +268,12 @@ const createPoolFromPair = (
       reserves?.[1] ?? parseUnits(pair.reserve1, Number(pair.token1.decimals))
     ).toString(),
   };
+
   const reserveUSD = Number(pair.reserveUSD);
-  const volume24h = Number(pair.dayData[0]?.volumeUSD ?? 0);
-  const volume1w = pair.dayData.reduce(
-    (total, { volumeUSD }) => total + Number(volumeUSD),
-    0,
-  );
+  const dayTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24;
+  const dayData = pair.dayData.find(({ date }) => Number(date) >= dayTime);
+  const weekTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 7;
+  const weekData = pair.dayData.filter(({ date }) => Number(date) >= weekTime);
   return {
     ...pair,
     name: `${token0.symbol} / ${token1.symbol}`,
@@ -295,11 +282,24 @@ const createPoolFromPair = (
     hasNFT: token0.isNFT || token1.isNFT,
     isNFTNFT: token0.isNFT && token1.isNFT,
     reserveUSD,
-    volume24h,
-    volume1w,
-    apy: getPoolAPY(volume1w, reserveUSD),
-    feesUSD: Number(pair.volumeUSD) * Number(pair.lpFee),
-    fees24h: volume24h * Number(pair.lpFee),
+    volume0: Number(pair.volume0),
+    volume1: Number(pair.volume1),
+    volumeUSD: Number(pair.volumeUSD),
+    volume24h0: Number(dayData?.volume0 ?? 0),
+    volume24h1: Number(dayData?.volume1 ?? 0),
+    volume24hUSD: Number(dayData?.volumeUSD ?? 0),
+    volume1w0: weekData.reduce(
+      (total, { volume0 }) => total + Number(volume0),
+      0,
+    ),
+    volume1w1: weekData.reduce(
+      (total, { volume1 }) => total + Number(volume1),
+      0,
+    ),
+    volume1wUSD: weekData.reduce(
+      (total, { volumeUSD }) => total + Number(volumeUSD),
+      0,
+    ),
   };
 };
 

@@ -25,7 +25,7 @@ import { transactionsRoutes } from "./routes/transactions";
 import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { getEnv } from "./utils/env";
-import { magicSwapRoutes } from "./routes/magic-swap";
+import { magicswapRoutes } from "./routes/magicswap";
 
 const main = async () => {
   const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
@@ -91,7 +91,7 @@ const main = async () => {
     app.register(projectsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes(ctx)),
-    app.register(magicSwapRoutes(ctx)),
+    app.register(magicswapRoutes(ctx)),
   ]);
 
   app.get("/healthcheck", async (_, reply) => {

@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from "fastify";
 
 import type { TdkApiContext } from "../types";
 
-export const magicSwapRoutes =
+export const magicswapRoutes =
   ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get(

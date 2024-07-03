@@ -28,7 +28,9 @@ type InventoryTokenResponse = TokenResponse & {
 const getChainSlug = (chainId: SupportedChainId) =>
   chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
 
-export type FetchTokenItem = Awaited<ReturnType<typeof fetchTokens>>[number];
+export type InventoryTokenItem = Awaited<
+  ReturnType<typeof fetchTokens>
+>[number];
 
 export const fetchTokens = async ({
   chainId,

@@ -25,9 +25,9 @@ export const BRIDGEWORLD_CORRUPTION_API_URL = {
 
 export const MAGICSWAPV2_API_URL = {
   [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/v1.1.0/gn",
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
   [arbitrumSepolia.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/v1.1.0/gn",
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/live/gn",
 } as const;
 
 // Chains

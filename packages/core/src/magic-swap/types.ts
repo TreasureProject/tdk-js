@@ -1,3 +1,6 @@
+import { CollectionResponse } from "../types";
+import { InventoryTokenItem } from "../utils/inventory";
+
 export type Token = {
   name: string;
   symbol: string;
@@ -23,10 +26,17 @@ export type Pair = {
   token1: Token;
   reserve0: string;
   reserve1: string;
+  volume0: string;
+  volume1: string;
   reserveUSD: string;
   volumeUSD: string;
   lpFee: string;
-  dayData: { volumeUSD: string }[];
+  dayData: {
+    volumeUSD: string;
+    date: string;
+    volume0: string;
+    volume1: string;
+  }[];
 };
 
 export type PoolTokenCollection = {
@@ -51,3 +61,9 @@ export type PoolToken = Omit<Token, "decimals"> & {
   priceUSD: number;
   reserve: string;
 };
+
+export type CollectionsMap = Record<string, CollectionResponse>;
+export type TokensByCollectionMap = Record<
+  string,
+  Record<string, InventoryTokenItem>
+>;
