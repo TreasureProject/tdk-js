@@ -83,3 +83,56 @@ export type User = Awaited<
 export type Session = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["user"]["getSessions"]>
 >[number];
+
+export type CollectionResponse = {
+  contractType: "ERC721" | "ERC1155";
+  daoFee: number;
+  quantityTotal: number;
+  tokenDisplayName: { singular: string; plural: string };
+  currency: string;
+  lastModified: string;
+  highestCollectionBid: null;
+  royaltyFee: number;
+  displayName: string;
+  contractName: string;
+  numOwners: number;
+  numTokens: number;
+  ceilingPrice: null;
+  tags: string[];
+  thumbnailUri: string;
+  flags: {
+    supportsRarity: boolean;
+    supportsTokenBids: boolean;
+    supportsCollectionBids: boolean;
+  };
+  urlSlug: string;
+  symbol: string;
+  cartridge: null;
+  related: string;
+  collectionAddr: string;
+  collectionTraitsOverride: object;
+  tagPriority: object;
+  quantityListed: number;
+  pk2: string;
+  partitionId: null;
+  royaltyRecipient: null;
+  externalUrls: {
+    twitter: string;
+    website: string;
+    game: string;
+    discord: string;
+    docs: string;
+    treasureTools: string;
+    instagram: string;
+  };
+  pk1: string;
+  chain: string;
+  collectionTraitsValuePriorities: object;
+  sk1: string;
+  sk2: string;
+  tokensLastSynced: string;
+  cacheLastModified: string;
+  description: string;
+  sk5: string;
+  floorPrice: null;
+};

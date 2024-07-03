@@ -23,6 +23,13 @@ export const BRIDGEWORLD_CORRUPTION_API_URL = {
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
 } as const;
 
+export const MAGICSWAPV2_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/live/gn",
+} as const;
+
 // Chains
 export const TREASURE_RUBY_CHAIN_DEFINITION = {
   id: 978_657,

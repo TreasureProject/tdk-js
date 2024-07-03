@@ -20,6 +20,7 @@ import { withErrorHandler } from "./middleware/error";
 import { withSwagger } from "./middleware/swagger";
 import { authRoutes } from "./routes/auth";
 import { harvestersRoutes } from "./routes/harvesters";
+import { magicswapRoutes } from "./routes/magicswap";
 import { projectsRoutes } from "./routes/projects";
 import { transactionsRoutes } from "./routes/transactions";
 import { usersRoutes } from "./routes/users";
@@ -90,6 +91,7 @@ const main = async () => {
     app.register(projectsRoutes(ctx)),
     app.register(transactionsRoutes(ctx)),
     app.register(harvestersRoutes(ctx)),
+    app.register(magicswapRoutes(ctx)),
   ]);
 
   app.get("/healthcheck", async (_, reply) => {

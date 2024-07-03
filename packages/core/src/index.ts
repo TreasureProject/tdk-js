@@ -55,3 +55,5 @@ export {
   isSessionRequired,
   validateSession,
 } from "./utils/session";
+
+export { fetchPools } from "./magicswap";

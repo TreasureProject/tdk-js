@@ -1,7 +1,7 @@
 import { arbitrumSepolia } from "viem/chains";
 
 import type { InventoryToken, Token } from "../../../../apps/api/src/schema";
-import type { SupportedChainId } from "../types";
+import type { CollectionResponse, SupportedChainId } from "../types";
 
 type TokenResponse = {
   collectionAddr: string;
@@ -27,6 +27,10 @@ type InventoryTokenResponse = TokenResponse & {
 
 const getChainSlug = (chainId: SupportedChainId) =>
   chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
+
+export type InventoryTokenItem = Awaited<
+  ReturnType<typeof fetchTokens>
+>[number];
 
 export const fetchTokens = async ({
   chainId,
@@ -82,6 +86,33 @@ export const fetchTokens = async ({
       }),
     )
     .sort((a, b) => a.tokenId - b.tokenId);
+};
+
+export const fetchCollections = async ({
+  chainId,
+  apiUrl,
+  apiKey,
+  addresses,
+}: {
+  chainId: SupportedChainId;
+  apiUrl: string;
+  apiKey: string;
+  addresses: string[];
+}) => {
+  const chainSlug = getChainSlug(chainId);
+  const url = new URL(`${apiUrl}/batch-collections`);
+  url.searchParams.set(
+    "slugs",
+    addresses.map((address) => `${chainSlug}/${address}`).join(","),
+  );
+  const response = await fetch(url, {
+    headers: {
+      "X-API-Key": apiKey,
+    },
+  });
+  const results = (await response.json()) as CollectionResponse[];
+
+  return results;
 };
 
 export const fetchUserInventory = async ({
