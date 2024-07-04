@@ -126,4 +126,14 @@ export const poolsReplySchema = Type.Object({
   pools: Type.Array(poolSchema),
 });
 
+export const poolQuoteSchema = Type.Object({
+  quote: Type.String({ description: "Quote for the pool" }),
+});
+
+const poolQuoteParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
+export type PoolQuoteParams = Static<typeof poolQuoteParamsSchema>;
+export type PoolQuoteReply = Static<typeof poolQuoteSchema>;
 export type PoolsReply = Static<typeof poolsReplySchema>;

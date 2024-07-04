@@ -601,4 +601,10 @@ export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
 export type LoginBody = Static<typeof loginBodySchema>;
 export type LoginReply = Static<typeof loginReplySchema>;
 
-export { type PoolsReply, poolsReplySchema } from "./magicswap";
+export {
+  type PoolsReply,
+  type PoolQuoteReply,
+  type PoolQuoteParams,
+  poolQuoteSchema,
+  poolsReplySchema,
+} from "./magicswap";
