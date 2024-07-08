@@ -62,15 +62,19 @@ export const magicswapRoutes =
       async (req, reply) => {
         const { chainId, body } = req;
 
-        const route = await getSwapRoute({
-          tokenInId: body.tokenInId,
-          tokenOutId: body.tokenOutId,
-          amount: body.amount,
-          isExactOut: body.isExactOut,
+        const pools = await fetchPools({
           chainId,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
+        });
+
+        const route = getSwapRoute({
+          tokenInId: body.tokenInId,
+          tokenOutId: body.tokenOutId,
+          amount: body.amount,
+          isExactOut: body.isExactOut,
+          pools,
         });
 
         reply.send({

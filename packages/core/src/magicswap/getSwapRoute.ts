@@ -4,12 +4,11 @@ import {
   findMultiRouteExactIn,
   findMultiRouteExactOut,
 } from "@sushiswap/tines";
-import type { Config } from "@wagmi/core";
 import { parseUnits } from "viem";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { multiplyArray, sumArray } from "../utils/array";
 import { bigIntToNumber } from "../utils/number";
-import { type Pool, fetchPools } from "./fetchPools";
+import type { Pool } from "./fetchPools";
 import type { PoolToken } from "./types";
 
 const tokenToRToken = ({
@@ -74,32 +73,19 @@ const createSwapRoute = (
   return findMultiRouteExactIn(rTokenIn, rTokenOut, amount, rPools, networks);
 };
 
-export const getSwapRoute = async ({
-  chainId,
-  inventoryApiUrl,
-  inventoryApiKey,
-  wagmiConfig,
+export const getSwapRoute = ({
+  pools,
   tokenInId,
   tokenOutId,
   amount,
   isExactOut,
 }: {
-  chainId: SupportedChainId;
-  inventoryApiUrl: string;
-  inventoryApiKey: string;
-  wagmiConfig?: Config;
+  pools: Pool[];
   tokenInId: string;
   tokenOutId: string;
   amount: string;
   isExactOut: boolean;
 }) => {
-  const pools = await fetchPools({
-    chainId,
-    inventoryApiUrl,
-    inventoryApiKey,
-    wagmiConfig,
-  });
-
   const poolTokens = pools
     .flatMap(({ token0, token1 }) => [token0, token1])
     .reduce(
