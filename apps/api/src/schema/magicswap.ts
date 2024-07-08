@@ -157,7 +157,7 @@ const legSchema = Type.Object({
   absolutePortion: Type.Number({ description: "Absolute portion" }),
 });
 
-const routeSchema = Type.Object({
+export const routeReplySchema = Type.Object({
   amountIn: Type.String({ description: "Amount in" }),
   amountOut: Type.String({ description: "Amount out" }),
   tokenIn: tokenSchema,
@@ -169,10 +169,6 @@ const routeSchema = Type.Object({
   lpFee: Type.Number(),
   protocolFee: Type.Number(),
   royaltiesFee: Type.Number(),
-});
-
-export const routeReplySchema = Type.Object({
-  route: routeSchema,
 });
 
 export type PoolsReply = Static<typeof poolsReplySchema>;
