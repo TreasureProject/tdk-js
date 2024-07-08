@@ -56,4 +56,4 @@ export {
   validateSession,
 } from "./utils/session";
 
-export { fetchPools, fetchQuote } from "./magicswap";
+export { fetchPools, fetchQuote, getSwapRoute } from "./magicswap";

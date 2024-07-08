@@ -605,6 +605,8 @@ export {
   type PoolsReply,
   type PoolQuoteReply,
   type PoolQuoteParams,
+  type RouteReply,
   poolQuoteSchema,
   poolsReplySchema,
+  routeReplySchema,
 } from "./magicswap";

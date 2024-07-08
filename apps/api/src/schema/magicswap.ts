@@ -134,6 +134,59 @@ const poolQuoteParamsSchema = Type.Object({
   id: Type.String(),
 });
 
+const routeBodySchema = Type.Object({
+  tokenInId: Type.String(),
+  tokenOutId: Type.String(),
+  amount: Type.String(),
+  isExactOut: Type.Boolean(),
+});
+
+const legSchema = Type.Object({
+  poolAddress: Type.String({ description: "Pool address" }),
+  poolType: Type.String({ description: "Pool type" }),
+  poolFee: Type.Number({ description: "Pool fee" }),
+  tokenFrom: Type.Object({
+    name: Type.String(),
+    symbol: Type.String(),
+    address: Type.String(),
+    decimals: Type.Number(),
+    tokenId: Type.Optional(Type.String()),
+  }),
+  tokenTo: Type.Object({
+    name: Type.String(),
+    symbol: Type.String(),
+    address: Type.String(),
+    decimals: Type.Number(),
+    tokenId: Type.Optional(Type.String()),
+  }),
+  assumedAmountIn: Type.Number({ description: "Assumed amount in" }),
+  assumedAmountOut: Type.Number({ description: "Assumed amount out" }),
+  swapPortion: Type.Number({ description: "Swap portion" }),
+  absolutePortion: Type.Number({ description: "Absolute portion" }),
+});
+
+const routeSchema = Type.Object({
+  amountIn: Type.String({ description: "Amount in" }),
+  amountOut: Type.String({ description: "Amount out" }),
+  tokenIn: tokenSchema,
+  tokenOut: tokenSchema,
+  legs: Type.Array(legSchema),
+  path: Type.Array(Type.String()),
+  priceImpact: Type.Number(),
+  derivedValue: Type.Number(),
+  lpFee: Type.Number(),
+  protocolFee: Type.Number(),
+  royaltiesFee: Type.Number(),
+});
+
+export const routeReplySchema = Type.Object({
+  route: routeSchema,
+});
+
 export type PoolQuoteParams = Static<typeof poolQuoteParamsSchema>;
 export type PoolQuoteReply = Static<typeof poolQuoteSchema>;
+
 export type PoolsReply = Static<typeof poolsReplySchema>;
+
+export type RouteBody = Static<typeof routeBodySchema>;
+export type RouteReply = Static<typeof routeReplySchema>;
