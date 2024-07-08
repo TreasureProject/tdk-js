@@ -78,11 +78,9 @@ export const magicswapRoutes =
         });
 
         reply.send({
-          route: {
-            ...route,
-            amountIn: route.amountIn.toString(),
-            amountOut: route.amountOut.toString(),
-          },
+          ...route,
+          amountIn: route.amountIn.toString(),
+          amountOut: route.amountOut.toString(),
         });
       },
     );
