@@ -1,5 +1,5 @@
-import { type Config, readContract, readContracts } from "@wagmi/core";
-import { parseEther, parseUnits } from "viem";
+import { type Config, readContracts } from "@wagmi/core";
+import { parseUnits } from "viem";
 import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
 import { MAGICSWAPV2_API_URL } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
@@ -356,25 +356,6 @@ export const fetchPools = async ({
   });
 
   return pools;
-};
-
-export const fetchQuote = async ({
-  poolId,
-  chainId,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
-}: {
-  poolId: string;
-  chainId: SupportedChainId;
-  wagmiConfig?: Config;
-}) => {
-  const [reserve0, reserve1] = await readContract(wagmiConfig, {
-    address: poolId as AddressString,
-    abi: uniswapV2PairAbi,
-    functionName: "getReserves",
-    chainId,
-  });
-
-  return (parseEther("1") * reserve0) / reserve1;
 };
 
 export type Pool = ReturnType<typeof createPoolFromPair>;

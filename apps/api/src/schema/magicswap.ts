@@ -126,14 +126,6 @@ export const poolsReplySchema = Type.Object({
   pools: Type.Array(poolSchema),
 });
 
-export const poolQuoteSchema = Type.Object({
-  quote: Type.String({ description: "Quote for the pool" }),
-});
-
-const poolQuoteParamsSchema = Type.Object({
-  id: Type.String(),
-});
-
 const routeBodySchema = Type.Object({
   tokenInId: Type.String(),
   tokenOutId: Type.String(),
@@ -182,9 +174,6 @@ const routeSchema = Type.Object({
 export const routeReplySchema = Type.Object({
   route: routeSchema,
 });
-
-export type PoolQuoteParams = Static<typeof poolQuoteParamsSchema>;
-export type PoolQuoteReply = Static<typeof poolQuoteSchema>;
 
 export type PoolsReply = Static<typeof poolsReplySchema>;
 

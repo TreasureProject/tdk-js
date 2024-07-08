@@ -1,4 +1,4 @@
-import { fetchPools, fetchQuote, getSwapRoute } from "@treasure-dev/tdk-core";
+import { fetchPools, getSwapRoute } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
@@ -6,11 +6,8 @@ import "../middleware/swagger";
 
 import {
   type ErrorReply,
-  type PoolQuoteParams,
-  type PoolQuoteReply,
   type PoolsReply,
   type RouteReply,
-  poolQuoteSchema,
   poolsReplySchema,
 } from "../schema";
 import { type RouteBody, routeReplySchema } from "../schema/magicswap";
@@ -44,35 +41,6 @@ export const magicswapRoutes =
 
         reply.send({
           pools,
-        });
-      },
-    );
-
-    app.get<{
-      Params: PoolQuoteParams;
-      Reply: PoolQuoteReply | ErrorReply;
-    }>(
-      "/magicswap/pools/:id/quote",
-      {
-        schema: {
-          summary: "Get pool quote",
-          description: "Get Magicswap pool quote",
-          response: {
-            200: poolQuoteSchema,
-          },
-        },
-      },
-      async (req, reply) => {
-        const { chainId, params } = req;
-
-        const quote = await fetchQuote({
-          poolId: params.id,
-          chainId,
-          wagmiConfig,
-        });
-
-        reply.send({
-          quote: quote.toString(),
         });
       },
     );
