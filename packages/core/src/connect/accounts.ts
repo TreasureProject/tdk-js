@@ -6,7 +6,7 @@ import type {
 
 import { managedAccountAbi } from "../abis/managedAccountAbi";
 import type { AddressString, SupportedChainId } from "../types";
-import { DEFAULT_WAGMI_CONFIG } from "./wagmi";
+import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 
 type Signer = AbiParametersToPrimitiveTypes<
   ExtractAbiFunction<

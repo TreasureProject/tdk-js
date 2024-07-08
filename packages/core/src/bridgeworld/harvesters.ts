@@ -22,14 +22,14 @@ import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
 import { BRIDGEWORLD_API_URL, TOKEN_IDS } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
-import { sumArray } from "./array";
-import { getContractAddress, getContractAddresses } from "./contracts";
+import { sumArray } from "../utils/array";
+import { getContractAddress, getContractAddresses } from "../utils/contracts";
+import { fetchTokens, fetchUserInventory } from "../utils/inventory";
+import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 import {
   fetchCorruptionRemovalRecipes,
   fetchCorruptionRemovals,
 } from "./corruption";
-import { fetchTokens, fetchUserInventory } from "./inventory";
-import { DEFAULT_WAGMI_CONFIG } from "./wagmi";
 
 const DEFAULT_BOOSTERS_MAX_STAKEABLE = 10n;
 const DEFAULT_BOOSTERS_LIFETIMES = [

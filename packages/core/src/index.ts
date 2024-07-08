@@ -23,7 +23,6 @@ export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
 export { priceFeedAbi } from "./abis/priceFeedAbi";
 export { TDKAPI } from "./api";
-export { getAllActiveSigners } from "./utils/accounts";
 export { truncateEthAddress } from "./utils/address";
 export { sumArray } from "./utils/array";
 export {
@@ -42,18 +41,23 @@ export {
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
+export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
+
+// Connect
+export { getAllActiveSigners } from "./connect/accounts";
+export { decodeAuthToken } from "./connect/jwt";
+export { createLoginUrl } from "./connect/login";
+export {
+  createSession,
+  validateSession,
+} from "./connect/session";
+
+// Bridgeworld
 export {
   fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
-} from "./utils/harvesters";
-export { decodeAuthToken } from "./utils/jwt";
-export { createLoginUrl } from "./utils/login";
-export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
-export {
-  createSession,
-  isSessionRequired,
-  validateSession,
-} from "./utils/session";
+} from "./bridgeworld/harvesters";
 
+// Magicswap
 export { fetchPools, getSwapRoute } from "./magicswap";
