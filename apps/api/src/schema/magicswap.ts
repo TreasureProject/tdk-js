@@ -126,6 +126,8 @@ export const poolsReplySchema = Type.Object({
   pools: Type.Array(poolSchema),
 });
 
+export const poolReplySchema = poolSchema;
+
 const routeBodySchema = Type.Object({
   tokenInId: Type.String(),
   tokenOutId: Type.String(),
@@ -157,7 +159,7 @@ const legSchema = Type.Object({
   absolutePortion: Type.Number({ description: "Absolute portion" }),
 });
 
-const routeSchema = Type.Object({
+export const routeReplySchema = Type.Object({
   amountIn: Type.String({ description: "Amount in" }),
   amountOut: Type.String({ description: "Amount out" }),
   tokenIn: tokenSchema,
@@ -171,11 +173,14 @@ const routeSchema = Type.Object({
   royaltiesFee: Type.Number(),
 });
 
-export const routeReplySchema = Type.Object({
-  route: routeSchema,
+const poolParamsSchema = Type.Object({
+  id: Type.String(),
 });
 
 export type PoolsReply = Static<typeof poolsReplySchema>;
+
+export type PoolParams = Static<typeof poolParamsSchema>;
+export type PoolReply = Static<typeof poolReplySchema>;
 
 export type RouteBody = Static<typeof routeBodySchema>;
 export type RouteReply = Static<typeof routeReplySchema>;

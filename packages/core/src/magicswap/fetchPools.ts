@@ -5,7 +5,7 @@ import { MAGICSWAPV2_API_URL } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
 import { fetchCollections, fetchTokens } from "../utils/inventory";
 import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
-import { getPairs, getStats } from "./graph-queries";
+import { getPair, getPairs, getStats } from "./graph-queries";
 import type {
   Collection,
   CollectionsMap,
@@ -31,6 +31,27 @@ const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
   } = (await response.json()) as { data: { pairs: Pair[] } };
 
   return pairs;
+};
+
+const fetchPair = async ({
+  chainId,
+  pairId,
+}: { chainId: SupportedChainId; pairId: string }) => {
+  const response = await fetch(
+    MAGICSWAPV2_API_URL[chainId as keyof typeof MAGICSWAPV2_API_URL],
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: getPair,
+        variables: { id: pairId },
+      }),
+    },
+  );
+  const {
+    data: { pair },
+  } = (await response.json()) as { data: { pair: Pair } };
+
+  return pair;
 };
 
 const fetchStats = async ({ chainId }: { chainId: SupportedChainId }) => {
@@ -306,21 +327,21 @@ const createPoolFromPair = (
   };
 };
 
-export const fetchPools = async ({
+const buildPools = async ({
+  stats,
+  pairs,
   chainId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
+  pairs: Pair[];
+  stats: Awaited<ReturnType<typeof fetchStats>>;
   chainId: SupportedChainId;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }) => {
-  const [pairs, stats] = await Promise.all([
-    fetchPairs({ chainId }),
-    fetchStats({ chainId }),
-  ]);
   const magicUSD = Number(stats.global?.magicUSD ?? 0);
 
   const { collectionsMap, tokensMap } = await fetchPairAssociatedData({
@@ -356,6 +377,61 @@ export const fetchPools = async ({
   });
 
   return pools;
+};
+
+export const fetchPools = async ({
+  chainId,
+  inventoryApiUrl,
+  inventoryApiKey,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+}: {
+  chainId: SupportedChainId;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+  wagmiConfig?: Config;
+}) => {
+  const [pairs, stats] = await Promise.all([
+    fetchPairs({ chainId }),
+    fetchStats({ chainId }),
+  ]);
+
+  return buildPools({
+    pairs,
+    stats,
+    chainId,
+    inventoryApiUrl,
+    inventoryApiKey,
+    wagmiConfig,
+  });
+};
+
+export const fetchPool = async ({
+  pairId,
+  chainId,
+  inventoryApiUrl,
+  inventoryApiKey,
+  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+}: {
+  pairId: string;
+  chainId: SupportedChainId;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+  wagmiConfig?: Config;
+}) => {
+  const [pair, stats] = await Promise.all([
+    fetchPair({ chainId, pairId }),
+    fetchStats({ chainId }),
+  ]);
+  const [pool] = await buildPools({
+    pairs: [pair],
+    stats,
+    chainId,
+    inventoryApiUrl,
+    inventoryApiKey,
+    wagmiConfig,
+  });
+
+  return pool;
 };
 
 export type Pool = ReturnType<typeof createPoolFromPair>;
