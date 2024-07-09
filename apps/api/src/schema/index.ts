@@ -603,7 +603,10 @@ export type LoginReply = Static<typeof loginReplySchema>;
 
 export {
   type PoolsReply,
+  type PoolReply,
+  type PoolParams,
   type RouteReply,
   poolsReplySchema,
+  poolReplySchema,
   routeReplySchema,
 } from "./magicswap";

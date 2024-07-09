@@ -126,6 +126,8 @@ export const poolsReplySchema = Type.Object({
   pools: Type.Array(poolSchema),
 });
 
+export const poolReplySchema = poolSchema;
+
 const routeBodySchema = Type.Object({
   tokenInId: Type.String(),
   tokenOutId: Type.String(),
@@ -171,7 +173,14 @@ export const routeReplySchema = Type.Object({
   royaltiesFee: Type.Number(),
 });
 
+const poolParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
 export type PoolsReply = Static<typeof poolsReplySchema>;
+
+export type PoolParams = Static<typeof poolParamsSchema>;
+export type PoolReply = Static<typeof poolReplySchema>;
 
 export type RouteBody = Static<typeof routeBodySchema>;
 export type RouteReply = Static<typeof routeReplySchema>;

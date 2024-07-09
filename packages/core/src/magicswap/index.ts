@@ -1,2 +1,2 @@
-export { fetchPools } from "./fetchPools";
+export { fetchPools, fetchPool } from "./fetchPools";
 export { getSwapRoute } from "./getSwapRoute";

@@ -1,4 +1,4 @@
-import { fetchPools, getSwapRoute } from "@treasure-dev/tdk-core";
+import { fetchPool, fetchPools, getSwapRoute } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
@@ -10,7 +10,13 @@ import {
   type RouteReply,
   poolsReplySchema,
 } from "../schema";
-import { type RouteBody, routeReplySchema } from "../schema/magicswap";
+import {
+  type PoolParams,
+  type PoolReply,
+  type RouteBody,
+  poolReplySchema,
+  routeReplySchema,
+} from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
 
 export const magicswapRoutes =
@@ -42,6 +48,38 @@ export const magicswapRoutes =
         reply.send({
           pools,
         });
+      },
+    );
+
+    app.get<{
+      Params: PoolParams;
+      Reply: PoolReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id",
+      {
+        schema: {
+          summary: "Get Magicswap Pool",
+          description: "Get Magicswap pool aggregated information",
+          response: {
+            200: poolReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          chainId,
+          params: { id },
+        } = req;
+
+        const pool = await fetchPool({
+          pairId: id,
+          chainId,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+          wagmiConfig,
+        });
+
+        reply.send(pool);
       },
     );
 
