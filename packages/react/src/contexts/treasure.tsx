@@ -134,7 +134,7 @@ const TreasureProviderInner = ({
 
     // Skip session creation if user has an active session already
     const sessions = await tdk.user.getSessions({ chainId });
-    const hasActiveSession = await validateSession({
+    const hasActiveSession = validateSession({
       ...options,
       sessions,
     });

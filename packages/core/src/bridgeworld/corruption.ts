@@ -8,8 +8,8 @@ import type {
 import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
 import { BRIDGEWORLD_CORRUPTION_API_URL } from "../constants";
 import type { AddressString, SupportedChainId } from "../types";
-import { getContractAddresses } from "./contracts";
-import { DEFAULT_WAGMI_CONFIG } from "./wagmi";
+import { getContractAddresses } from "../utils/contracts";
+import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 
 const ERC1155_TOKEN_SET_CORRUPTION_HANDLER_ABI_PARAMS = parseAbiParameters(
   "(uint256 amount, address collection, uint256[] tokenIds)",

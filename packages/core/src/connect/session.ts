@@ -11,20 +11,12 @@ import {
   getDateHoursFromNow,
   getDateSecondsFromNow,
   getDateYearsFromNow,
-} from "./date";
+} from "../utils/date";
 
 import { formatEther } from "viem";
 import type { Session } from "../types";
 
-export const isSessionRequired = ({
-  approvedTargets = [],
-  nativeTokenLimitPerTransaction = 0n,
-}: {
-  approvedTargets?: string[];
-  nativeTokenLimitPerTransaction?: bigint;
-}) => approvedTargets.length > 0 || nativeTokenLimitPerTransaction > 0;
-
-export const validateSession = async ({
+export const validateSession = ({
   backendWallet,
   approvedTargets: rawApprovedTargets,
   nativeTokenLimitPerTransaction = 0n,
@@ -37,14 +29,14 @@ export const validateSession = async ({
   sessionMinDurationLeftSec?: number;
   sessions: Session[];
 }) => {
+  // Skip check if no session is required
+  if (rawApprovedTargets.length === 0) {
+    return true;
+  }
+
   const approvedTargets = rawApprovedTargets.map((target) =>
     target.toLowerCase(),
   );
-
-  // Skip check if no session is required
-  if (!isSessionRequired({ approvedTargets, nativeTokenLimitPerTransaction })) {
-    return true;
-  }
 
   const nowDate = new Date();
   const minEndDate = getDateSecondsFromNow(sessionMinDurationLeftSec);
@@ -58,21 +50,23 @@ export const validateSession = async ({
     return (
       // Expected backend wallet is signer
       session.signer.toLowerCase() === backendWallet?.toLowerCase() &&
-      // Start date has passed
-      startDate < nowDate &&
-      // Expiration date meets minimum time requirements
-      endDate >= minEndDate &&
-      // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
-      // This check is to prevent sessions from being created with timestamps in milliseconds
-      endDate <= maxEndDate &&
-      // All requested targets are approved
-      approvedTargets.every((target) =>
-        signerApprovedTargets.includes(target),
-      ) &&
-      // Native token limit per transaction is approved
-      (!nativeTokenLimitPerTransaction ||
-        BigInt(session.nativeTokenLimitPerTransaction) >=
-          nativeTokenLimitPerTransaction)
+      // If this signer is an admin, they always have the required permissions
+      (session.isAdmin ||
+        // Start date has passed
+        (startDate < nowDate &&
+          // Expiration date meets minimum time requirements
+          endDate >= minEndDate &&
+          // Expiration date is not too far in the future (10 years because Thirdweb uses this for admins)
+          // This check is to prevent sessions from being created with timestamps in milliseconds
+          endDate <= maxEndDate &&
+          // All requested targets are approved
+          approvedTargets.every((target) =>
+            signerApprovedTargets.includes(target),
+          ) &&
+          // Native token limit per transaction is approved
+          (!nativeTokenLimitPerTransaction ||
+            BigInt(session.nativeTokenLimitPerTransaction) >=
+              nativeTokenLimitPerTransaction)))
     );
   });
 };
