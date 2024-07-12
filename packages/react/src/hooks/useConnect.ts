@@ -103,5 +103,13 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
       },
     });
 
-  return { status, description, openConnectModal, openAccountModal };
+  return {
+    status,
+    description,
+    openConnectModal,
+    openAccountModal,
+    cancelConnect: () => {
+      setState({ status: "idle", description: undefined });
+    },
+  };
 };

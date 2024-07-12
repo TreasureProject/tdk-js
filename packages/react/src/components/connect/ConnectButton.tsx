@@ -21,12 +21,17 @@ export const ConnectButton = ({
 }: Props) => {
   const { t } = useTranslation();
   const { user, isConnecting } = useTreasure();
-  const { status, description, openConnectModal, openAccountModal } =
-    useConnect({
-      appName,
-      appIconUri,
-      theme,
-    });
+  const {
+    status,
+    description,
+    openConnectModal,
+    openAccountModal,
+    cancelConnect,
+  } = useConnect({
+    appName,
+    appIconUri,
+    theme,
+  });
   return (
     <>
       {user ? (
@@ -80,7 +85,9 @@ export const ConnectButton = ({
               {status === "loading" ? (
                 <Spinner className="tdk-text-ruby-900 tdk-w-6 tdk-h-6 tdk-mx-auto" />
               ) : status === "error" ? (
-                <Button>{t("common.close")}</Button>
+                <Button onClick={() => cancelConnect()}>
+                  {t("common.close")}
+                </Button>
               ) : null}
             </p>
           </div>

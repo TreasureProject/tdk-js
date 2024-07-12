@@ -274,8 +274,6 @@ const TreasureProviderInner = ({
     },
   });
 
-  console.log({ isAutoConnecting, activeWalletStatus, isAuthenticating });
-
   return (
     <Context.Provider
       value={{
