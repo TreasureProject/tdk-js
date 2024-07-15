@@ -235,6 +235,7 @@ export const CONTRACT_ADDRESSES: Record<
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
     ZeeverseVeeClaimer: "0xf7abce65b1e683b7a42113f69ef76ee35cabbddc",
     ZeeverseGame: "0x695f9a040f19e3d31c15c39ccb853ef0604896ca",
+    MagicSwapV2Router: "0xd0a4fbcc5cde863a2be50c75b564efd942b03154",
   },
   [mainnet.id]: {
     // Tokens
