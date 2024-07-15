@@ -1,11 +1,6 @@
-import { type Config, connect, mock, readContract } from "@wagmi/core";
-import { erc20Abi } from "viem";
-import { erc1155Abi } from "../abis/erc1155Abi";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 import type { Pool } from "./fetchPools";
-import { getSwapRoute } from "./getSwapRoute";
 import type { PoolToken } from "./types";
 
 type NFTInput = { id: string; quantity: number };
@@ -17,19 +12,19 @@ const getAmountMin = (amount: bigint, slippage: number) =>
 
 const DEFAULT_SLIPPAGE = 0.005;
 
-export const swap = async ({
+export const getSwapArgs = ({
   pools,
   toAddress,
   tokenInId,
   tokenOutId,
   nftsIn,
   nftsOut,
-  amountIn = "0",
-  amountOut = "0",
+  amountIn = 0n,
+  amountOut = 0n,
   isExactOut,
+  path,
   chainId,
   slippage = DEFAULT_SLIPPAGE,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
 }: {
   pools: Pool[];
   toAddress: AddressString;
@@ -37,20 +32,19 @@ export const swap = async ({
   tokenOutId: string;
   nftsIn: NFTInput[];
   nftsOut: NFTInput[];
-  amountIn?: string;
-  amountOut?: string;
+  amountIn?: bigint;
+  amountOut?: bigint;
   isExactOut: boolean;
   chainId: SupportedChainId;
+  path: string[];
   slippage?: number;
-  wagmiConfig?: Config;
-}) => {
-  await connect(wagmiConfig, {
-    chainId,
-    connector: mock({
-      accounts: ["0x8c59E81e2553104d0B4F3dE19D0eD347055BB218"],
-    }),
-  });
-
+}): {
+  swap: {
+    address: AddressString;
+    functionName: string;
+    args: (string | string[])[];
+  };
+} => {
   const poolTokens = pools
     .flatMap(({ token0, token1 }) => [token0, token1])
     .reduce(
@@ -65,7 +59,7 @@ export const swap = async ({
   const tokenOut = poolTokens[tokenOutId];
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicSwapV2Router;
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60);
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
 
   // From NFT
   if (tokenIn.isNFT) {
@@ -75,37 +69,22 @@ export const swap = async ({
     // To Token
     const collectionId = tokenIn.collectionId;
     const amountOutMin = isExactOut
-      ? BigInt(amountOut)
-      : getAmountMin(BigInt(amountOut), slippage);
-
-    const route = getSwapRoute({
-      pools,
-      tokenInId,
-      tokenOutId,
-      amount: amountOut,
-      isExactOut,
-    });
+      ? amountOut
+      : getAmountMin(amountOut, slippage);
 
     const collectionsIn = nftsIn.map(() => collectionId as AddressString);
-    const tokenIdsIn = nftsIn.map(({ id }) => BigInt(id));
-    const quantitiesIn = nftsIn.map(({ quantity }) => BigInt(quantity));
-    const path = route.path;
-    const approved = await readContract(wagmiConfig, {
-      address: tokenIn.collectionId as AddressString,
-      abi: erc1155Abi,
-      functionName: "isApprovedForAll",
-      args: [toAddress, magicSwapV2RouterAddress],
-    });
+    const tokenIdsIn = nftsIn.map(({ id }) => id);
+    const quantitiesIn = nftsIn.map(({ quantity }) => quantity.toString());
 
     return {
-      approved,
       swap: {
+        address: magicSwapV2RouterAddress,
         functionName: "swapNftForTokens",
         args: [
           collectionsIn,
           tokenIdsIn,
           quantitiesIn,
-          amountOutMin,
+          amountOutMin.toString(),
           path,
           toAddress,
           deadline,
@@ -115,43 +94,25 @@ export const swap = async ({
   }
 
   // From Token to NFT
-  const approved = await readContract(wagmiConfig, {
-    address: tokenIn.id as AddressString,
-    abi: erc20Abi,
-    functionName: "allowance",
-    args: [toAddress, magicSwapV2RouterAddress],
-  });
-
   if (tokenOut.isNFT) {
     const collectionId = tokenOut.collectionId;
     const amountInMax = isExactOut
-      ? getAmountMax(BigInt(amountIn), slippage)
-      : BigInt(amountIn);
-
-    const route = getSwapRoute({
-      pools,
-      tokenInId,
-      tokenOutId,
-      amount: nftsOut
-        .reduce((acc, { quantity }) => acc + quantity, 0)
-        .toString(),
-      isExactOut,
-    });
+      ? getAmountMax(amountIn, slippage)
+      : amountIn;
 
     const collectionsOut = nftsOut.map(() => collectionId as AddressString);
-    const tokenIdsOut = nftsOut.map(({ id }) => BigInt(id));
-    const quantitiesOut = nftsOut.map(({ quantity }) => BigInt(quantity));
-    const path = route.path;
+    const tokenIdsOut = nftsOut.map(({ id }) => id);
+    const quantitiesOut = nftsOut.map(({ quantity }) => quantity.toString());
 
     return {
-      approved,
       swap: {
+        address: magicSwapV2RouterAddress,
         functionName: "swapTokensForNft",
         args: [
           collectionsOut,
           tokenIdsOut,
           quantitiesOut,
-          amountInMax,
+          amountInMax.toString(),
           path,
           toAddress,
           deadline,
@@ -160,37 +121,43 @@ export const swap = async ({
     };
   }
 
-  const route = getSwapRoute({
-    pools,
-    tokenInId,
-    tokenOutId,
-    amount: amountOut,
-    isExactOut,
-  });
-
   // From Token to Token Exact Out
   if (isExactOut) {
     const amountInMax = isExactOut
-      ? getAmountMax(BigInt(amountIn), slippage)
-      : BigInt(amountIn);
+      ? getAmountMax(amountIn, slippage)
+      : amountIn;
 
     return {
       swap: {
+        address: magicSwapV2RouterAddress,
         functionName: "swapTokensForExactTokens",
-        args: [BigInt(amountOut), amountInMax, route.path, toAddress, deadline],
+        args: [
+          amountOut.toString(),
+          amountInMax.toString(),
+          path,
+          toAddress,
+          deadline,
+        ],
       },
     };
   }
 
   // From Token to Token Exact In
   const amountOutMin = isExactOut
-    ? BigInt(amountOut)
-    : getAmountMin(BigInt(amountOut), slippage);
+    ? amountOut
+    : getAmountMin(amountOut, slippage);
 
   return {
     swap: {
+      address: magicSwapV2RouterAddress,
       functionName: "swapExactTokensForTokens",
-      args: [BigInt(amountIn), amountOutMin, route.path, toAddress, deadline],
+      args: [
+        amountIn.toString(),
+        amountOutMin.toString(),
+        path,
+        toAddress,
+        deadline,
+      ],
     },
   };
 };
