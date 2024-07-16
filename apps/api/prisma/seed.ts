@@ -16,7 +16,7 @@ const PROJECT_DATA: Record<
   {
     metadata: ProjectMetadata;
     redirectUris: Record<Environment, string[]>;
-    callTargets: Record<RemoteEnvironment, [number, Contract][]>;
+    callTargets: Record<RemoteEnvironment, [number, Contract | string][]>;
   }
 > = {
   app: {
@@ -133,6 +133,27 @@ const PROJECT_DATA: Record<
         [arbitrumSepolia.id, "ZeeverseVeeClaimer"],
         [arbitrumSepolia.id, "BulkTransferHelper"],
         [arbitrumSepolia.id, "ZeeverseGame"],
+        [arbitrumSepolia.id, "MagicswapV2Router"],
+        [arbitrumSepolia.id, "0x77d3d38ef24a2179b5147d8ebdab84b26012b210"],
+        [arbitrumSepolia.id, "0xb839c8f68415df2ae57d5e84f180afeeff451d28"],
+        [arbitrumSepolia.id, "0x659e2056746a948b89849e2a8260b9b40547fc1e"],
+        [arbitrumSepolia.id, "0x8ea8f2fa60defce91d454b1586b0eef02c39e452"],
+        [arbitrumSepolia.id, "0x9fe0776da91daff09c71f848fe70c28e9ff04938"],
+        [arbitrumSepolia.id, "0xeb4aab0253a50918a2cbb7adbaab78ad19c07bb1"],
+        [arbitrumSepolia.id, "0x5cd757ef714b530a3cdfcb4573bcbb091d2a8f47"],
+        [arbitrumSepolia.id, "0x0cab0aacad409e31edced970b6cb2866bbd87985"],
+        [arbitrumSepolia.id, "0x7060bf4718e3aa65469b05e704eae3d1ac92d889"],
+        [arbitrumSepolia.id, "0xcd6a505c76ff60450df8461ca2e7cae1cc25dfa8"],
+        [arbitrumSepolia.id, "0xcc3682db930bd6be6163b4faeb6c4bd57942fd22"],
+        [arbitrumSepolia.id, "0xfdff26af67f6e06a9806bf070e4285cfb000406c"],
+        [arbitrumSepolia.id, "0x512a5beb48b1aff4ef2b776a44232f93d2958973"],
+        [arbitrumSepolia.id, "0xcd309f983906abba616f279b3c8dc3473cb05e66"],
+        [arbitrumSepolia.id, "0x5dba7124c8189018ab3185f726d22a15217a1155"],
+        [arbitrumSepolia.id, "0x855fc1a6f250fce69371dc280e9f12a9d44c2dba"],
+        [arbitrumSepolia.id, "0xd3fca189b66b5e880040f61050b4431d1c428efe"],
+        [arbitrumSepolia.id, "0x7f5bbc6a35150fc9c1716b66776fb664307295e8"],
+        [arbitrumSepolia.id, "0x68a0dc480abb5228e0d3ac6764c834ad5c88121a"],
+        [arbitrumSepolia.id, "0xf3a50c9ade296567f3b5a89d4659bcf0effd44f6"],
         [sepolia.id, "CRV"],
         [sepolia.id, "VEE"],
         [sepolia.id, "ZeeverseLlama"],
@@ -170,7 +191,7 @@ const createProject = async ({
   slug: string;
   metadata: ProjectMetadata;
   redirectUris?: string[];
-  callTargets?: [number, Contract][];
+  callTargets?: [number, Contract | string][];
 }) => {
   const data = {
     ...metadata,
@@ -178,7 +199,9 @@ const createProject = async ({
     redirectUris,
     callTargets: {
       connectOrCreate: callTargets.map(([chainId, contract]) => {
-        const address = getContractAddress(chainId, contract);
+        const address = contract.startsWith("0x")
+          ? contract
+          : getContractAddress(chainId, contract as Contract);
         if (!address) {
           throw new Error(
             `Contract address not found for ${contract} on chain ${chainId}`,
