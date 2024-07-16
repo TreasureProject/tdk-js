@@ -225,6 +225,8 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerShinoba: "0x9fc401504a8bac2f8c1a6d4f9a9e81999570dcbf",
     HarvesterThundermane: "0x347471fbfc6daceed66a09c38e9596cd1706da46",
     NftHandlerThundermane: "0x00a191804f5bc4942828ae8cde937a4b644d53cf",
+    // Magicswap
+    MagicswapV2Router: "0xd0a4fbcc5cde863a2be50c75b564efd942b03154",
     // Treasure Misc
     PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",

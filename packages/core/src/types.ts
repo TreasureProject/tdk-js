@@ -45,6 +45,7 @@ type BridgeworldContract =
   // Gameplay
   | "CorruptionRemoval"
   | "ERC1155TokenSetCorruptionHandler";
+type MagicswapContract = "MagicswapV2Router";
 type ZeeverseContract =
   | "ZeeverseZee"
   | "ZeeverseItems"
@@ -62,6 +63,7 @@ export type Contract =
   | TokenContract
   | PriceFeedContract
   | BridgeworldContract
+  | MagicswapContract
   | ZeeverseContract;
 
 // Approvals
