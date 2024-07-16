@@ -58,7 +58,7 @@ export const getSwapArgs = ({
   const tokenIn = poolTokens[tokenInId];
   const tokenOut = poolTokens[tokenOutId];
   const contractAddresses = getContractAddresses(chainId);
-  const magicSwapV2RouterAddress = contractAddresses.MagicSwapV2Router;
+  const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
 
   // From NFT

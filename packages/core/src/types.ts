@@ -59,7 +59,6 @@ export type Contract =
   | "BulkTransferHelper"
   | "TreasureConduit"
   | "RubyNFT"
-  | "MagicSwapV2Router"
   | TokenContract
   | PriceFeedContract
   | BridgeworldContract

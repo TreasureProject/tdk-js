@@ -180,6 +180,8 @@ export const CONTRACT_ADDRESSES: Record<
     NftHandlerShinoba: "0x85f1bfd98e190b482d5348fd6c987ae3da7a4df6",
     HarvesterThundermane: "0x3fbfcdc02f649d5875bc9f97281b7ef5a7a9c491",
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
+    // Magicswap
+    MagicswapV2Router: "0xb740d5804ea2061432469119cfa40cbb4586dd17",
     // Treasure Misc
     PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
@@ -237,7 +239,6 @@ export const CONTRACT_ADDRESSES: Record<
     ZeeverseItems: "0xfaad5aa3209ab1b25ede22ed4da5521538b649fa",
     ZeeverseVeeClaimer: "0xf7abce65b1e683b7a42113f69ef76ee35cabbddc",
     ZeeverseGame: "0x695f9a040f19e3d31c15c39ccb853ef0604896ca",
-    MagicSwapV2Router: "0xd0a4fbcc5cde863a2be50c75b564efd942b03154",
   },
   [mainnet.id]: {
     // Tokens
