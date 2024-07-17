@@ -173,6 +173,24 @@ export const routeReplySchema = Type.Object({
   royaltiesFee: Type.Number(),
 });
 
+const nftInputSchema = Type.Object({
+  id: Type.String(),
+  quantity: Type.Number(),
+});
+
+const swapBodySchema = Type.Object({
+  backendWallet: Type.Optional(Type.String()),
+  tokenInId: Type.String(),
+  tokenOutId: Type.String(),
+  amountIn: Type.Optional(Type.String()),
+  amountOut: Type.Optional(Type.String()),
+  path: Type.Array(Type.String()),
+  isExactOut: Type.Boolean(),
+  nftsIn: Type.Optional(Type.Array(nftInputSchema)),
+  nftsOut: Type.Optional(Type.Array(nftInputSchema)),
+  slippage: Type.Optional(Type.Number()),
+});
+
 const poolParamsSchema = Type.Object({
   id: Type.String(),
 });
@@ -184,3 +202,5 @@ export type PoolReply = Static<typeof poolReplySchema>;
 
 export type RouteBody = Static<typeof routeBodySchema>;
 export type RouteReply = Static<typeof routeReplySchema>;
+
+export type SwapBody = Static<typeof swapBodySchema>;

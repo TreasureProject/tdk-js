@@ -1,6 +1,5 @@
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import type { Pool } from "./fetchPools";
 import type { PoolToken } from "./types";
 
 type NFTInput = { id: string; quantity: number };
