@@ -1,26 +1,37 @@
-import { fetchPool, fetchPools, getSwapRoute } from "@treasure-dev/tdk-core";
+import {
+  fetchPool,
+  fetchPools,
+  getSwapArgs,
+  getSwapRoute,
+} from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
+import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 
+import { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import {
+  type CreateTransactionReply,
   type ErrorReply,
   type PoolsReply,
   type RouteReply,
+  createTransactionReplySchema,
   poolsReplySchema,
 } from "../schema";
 import {
   type PoolParams,
   type PoolReply,
   type RouteBody,
+  type SwapBody,
   poolReplySchema,
   routeReplySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
+import { TdkError, parseEngineErrorMessage } from "../utils/error";
 
 export const magicswapRoutes =
-  ({ env, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, wagmiConfig, engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: PoolsReply | ErrorReply;
@@ -120,6 +131,105 @@ export const magicswapRoutes =
           amountIn: route.amountIn.toString(),
           amountOut: route.amountOut.toString(),
         });
+      },
+    );
+
+    app.post<{ Body: SwapBody; Reply: CreateTransactionReply | ErrorReply }>(
+      "/magicswap/swap",
+      {
+        schema: {
+          summary: "Swap tokens",
+          description: "Swap tokens using Magicswap",
+          response: {
+            200: createTransactionReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { userAddress, authError, body, chainId } = req;
+
+        const {
+          tokenInId,
+          tokenOutId,
+          amountIn,
+          amountOut,
+          path,
+          nftsIn,
+          nftsOut,
+          isExactOut,
+          slippage,
+          backendWallet: overrideBackendWallet,
+        } = body;
+
+        if (!userAddress) {
+          throw new TdkError({
+            code: "TDK_UNAUTHORIZED",
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const backendWallet =
+          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
+
+        const pools = await fetchPools({
+          chainId,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+          wagmiConfig,
+        });
+
+        const poolTokens = pools.reduce((acc, poolToken) => {
+          acc[poolToken.id] = poolToken;
+          return acc;
+        }, {});
+
+        const tokenIn = poolTokens[tokenInId];
+        const tokenOut = poolTokens[tokenOutId];
+
+        const swapArguments = getSwapArgs({
+          chainId,
+          toAddress: userAddress,
+          tokenIn,
+          tokenOut,
+          nftsIn,
+          nftsOut,
+          amountIn: amountIn ? BigInt(amountIn) : undefined,
+          amountOut: amountOut ? BigInt(amountOut) : undefined,
+          isExactOut,
+          path,
+          slippage,
+        });
+
+        try {
+          const { result } = await engine.contract.write(
+            chainId.toString(),
+            swapArguments.address,
+            backendWallet,
+            {
+              abi: magicSwapV2RouterABI,
+              functionName: swapArguments.functionName,
+              args: swapArguments.args as string[],
+            },
+            false,
+            undefined,
+            userAddress,
+          );
+          reply.send(result);
+        } catch (err) {
+          throw new TdkError({
+            code: "TDK_CREATE_TRANSACTION",
+            message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            data: {
+              chainId,
+              backendWallet,
+              userAddress,
+              address: swapArguments.address,
+              functionName: swapArguments.functionName,
+              args: swapArguments.args,
+            },
+          });
+        }
       },
     );
   };
