@@ -13,12 +13,11 @@ const getAmountMin = (amount: bigint, slippage: number) =>
 const DEFAULT_SLIPPAGE = 0.005;
 
 export const getSwapArgs = ({
-  pools,
   toAddress,
-  tokenInId,
-  tokenOutId,
-  nftsIn,
-  nftsOut,
+  tokenIn,
+  tokenOut,
+  nftsIn = [],
+  nftsOut = [],
   amountIn = 0n,
   amountOut = 0n,
   isExactOut,
@@ -26,12 +25,11 @@ export const getSwapArgs = ({
   chainId,
   slippage = DEFAULT_SLIPPAGE,
 }: {
-  pools: Pool[];
   toAddress: AddressString;
-  tokenInId: string;
-  tokenOutId: string;
-  nftsIn: NFTInput[];
-  nftsOut: NFTInput[];
+  tokenIn: PoolToken;
+  tokenOut: PoolToken;
+  nftsIn?: NFTInput[];
+  nftsOut?: NFTInput[];
   amountIn?: bigint;
   amountOut?: bigint;
   isExactOut: boolean;
@@ -39,57 +37,64 @@ export const getSwapArgs = ({
   path: string[];
   slippage?: number;
 }): {
-  swap: {
-    address: AddressString;
-    functionName: string;
-    args: (string | string[])[];
-  };
+  address: AddressString;
+  functionName: string;
+  args: (string | string[])[];
 } => {
-  const poolTokens = pools
-    .flatMap(({ token0, token1 }) => [token0, token1])
-    .reduce(
-      (acc, poolToken) => {
-        acc[poolToken.id] = poolToken;
-        return acc;
-      },
-      {} as Record<string, PoolToken>,
-    );
-
-  const tokenIn = poolTokens[tokenInId];
-  const tokenOut = poolTokens[tokenOutId];
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
 
   // From NFT
   if (tokenIn.isNFT) {
-    // To NFT
-    if (tokenOut.isNFT) throw new Error("NFT to NFT swaps are not supported");
-
-    // To Token
     const collectionId = tokenIn.collectionId;
-    const amountOutMin = isExactOut
-      ? amountOut
-      : getAmountMin(amountOut, slippage);
 
     const collectionsIn = nftsIn.map(() => collectionId as AddressString);
     const tokenIdsIn = nftsIn.map(({ id }) => id);
     const quantitiesIn = nftsIn.map(({ quantity }) => quantity.toString());
+    // To NFT
+    if (tokenOut.isNFT) {
+      const collectionIdOut = tokenOut.collectionId;
+      const collectionsOut = nftsOut.map(
+        () => collectionIdOut as AddressString,
+      );
+      const tokenIdsOut = nftsOut.map(({ id }) => id);
+      const quantitiesOut = nftsOut.map(({ quantity }) => quantity.toString());
 
-    return {
-      swap: {
+      return {
         address: magicSwapV2RouterAddress,
-        functionName: "swapNftForTokens",
+        functionName: "swapNftForNft",
         args: [
           collectionsIn,
           tokenIdsIn,
           quantitiesIn,
-          amountOutMin.toString(),
+          collectionsOut,
+          tokenIdsOut,
+          quantitiesOut,
           path,
           toAddress,
           deadline,
         ],
-      },
+      };
+    }
+
+    // To Token
+    const amountOutMin = isExactOut
+      ? amountOut
+      : getAmountMin(amountOut, slippage);
+
+    return {
+      address: magicSwapV2RouterAddress,
+      functionName: "swapNftForTokens",
+      args: [
+        collectionsIn,
+        tokenIdsIn,
+        quantitiesIn,
+        amountOutMin.toString(),
+        path,
+        toAddress,
+        deadline,
+      ],
     };
   }
 
@@ -105,19 +110,17 @@ export const getSwapArgs = ({
     const quantitiesOut = nftsOut.map(({ quantity }) => quantity.toString());
 
     return {
-      swap: {
-        address: magicSwapV2RouterAddress,
-        functionName: "swapTokensForNft",
-        args: [
-          collectionsOut,
-          tokenIdsOut,
-          quantitiesOut,
-          amountInMax.toString(),
-          path,
-          toAddress,
-          deadline,
-        ],
-      },
+      address: magicSwapV2RouterAddress,
+      functionName: "swapTokensForNft",
+      args: [
+        collectionsOut,
+        tokenIdsOut,
+        quantitiesOut,
+        amountInMax.toString(),
+        path,
+        toAddress,
+        deadline,
+      ],
     };
   }
 
@@ -128,17 +131,15 @@ export const getSwapArgs = ({
       : amountIn;
 
     return {
-      swap: {
-        address: magicSwapV2RouterAddress,
-        functionName: "swapTokensForExactTokens",
-        args: [
-          amountOut.toString(),
-          amountInMax.toString(),
-          path,
-          toAddress,
-          deadline,
-        ],
-      },
+      address: magicSwapV2RouterAddress,
+      functionName: "swapTokensForExactTokens",
+      args: [
+        amountOut.toString(),
+        amountInMax.toString(),
+        path,
+        toAddress,
+        deadline,
+      ],
     };
   }
 
@@ -148,16 +149,14 @@ export const getSwapArgs = ({
     : getAmountMin(amountOut, slippage);
 
   return {
-    swap: {
-      address: magicSwapV2RouterAddress,
-      functionName: "swapExactTokensForTokens",
-      args: [
-        amountIn.toString(),
-        amountOutMin.toString(),
-        path,
-        toAddress,
-        deadline,
-      ],
-    },
+    address: magicSwapV2RouterAddress,
+    functionName: "swapExactTokensForTokens",
+    args: [
+      amountIn.toString(),
+      amountOutMin.toString(),
+      path,
+      toAddress,
+      deadline,
+    ],
   };
 };
