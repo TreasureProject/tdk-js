@@ -1,5 +1,5 @@
 {
-  "name": "@treasure-dev/tdk-examples-connect",
+  "name": "@treasure-dev/tdk-examples-connect-core",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,10 +7,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@treasure-dev/tdk-react": "*",
+    "@treasure-dev/tdk-core": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "viem": "^2.15.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@treasure-project/tailwind-config": "^2.1.0",

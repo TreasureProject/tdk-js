@@ -3,9 +3,11 @@ import type {
   AbiParametersToPrimitiveTypes,
   ExtractAbiFunction,
 } from "abitype";
+import { defineChain } from "thirdweb";
 
 import { managedAccountAbi } from "../abis/managedAccountAbi";
 import type { AddressString, SupportedChainId } from "../types";
+import { getContractAddress } from "../utils/contracts";
 import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 
 type Signer = AbiParametersToPrimitiveTypes<
@@ -65,4 +67,13 @@ export const getAllActiveSigners = async ({
       ),
     })),
   ];
+};
+
+export const getSmartAccountConfig = ({ chainId }: { chainId: number }) => {
+  const chain = defineChain(chainId);
+  return {
+    chain,
+    factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
+    sponsorGas: true,
+  };
 };

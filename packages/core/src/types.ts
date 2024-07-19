@@ -1,7 +1,25 @@
+import type { ThirdwebClient } from "thirdweb";
 import type { TransactionReceipt } from "viem";
 
 import type { TDKAPI } from "./api";
 import type { SUPPORTED_CHAIN_IDS } from "./constants";
+
+// Treasure Connect
+export type TreasureConnectClient = ThirdwebClient;
+
+export type SessionOptions = {
+  backendWallet: string;
+  approvedTargets: string[];
+  nativeTokenLimitPerTransaction?: bigint;
+  sessionDurationSec?: number;
+  sessionMinDurationLeftSec?: number;
+};
+
+export type ConnectConfig = {
+  apiUri?: string;
+  chainId?: number;
+  sessionOptions?: SessionOptions;
+};
 
 // General transactions
 export type AddressString = `0x${string}`;

@@ -5,7 +5,7 @@ import {
   sendTransaction,
 } from "thirdweb";
 import { addSessionKey } from "thirdweb/extensions/erc4337";
-import type { Account } from "thirdweb/wallets";
+import type { Account, Wallet } from "thirdweb/wallets";
 
 import {
   getDateHoursFromNow,
@@ -14,7 +14,8 @@ import {
 } from "../utils/date";
 
 import { formatEther } from "viem";
-import type { Session } from "../types";
+import type { TDKAPI } from "../api";
+import type { Session, SessionOptions, TreasureConnectClient } from "../types";
 
 export const validateSession = ({
   backendWallet,
@@ -121,4 +122,66 @@ export const createSession = async ({
     approvedTargets,
     nativeTokenLimitPerTransaction,
   };
+};
+
+export const startUserSession = async ({
+  client,
+  wallet,
+  chainId,
+  tdk,
+  options,
+}: {
+  client: TreasureConnectClient;
+  wallet: Wallet;
+  chainId: number;
+  tdk: TDKAPI;
+  options: SessionOptions;
+}) => {
+  // Skip session creation if not required by app
+  if (options.approvedTargets.length === 0) {
+    console.debug("[TDK] Session not required by app");
+    return;
+  }
+
+  const walletChainId = wallet.getChain()?.id;
+
+  // Skip session creation if user has an active session already
+  const sessions = await tdk.user.getSessions({ chainId });
+  const hasActiveSession = validateSession({
+    ...options,
+    sessions,
+  });
+  if (hasActiveSession) {
+    console.debug("[TDK] Using existing session");
+    return;
+  }
+
+  // Session needs to be created, so a valid wallet is required
+  if (!wallet) {
+    throw new Error("Wallet required for session creation");
+  }
+
+  // Switch chains if requested session chain is different
+  if (chainId !== walletChainId) {
+    console.debug("[TDK] Switching chains for session creation:", chainId);
+    await wallet.switchChain(defineChain(chainId));
+  }
+
+  const account = wallet.getAccount();
+  if (!account) {
+    throw new Error("Wallet account required for session creation");
+  }
+
+  console.debug("[TDK] Creating new session");
+  try {
+    await createSession({
+      ...options,
+      client,
+      chainId,
+      account,
+    });
+  } catch (err) {
+    console.error("[TDK] Error creating user session:", err);
+    throw err;
+  }
 };
