@@ -1,5 +1,17 @@
 # @treasure-dev/tdk-react
 
+## 1.1.0
+
+### Minor Changes
+
+- cffb8e3: Added Treasure Connect login functions to core package
+
+### Patch Changes
+
+- Updated dependencies [cffb8e3]
+- Updated dependencies [fea2894]
+  - @treasure-dev/tdk-core@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes
