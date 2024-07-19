@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-core
 
+## 1.1.0
+
+### Minor Changes
+
+- cffb8e3: Added Treasure Connect login functions to core package
+
+### Patch Changes
+
+- fea2894: Added Magicswap utils
+
 ## 1.0.1
 
 ## 1.0.0
