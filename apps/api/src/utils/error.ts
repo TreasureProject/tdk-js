@@ -31,7 +31,7 @@ export class TdkError extends Error {
     data,
   }: {
     name: string;
-    code?: string;
+    code: string;
     message: string;
     data?: object;
   }) {
