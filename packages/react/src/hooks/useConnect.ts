@@ -17,8 +17,7 @@ type Props = {
 };
 
 export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
-  const { chain, contractAddresses, thirdwebClient, logIn, logOut } =
-    useTreasure();
+  const { chain, contractAddresses, client, logIn, logOut } = useTreasure();
   const { connect } = useConnectModal();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
   const [{ status, description }, setState] = useState<{
@@ -57,7 +56,7 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
 
   const openConnectModal = async () => {
     const wallet = (await connect({
-      client: thirdwebClient,
+      client,
       wallets: SUPPORTED_WALLETS,
       chain,
       accountAbstraction: {
@@ -84,7 +83,7 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
 
   const openAccountModal = () =>
     openWalletDetailsModal({
-      client: thirdwebClient,
+      client,
       theme: modalTheme,
       supportedTokens: contractAddresses.MAGIC
         ? {
