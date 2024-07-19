@@ -12,7 +12,9 @@ import {
 
 import "./style.css";
 
-const client = createTreasureConnectClient(import.meta.env.VITE_TDK_CLIENT_ID);
+const client = createTreasureConnectClient({
+  clientId: import.meta.env.VITE_TDK_CLIENT_ID,
+});
 const chainId = 421614;
 const apiUri = import.meta.env.VITE_TDK_API_URL;
 const sessionOptions: SessionOptions = {

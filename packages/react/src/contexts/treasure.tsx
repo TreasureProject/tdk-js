@@ -88,7 +88,7 @@ const TreasureProviderInner = ({
     [apiUri, chainId, sessionOptions?.backendWallet],
   );
   const client = useMemo(
-    () => createTreasureConnectClient(clientId),
+    () => createTreasureConnectClient({ clientId }),
     [clientId],
   );
   const activeWallet = useActiveWallet();

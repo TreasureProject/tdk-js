@@ -25,9 +25,10 @@ export const createLoginUrl = ({
     data ? `&data=${data}` : ""
   }`;
 
-export const createTreasureConnectClient = (
-  clientId: string,
-): TreasureConnectClient => createThirdwebClient({ clientId });
+export const createTreasureConnectClient = ({
+  clientId,
+}: { clientId: string }): TreasureConnectClient =>
+  createThirdwebClient({ clientId });
 
 export const authenticateWallet = async ({
   wallet,
