@@ -5,7 +5,7 @@ import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
 import { TDKAPI } from "../api";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "../constants";
 import type { ConnectConfig, TreasureConnectClient } from "../types";
-import { getSmartAccountConfig } from "./accounts";
+import { getContractAddress } from "../utils/contracts";
 import { startUserSession } from "./session";
 
 export const createLoginUrl = ({
@@ -97,7 +97,11 @@ export const logIn = async (
   const chain = defineChain(chainId);
 
   const wallet = inAppWallet({
-    smartAccount: getSmartAccountConfig({ chainId }),
+    smartAccount: {
+      chain,
+      factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
+      sponsorGas: true,
+    },
   });
 
   if (params.mode === "email") {
