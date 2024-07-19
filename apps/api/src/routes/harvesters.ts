@@ -62,7 +62,6 @@ export const harvestersRoutes =
             name: TDK_ERROR_NAMES.HarvesterError,
             code: TDK_ERROR_CODES.HARVESTER_NFT_HANDLER_NOT_FOUND,
             message: "NftHandler not found",
-            data: { harvesterAddress },
           });
         }
 

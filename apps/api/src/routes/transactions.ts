@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
@@ -70,17 +71,33 @@ export const transactionsRoutes =
         const backendWallet =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
+          const transactionAbi =
+            typeof abi === "string" && abi.length > 0
+              ? JSON.parse(abi)
+              : Array.isArray(abi) && abi.length > 0
+                ? abi
+                : undefined;
+
+          Sentry.setExtra(
+            "transaction",
+            JSON.stringify(
+              {
+                address,
+                functionName,
+                abi: !!transactionAbi,
+                args,
+              },
+              null,
+              2,
+            ),
+          );
+
           const { result } = await engine.contract.write(
             chainId.toString(),
             address,
             backendWallet,
             {
-              abi:
-                typeof abi === "string" && abi.length > 0
-                  ? JSON.parse(abi)
-                  : Array.isArray(abi) && abi.length > 0
-                    ? abi
-                    : undefined,
+              abi: transactionAbi,
               functionName,
               args,
               txOverrides,
@@ -95,14 +112,6 @@ export const transactionsRoutes =
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
             message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
-            data: {
-              chainId,
-              backendWallet,
-              userAddress,
-              address,
-              functionName,
-              args,
-            },
           });
         }
       },
@@ -144,6 +153,7 @@ export const transactionsRoutes =
         const backendWallet =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
+          Sentry.setExtra("transaction", { to, amount });
           const { result } = await engine.backendWallet.sendTransaction(
             chainId.toString(),
             backendWallet,
@@ -161,13 +171,6 @@ export const transactionsRoutes =
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
             message: `Error creating native send transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
-            data: {
-              chainId,
-              backendWallet,
-              userAddress,
-              to,
-              amount,
-            },
           });
         }
       },
@@ -197,7 +200,6 @@ export const transactionsRoutes =
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_READ_FAILED,
             message: `Error fetching transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
-            data: { queueId },
           });
         }
       },

@@ -60,7 +60,6 @@ export const usersRoutes =
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
             message: "User not found",
-            data: { userAddress },
           });
         }
 

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import {
   fetchPool,
   fetchPools,
@@ -208,6 +209,10 @@ export const magicswapRoutes =
         });
 
         try {
+          Sentry.setExtra(
+            "transaction",
+            JSON.stringify(swapArguments, null, 2),
+          );
           const { result } = await engine.contract.write(
             chainId.toString(),
             swapArguments.address,
@@ -227,14 +232,6 @@ export const magicswapRoutes =
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
             message: `Error performing swap: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
-            data: {
-              chainId,
-              backendWallet,
-              userAddress,
-              address: swapArguments.address,
-              functionName: swapArguments.functionName,
-              args: swapArguments.args,
-            },
           });
         }
       },
