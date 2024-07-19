@@ -1,6 +1,10 @@
 import {
+  type AddressString,
   type SessionOptions,
+  type TDKAPI,
+  type User,
   createTreasureConnectClient,
+  getContractAddress,
   logInWithEmail,
   logInWithSocial,
   sendEmailVerificationCode,
@@ -13,10 +17,7 @@ const chainId = 421614;
 const apiUri = import.meta.env.VITE_TDK_API_URL;
 const sessionOptions: SessionOptions = {
   backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,
-  approvedTargets: [
-    "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
-    "0xE647b2c46365741e85268ceD243113d08F7E00B8",
-  ],
+  approvedTargets: ["0x55d0cf68a1afe0932aff6f36c87efa703508191c"],
 };
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
@@ -56,12 +57,16 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     </div>
     <div id="user-container">
       <h2>Logged in as <span id="user-email" /></h2>
+      <button id="mint">Mint 1,000 MAGIC</button>
       <button id="log-out">Log Out</button>
     </div>
   </main>
 `;
 
 (() => {
+  let tdk: TDKAPI;
+  let user: User;
+
   const connectContainer =
     document.querySelector<HTMLDivElement>("#connect-container")!;
   const userContainer =
@@ -69,18 +74,18 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   const userEmail =
     userContainer.querySelector<HTMLSpanElement>("#user-email")!;
   const connectWithGoogleButton =
-    document.querySelector<HTMLButtonElement>("#connect-google")!;
+    document.querySelector<HTMLButtonElement>("#connect-google");
   const emailContainer =
     document.querySelector<HTMLDivElement>("#email-container")!;
   const codeContainer =
     document.querySelector<HTMLDivElement>("#code-container")!;
   const emailInput = emailContainer.querySelector<HTMLInputElement>("input")!;
-  const emailButton =
-    emailContainer.querySelector<HTMLButtonElement>("button")!;
+  const emailButton = emailContainer.querySelector<HTMLButtonElement>("button");
   const codeInput = codeContainer.querySelector<HTMLInputElement>("input")!;
-  const codeButton = codeContainer.querySelector<HTMLButtonElement>("button")!;
+  const codeButton = codeContainer.querySelector<HTMLButtonElement>("button");
+  const mintButton = userContainer.querySelector<HTMLButtonElement>("#mint");
   const logOutButton =
-    userContainer.querySelector<HTMLButtonElement>("#log-out")!;
+    userContainer.querySelector<HTMLButtonElement>("#log-out");
 
   // Set up initial layout
   connectContainer.hidden = false;
@@ -89,7 +94,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   codeContainer.hidden = true;
 
   // Set up Connect with Google flow
-  connectWithGoogleButton.addEventListener("click", async () => {
+  connectWithGoogleButton?.addEventListener("click", async () => {
     connectWithGoogleButton.disabled = true;
     try {
       const result = await logInWithSocial({
@@ -99,7 +104,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         chainId,
         sessionOptions,
       });
-      userEmail.innerHTML = result.user.email || result.user.id;
+      tdk = result.tdk;
+      user = result.user;
+      userEmail.innerHTML = user.email || user.id;
       connectContainer.hidden = true;
       userContainer.hidden = false;
     } catch (err) {
@@ -110,7 +117,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   });
 
   // Set up Connect with Email flow
-  emailButton.addEventListener("click", async () => {
+  emailButton?.addEventListener("click", async () => {
     emailButton.disabled = true;
     try {
       await sendEmailVerificationCode({
@@ -126,7 +133,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     emailButton.disabled = false;
   });
 
-  codeButton.addEventListener("click", async () => {
+  codeButton?.addEventListener("click", async () => {
     codeButton.disabled = true;
     try {
       const result = await logInWithEmail({
@@ -137,7 +144,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         chainId,
         sessionOptions,
       });
-      userEmail.innerHTML = result.user.email || result.user.id;
+      tdk = result.tdk;
+      user = result.user;
+      userEmail.innerHTML = user.email || user.id;
       connectContainer.hidden = true;
       userContainer.hidden = false;
     } catch (err) {
@@ -150,8 +159,51 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     codeButton.disabled = false;
   });
 
+  // Set up Mint button
+  mintButton?.addEventListener("click", async () => {
+    mintButton.disabled = true;
+    try {
+      const result = await tdk.transaction.create(
+        {
+          address: getContractAddress(chainId, "MAGIC"),
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_to",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+              ],
+              name: "mint",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+          ] as const,
+          functionName: "mint",
+          args: [
+            user.smartAccountAddress as AddressString,
+            1000000000000000000000n, // 1,000
+          ],
+        },
+        { includeAbi: true },
+      );
+      console.log("Mint transaction:", result);
+    } catch (err) {
+      console.error("Error minting MAGIC:", err);
+    }
+
+    mintButton.disabled = false;
+  });
+
   // Set up Log Out button
-  logOutButton.addEventListener("click", () => {
+  logOutButton?.addEventListener("click", () => {
     connectContainer.hidden = false;
     userContainer.hidden = true;
     emailInput.value = "";
