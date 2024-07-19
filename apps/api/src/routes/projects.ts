@@ -8,7 +8,7 @@ import {
   readProjectReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { TdkError } from "../utils/error";
+import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
 
 export const projectsRoutes =
   ({ env, db }: TdkApiContext): FastifyPluginAsync =>
@@ -58,7 +58,8 @@ export const projectsRoutes =
         });
         if (!project) {
           throw new TdkError({
-            code: "TDK_NOT_FOUND",
+            name: TDK_ERROR_NAMES.ProjectError,
+            code: TDK_ERROR_CODES.PROJECT_NOT_FOUND,
             message: "Project not found",
             data: { slug },
           });

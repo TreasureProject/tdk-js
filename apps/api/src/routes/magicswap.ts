@@ -28,7 +28,12 @@ import {
   routeReplySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
-import { TdkError, parseEngineErrorMessage } from "../utils/error";
+import {
+  TDK_ERROR_CODES,
+  TDK_ERROR_NAMES,
+  TdkError,
+  parseEngineErrorMessage,
+} from "../utils/error";
 
 export const magicswapRoutes =
   ({ env, wagmiConfig, engine }: TdkApiContext): FastifyPluginAsync =>
@@ -148,6 +153,15 @@ export const magicswapRoutes =
       async (req, reply) => {
         const { userAddress, authError, body, chainId } = req;
 
+        if (!userAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
         const {
           tokenInId,
           tokenOutId,
@@ -160,14 +174,6 @@ export const magicswapRoutes =
           slippage,
           backendWallet: overrideBackendWallet,
         } = body;
-
-        if (!userAddress) {
-          throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
-            message: "Unauthorized",
-            data: { authError },
-          });
-        }
 
         const backendWallet =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
@@ -218,8 +224,9 @@ export const magicswapRoutes =
           reply.send(result);
         } catch (err) {
           throw new TdkError({
-            code: "TDK_CREATE_TRANSACTION",
-            message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `Error performing swap: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
             data: {
               chainId,
               backendWallet,

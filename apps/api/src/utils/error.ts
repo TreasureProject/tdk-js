@@ -1,39 +1,43 @@
 import * as Sentry from "@sentry/node";
 import { ApiError } from "@thirdweb-dev/engine";
 
-type ErrorCode =
-  | "TDK_UNAUTHORIZED"
-  | "TDK_FORBIDDEN"
-  | "TDK_NOT_FOUND"
-  | "TDK_CREATE_TRANSACTION"
-  | "TDK_READ_TRANSACTION";
+export const TDK_ERROR_NAMES = {
+  AuthError: "AuthError",
+  HarvesterError: "HarvesterError",
+  MagicswapError: "MagicswapError",
+  ProjectError: "ProjectError",
+  TransactionError: "TransactionError",
+  UserError: "UserError",
+} as const;
 
-const ERROR_STATUS_CODE_MAPPING: Partial<Record<ErrorCode, number>> = {
-  TDK_UNAUTHORIZED: 401,
-  TDK_FORBIDDEN: 403,
-  TDK_NOT_FOUND: 404,
+export const TDK_ERROR_CODES = {
+  AUTH_UNAUTHORIZED: "AUTH_UNAUTHORIZED",
+  HARVESTER_NFT_HANDLER_NOT_FOUND: "HARVESTER_NFT_HANDLER_NOT_FOUND",
+  MAGICSWAP_SWAP_FAILED: "MAGICSWAP_SWAP_FAILED",
+  PROJECT_NOT_FOUND: "PROJECT_NOT_FOUND",
+  TRANSACTION_CREATE_FAILED: "TRANSACTION_CREATE_FAILED",
+  TRANSACTION_READ_FAILED: "TRANSACTION_READ_FAILED",
+  USER_NOT_FOUND: "USER_NOT_FOUND",
 };
 
 export class TdkError extends Error {
-  code: ErrorCode;
-  statusCode: number;
+  code: string | undefined;
   data: object | undefined;
 
   constructor({
+    name,
     code,
     message,
-    statusCode,
     data,
   }: {
-    code: ErrorCode;
+    name: string;
+    code?: string;
     message: string;
-    statusCode?: number;
     data?: object;
   }) {
     super(message);
-    this.name = "TdkError";
+    this.name = name;
     this.code = code;
-    this.statusCode = statusCode ?? ERROR_STATUS_CODE_MAPPING[code] ?? 500;
     this.data = data;
     Sentry.setExtra("error", this);
   }

@@ -18,7 +18,12 @@ import {
   readTransactionReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { TdkError, parseEngineErrorMessage } from "../utils/error";
+import {
+  TDK_ERROR_CODES,
+  TDK_ERROR_NAMES,
+  TdkError,
+  parseEngineErrorMessage,
+} from "../utils/error";
 
 export const transactionsRoutes =
   ({ engine, env }: TdkApiContext): FastifyPluginAsync =>
@@ -55,7 +60,8 @@ export const transactionsRoutes =
         } = req;
         if (!userAddress) {
           throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
             message: "Unauthorized",
             data: { authError },
           });
@@ -86,7 +92,8 @@ export const transactionsRoutes =
           reply.send(result);
         } catch (err) {
           throw new TdkError({
-            code: "TDK_CREATE_TRANSACTION",
+            name: TDK_ERROR_NAMES.TransactionError,
+            code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
             message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
             data: {
               chainId,
@@ -127,7 +134,8 @@ export const transactionsRoutes =
         } = req;
         if (!userAddress) {
           throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
             message: "Unauthorized",
             data: { authError },
           });
@@ -150,7 +158,8 @@ export const transactionsRoutes =
           reply.send(result);
         } catch (err) {
           throw new TdkError({
-            code: "TDK_CREATE_TRANSACTION",
+            name: TDK_ERROR_NAMES.TransactionError,
+            code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
             message: `Error creating native send transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
             data: {
               chainId,
@@ -185,7 +194,8 @@ export const transactionsRoutes =
           reply.send(data.result);
         } catch (err) {
           throw new TdkError({
-            code: "TDK_READ_TRANSACTION",
+            name: TDK_ERROR_NAMES.TransactionError,
+            code: TDK_ERROR_CODES.TRANSACTION_READ_FAILED,
             message: `Error fetching transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
             data: { queueId },
           });
