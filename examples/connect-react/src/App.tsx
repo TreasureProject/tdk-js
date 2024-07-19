@@ -71,7 +71,7 @@ export const App = () => {
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
         <h1 className="font-semibold text-2xl text-ruby-900">
-          TDK Connect Example
+          TDK React - Connect Example
         </h1>
         <ConnectButton appName="Treasure" />
       </header>

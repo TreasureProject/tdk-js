@@ -14,8 +14,9 @@ SDK for the Treasure ecosystem
 
 ## Examples
 
-- [Connect](./examples/connect) ([Demo](https://tdk-examples-connect.vercel.app))
-- [Harvester](./examples/harvester) ([Demo](https://tdk-examples-harvester.vercel.app))
+- [Treasure Connect (Core)](./examples/connect-core)
+- [Treasure Connect (React)](./examples/connect-react) - [Live Demo](https://tdk-examples-connect.vercel.app)
+- [Harvester](./examples/harvester) - [Live Demo](https://tdk-examples-harvester.vercel.app)
 - [Payments](./examples/payments)
 
 ## Development

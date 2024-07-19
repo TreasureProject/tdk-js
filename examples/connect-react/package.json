@@ -1,5 +1,5 @@
 {
-  "name": "@treasure-dev/tdk-examples-connect",
+  "name": "@treasure-dev/tdk-examples-connect-react",
   "private": true,
   "type": "module",
   "scripts": {

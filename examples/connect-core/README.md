@@ -1,8 +1,6 @@
-# TDK Connect Example
+# TDK Core - Treasure Connect Example
 
-Example showing how front-ends can interact with the Treasure Development Kit's Connect feature, powering login flows and account abstration.
-
-[Live Demo](https://tdk-examples-connect.vercel.app)
+Example showing how vanilla JS/TS front-ends can interact with the Treasure Development Kit's Treasure Connect feature, powering login flows and account abstraction.
 
 ## Prerequisites
 

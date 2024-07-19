@@ -46,10 +46,19 @@ export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
 // Connect
 export { getAllActiveSigners } from "./connect/accounts";
 export { decodeAuthToken } from "./connect/jwt";
-export { createLoginUrl } from "./connect/login";
+export {
+  createLoginUrl,
+  createTreasureConnectClient,
+  sendEmailVerificationCode,
+  authenticateWallet,
+  logIn,
+  logInWithEmail,
+  logInWithSocial,
+} from "./connect/login";
 export {
   createSession,
   validateSession,
+  startUserSession,
 } from "./connect/session";
 
 // Bridgeworld

@@ -37,7 +37,7 @@
     "tsup": "^8.0.1",
     "tsx": "^4.7.1",
     "typescript": "^5.4.5",
-    "vitest": "^1.0.1"
+    "vitest": "^2.0.3"
   },
   "optionalDependencies": {
     "@biomejs/cli-linux-x64": "^0.1.2",
