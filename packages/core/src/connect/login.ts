@@ -4,11 +4,7 @@ import type { InAppWalletSocialAuth, Wallet } from "thirdweb/wallets";
 import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
 import { TDKAPI } from "../api";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "../constants";
-import type {
-  ConnectConfig,
-  SessionOptions,
-  TreasureConnectClient,
-} from "../types";
+import type { ConnectConfig, TreasureConnectClient } from "../types";
 import { getSmartAccountConfig } from "./accounts";
 import { startUserSession } from "./session";
 

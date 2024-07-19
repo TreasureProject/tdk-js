@@ -1,4 +1,5 @@
 import {
+  type SessionOptions,
   createTreasureConnectClient,
   logInWithEmail,
   logInWithSocial,
@@ -10,6 +11,13 @@ import "./style.css";
 const client = createTreasureConnectClient(import.meta.env.VITE_TDK_CLIENT_ID);
 const chainId = 421614;
 const apiUri = import.meta.env.VITE_TDK_API_URL;
+const sessionOptions: SessionOptions = {
+  backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,
+  approvedTargets: [
+    "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
+    "0xE647b2c46365741e85268ceD243113d08F7E00B8",
+  ],
+};
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <main>
@@ -89,6 +97,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         network: "google",
         apiUri,
         chainId,
+        sessionOptions,
       });
       userEmail.innerHTML = result.user.email || result.user.id;
       connectContainer.hidden = true;
@@ -126,6 +135,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         verificationCode: codeInput.value,
         apiUri,
         chainId,
+        sessionOptions,
       });
       userEmail.innerHTML = result.user.email || result.user.id;
       connectContainer.hidden = true;
