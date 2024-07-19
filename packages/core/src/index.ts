@@ -49,8 +49,9 @@ export { decodeAuthToken } from "./connect/jwt";
 export {
   createLoginUrl,
   createTreasureConnectClient,
-  logInWallet,
   sendEmailVerificationCode,
+  authenticateWallet,
+  logIn,
   logInWithEmail,
   logInWithSocial,
 } from "./connect/login";

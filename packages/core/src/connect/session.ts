@@ -132,7 +132,7 @@ export const startUserSession = async ({
   options,
 }: {
   client: TreasureConnectClient;
-  wallet: Wallet;
+  wallet: Wallet | undefined;
   chainId: number;
   tdk: TDKAPI;
   options: SessionOptions;
@@ -143,7 +143,7 @@ export const startUserSession = async ({
     return;
   }
 
-  const walletChainId = wallet.getChain()?.id;
+  const walletChainId = wallet?.getChain()?.id;
 
   // Skip session creation if user has an active session already
   const sessions = await tdk.user.getSessions({ chainId });
