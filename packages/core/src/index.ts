@@ -53,6 +53,7 @@ export {
   authenticateWallet,
   logIn,
   logInWithEmail,
+  logInWithPhoneNumber,
   logInWithSocial,
 } from "./connect/login";
 export {

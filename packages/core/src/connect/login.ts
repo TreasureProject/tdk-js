@@ -85,6 +85,11 @@ export const logIn = async (
         email: string;
         verificationCode: string;
       }
+    | {
+        mode: "phone";
+        phoneNumber: string;
+        verificationCode: string;
+      }
   ) &
     ConnectConfig,
 ) => {
@@ -110,6 +115,14 @@ export const logIn = async (
       chain,
       strategy: "email",
       email: params.email,
+      verificationCode: params.verificationCode,
+    });
+  } else if (params.mode === "phone") {
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "phone",
+      phoneNumber: params.phoneNumber,
       verificationCode: params.verificationCode,
     });
   } else {
@@ -163,6 +176,17 @@ export const logInWithEmail = async ({
     verificationCode,
     ...rest,
   });
+
+export const logInWithPhoneNumber = async ({
+  phoneNumber,
+  verificationCode,
+  ...rest
+}: {
+  client: TreasureConnectClient;
+  phoneNumber: string;
+  verificationCode: string;
+} & ConnectConfig) =>
+  logIn({ mode: "phone", phoneNumber, verificationCode, ...rest });
 
 export const logInWithSocial = async ({
   network,
