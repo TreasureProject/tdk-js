@@ -85,18 +85,30 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
     openWalletDetailsModal({
       client,
       theme: modalTheme,
-      supportedTokens: contractAddresses.MAGIC
-        ? {
-            [chain.id]: [
-              {
-                address: contractAddresses.MAGIC,
-                name: "MAGIC",
-                symbol: "MAGIC",
-                icon: "https://images.treasure.lol/tdk/login/magic.png",
-              },
-            ],
-          }
-        : undefined,
+      supportedTokens: {
+        [chain.id]: [
+          ...(contractAddresses.MAGIC
+            ? [
+                {
+                  address: contractAddresses.MAGIC,
+                  name: "MAGIC",
+                  symbol: "MAGIC",
+                  icon: "https://images.treasure.lol/tdk/login/magic.png",
+                },
+              ]
+            : []),
+          ...(contractAddresses.VEE
+            ? [
+                {
+                  address: contractAddresses.VEE,
+                  name: "VEE",
+                  symbol: "VEE",
+                  icon: "https://images.treasure.lol/tdk/login/vee.png",
+                },
+              ]
+            : []),
+        ],
+      },
       onDisconnect: () => {
         logOut();
       },
