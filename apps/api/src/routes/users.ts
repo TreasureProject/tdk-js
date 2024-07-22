@@ -13,7 +13,7 @@ import {
   readCurrentUserSessionsReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { TdkError } from "../utils/error";
+import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
 
 export const usersRoutes =
   ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
@@ -36,7 +36,8 @@ export const usersRoutes =
         const { chainId, userAddress, authError } = req;
         if (!userAddress) {
           throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
             message: "Unauthorized",
             data: { authError },
           });
@@ -56,9 +57,9 @@ export const usersRoutes =
 
         if (!dbUser) {
           throw new TdkError({
-            code: "TDK_NOT_FOUND",
+            name: TDK_ERROR_NAMES.UserError,
+            code: TDK_ERROR_CODES.USER_NOT_FOUND,
             message: "User not found",
-            data: { userAddress },
           });
         }
 
@@ -97,7 +98,8 @@ export const usersRoutes =
         const { userAddress, authError } = req;
         if (!userAddress) {
           throw new TdkError({
-            code: "TDK_UNAUTHORIZED",
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
             message: "Unauthorized",
             data: { authError },
           });
