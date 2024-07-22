@@ -191,6 +191,7 @@ export const CONTRACT_ADDRESSES: Record<
     ZeeverseZee: "0x094fa8ae08426ab180e71e60fa253b079e13b9fe",
     ZeeverseItems: "0x58318bceaa0d249b62fad57d134da7475e551b47",
     ZeeverseVeeClaimer: "0x1cebdde81a9e4cd377bc7da5000797407cf9a58a",
+    ZeeverseGame: "0x9b85e59d6e4295fdeb8f82fd5d9ecafbd3f6d5d8",
   },
   [arbitrumSepolia.id]: {
     // Tokens
