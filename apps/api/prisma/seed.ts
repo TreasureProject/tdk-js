@@ -19,6 +19,20 @@ const PROJECT_DATA: Record<
     callTargets: Record<RemoteEnvironment, [number, Contract | string][]>;
   }
 > = {
+  "aliyas-ascent": {
+    metadata: {
+      name: "Aliya's Ascent",
+    },
+    redirectUris: {
+      local: [],
+      dev: [],
+      prod: [],
+    },
+    callTargets: {
+      dev: [],
+      prod: [],
+    },
+  },
   app: {
     metadata: {
       name: "Treasure",
