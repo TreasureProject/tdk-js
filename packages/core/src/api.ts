@@ -11,9 +11,12 @@ import type {
   CreateTransactionBody,
   LoginBody,
   LoginReply,
+  PoolReply,
+  PoolsReply,
   ReadCurrentUserSessionsQuerystring,
   ReadCurrentUserSessionsReply,
   ReadLoginPayloadReply,
+  RouteReply,
 } from "../../../apps/api/src/schema";
 import type {
   CreateTransactionReply,
@@ -24,6 +27,10 @@ import type {
   ReadProjectReply,
   ReadTransactionReply,
 } from "../../../apps/api/src/schema";
+import type {
+  RouteBody,
+  SwapBody,
+} from "../../../apps/api/src/schema/magicswap";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
@@ -250,5 +257,19 @@ export class TDKAPI {
 
   harvester = {
     get: (id: string) => this.get<ReadHarvesterReply>(`/harvesters/${id}`),
+  };
+
+  magicswap = {
+    getPools: () => this.get<PoolsReply>("/magicswap/pools"),
+    getPool: (id: string) => this.get<PoolReply>(`/magicswap/pools/${id}`),
+    getRoute: (body: RouteBody) =>
+      this.post<RouteBody, RouteReply>("/magicswap/route", body),
+    swap: async (body: SwapBody, waitForCompletion = true) => {
+      const result = await this.post<SwapBody, CreateTransactionReply>(
+        "/magicswap/swap",
+        body,
+      );
+      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+    },
   };
 }

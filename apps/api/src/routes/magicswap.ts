@@ -186,10 +186,12 @@ export const magicswapRoutes =
           wagmiConfig,
         });
 
-        const poolTokens = pools.reduce((acc, poolToken) => {
-          acc[poolToken.id] = poolToken;
-          return acc;
-        }, {});
+        const poolTokens = pools
+          .flatMap(({ token0, token1 }) => [token0, token1])
+          .reduce((acc, poolToken) => {
+            acc[poolToken.id] = poolToken;
+            return acc;
+          }, {});
 
         const tokenIn = poolTokens[tokenInId];
         const tokenOut = poolTokens[tokenOutId];
