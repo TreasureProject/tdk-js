@@ -1,6 +1,6 @@
 ---
-"@treasure-dev/tdk-react": patch
-"@treasure-dev/tdk-core": patch
+"@treasure-dev/tdk-react": minor
+"@treasure-dev/tdk-core": minor
 ---
 
 Added Discord login option
