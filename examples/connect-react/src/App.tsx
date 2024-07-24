@@ -11,7 +11,7 @@ export const App = () => {
   const { tdk, user, contractAddresses } = useTreasure();
 
   const handleMintMagic = async (amount: number) => {
-    if (!user?.smartAccountAddress) {
+    if (!user?.address) {
       return;
     }
 
@@ -40,10 +40,7 @@ export const App = () => {
             },
           ] as const,
           functionName: "mint",
-          args: [
-            user.smartAccountAddress as AddressString,
-            parseEther(amount.toString()),
-          ],
+          args: [user.address as AddressString, parseEther(amount.toString())],
         },
         { includeAbi: true },
       );
@@ -53,7 +50,7 @@ export const App = () => {
   };
 
   const handleSendEth = async (amount: number) => {
-    if (!user?.smartAccountAddress) {
+    if (!user?.address) {
       return;
     }
 

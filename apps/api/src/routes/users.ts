@@ -45,8 +45,8 @@ export const usersRoutes =
 
         const [dbUser, allActiveSigners] = await Promise.all([
           db.user.findUnique({
-            where: { smartAccountAddress: userAddress },
-            select: { id: true, smartAccountAddress: true, email: true },
+            where: { address: userAddress },
+            select: { id: true, address: true, email: true },
           }),
           getAllActiveSigners({
             chainId,

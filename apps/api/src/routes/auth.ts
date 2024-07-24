@@ -70,24 +70,22 @@ export const authRoutes =
         }
 
         const { payload } = verifiedPayload;
-        const {
-          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
-          address: smartAccountAddress,
-        } = payload;
+        const { chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(), address } =
+          payload;
 
         let user = await db.user.upsert({
           where: {
-            smartAccountAddress,
+            address,
           },
           update: {
             lastLoginAt: new Date(),
           },
           create: {
-            smartAccountAddress,
+            address,
           },
           select: {
             id: true,
-            smartAccountAddress: true,
+            address: true,
             email: true,
           },
         });
@@ -97,7 +95,7 @@ export const authRoutes =
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
-          } = await engine.account.getAllAdmins(chainId, smartAccountAddress);
+          } = await engine.account.getAllAdmins(chainId, address);
 
           // Look up any possible associated email addresses (for embedded wallets)
           const embeddedWalletUser = await fetchEmbeddedWalletUser(
@@ -124,7 +122,7 @@ export const authRoutes =
                 data: { email },
                 select: {
                   id: true,
-                  smartAccountAddress: true,
+                  address: true,
                   email: true,
                 },
               });
@@ -136,11 +134,15 @@ export const authRoutes =
         const [authToken, allActiveSigners] = await Promise.all([
           auth.generateJWT({
             payload,
-            context: user,
+            context: {
+              ...user,
+              // Keep previous field name for backwards compatibility
+              smartAccountAddress: address,
+            },
           }),
           getAllActiveSigners({
             chainId: Number(chainId),
-            address: user.smartAccountAddress,
+            address: user.address,
             wagmiConfig,
           }),
         ]);
@@ -148,6 +150,7 @@ export const authRoutes =
           token: authToken,
           user: {
             ...user,
+            smartAccountAddress: user.address,
             allActiveSigners: allActiveSigners.map((activeSigner) => ({
               ...activeSigner,
               approvedTargets: activeSigner.approvedTargets.map((target) =>

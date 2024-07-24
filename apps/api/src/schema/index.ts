@@ -528,6 +528,11 @@ const userSchema = Type.Object({
     description: "User unique identifier",
     examples: [EXAMPLE_USER_ID],
   }),
+  address: Type.String({
+    description: "Treasure Account address",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
+  // Keep previous field name for backwards compatibility
   smartAccountAddress: Type.String({
     description: "Treasure Account address",
     examples: [EXAMPLE_WALLET_ADDRESS],
