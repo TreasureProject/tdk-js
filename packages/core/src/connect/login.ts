@@ -85,6 +85,17 @@ export const logIn = async (
         email: string;
         verificationCode: string;
       }
+    | {
+        mode: "phone";
+        phoneNumber: string;
+        verificationCode: string;
+      }
+    | {
+        mode: "passkey";
+        type: "sign-up" | "sign-in";
+        passkeyName?: string;
+        authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
+      }
   ) &
     ConnectConfig,
 ) => {
@@ -105,12 +116,32 @@ export const logIn = async (
   });
 
   if (params.mode === "email") {
+    const { email, verificationCode } = params;
     await wallet.connect({
       client,
       chain,
       strategy: "email",
-      email: params.email,
-      verificationCode: params.verificationCode,
+      email,
+      verificationCode,
+    });
+  } else if (params.mode === "phone") {
+    const { phoneNumber, verificationCode } = params;
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "phone",
+      phoneNumber,
+      verificationCode,
+    });
+  } else if (params.mode === "passkey") {
+    const { type, passkeyName, authenticatorType } = params;
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "passkey",
+      type,
+      passkeyName,
+      authenticatorType,
     });
   } else {
     await wallet.connect({
@@ -163,6 +194,36 @@ export const logInWithEmail = async ({
     verificationCode,
     ...rest,
   });
+
+export const logInWithPasskey = async ({
+  type,
+  passkeyName,
+  authenticatorType,
+  ...rest
+}: {
+  client: TreasureConnectClient;
+  type: "sign-up" | "sign-in";
+  passkeyName?: string;
+  authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
+} & ConnectConfig) =>
+  logIn({
+    mode: "passkey",
+    type,
+    passkeyName,
+    authenticatorType,
+    ...rest,
+  });
+
+export const logInWithPhoneNumber = async ({
+  phoneNumber,
+  verificationCode,
+  ...rest
+}: {
+  client: TreasureConnectClient;
+  phoneNumber: string;
+  verificationCode: string;
+} & ConnectConfig) =>
+  logIn({ mode: "phone", phoneNumber, verificationCode, ...rest });
 
 export const logInWithSocial = async ({
   network,
