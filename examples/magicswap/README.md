@@ -1,8 +1,6 @@
-# TDK Connect Example
+# TDK Magicswap v2 Example
 
-Example showing how front-ends can interact with the Treasure Development Kit's Connect feature, powering login flows and account abstration.
-
-[Live Demo](https://tdk-examples-connect.vercel.app)
+Example showing how front-ends can interact with the Treasure Development Kit's Magicswap v2 feature, powering swaps, routing, and liquidity operations.
 
 ## Prerequisites
 
