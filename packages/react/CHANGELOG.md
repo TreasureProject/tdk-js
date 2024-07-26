@@ -1,5 +1,18 @@
 # @treasure-dev/tdk-react
 
+## 1.2.0
+
+### Minor Changes
+
+- 1ab9e76: Added Discord login option
+
+### Patch Changes
+
+- Updated dependencies [eeb81b0]
+- Updated dependencies [1ab9e76]
+- Updated dependencies [1ab9e76]
+  - @treasure-dev/tdk-core@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes
