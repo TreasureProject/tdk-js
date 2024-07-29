@@ -39,7 +39,7 @@ export const App = () => {
   } = useHarvester({
     chainId,
     contract: "HarvesterEmberwing",
-    userAddress: eoaAddress,
+    userAddress: eoaAddress as AddressString,
   });
 
   const {
