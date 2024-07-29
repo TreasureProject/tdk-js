@@ -5,6 +5,7 @@ import {
   getAddLiquidityArgs,
   getSwapArgs,
   getSwapRoute,
+  magicSwapV2RouterABI,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
@@ -12,7 +13,6 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 
-import { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import {
   type CreateTransactionReply,
   type ErrorReply,
