@@ -332,8 +332,11 @@ export const magicswapRoutes =
               abi: magicSwapV2RouterABI,
               functionName: addLiquidityArgs.functionName,
               args: addLiquidityArgs.args as string[],
-              // TODO: figure out how to send value through contract write
-              // value: addLiquidityArgs.value,
+              txOverrides: addLiquidityArgs.value
+                ? {
+                    value: addLiquidityArgs.value.toString(),
+                  }
+                : undefined,
             },
             false,
             undefined,
