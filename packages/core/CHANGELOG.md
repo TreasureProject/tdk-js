@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-core
 
+## 1.2.0
+
+### Minor Changes
+
+- eeb81b0: Added magicswap helpers to tdk api client
+- 1ab9e76: Added helpers for login with phone number and passkey
+- 1ab9e76: Added Discord login option
+
 ## 1.1.0
 
 ### Minor Changes

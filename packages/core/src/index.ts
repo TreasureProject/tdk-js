@@ -22,6 +22,7 @@ export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
 export { priceFeedAbi } from "./abis/priceFeedAbi";
+export { magicSwapV2RouterABI } from "./abis/magicSwapV2RouterAbi";
 export { TDKAPI } from "./api";
 export { truncateEthAddress } from "./utils/address";
 export { sumArray } from "./utils/array";
@@ -71,4 +72,10 @@ export {
 } from "./bridgeworld/harvesters";
 
 // Magicswap
-export { fetchPools, fetchPool, getSwapRoute, getSwapArgs } from "./magicswap";
+export {
+  fetchPools,
+  fetchPool,
+  getSwapRoute,
+  getSwapArgs,
+  getAddLiquidityArgs,
+} from "./magicswap";

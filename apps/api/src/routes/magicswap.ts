@@ -2,8 +2,10 @@ import * as Sentry from "@sentry/node";
 import {
   fetchPool,
   fetchPools,
+  getAddLiquidityArgs,
   getSwapArgs,
   getSwapRoute,
+  magicSwapV2RouterABI,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
@@ -11,7 +13,6 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 
-import { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import {
   type CreateTransactionReply,
   type ErrorReply,
@@ -21,6 +22,7 @@ import {
   poolsReplySchema,
 } from "../schema";
 import {
+  type AddLiquidityBody,
   type PoolParams,
   type PoolReply,
   type RouteBody,
@@ -210,6 +212,14 @@ export const magicswapRoutes =
           slippage,
         });
 
+        if (!swapArguments.address) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Error performing swap: missing contract address",
+          });
+        }
+
         try {
           Sentry.setExtra(
             "transaction",
@@ -223,6 +233,110 @@ export const magicswapRoutes =
               abi: magicSwapV2RouterABI,
               functionName: swapArguments.functionName,
               args: swapArguments.args as string[],
+            },
+            false,
+            undefined,
+            userAddress,
+          );
+          reply.send(result);
+        } catch (err) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `Error performing swap: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+          });
+        }
+      },
+    );
+
+    app.post<{
+      Params: PoolParams;
+      Body: AddLiquidityBody;
+      Reply: CreateTransactionReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/add-liquidity",
+      {
+        schema: {
+          summary: "Adds liquidity to a pool",
+          description: "Adds liquidity to a pool using Magicswap",
+          response: {
+            200: createTransactionReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { userAddress, authError, body, chainId, params } = req;
+
+        if (!userAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const { id: poolId } = params;
+
+        const {
+          amount0,
+          amount1,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          backendWallet: overrideBackendWallet,
+        } = body;
+
+        const backendWallet =
+          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
+
+        const pool = await fetchPool({
+          pairId: poolId,
+          chainId,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+          wagmiConfig,
+        });
+
+        const addLiquidityArgs = getAddLiquidityArgs({
+          chainId,
+          toAddress: userAddress,
+          amount0: amount0 ? BigInt(amount0) : undefined,
+          amount1: amount1 ? BigInt(amount1) : undefined,
+          amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
+          amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
+          nfts0,
+          nfts1,
+          pool,
+        });
+
+        if (!addLiquidityArgs.address) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Error adding liquidity: missing contract address",
+          });
+        }
+
+        try {
+          Sentry.setExtra(
+            "transaction",
+            JSON.stringify(addLiquidityArgs, null, 2),
+          );
+          const { result } = await engine.contract.write(
+            chainId.toString(),
+            addLiquidityArgs.address,
+            backendWallet,
+            {
+              abi: magicSwapV2RouterABI,
+              functionName: addLiquidityArgs.functionName,
+              args: addLiquidityArgs.args as string[],
+              txOverrides: addLiquidityArgs.value
+                ? {
+                    value: addLiquidityArgs.value.toString(),
+                  }
+                : undefined,
             },
             false,
             undefined,
