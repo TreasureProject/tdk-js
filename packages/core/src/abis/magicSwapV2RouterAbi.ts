@@ -7,8 +7,179 @@ export const magicSwapV2RouterABI = [
     stateMutability: "nonpayable",
     type: "constructor",
   },
+  { inputs: [], name: "MagicSwapV2InvalidPath", type: "error" },
+  { inputs: [], name: "MagicSwapV2WrongAmountADeposited", type: "error" },
+  { inputs: [], name: "MagicSwapV2WrongAmountBDeposited", type: "error" },
+  { inputs: [], name: "MagicSwapV2WrongAmountDeposited", type: "error" },
+  { inputs: [], name: "MagicSwapV2WrongAmounts", type: "error" },
+  { inputs: [], name: "UniswapV2RouterExcessiveInputAmount", type: "error" },
+  { inputs: [], name: "UniswapV2RouterExpired", type: "error" },
+  { inputs: [], name: "UniswapV2RouterInsufficientAAmount", type: "error" },
+  { inputs: [], name: "UniswapV2RouterInsufficientBAmount", type: "error" },
+  {
+    inputs: [],
+    name: "UniswapV2RouterInsufficientOutputAmount",
+    type: "error",
+  },
+  { inputs: [], name: "UniswapV2RouterInvalidPath", type: "error" },
+  {
+    inputs: [],
+    name: "UniswapV2RouterOnlyAcceptETHViaFallbackFromWETHContract",
+    type: "error",
+  },
   { inputs: [], name: "UnsupportedNft", type: "error" },
-  { inputs: [], name: "WrongAmounts", type: "error" },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vault",
+        type: "tuple",
+      },
+    ],
+    name: "NFTLiquidityAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vault",
+        type: "tuple",
+      },
+    ],
+    name: "NFTLiquidityRemoved",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vaultA",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vaultB",
+        type: "tuple",
+      },
+    ],
+    name: "NFTNFTLiquidityAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pair",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vaultA",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        indexed: false,
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "vaultB",
+        type: "tuple",
+      },
+    ],
+    name: "NFTNFTLiquidityRemoved",
+    type: "event",
+  },
   {
     inputs: [],
     name: "ONE",
@@ -63,10 +234,21 @@ export const magicSwapV2RouterABI = [
   },
   {
     inputs: [
-      { internalType: "address[]", name: "_collection", type: "address[]" },
-      { internalType: "uint256[]", name: "_tokenId", type: "uint256[]" },
-      { internalType: "uint256[]", name: "_amount", type: "uint256[]" },
-      { internalType: "contract INftVault", name: "_tokenA", type: "address" },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vault",
+        type: "tuple",
+      },
       { internalType: "address", name: "_tokenB", type: "address" },
       { internalType: "uint256", name: "_amountBDesired", type: "uint256" },
       { internalType: "uint256", name: "_amountBMin", type: "uint256" },
@@ -84,10 +266,21 @@ export const magicSwapV2RouterABI = [
   },
   {
     inputs: [
-      { internalType: "address[]", name: "_collection", type: "address[]" },
-      { internalType: "uint256[]", name: "_tokenId", type: "uint256[]" },
-      { internalType: "uint256[]", name: "_amount", type: "uint256[]" },
-      { internalType: "contract INftVault", name: "_token", type: "address" },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vault",
+        type: "tuple",
+      },
       { internalType: "uint256", name: "_amountETHMin", type: "uint256" },
       { internalType: "address", name: "_to", type: "address" },
       { internalType: "uint256", name: "_deadline", type: "uint256" },
@@ -99,6 +292,50 @@ export const magicSwapV2RouterABI = [
       { internalType: "uint256", name: "lpAmount", type: "uint256" },
     ],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vaultA",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vaultB",
+        type: "tuple",
+      },
+      { internalType: "address", name: "_to", type: "address" },
+      { internalType: "uint256", name: "_deadline", type: "uint256" },
+    ],
+    name: "addLiquidityNFTNFT",
+    outputs: [
+      { internalType: "uint256", name: "amountA", type: "uint256" },
+      { internalType: "uint256", name: "amountB", type: "uint256" },
+      { internalType: "uint256", name: "lpAmount", type: "uint256" },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -172,13 +409,6 @@ export const magicSwapV2RouterABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256[]", name: "_list", type: "uint256[]" }],
-    name: "nftAmountToERC20",
-    outputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "uint256", name: "amountA", type: "uint256" },
       { internalType: "uint256", name: "reserveA", type: "uint256" },
@@ -247,10 +477,21 @@ export const magicSwapV2RouterABI = [
   },
   {
     inputs: [
-      { internalType: "address[]", name: "_collection", type: "address[]" },
-      { internalType: "uint256[]", name: "_tokenId", type: "uint256[]" },
-      { internalType: "uint256[]", name: "_amount", type: "uint256[]" },
-      { internalType: "contract INftVault", name: "_tokenA", type: "address" },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vault",
+        type: "tuple",
+      },
       { internalType: "address", name: "_tokenB", type: "address" },
       { internalType: "uint256", name: "_lpAmount", type: "uint256" },
       { internalType: "uint256", name: "_amountAMin", type: "uint256" },
@@ -269,10 +510,21 @@ export const magicSwapV2RouterABI = [
   },
   {
     inputs: [
-      { internalType: "address[]", name: "_collection", type: "address[]" },
-      { internalType: "uint256[]", name: "_tokenId", type: "uint256[]" },
-      { internalType: "uint256[]", name: "_amount", type: "uint256[]" },
-      { internalType: "contract INftVault", name: "_token", type: "address" },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vault",
+        type: "tuple",
+      },
       { internalType: "uint256", name: "_lpAmount", type: "uint256" },
       { internalType: "uint256", name: "_amountTokenMin", type: "uint256" },
       { internalType: "uint256", name: "_amountETHMin", type: "uint256" },
@@ -284,6 +536,52 @@ export const magicSwapV2RouterABI = [
     outputs: [
       { internalType: "uint256", name: "amountToken", type: "uint256" },
       { internalType: "uint256", name: "amountETH", type: "uint256" },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vaultA",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "contract INftVault",
+            name: "token",
+            type: "address",
+          },
+          { internalType: "address[]", name: "collection", type: "address[]" },
+          { internalType: "uint256[]", name: "tokenId", type: "uint256[]" },
+          { internalType: "uint256[]", name: "amount", type: "uint256[]" },
+        ],
+        internalType: "struct IMagicSwapV2Router.NftVaultLiquidityData",
+        name: "_vaultB",
+        type: "tuple",
+      },
+      { internalType: "uint256", name: "_lpAmount", type: "uint256" },
+      { internalType: "uint256", name: "_amountAMin", type: "uint256" },
+      { internalType: "uint256", name: "_amountBMin", type: "uint256" },
+      { internalType: "address", name: "_to", type: "address" },
+      { internalType: "uint256", name: "_deadline", type: "uint256" },
+    ],
+    name: "removeLiquidityNFTNFT",
+    outputs: [
+      { internalType: "uint256", name: "amountA", type: "uint256" },
+      { internalType: "uint256", name: "amountB", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "function",
@@ -317,7 +615,7 @@ export const magicSwapV2RouterABI = [
       { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "deadline", type: "uint256" },
     ],
-    name: "nETHForExactTokens",
+    name: "swapETHForExactTokens",
     outputs: [
       { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
     ],
@@ -381,17 +679,6 @@ export const magicSwapV2RouterABI = [
     outputs: [
       { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_tokenA", type: "address" },
-      { internalType: "address", name: "_tokenB", type: "address" },
-      { internalType: "uint256", name: "_amountIn", type: "uint256" },
-    ],
-    name: "swapLeftover",
-    outputs: [{ internalType: "uint256", name: "amountOut", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
