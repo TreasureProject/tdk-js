@@ -607,6 +607,7 @@ export {
   type PoolParams,
   type RouteReply,
   type SwapBody,
+  type AddLiquidityBody,
   poolsReplySchema,
   poolReplySchema,
   routeReplySchema,

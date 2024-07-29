@@ -191,6 +191,16 @@ const swapBodySchema = Type.Object({
   slippage: Type.Optional(Type.Number()),
 });
 
+const addLiquidityBodySchema = Type.Object({
+  backendWallet: Type.Optional(Type.String()),
+  nfts0: Type.Optional(Type.Array(nftInputSchema)),
+  nfts1: Type.Optional(Type.Array(nftInputSchema)),
+  amount0: Type.Optional(Type.String()),
+  amount1: Type.Optional(Type.String()),
+  amount0Min: Type.Optional(Type.String()),
+  amount1Min: Type.Optional(Type.String()),
+});
+
 const poolParamsSchema = Type.Object({
   id: Type.String(),
 });
@@ -204,3 +214,5 @@ export type RouteBody = Static<typeof routeBodySchema>;
 export type RouteReply = Static<typeof routeReplySchema>;
 
 export type SwapBody = Static<typeof swapBodySchema>;
+
+export type AddLiquidityBody = Static<typeof addLiquidityBodySchema>;

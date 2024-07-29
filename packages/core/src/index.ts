@@ -71,4 +71,10 @@ export {
 } from "./bridgeworld/harvesters";
 
 // Magicswap
-export { fetchPools, fetchPool, getSwapRoute, getSwapArgs } from "./magicswap";
+export {
+  fetchPools,
+  fetchPool,
+  getSwapRoute,
+  getSwapArgs,
+  getAddLiquidityArgs,
+} from "./magicswap";

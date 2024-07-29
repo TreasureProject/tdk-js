@@ -1,8 +1,6 @@
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import type { PoolToken } from "./types";
-
-type NFTInput = { id: string; quantity: number };
+import type { NFTInput, PoolToken } from "./types";
 
 const getAmountMax = (amount: bigint, slippage: number) =>
   amount + (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
