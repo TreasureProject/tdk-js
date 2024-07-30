@@ -86,7 +86,9 @@ model User {
   lastLoginAt DateTime? @map("last_login_at")
 
   // Relations
-  profile UserProfile?
+  profile              UserProfile?
+  socialAccounts       UserSocialAccount[]
+  notificationSettings UserNotificationSettings[]
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at")
@@ -140,4 +142,74 @@ model UserProfile {
 
   @@unique([tag, discriminant])
   @@map("user_profile")
+}
+
+enum SocialNetwork {
+  APPLE
+  DISCORD
+  FARCASTER
+  GOOGLE
+  STEAM
+  TWITCH
+  TWITTER
+}
+
+model UserSocialAccount {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  network       SocialNetwork
+  accountId     String        @map("account_id")
+  accountName   String        @map("account_name")
+  accountHandle String?       @map("account_handle")
+  accountData   Json?         @map("account_data")
+  isPublic      Boolean       @default(false) @map("is_public")
+
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_social_account")
+}
+
+enum NotificationType {
+  BADGE
+  BID_ACTIVITY
+  ITEM_SOLD
+  ITEM_PURCHASED
+  MARKETING
+}
+
+model UserNotificationSettings {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  type           NotificationType
+  threshold      Int?
+  isEnabledEmail Boolean          @default(true) @map("is_enabled_email")
+  isEnabledInApp Boolean          @default(true) @map("is_enabled_in_app")
+
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  // Relations
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([type, userId])
+  @@unique([type, legacyAddress])
+  @@map("user_notification_settings")
 }
