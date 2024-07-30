@@ -108,7 +108,7 @@ model UserProfile {
   tagLastCheckedAt DateTime? @map("tag_last_checked_at")
 
   // Email security
-  emailSeucirytPhrase          String?   @map("email_security_phrase")
+  emailSecurityPhrase          String?   @map("email_security_phrase")
   emailSecurityPhraseUpdatedAt DateTime? @map("email_security_phrase_updated_at")
 
   // Bio
@@ -124,12 +124,15 @@ model UserProfile {
   showEthBalance   Boolean @default(true) @map("show_eth_balance")
   showGemsBalance  Boolean @default(true) @map("show_gems_balance")
 
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
   // Other
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
 
   // Relations
-  userId String @unique @map("user_id")
-  user   User   @relation(fields: [userId], references: [id])
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at")
