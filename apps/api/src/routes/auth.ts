@@ -87,46 +87,38 @@ export const authRoutes =
             id: true,
             address: true,
             email: true,
+            phoneNumber: true,
           },
         });
 
-        // User does not have an email address registered yet
-        if (!user.email) {
+        // User is missing details we could fill in from the embedded wallet
+        if (!user.email && !user.phoneNumber) {
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
           } = await engine.account.getAllAdmins(chainId, address);
 
-          // Look up any possible associated email addresses (for embedded wallets)
+          // Look up any associated user details in the embedded wallet
           const embeddedWalletUser = await fetchEmbeddedWalletUser(
             adminAddress,
             env.THIRDWEB_SECRET_KEY,
           );
-          if (embeddedWalletUser) {
-            const { email } = embeddedWalletUser;
-            if (email) {
-              // Check if email was migrated from TreasureTag system, and delete existing record if so
-              const existingUser = await db.user.findUnique({
-                where: { email },
-                select: { id: true },
-              });
-              if (existingUser) {
-                await db.user.delete({ where: { id: existingUser.id } });
-              }
-
-              // Set user's email address
-              user = await db.user.update({
-                where: {
-                  id: user.id,
-                },
-                data: { email },
-                select: {
-                  id: true,
-                  address: true,
-                  email: true,
-                },
-              });
-            }
+          if (embeddedWalletUser?.email || embeddedWalletUser?.phone) {
+            user = await db.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                email: embeddedWalletUser.email,
+                phoneNumber: embeddedWalletUser.phone,
+              },
+              select: {
+                id: true,
+                address: true,
+                email: true,
+                phoneNumber: true,
+              },
+            });
           }
         }
 
@@ -150,6 +142,7 @@ export const authRoutes =
           token: authToken,
           user: {
             ...user,
+            // Keep previous field name for backwards compatibility
             smartAccountAddress: user.address,
             allActiveSigners: allActiveSigners.map((activeSigner) => ({
               ...activeSigner,
