@@ -141,10 +141,14 @@ export const usersRoutes =
           showGemsBalance,
         } = req.body;
 
+        const emailSecurityPhraseUpdatedAt =
+          typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
+
         const profile = await db.userProfile.upsert({
           where: { userId },
           update: {
             emailSecurityPhrase,
+            emailSecurityPhraseUpdatedAt,
             featuredNftIds,
             featuredBadgeIds,
             highlyFeaturedBadgeId,
