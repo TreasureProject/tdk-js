@@ -1,5 +1,6 @@
 import {
   DEFAULT_TDK_CHAIN_ID,
+  type UserContext,
   getAllActiveSigners,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
@@ -122,15 +123,18 @@ export const authRoutes =
           }
         }
 
+        const userContext: UserContext = {
+          id: user.id,
+          address: user.address,
+          email: user.email,
+          smartAccountAddress: user.address,
+        };
+
         // Add user data to JWT payload's context
         const [authToken, allActiveSigners] = await Promise.all([
           auth.generateJWT({
             payload,
-            context: {
-              ...user,
-              // Keep previous field name for backwards compatibility
-              smartAccountAddress: address,
-            },
+            context: userContext,
           }),
           getAllActiveSigners({
             chainId: Number(chainId),
@@ -141,9 +145,8 @@ export const authRoutes =
         reply.send({
           token: authToken,
           user: {
+            ...userContext,
             ...user,
-            // Keep previous field name for backwards compatibility
-            smartAccountAddress: user.address,
             allActiveSigners: allActiveSigners.map((activeSigner) => ({
               ...activeSigner,
               approvedTargets: activeSigner.approvedTargets.map((target) =>

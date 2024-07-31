@@ -21,6 +21,14 @@ export type ConnectConfig = {
   sessionOptions?: SessionOptions;
 };
 
+export type UserContext = {
+  id: string;
+  address: string;
+  email: string | null;
+  // Keep previous field name for backwards compatibility
+  smartAccountAddress: string;
+};
+
 // General transactions
 export type AddressString = `0x${string}`;
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
