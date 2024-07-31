@@ -9,10 +9,14 @@ import {
   type ReadCurrentUserReply,
   type ReadCurrentUserSessionsQuerystring,
   type ReadCurrentUserSessionsReply,
+  type UpdateCurrentUserBody,
+  type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
   readCurrentUserSessionsReplySchema,
+  updateCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
 import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
 
 export const usersRoutes =
@@ -43,10 +47,10 @@ export const usersRoutes =
           });
         }
 
-        const [dbUser, allActiveSigners] = await Promise.all([
+        const [user, allActiveSigners] = await Promise.all([
           db.user.findUnique({
             where: { address: userAddress },
-            select: { id: true, address: true, email: true, phoneNumber: true },
+            select: USER_SELECT_FIELDS,
           }),
           getAllActiveSigners({
             chainId,
@@ -55,7 +59,7 @@ export const usersRoutes =
           }),
         ]);
 
-        if (!dbUser) {
+        if (!user) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
@@ -63,9 +67,17 @@ export const usersRoutes =
           });
         }
 
+        const profile = await db.userProfile.upsert({
+          where: { userId: user.id },
+          update: {},
+          create: { userId: user.id },
+          select: USER_PROFILE_SELECT_FIELDS,
+        });
+
         reply.send({
-          ...dbUser,
-          smartAccountAddress: dbUser.address,
+          ...user,
+          ...profile,
+          smartAccountAddress: user.address,
           allActiveSigners: allActiveSigners.map((activeSigner) => ({
             ...activeSigner,
             approvedTargets: activeSigner.approvedTargets.map((target) =>
@@ -76,6 +88,60 @@ export const usersRoutes =
             startTimestamp: activeSigner.startTimestamp.toString(),
             endTimestamp: activeSigner.endTimestamp.toString(),
           })),
+        });
+      },
+    );
+
+    app.put<{
+      Body: UpdateCurrentUserBody;
+      Reply: UpdateCurrentUserReply | ErrorReply;
+    }>(
+      "/users/me",
+      {
+        schema: {
+          summary: "Update user",
+          description: "Update current user profile details",
+          security: [{ authToken: [] }],
+          response: {
+            200: updateCurrentUserReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { userAddress, authError } = req;
+        if (!userAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const user = await db.user.findUnique({
+          where: { address: userAddress },
+          select: USER_SELECT_FIELDS,
+        });
+
+        if (!user) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.UserError,
+            code: TDK_ERROR_CODES.USER_NOT_FOUND,
+            message: "User not found",
+          });
+        }
+
+        const profile = await db.userProfile.upsert({
+          where: { userId: user.id },
+          update: req.body,
+          create: { userId: user.id },
+          select: USER_PROFILE_SELECT_FIELDS,
+        });
+
+        reply.send({
+          ...user,
+          ...profile,
+          smartAccountAddress: user.address,
         });
       },
     );

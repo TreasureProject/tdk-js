@@ -21,6 +21,7 @@ import {
   readLoginPayloadReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { USER_SELECT_FIELDS } from "../utils/db";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 
 export const authRoutes =
@@ -84,12 +85,7 @@ export const authRoutes =
           create: {
             address,
           },
-          select: {
-            id: true,
-            address: true,
-            email: true,
-            phoneNumber: true,
-          },
+          select: USER_SELECT_FIELDS,
         });
 
         // User is missing details we could fill in from the embedded wallet
@@ -113,12 +109,7 @@ export const authRoutes =
                 email: embeddedWalletUser.email,
                 phoneNumber: embeddedWalletUser.phone,
               },
-              select: {
-                id: true,
-                address: true,
-                email: true,
-                phoneNumber: true,
-              },
+              select: USER_SELECT_FIELDS,
             });
           }
         }
