@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-react
 
+## 1.3.0
+
+### Patch Changes
+
+- 7494c70: Added Farcaster social auth option
+- a2de146: Exposed the useConnect hook
+- Updated dependencies [af94875]
+- Updated dependencies [f272eb2]
+  - @treasure-dev/tdk-core@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

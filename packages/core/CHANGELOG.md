@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-core
 
+## 1.3.0
+
+### Minor Changes
+
+- af94875: add magicswap method to get arguments to add liquidity
+- f272eb2: Renamed user smartAccountAddress field to address
+
 ## 1.2.0
 
 ### Minor Changes
