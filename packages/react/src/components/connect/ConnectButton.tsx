@@ -42,7 +42,7 @@ export const ConnectButton = ({
               </span>
             ) : null}
             <span className="tdk-text-xs tdk-text-night-600 tdk-block">
-              {truncateEthAddress(user.smartAccountAddress)}
+              {truncateEthAddress(user.address)}
             </span>
           </div>
           <TreasureIcon className="tdk-w-8 tdk-h-8 tdk-text-ruby-900" />

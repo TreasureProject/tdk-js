@@ -59,6 +59,7 @@ export type ErrorReply = Static<typeof errorReplySchema>;
 
 const EXAMPLE_USER_ID = "clxtvrt7p00012e6m8yurr83z";
 const EXAMPLE_EMAIL = "example@treasure.lol";
+const EXAMPLE_PHONE_NUMBER = "+13235550000";
 const EXAMPLE_CONTRACT_ADDRESS = "0x539bde0d7dbd336b79148aa742883198bbf60342";
 const EXAMPLE_WALLET_ADDRESS = "0x0eB5B03c0303f2F47cD81d7BE4275AF8Ed347576";
 const EXAMPLE_QUEUE_ID = "5b6c941c-35ba-4c54-92db-41b39cd06b2d";
@@ -528,6 +529,11 @@ const userSchema = Type.Object({
     description: "User unique identifier",
     examples: [EXAMPLE_USER_ID],
   }),
+  address: Type.String({
+    description: "Treasure Account address",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
+  // Keep previous field name for backwards compatibility
   smartAccountAddress: Type.String({
     description: "Treasure Account address",
     examples: [EXAMPLE_WALLET_ADDRESS],
@@ -536,6 +542,13 @@ const userSchema = Type.Object({
     Type.String({
       description: "User email address",
       examples: [EXAMPLE_EMAIL],
+    }),
+    Type.Null(),
+  ]),
+  phoneNumber: Type.Union([
+    Type.String({
+      description: "User phone number",
+      examples: [EXAMPLE_PHONE_NUMBER],
     }),
     Type.Null(),
   ]),

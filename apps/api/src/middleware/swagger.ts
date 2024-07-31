@@ -33,8 +33,7 @@ export const withSwagger = async (app: FastifyInstance) => {
     transform: ({ schema, url }) => {
       const nextSchema = { ...schema };
 
-      if (url.startsWith("/auth") || url.startsWith("/login")) {
-        nextSchema.deprecated = url.startsWith("/auth");
+      if (url.startsWith("/login")) {
         nextSchema.tags = ["auth"];
       } else if (url.startsWith("/harvesters")) {
         nextSchema.tags = ["harvesters"];
