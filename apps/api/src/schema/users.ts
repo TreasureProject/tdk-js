@@ -10,10 +10,10 @@ const userProfileSchema = Type.Object({
   tag: nullableStringSchema,
   discriminant: Type.Union([Type.Number(), Type.Null()]),
   tagClaimed: Type.Boolean(),
-  tagModifiedAt: Type.Union([Type.Date(), Type.Null()]),
-  tagLastCheckedAt: Type.Union([Type.Date(), Type.Null()]),
+  tagModifiedAt: nullableStringSchema,
+  tagLastCheckedAt: nullableStringSchema,
   emailSecurityPhrase: nullableStringSchema,
-  emailSecurityPhraseUpdatedAt: Type.Union([Type.Date(), Type.Null()]),
+  emailSecurityPhraseUpdatedAt: nullableStringSchema,
   featuredNftIds: Type.Array(Type.String()),
   featuredBadgeIds: Type.Array(Type.String()),
   highlyFeaturedBadgeId: nullableStringSchema,
@@ -23,7 +23,7 @@ const userProfileSchema = Type.Object({
   showMagicBalance: Type.Boolean(),
   showEthBalance: Type.Boolean(),
   showGemsBalance: Type.Boolean(),
-  testnetFaucetLastUsedAt: Type.Union([Type.Date(), Type.Null()]),
+  testnetFaucetLastUsedAt: nullableStringSchema,
 });
 
 export const readCurrentUserReplySchema = Type.Intersect([
@@ -31,7 +31,7 @@ export const readCurrentUserReplySchema = Type.Intersect([
   userProfileSchema,
 ]);
 
-const updateCurrentUserBodySchema = Type.Object({
+export const updateCurrentUserBodySchema = Type.Object({
   emailSecurityPhrase: Type.Optional(nullableStringSchema),
   featuredNftIds: Type.Optional(Type.Array(Type.String())),
   featuredBadgeIds: Type.Optional(Type.Array(Type.String())),
