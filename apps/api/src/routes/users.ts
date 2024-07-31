@@ -13,6 +13,7 @@ import {
   type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
   readCurrentUserSessionsReplySchema,
+  transformUserProfileResponseFields,
   updateCurrentUserBodySchema,
   updateCurrentUserReplySchema,
 } from "../schema";
@@ -80,12 +81,7 @@ export const usersRoutes =
         reply.send({
           ...user,
           ...restProfile,
-          tagModifiedAt: profile.tagModifiedAt?.toISOString() ?? null,
-          tagLastCheckedAt: profile.tagLastCheckedAt?.toISOString() ?? null,
-          emailSecurityPhraseUpdatedAt:
-            profile.emailSecurityPhraseUpdatedAt?.toISOString() ?? null,
-          testnetFaucetLastUsedAt:
-            profile.testnetFaucetLastUsedAt?.toISOString() ?? null,
+          ...transformUserProfileResponseFields(restProfile),
           smartAccountAddress: user.address,
           allActiveSigners: allActiveSigners.map((activeSigner) => ({
             ...activeSigner,
@@ -181,12 +177,7 @@ export const usersRoutes =
         reply.send({
           ...user,
           ...restProfile,
-          tagModifiedAt: profile.tagModifiedAt?.toISOString() ?? null,
-          tagLastCheckedAt: profile.tagLastCheckedAt?.toISOString() ?? null,
-          emailSecurityPhraseUpdatedAt:
-            profile.emailSecurityPhraseUpdatedAt?.toISOString() ?? null,
-          testnetFaucetLastUsedAt:
-            profile.testnetFaucetLastUsedAt?.toISOString() ?? null,
+          ...transformUserProfileResponseFields(restProfile),
           smartAccountAddress: user.address,
         });
       },

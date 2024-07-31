@@ -121,11 +121,24 @@ export const userSchema = Type.Object({
   ]),
 });
 
-export const userWithSessionsSchema = Type.Intersect([
-  userSchema,
-  Type.Object({
-    allActiveSigners: Type.Array(sessionSchema),
-  }),
-]);
+export const userProfileSchema = Type.Object({
+  tag: nullableStringSchema,
+  discriminant: Type.Union([Type.Number(), Type.Null()]),
+  tagClaimed: Type.Boolean(),
+  tagModifiedAt: nullableStringSchema,
+  tagLastCheckedAt: nullableStringSchema,
+  emailSecurityPhrase: nullableStringSchema,
+  emailSecurityPhraseUpdatedAt: nullableStringSchema,
+  featuredNftIds: Type.Array(Type.String()),
+  featuredBadgeIds: Type.Array(Type.String()),
+  highlyFeaturedBadgeId: nullableStringSchema,
+  about: nullableStringSchema,
+  pfp: nullableStringSchema,
+  banner: nullableStringSchema,
+  showMagicBalance: Type.Boolean(),
+  showEthBalance: Type.Boolean(),
+  showGemsBalance: Type.Boolean(),
+  testnetFaucetLastUsedAt: nullableStringSchema,
+});
 
 export type ErrorReply = Static<typeof errorReplySchema>;

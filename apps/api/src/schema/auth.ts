@@ -1,5 +1,10 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { EXAMPLE_WALLET_ADDRESS, userWithSessionsSchema } from "./shared";
+import {
+  EXAMPLE_WALLET_ADDRESS,
+  sessionSchema,
+  userProfileSchema,
+  userSchema,
+} from "./shared";
 
 const loginPayloadSchema = Type.Object({
   domain: Type.String(),
@@ -33,7 +38,13 @@ export const loginReplySchema = Type.Object({
   token: Type.String({
     description: "Authorization token for the logged in user",
   }),
-  user: userWithSessionsSchema,
+  user: Type.Intersect([
+    userSchema,
+    userProfileSchema,
+    Type.Object({
+      allActiveSigners: Type.Array(sessionSchema),
+    }),
+  ]),
 });
 
 export type ReadLoginPayloadQuerystring = Static<

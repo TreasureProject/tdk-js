@@ -1,34 +1,29 @@
+import type { UserProfile } from "@prisma/client";
 import { type Static, Type } from "@sinclair/typebox";
 import {
   nullableStringSchema,
   sessionSchema,
+  userProfileSchema,
   userSchema,
-  userWithSessionsSchema,
 } from "./shared";
 
-const userProfileSchema = Type.Object({
-  tag: nullableStringSchema,
-  discriminant: Type.Union([Type.Number(), Type.Null()]),
-  tagClaimed: Type.Boolean(),
-  tagModifiedAt: nullableStringSchema,
-  tagLastCheckedAt: nullableStringSchema,
-  emailSecurityPhrase: nullableStringSchema,
-  emailSecurityPhraseUpdatedAt: nullableStringSchema,
-  featuredNftIds: Type.Array(Type.String()),
-  featuredBadgeIds: Type.Array(Type.String()),
-  highlyFeaturedBadgeId: nullableStringSchema,
-  about: nullableStringSchema,
-  pfp: nullableStringSchema,
-  banner: nullableStringSchema,
-  showMagicBalance: Type.Boolean(),
-  showEthBalance: Type.Boolean(),
-  showGemsBalance: Type.Boolean(),
-  testnetFaucetLastUsedAt: nullableStringSchema,
+export const transformUserProfileResponseFields = (
+  profile: Partial<UserProfile>,
+) => ({
+  tagModifiedAt: profile.tagModifiedAt?.toISOString() ?? null,
+  tagLastCheckedAt: profile.tagLastCheckedAt?.toISOString() ?? null,
+  emailSecurityPhraseUpdatedAt:
+    profile.emailSecurityPhraseUpdatedAt?.toISOString() ?? null,
+  testnetFaucetLastUsedAt:
+    profile.testnetFaucetLastUsedAt?.toISOString() ?? null,
 });
 
 export const readCurrentUserReplySchema = Type.Intersect([
-  userWithSessionsSchema,
+  userSchema,
   userProfileSchema,
+  Type.Object({
+    allActiveSigners: Type.Array(sessionSchema),
+  }),
 ]);
 
 export const updateCurrentUserBodySchema = Type.Object({
