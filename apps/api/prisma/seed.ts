@@ -82,6 +82,8 @@ const PROJECT_DATA: Record<
         [arbitrumSepolia.id, "ZeeverseZee"],
         [arbitrumSepolia.id, "ZeeverseItems"],
         [arbitrumSepolia.id, "BulkTransferHelper"],
+        [arbitrumSepolia.id, "MagicswapV2Router"],
+        [arbitrumSepolia.id, "Treasures"],
         [sepolia.id, "MAGIC"],
       ],
       prod: [],
