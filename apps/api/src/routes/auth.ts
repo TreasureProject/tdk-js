@@ -19,8 +19,10 @@ import {
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
   readLoginPayloadReplySchema,
+  transformUserProfileResponseFields,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 
 export const authRoutes =
@@ -84,12 +86,7 @@ export const authRoutes =
           create: {
             address,
           },
-          select: {
-            id: true,
-            address: true,
-            email: true,
-            phoneNumber: true,
-          },
+          select: USER_SELECT_FIELDS,
         });
 
         // User is missing details we could fill in from the embedded wallet
@@ -113,12 +110,7 @@ export const authRoutes =
                 email: embeddedWalletUser.email,
                 phoneNumber: embeddedWalletUser.phone,
               },
-              select: {
-                id: true,
-                address: true,
-                email: true,
-                phoneNumber: true,
-              },
+              select: USER_SELECT_FIELDS,
             });
           }
         }
@@ -131,7 +123,7 @@ export const authRoutes =
         };
 
         // Add user data to JWT payload's context
-        const [authToken, allActiveSigners] = await Promise.all([
+        const [authToken, allActiveSigners, profile] = await Promise.all([
           auth.generateJWT({
             payload,
             context: userContext,
@@ -141,12 +133,21 @@ export const authRoutes =
             address: user.address,
             wagmiConfig,
           }),
+          db.userProfile.upsert({
+            where: { userId: user.id },
+            update: {},
+            create: { userId: user.id },
+            select: USER_PROFILE_SELECT_FIELDS,
+          }),
         ]);
+
         reply.send({
           token: authToken,
           user: {
             ...userContext,
             ...user,
+            ...profile,
+            ...transformUserProfileResponseFields(profile),
             allActiveSigners: allActiveSigners.map((activeSigner) => ({
               ...activeSigner,
               approvedTargets: activeSigner.approvedTargets.map((target) =>

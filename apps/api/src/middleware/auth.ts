@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import type { AddressString } from "@treasure-dev/tdk-core";
+import type { AddressString, UserContext } from "@treasure-dev/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 import type { TdkApiContext } from "../types";
@@ -7,6 +7,7 @@ import { verifyAuth } from "../utils/auth";
 
 declare module "fastify" {
   interface FastifyRequest {
+    userId: string | undefined;
     userAddress: AddressString | undefined;
     overrideUserAddress: AddressString | undefined;
     authError: string | undefined;
@@ -18,6 +19,7 @@ export const withAuth = async (
   { auth }: TdkApiContext,
 ) => {
   // Parse JWT header and obtain user address in middleware
+  app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
   app.decorateRequest("overrideUserAddress", undefined);
   app.decorateRequest("authError", undefined);
@@ -25,9 +27,10 @@ export const withAuth = async (
     if (req.headers.authorization) {
       const authResult = await verifyAuth(auth, req);
       if (authResult.valid) {
+        req.userId = (authResult.parsedJWT.ctx as UserContext | undefined)?.id;
         req.userAddress = authResult.parsedJWT.sub as AddressString;
         Sentry.setUser({
-          id: (authResult.parsedJWT.ctx as { id: string } | undefined)?.id,
+          id: req.userId,
           username: req.userAddress,
         });
       } else {
