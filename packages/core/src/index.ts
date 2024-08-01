@@ -78,4 +78,5 @@ export {
   getSwapRoute,
   getSwapArgs,
   getAddLiquidityArgs,
+  getRemoveLiquidityArgs,
 } from "./magicswap";
