@@ -29,8 +29,12 @@ import {
   type RemoveLiquidityBody,
   type RouteBody,
   type SwapBody,
+  addLiquidityBodySchema,
   poolReplySchema,
+  removeLiquidityBodySchema,
+  routeBodySchema,
   routeReplySchema,
+  swapBodySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
 import {
@@ -116,6 +120,7 @@ export const magicswapRoutes =
           response: {
             200: routeReplySchema,
           },
+          body: routeBodySchema,
         },
       },
       async (req, reply) => {
@@ -153,6 +158,7 @@ export const magicswapRoutes =
           response: {
             200: createTransactionReplySchema,
           },
+          body: swapBodySchema,
         },
       },
       async (req, reply) => {
@@ -264,6 +270,7 @@ export const magicswapRoutes =
           response: {
             200: createTransactionReplySchema,
           },
+          body: addLiquidityBodySchema,
         },
       },
       async (req, reply) => {
@@ -368,6 +375,7 @@ export const magicswapRoutes =
           response: {
             200: createTransactionReplySchema,
           },
+          body: removeLiquidityBodySchema,
         },
       },
       async (req, reply) => {
@@ -405,7 +413,7 @@ export const magicswapRoutes =
           wagmiConfig,
         });
 
-        const addLiquidityArgs = getRemoveLiquidityArgs({
+        const removeLiquidityArgs = getRemoveLiquidityArgs({
           chainId,
           toAddress: userAddress,
           amountLP: BigInt(amountLP),
@@ -417,7 +425,7 @@ export const magicswapRoutes =
           swapLeftover: swapLeftover ?? true,
         });
 
-        if (!addLiquidityArgs.address) {
+        if (!removeLiquidityArgs.address) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
@@ -428,19 +436,19 @@ export const magicswapRoutes =
         try {
           Sentry.setExtra(
             "transaction",
-            JSON.stringify(addLiquidityArgs, null, 2),
+            JSON.stringify(removeLiquidityArgs, null, 2),
           );
           const { result } = await engine.contract.write(
             chainId.toString(),
-            addLiquidityArgs.address,
+            removeLiquidityArgs.address,
             backendWallet,
             {
               abi: magicSwapV2RouterABI,
-              functionName: addLiquidityArgs.functionName,
-              args: addLiquidityArgs.args as string[],
-              txOverrides: addLiquidityArgs.value
+              functionName: removeLiquidityArgs.functionName,
+              args: removeLiquidityArgs.args as string[],
+              txOverrides: removeLiquidityArgs.value
                 ? {
-                    value: addLiquidityArgs.value.toString(),
+                    value: removeLiquidityArgs.value.toString(),
                   }
                 : undefined,
             },
