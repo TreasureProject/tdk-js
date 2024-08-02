@@ -3,6 +3,7 @@ import {
   fetchPool,
   fetchPools,
   getAddLiquidityArgs,
+  getRemoveLiquidityArgs,
   getSwapArgs,
   getSwapRoute,
   magicSwapV2RouterABI,
@@ -25,10 +26,15 @@ import {
   type AddLiquidityBody,
   type PoolParams,
   type PoolReply,
+  type RemoveLiquidityBody,
   type RouteBody,
   type SwapBody,
+  addLiquidityBodySchema,
   poolReplySchema,
+  removeLiquidityBodySchema,
+  routeBodySchema,
   routeReplySchema,
+  swapBodySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
 import {
@@ -114,6 +120,7 @@ export const magicswapRoutes =
           response: {
             200: routeReplySchema,
           },
+          body: routeBodySchema,
         },
       },
       async (req, reply) => {
@@ -151,6 +158,7 @@ export const magicswapRoutes =
           response: {
             200: createTransactionReplySchema,
           },
+          body: swapBodySchema,
         },
       },
       async (req, reply) => {
@@ -262,6 +270,7 @@ export const magicswapRoutes =
           response: {
             200: createTransactionReplySchema,
           },
+          body: addLiquidityBodySchema,
         },
       },
       async (req, reply) => {
@@ -347,7 +356,112 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error performing swap: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error adding liquidity: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+          });
+        }
+      },
+    );
+
+    app.post<{
+      Params: PoolParams;
+      Body: RemoveLiquidityBody;
+      Reply: CreateTransactionReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/remove-liquidity",
+      {
+        schema: {
+          summary: "Removes liquidity to a pool",
+          description: "Removes liquidity to a pool using Magicswap",
+          response: {
+            200: createTransactionReplySchema,
+          },
+          body: removeLiquidityBodySchema,
+        },
+      },
+      async (req, reply) => {
+        const { userAddress, authError, body, chainId, params } = req;
+
+        if (!userAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.AuthError,
+            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+            message: "Unauthorized",
+            data: { authError },
+          });
+        }
+
+        const { id: poolId } = params;
+
+        const {
+          amountLP,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          swapLeftover,
+          backendWallet: overrideBackendWallet,
+        } = body;
+
+        const backendWallet =
+          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
+
+        const pool = await fetchPool({
+          pairId: poolId,
+          chainId,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+          wagmiConfig,
+        });
+
+        const removeLiquidityArgs = getRemoveLiquidityArgs({
+          chainId,
+          toAddress: userAddress,
+          amountLP: BigInt(amountLP),
+          amount0Min: BigInt(amount0Min),
+          amount1Min: BigInt(amount1Min),
+          nfts0,
+          nfts1,
+          pool,
+          swapLeftover: swapLeftover ?? true,
+        });
+
+        if (!removeLiquidityArgs.address) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Error removing liquidity: missing contract address",
+          });
+        }
+
+        try {
+          Sentry.setExtra(
+            "transaction",
+            JSON.stringify(removeLiquidityArgs, null, 2),
+          );
+          const { result } = await engine.contract.write(
+            chainId.toString(),
+            removeLiquidityArgs.address,
+            backendWallet,
+            {
+              abi: magicSwapV2RouterABI,
+              functionName: removeLiquidityArgs.functionName,
+              args: removeLiquidityArgs.args as string[],
+              txOverrides: removeLiquidityArgs.value
+                ? {
+                    value: removeLiquidityArgs.value.toString(),
+                  }
+                : undefined,
+            },
+            false,
+            undefined,
+            userAddress,
+          );
+          reply.send(result);
+        } catch (err) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `Error removing liquidity: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
           });
         }
       },

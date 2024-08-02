@@ -3,26 +3,26 @@ import { getContractAddresses } from "../utils/contracts";
 import type { Pool } from "./fetchPools";
 import type { ContractArgs, NFTInput } from "./types";
 
-export const getAddLiquidityArgs = ({
+export const getRemoveLiquidityArgs = ({
   pool,
   chainId,
+  amountLP,
   toAddress,
+  amount0Min,
+  amount1Min,
   nfts0 = [],
   nfts1 = [],
-  amount0 = 0n,
-  amount1 = 0n,
-  amount0Min = 0n,
-  amount1Min = 0n,
+  swapLeftover,
 }: {
   pool: Pool;
   chainId: SupportedChainId;
   toAddress: AddressString;
+  amountLP: bigint;
+  amount0Min: bigint;
+  amount1Min: bigint;
+  swapLeftover: boolean;
   nfts0?: NFTInput[];
   nfts1?: NFTInput[];
-  amount0?: bigint;
-  amount1?: bigint;
-  amount0Min?: bigint;
-  amount1Min?: bigint;
 }): {
   address: AddressString;
   functionName: string;
@@ -38,8 +38,6 @@ export const getAddLiquidityArgs = ({
     (pool.token1.isNFT && !pool.isNFTNFT && !pool.token0.isETH);
   const tokenA = isTokenAToken1 ? pool.token1 : pool.token0;
   const tokenB = isTokenAToken1 ? pool.token0 : pool.token1;
-  const amountA = isTokenAToken1 ? amount1 : amount0;
-  const amountB = isTokenAToken1 ? amount0 : amount1;
   const amountAMin = isTokenAToken1 ? amount1Min : amount0Min;
   const amountBMin = isTokenAToken1 ? amount0Min : amount1Min;
   const nftsA = isTokenAToken1 ? nfts1 : nfts0;
@@ -67,6 +65,9 @@ export const getAddLiquidityArgs = ({
           tokenId: nftsB.map(({ id }) => id),
           amount: nftsB.map(({ quantity }) => quantity.toString()),
         },
+        amountLP.toString(),
+        amountAMin.toString(),
+        amountBMin.toString(),
         toAddress,
         deadline,
       ],
@@ -77,7 +78,7 @@ export const getAddLiquidityArgs = ({
     if (pool.token0.isETH || pool.token1.isETH) {
       return {
         address: magicSwapV2RouterAddress,
-        functionName: "addLiquidityNFTETH",
+        functionName: "removeLiquidityNFTETH",
         args: [
           {
             token: tokenB.id,
@@ -87,17 +88,19 @@ export const getAddLiquidityArgs = ({
             tokenId: nftsB.map(({ id }) => id),
             amount: nftsB.map(({ quantity }) => quantity.toString()),
           },
-          amountA.toString(),
+          amountLP.toString(),
+          amountBMin.toString(),
+          amountAMin.toString(),
           toAddress,
           deadline,
+          swapLeftover.toString(),
         ],
-        value: amountA,
       };
     }
     // NFT-ERC20
     return {
       address: magicSwapV2RouterAddress,
-      functionName: "addLiquidityNFT",
+      functionName: "removeLiquidityNFT",
       args: [
         {
           token: tokenA.id,
@@ -108,10 +111,12 @@ export const getAddLiquidityArgs = ({
           amount: nftsA.map(({ quantity }) => quantity.toString()),
         },
         tokenB.id,
-        amountB.toString(),
+        amountLP.toString(),
+        amountAMin.toString(),
         amountBMin.toString(),
         toAddress,
         deadline,
+        swapLeftover.toString(),
       ],
     };
   }
@@ -120,28 +125,26 @@ export const getAddLiquidityArgs = ({
   if (pool.token0.isETH || pool.token1.isETH) {
     return {
       address: magicSwapV2RouterAddress,
-      functionName: "addLiquidityETH",
+      functionName: "removeLiquidityETH",
       args: [
         tokenB.id,
-        amountB.toString(),
+        amountLP.toString(),
         amountBMin.toString(),
-        amountA.toString(),
+        amountAMin.toString(),
         toAddress,
         deadline,
       ],
-      value: amountA,
     };
   }
 
   // ERC20-ERC20
   return {
     address: magicSwapV2RouterAddress,
-    functionName: "addLiquidity",
+    functionName: "removeLiquidity",
     args: [
       tokenA.id,
       tokenB.id,
-      amountA.toString(),
-      amountB.toString(),
+      amountLP.toString(),
       amountAMin.toString(),
       amountBMin.toString(),
       toAddress,
