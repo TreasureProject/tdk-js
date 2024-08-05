@@ -28,6 +28,8 @@ import type {
   ReadTransactionReply,
 } from "../../../apps/api/src/schema";
 import type {
+  AddLiquidityBody,
+  RemoveLiquidityBody,
   RouteBody,
   SwapBody,
 } from "../../../apps/api/src/schema/magicswap";
@@ -269,6 +271,28 @@ export class TDKAPI {
         "/magicswap/swap",
         body,
       );
+      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+    },
+    addLiquidity: async (
+      poolId: string,
+      body: AddLiquidityBody,
+      waitForCompletion = true,
+    ) => {
+      const result = await this.post<AddLiquidityBody, CreateTransactionReply>(
+        `/magicswap/pools/${poolId}/add-liquidity`,
+        body,
+      );
+      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+    },
+    removeLiquidity: async (
+      poolId: string,
+      body: RemoveLiquidityBody,
+      waitForCompletion = true,
+    ) => {
+      const result = await this.post<
+        RemoveLiquidityBody,
+        CreateTransactionReply
+      >(`/magicswap/pools/${poolId}/remove-liquidity`, body);
       return waitForCompletion ? this.transaction.wait(result.queueId) : result;
     },
   };
