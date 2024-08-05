@@ -28,6 +28,46 @@ const abiSchema = Type.Object({
   stateMutability: Type.Optional(Type.String()),
 });
 
+const txOverridesSchema = Type.Object({
+  value: Type.Optional(
+    Type.String({
+      examples: ["10000000000"],
+      description: "Amount of native currency to send",
+    }),
+  ),
+  gas: Type.Optional(
+    Type.String({
+      examples: ["530000"],
+      description: "Gas limit for the transaction",
+    }),
+  ),
+  maxFeePerGas: Type.Optional(
+    Type.String({
+      examples: ["1000000000"],
+      description: "Maximum fee per gas",
+    }),
+  ),
+  maxPriorityFeePerGas: Type.Optional(
+    Type.String({
+      examples: ["1000000000"],
+      description: "Maximum priority fee per gas",
+    }),
+  ),
+});
+
+const txArgsSchema = Type.Array(
+  Type.Union([
+    Type.String({
+      description: "The arguments to call on the function",
+      examples: [[EXAMPLE_WALLET_ADDRESS, "1000000000000000000"]],
+    }),
+    Type.Tuple([Type.String(), Type.String()]),
+    Type.Object({}),
+    Type.Array(Type.Any()),
+    Type.Any(),
+  ]),
+);
+
 export const createTransactionBodySchema = Type.Object({
   address: Type.String({
     description: "The address of the contract to call",
@@ -40,46 +80,8 @@ export const createTransactionBodySchema = Type.Object({
     description: "The function to call on the contract",
     examples: ["transfer"],
   }),
-  args: Type.Array(
-    Type.Union([
-      Type.String({
-        description: "The arguments to call on the function",
-        examples: [[EXAMPLE_WALLET_ADDRESS, "1000000000000000000"]],
-      }),
-      Type.Tuple([Type.String(), Type.String()]),
-      Type.Object({}),
-      Type.Array(Type.Any()),
-      Type.Any(),
-    ]),
-  ),
-  txOverrides: Type.Optional(
-    Type.Object({
-      value: Type.Optional(
-        Type.String({
-          examples: ["10000000000"],
-          description: "Amount of native currency to send",
-        }),
-      ),
-      gas: Type.Optional(
-        Type.String({
-          examples: ["530000"],
-          description: "Gas limit for the transaction",
-        }),
-      ),
-      maxFeePerGas: Type.Optional(
-        Type.String({
-          examples: ["1000000000"],
-          description: "Maximum fee per gas",
-        }),
-      ),
-      maxPriorityFeePerGas: Type.Optional(
-        Type.String({
-          examples: ["1000000000"],
-          description: "Maximum priority fee per gas",
-        }),
-      ),
-    }),
-  ),
+  args: txArgsSchema,
+  txOverrides: Type.Optional(txOverridesSchema),
   backendWallet: Type.Optional(Type.String()),
 });
 
@@ -119,6 +121,8 @@ export const readTransactionReplySchema = Type.Object({
   errorMessage: nullableStringSchema,
 });
 
+export type TransactionArguments = Static<typeof txArgsSchema>;
+export type TransactionOverrides = Static<typeof txOverridesSchema>;
 export type CreateTransactionBody = Static<typeof createTransactionBodySchema>;
 export type CreateTransactionReply = Static<
   typeof createTransactionReplySchema

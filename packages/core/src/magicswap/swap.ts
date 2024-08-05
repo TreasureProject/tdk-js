@@ -1,6 +1,25 @@
+import type {
+  AbiParametersToPrimitiveTypes,
+  ExtractAbiFunction,
+} from "abitype";
+
+import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { NFTInput, PoolToken } from "./types";
+
+type SwapFunctionName =
+  | "swapExactTokensForTokens"
+  | "swapTokensForExactTokens"
+  | "swapExactTokensForETH"
+  | "swapTokensForExactETH"
+  | "swapETHForExactTokens"
+  | "swapExactETHForTokens"
+  | "swapTokensForNft"
+  | "swapNftForTokens"
+  | "swapETHForNft"
+  | "swapNftForETH"
+  | "swapNftForNft";
 
 const getAmountMax = (amount: bigint, slippage: number) =>
   amount + (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
@@ -35,28 +54,31 @@ export const getSwapArgs = ({
   slippage?: number;
 }): {
   address: AddressString;
-  functionName: string;
-  args: (string | string[])[];
+  functionName: SwapFunctionName;
+  args: AbiParametersToPrimitiveTypes<
+    ExtractAbiFunction<typeof magicSwapV2RouterABI, SwapFunctionName>["inputs"],
+    "inputs"
+  >;
 } => {
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60);
 
   // From NFT
   if (tokenIn.isNFT) {
     const collectionId = tokenIn.collectionId;
 
     const collectionsIn = nftsIn.map(() => collectionId as AddressString);
-    const tokenIdsIn = nftsIn.map(({ id }) => id);
-    const quantitiesIn = nftsIn.map(({ quantity }) => quantity.toString());
+    const tokenIdsIn = nftsIn.map(({ id }) => BigInt(id));
+    const quantitiesIn = nftsIn.map(({ quantity }) => BigInt(quantity));
     // To NFT
     if (tokenOut.isNFT) {
       const collectionIdOut = tokenOut.collectionId;
       const collectionsOut = nftsOut.map(
         () => collectionIdOut as AddressString,
       );
-      const tokenIdsOut = nftsOut.map(({ id }) => id);
-      const quantitiesOut = nftsOut.map(({ quantity }) => quantity.toString());
+      const tokenIdsOut = nftsOut.map(({ id }) => BigInt(id));
+      const quantitiesOut = nftsOut.map(({ quantity }) => BigInt(quantity));
 
       return {
         address: magicSwapV2RouterAddress,
@@ -87,7 +109,7 @@ export const getSwapArgs = ({
         collectionsIn,
         tokenIdsIn,
         quantitiesIn,
-        amountOutMin.toString(),
+        amountOutMin,
         path,
         toAddress,
         deadline,
@@ -103,8 +125,8 @@ export const getSwapArgs = ({
       : amountIn;
 
     const collectionsOut = nftsOut.map(() => collectionId as AddressString);
-    const tokenIdsOut = nftsOut.map(({ id }) => id);
-    const quantitiesOut = nftsOut.map(({ quantity }) => quantity.toString());
+    const tokenIdsOut = nftsOut.map(({ id }) => BigInt(id));
+    const quantitiesOut = nftsOut.map(({ quantity }) => BigInt(quantity));
 
     return {
       address: magicSwapV2RouterAddress,
@@ -113,7 +135,7 @@ export const getSwapArgs = ({
         collectionsOut,
         tokenIdsOut,
         quantitiesOut,
-        amountInMax.toString(),
+        amountInMax,
         path,
         toAddress,
         deadline,
@@ -130,13 +152,7 @@ export const getSwapArgs = ({
     return {
       address: magicSwapV2RouterAddress,
       functionName: "swapTokensForExactTokens",
-      args: [
-        amountOut.toString(),
-        amountInMax.toString(),
-        path,
-        toAddress,
-        deadline,
-      ],
+      args: [amountOut, amountInMax, path, toAddress, deadline],
     };
   }
 
@@ -148,12 +164,6 @@ export const getSwapArgs = ({
   return {
     address: magicSwapV2RouterAddress,
     functionName: "swapExactTokensForTokens",
-    args: [
-      amountIn.toString(),
-      amountOutMin.toString(),
-      path,
-      toAddress,
-      deadline,
-    ],
+    args: [amountIn, amountOutMin, path, toAddress, deadline],
   };
 };

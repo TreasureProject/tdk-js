@@ -1,7 +1,20 @@
+import type {
+  AbiParametersToPrimitiveTypes,
+  ExtractAbiFunction,
+} from "abitype";
+
+import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { Pool } from "./fetchPools";
-import type { ContractArgs, NFTInput } from "./types";
+import type { NFTInput } from "./types";
+
+type AddLiquidityFunctionName =
+  | "addLiquidity"
+  | "addLiquidityETH"
+  | "addLiquidityNFT"
+  | "addLiquidityNFTETH"
+  | "addLiquidityNFTNFT";
 
 export const getAddLiquidityArgs = ({
   pool,
@@ -25,13 +38,19 @@ export const getAddLiquidityArgs = ({
   amount1Min?: bigint;
 }): {
   address: AddressString;
-  functionName: string;
-  args: (ContractArgs | Record<string, ContractArgs>)[];
+  functionName: AddLiquidityFunctionName;
+  args: AbiParametersToPrimitiveTypes<
+    ExtractAbiFunction<
+      typeof magicSwapV2RouterABI,
+      AddLiquidityFunctionName
+    >["inputs"],
+    "inputs"
+  >;
   value?: bigint;
 } => {
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60);
 
   const isTokenAToken1 =
     pool.token1.isETH ||
@@ -56,22 +75,23 @@ export const getAddLiquidityArgs = ({
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
-          tokenId: nftsA.map(({ id }) => id),
-          amount: nftsA.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsA.map(({ id }) => BigInt(id)),
+          amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         {
           token: tokenB.id,
           collection: Array.from({ length: nftsB.length }).fill(
             tokenB.collectionId,
           ) as AddressString[],
-          tokenId: nftsB.map(({ id }) => id),
-          amount: nftsB.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsB.map(({ id }) => BigInt(id)),
+          amount: nftsB.map(({ quantity }) => BigInt(quantity)),
         },
         toAddress,
         deadline,
       ],
     };
   }
+
   if (pool.hasNFT) {
     // NFT-ETH
     if (pool.token0.isETH || pool.token1.isETH) {
@@ -84,16 +104,17 @@ export const getAddLiquidityArgs = ({
             collection: Array.from({ length: nftsB.length }).fill(
               tokenB.collectionId,
             ) as AddressString[],
-            tokenId: nftsB.map(({ id }) => id),
-            amount: nftsB.map(({ quantity }) => quantity.toString()),
+            tokenId: nftsB.map(({ id }) => BigInt(id)),
+            amount: nftsB.map(({ quantity }) => BigInt(quantity)),
           },
-          amountA.toString(),
+          amountA,
           toAddress,
           deadline,
         ],
         value: amountA,
       };
     }
+
     // NFT-ERC20
     return {
       address: magicSwapV2RouterAddress,
@@ -104,12 +125,12 @@ export const getAddLiquidityArgs = ({
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
-          tokenId: nftsA.map(({ id }) => id),
-          amount: nftsA.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsB.map(({ id }) => BigInt(id)),
+          amount: nftsB.map(({ quantity }) => BigInt(quantity)),
         },
         tokenB.id,
-        amountB.toString(),
-        amountBMin.toString(),
+        amountB,
+        amountBMin,
         toAddress,
         deadline,
       ],
@@ -121,14 +142,7 @@ export const getAddLiquidityArgs = ({
     return {
       address: magicSwapV2RouterAddress,
       functionName: "addLiquidityETH",
-      args: [
-        tokenB.id,
-        amountB.toString(),
-        amountBMin.toString(),
-        amountA.toString(),
-        toAddress,
-        deadline,
-      ],
+      args: [tokenB.id, amountB, amountBMin, amountA, toAddress, deadline],
       value: amountA,
     };
   }
@@ -140,10 +154,10 @@ export const getAddLiquidityArgs = ({
     args: [
       tokenA.id,
       tokenB.id,
-      amountA.toString(),
-      amountB.toString(),
-      amountAMin.toString(),
-      amountBMin.toString(),
+      amountA,
+      amountB,
+      amountAMin,
+      amountBMin,
       toAddress,
       deadline,
     ],

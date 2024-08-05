@@ -79,5 +79,3 @@ export type TokensByCollectionMap = Record<
 >;
 
 export type NFTInput = { id: string; quantity: number };
-
-export type ContractArgs = string | string[];
