@@ -1,4 +1,3 @@
-import type { UserProfile } from "@prisma/client";
 import { type Static, Type } from "@sinclair/typebox";
 import {
   nullableStringSchema,
@@ -6,17 +5,6 @@ import {
   userProfileSchema,
   userSchema,
 } from "./shared";
-
-export const transformUserProfileResponseFields = (
-  profile: Partial<UserProfile>,
-) => ({
-  tagModifiedAt: profile.tagModifiedAt?.toISOString() ?? null,
-  tagLastCheckedAt: profile.tagLastCheckedAt?.toISOString() ?? null,
-  emailSecurityPhraseUpdatedAt:
-    profile.emailSecurityPhraseUpdatedAt?.toISOString() ?? null,
-  testnetFaucetLastUsedAt:
-    profile.testnetFaucetLastUsedAt?.toISOString() ?? null,
-});
 
 export const readCurrentUserReplySchema = Type.Intersect([
   userSchema,
