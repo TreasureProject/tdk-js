@@ -13,13 +13,13 @@ import {
   type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
   readCurrentUserSessionsReplySchema,
-  transformUserProfileResponseFields,
   updateCurrentUserBodySchema,
   updateCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
 import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
+import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
   ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>

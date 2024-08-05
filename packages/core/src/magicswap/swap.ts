@@ -59,6 +59,7 @@ export const getSwapArgs = ({
     ExtractAbiFunction<typeof magicSwapV2RouterABI, SwapFunctionName>["inputs"],
     "inputs"
   >;
+  value?: bigint;
 } => {
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
@@ -71,7 +72,8 @@ export const getSwapArgs = ({
     const collectionsIn = nftsIn.map(() => collectionId as AddressString);
     const tokenIdsIn = nftsIn.map(({ id }) => BigInt(id));
     const quantitiesIn = nftsIn.map(({ quantity }) => BigInt(quantity));
-    // To NFT
+
+    // NFT-NFT
     if (tokenOut.isNFT) {
       const collectionIdOut = tokenOut.collectionId;
       const collectionsOut = nftsOut.map(
@@ -97,11 +99,28 @@ export const getSwapArgs = ({
       };
     }
 
-    // To Token
     const amountOutMin = isExactOut
       ? amountOut
       : getAmountMin(amountOut, slippage);
 
+    // NFT-ETH
+    if (tokenOut.isETH) {
+      return {
+        address: magicSwapV2RouterAddress,
+        functionName: "swapNftForETH",
+        args: [
+          collectionsIn,
+          tokenIdsIn,
+          quantitiesIn,
+          amountOutMin,
+          path,
+          toAddress,
+          deadline,
+        ],
+      };
+    }
+
+    // NFT-ERC20
     return {
       address: magicSwapV2RouterAddress,
       functionName: "swapNftForTokens",
@@ -128,6 +147,24 @@ export const getSwapArgs = ({
     const tokenIdsOut = nftsOut.map(({ id }) => BigInt(id));
     const quantitiesOut = nftsOut.map(({ quantity }) => BigInt(quantity));
 
+    // ETH-NFT
+    if (tokenOut.isETH) {
+      return {
+        address: magicSwapV2RouterAddress,
+        functionName: "swapETHForNft",
+        args: [
+          collectionsOut,
+          tokenIdsOut,
+          quantitiesOut,
+          path,
+          toAddress,
+          deadline,
+        ],
+        value: amountInMax,
+      };
+    }
+
+    // ERC20-NFT
     return {
       address: magicSwapV2RouterAddress,
       functionName: "swapTokensForNft",
@@ -143,12 +180,51 @@ export const getSwapArgs = ({
     };
   }
 
-  // From Token to Token Exact Out
-  if (isExactOut) {
-    const amountInMax = isExactOut
-      ? getAmountMax(amountIn, slippage)
-      : amountIn;
+  const amountInMax = isExactOut ? getAmountMax(amountIn, slippage) : amountIn;
+  const amountOutMin = isExactOut
+    ? amountOut
+    : getAmountMin(amountOut, slippage);
 
+  if (tokenIn.isETH) {
+    // ETH-ERC20 exact out
+    if (isExactOut) {
+      return {
+        address: magicSwapV2RouterAddress,
+        functionName: "swapETHForExactTokens",
+        args: [amountOut, path, toAddress, deadline],
+        value: amountInMax,
+      };
+    }
+
+    // ETH-ERC20 exact in
+    return {
+      address: magicSwapV2RouterAddress,
+      functionName: "swapExactETHForTokens",
+      args: [amountOutMin, path, toAddress, deadline],
+      value: amountIn,
+    };
+  }
+
+  if (tokenOut.isETH) {
+    // ERC20-ETH exact out
+    if (isExactOut) {
+      return {
+        address: magicSwapV2RouterAddress,
+        functionName: "swapTokensForExactETH",
+        args: [amountOut, amountInMax, path, toAddress, deadline],
+      };
+    }
+
+    // ERC20-ETH exact in
+    return {
+      address: magicSwapV2RouterAddress,
+      functionName: "swapExactTokensForETH",
+      args: [amountIn, amountOutMin, path, toAddress, deadline],
+    };
+  }
+
+  // ERC20-ERC20 exact out
+  if (isExactOut) {
     return {
       address: magicSwapV2RouterAddress,
       functionName: "swapTokensForExactTokens",
@@ -156,11 +232,7 @@ export const getSwapArgs = ({
     };
   }
 
-  // From Token to Token Exact In
-  const amountOutMin = isExactOut
-    ? amountOut
-    : getAmountMin(amountOut, slippage);
-
+  // ERC20-ERC20 exact in
   return {
     address: magicSwapV2RouterAddress,
     functionName: "swapExactTokensForTokens",

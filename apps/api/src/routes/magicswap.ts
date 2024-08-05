@@ -238,6 +238,11 @@ export const magicswapRoutes =
             abi: magicSwapV2RouterABI,
             functionName: swapArguments.functionName,
             args: swapArguments.args,
+            txOverrides: swapArguments.value
+              ? {
+                  value: swapArguments.value.toString(),
+                }
+              : undefined,
           });
           reply.send(result);
         } catch (err) {

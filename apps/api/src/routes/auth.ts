@@ -19,11 +19,11 @@ import {
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
   readLoginPayloadReplySchema,
-  transformUserProfileResponseFields,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
+import { transformUserProfileResponseFields } from "../utils/user";
 
 export const authRoutes =
   ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
