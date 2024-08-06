@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 1.4.1
+
+### Patch Changes
+
+- d25ce6b: Temporarily allow consumer apps to specify auth options
+  - @treasure-dev/tdk-core@1.4.1
+
 ## 1.4.0
 
 ### Patch Changes
