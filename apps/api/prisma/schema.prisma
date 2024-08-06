@@ -226,17 +226,16 @@ model UserNotificationSettings {
   @@schema("public")
 }
 
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view Transaction {
-  chain             String?
-  block_number      Decimal?  @db.Decimal
-  block_timestamp   DateTime? @db.Timestamptz(6)
-  transaction_index Decimal?  @db.Decimal
-  transaction_hash  String?
-  from_address      String?
-  to_address        String?
-  value             Decimal?  @db.Decimal
+  id              String   @id
+  chain           String
+  blockNumber     Decimal  @map("block_number") @db.Decimal
+  blockTimestamp  DateTime @map("block_timestamp")
+  transactionHash String   @map("transaction_hash")
+  fromAddress     String   @map("from_address")
+  toAddress       String   @map("to_address")
+  value           Decimal? @db.Decimal
 
-  @@ignore
+  @@map("transactions")
   @@schema("smart_account")
 }

@@ -9,10 +9,16 @@ import {
   type ReadCurrentUserReply,
   type ReadCurrentUserSessionsQuerystring,
   type ReadCurrentUserSessionsReply,
+  type ReadUserTransactionsParams,
+  type ReadUserTransactionsQuerystring,
+  type ReadUserTransactionsReply,
   type UpdateCurrentUserBody,
   type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
+  readCurrentUserSessionsQuerystringSchema,
   readCurrentUserSessionsReplySchema,
+  readUserTransactionsQuerystringSchema,
+  readUserTransactionsReplySchema,
   updateCurrentUserBodySchema,
   updateCurrentUserReplySchema,
 } from "../schema";
@@ -193,6 +199,7 @@ export const usersRoutes =
           summary: "Get user sessions",
           description: "Get current user's on-chain sessions",
           security: [{ authToken: [] }],
+          querystring: readCurrentUserSessionsQuerystringSchema,
           response: {
             200: readCurrentUserSessionsReplySchema,
           },
@@ -227,6 +234,56 @@ export const usersRoutes =
             endTimestamp: activeSigner.endTimestamp.toString(),
           })),
         );
+      },
+    );
+
+    app.get<{
+      Params: ReadUserTransactionsParams;
+      Querystring: ReadUserTransactionsQuerystring;
+      Reply: ReadUserTransactionsReply | ErrorReply;
+    }>(
+      "/users/:address/transactions",
+      {
+        schema: {
+          summary: "Get user transaction history",
+          description: "Get user's Treasure Account transaction history",
+          security: [{ authToken: [] }],
+          querystring: readUserTransactionsQuerystringSchema,
+          response: {
+            200: readUserTransactionsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { address } = req.params;
+        const { toAddress, page = 1, limit = 25 } = req.query;
+
+        const filter = {
+          fromAddress: address,
+          toAddress,
+        };
+
+        const [total, transactions] = await db.$transaction([
+          db.transaction.count({ where: filter }),
+          db.transaction.findMany({
+            where: filter,
+            take: limit,
+            skip: (page - 1) * limit,
+            orderBy: {
+              blockTimestamp: "desc",
+            },
+          }),
+        ]);
+
+        reply.send({
+          results: transactions.map((transaction) => ({
+            ...transaction,
+            blockNumber: transaction.blockNumber.toString(),
+            blockTimestamp: transaction.blockTimestamp.toISOString(),
+            value: transaction.value?.toString() ?? "0",
+          })),
+          total,
+        });
       },
     );
   };
