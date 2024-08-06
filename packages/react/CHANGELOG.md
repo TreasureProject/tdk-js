@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-react
 
+## 1.4.0
+
+### Patch Changes
+
+- 361c861: Added telegram to social login options
+- Updated dependencies [361c861]
+- Updated dependencies [72d45e9]
+- Updated dependencies [ea0053b]
+- Updated dependencies [ac072df]
+  - @treasure-dev/tdk-core@1.4.0
+
 ## 1.3.0
 
 ### Patch Changes
