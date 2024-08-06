@@ -9,6 +9,7 @@ export const SUPPORTED_WALLETS = [
         "apple",
         "discord",
         "farcaster",
+        "telegram",
         "passkey",
         "phone",
       ],
