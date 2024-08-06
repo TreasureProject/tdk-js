@@ -170,6 +170,7 @@ const PROJECT_DATA: Record<
         [arbitrumSepolia.id, "0x7f5bbc6a35150fc9c1716b66776fb664307295e8"],
         [arbitrumSepolia.id, "0x68a0dc480abb5228e0d3ac6764c834ad5c88121a"],
         [arbitrumSepolia.id, "0xf3a50c9ade296567f3b5a89d4659bcf0effd44f6"],
+        [arbitrumSepolia.id, "0x056dc78f505ad2d4ea306761d039be318bc92cd4"],
         [sepolia.id, "CRV"],
         [sepolia.id, "VEE"],
         [sepolia.id, "ZeeverseLlama"],
