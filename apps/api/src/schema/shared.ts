@@ -17,7 +17,7 @@ const errorReplySchema = Type.Object({
   error: Type.String(),
 });
 
-export const baseReplySchema: object = {
+export const badRequestReplySchema: object = {
   400: {
     description: "Bad Request",
     ...Type.Object({
@@ -27,6 +27,9 @@ export const baseReplySchema: object = {
       }),
     }),
   },
+};
+
+export const unauthorizedReplySchema: object = {
   401: {
     description: "Unauthorized",
     ...Type.Object({
@@ -36,6 +39,9 @@ export const baseReplySchema: object = {
       }),
     }),
   },
+};
+
+export const forbiddenReplySchema: object = {
   403: {
     description: "Forbidden",
     ...Type.Object({
@@ -45,6 +51,9 @@ export const baseReplySchema: object = {
       }),
     }),
   },
+};
+
+export const notFoundReplySchema: object = {
   404: {
     description: "Not Found",
     ...Type.Object({
@@ -54,6 +63,9 @@ export const baseReplySchema: object = {
       }),
     }),
   },
+};
+
+export const internalServerErrorReplySchema: object = {
   500: {
     description: "Internal Server Error",
     ...Type.Object({

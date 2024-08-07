@@ -27,7 +27,6 @@ export type TdkApiEnv = {
   THIRDWEB_SECRET_KEY: string;
   TROVE_API_URL: string;
   TROVE_API_KEY: string;
-  ZEEVERSE_API_URL: string;
 };
 
 export type TdkApiContext = {

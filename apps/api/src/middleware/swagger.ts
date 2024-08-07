@@ -1,8 +1,12 @@
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
-
-import { baseReplySchema } from "../schema";
+import {
+  badRequestReplySchema,
+  forbiddenReplySchema,
+  internalServerErrorReplySchema,
+  unauthorizedReplySchema,
+} from "../schema";
 
 export const withSwagger = async (app: FastifyInstance) => {
   await app.register(swagger, {
@@ -14,7 +18,21 @@ export const withSwagger = async (app: FastifyInstance) => {
         description:
           "Backend APIs for the Treasure Development Kit powering the Treasure Web3 gaming ecosystem",
         version: "1.0.0",
+        contact: {
+          name: "Treasure Engineering",
+          email: "engineering@treasure.lol",
+        },
       },
+      servers: [
+        {
+          url: "https://tdk-api.treasure.lol",
+          description: "Production server",
+        },
+        {
+          url: "https://tdk-api.spellcaster.lol",
+          description: "Development server",
+        },
+      ],
       components: {
         securitySchemes: {
           authToken: {
@@ -50,7 +68,20 @@ export const withSwagger = async (app: FastifyInstance) => {
       if (nextSchema.response) {
         nextSchema.response = {
           ...nextSchema.response,
-          ...baseReplySchema,
+          // 400 possible if endpoint accepts body payload
+          ...(nextSchema.body
+            ? {
+                ...badRequestReplySchema,
+              }
+            : undefined),
+          // 401 and 403 possible if endpoint requires authentication
+          ...(nextSchema.security
+            ? {
+                ...unauthorizedReplySchema,
+                ...forbiddenReplySchema,
+              }
+            : undefined),
+          ...internalServerErrorReplySchema,
         };
       }
 

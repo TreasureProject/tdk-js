@@ -14,6 +14,7 @@ import {
   type ReadUserTransactionsReply,
   type UpdateCurrentUserBody,
   type UpdateCurrentUserReply,
+  notFoundReplySchema,
   readCurrentUserReplySchema,
   readCurrentUserSessionsQuerystringSchema,
   readCurrentUserSessionsReplySchema,
@@ -41,6 +42,7 @@ export const usersRoutes =
           security: [{ authToken: [] }],
           response: {
             200: readCurrentUserReplySchema,
+            404: notFoundReplySchema,
           },
         },
       },
@@ -78,6 +80,7 @@ export const usersRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
+            statusCode: 404,
             message: "User not found",
           });
         }
@@ -116,6 +119,7 @@ export const usersRoutes =
           body: updateCurrentUserBodySchema,
           response: {
             200: updateCurrentUserReplySchema,
+            404: notFoundReplySchema,
           },
         },
       },
@@ -174,6 +178,7 @@ export const usersRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
+            statusCode: 404,
             message: "User not found",
           });
         }
