@@ -7,16 +7,26 @@ import {
 } from "thirdweb/react";
 import { useTreasure } from "../contexts/treasure";
 
-import type { Wallet } from "thirdweb/wallets";
+import {
+  type InAppWalletAuth,
+  type Wallet,
+  inAppWallet,
+} from "thirdweb/wallets";
 import { SUPPORTED_WALLETS } from "../utils/wallet";
 
 type Props = {
   appName: string;
   appIconUri?: string;
   theme?: "light" | "dark";
+  supportedAuthOptions?: InAppWalletAuth[];
 };
 
-export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
+export const useConnect = ({
+  appName,
+  appIconUri,
+  theme = "light",
+  supportedAuthOptions,
+}: Props) => {
   const { chain, contractAddresses, client, logIn, logOut } = useTreasure();
   const { connect } = useConnectModal();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
@@ -57,7 +67,9 @@ export const useConnect = ({ appName, appIconUri, theme = "light" }: Props) => {
   const openConnectModal = async () => {
     const wallet = (await connect({
       client,
-      wallets: SUPPORTED_WALLETS,
+      wallets: supportedAuthOptions
+        ? [inAppWallet({ auth: { options: supportedAuthOptions } })]
+        : SUPPORTED_WALLETS,
       chain,
       accountAbstraction: {
         chain,

@@ -2,11 +2,6 @@ name: Deploy Login
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "apps/login/**"
-      - "packages/**"
-    branches:
-      - main
     tags:
       - login-v*
 jobs:

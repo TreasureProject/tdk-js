@@ -5,7 +5,6 @@ SDK for the Treasure ecosystem
 ## Apps
 
 - [@treasure-dev/tdk-api](./apps/api)
-- [@treasure-dev/tdk-login](./apps/login)
 
 ## Packages
 
@@ -16,8 +15,7 @@ SDK for the Treasure ecosystem
 
 - [Treasure Connect (Core)](./examples/connect-core)
 - [Treasure Connect (React)](./examples/connect-react) - [Live Demo](https://tdk-examples-connect.vercel.app)
-- [Harvester](./examples/harvester) - [Live Demo](https://tdk-examples-harvester.vercel.app)
-- [Payments](./examples/payments)
+- [Magicswap](./examples/magicswap)
 
 ## Development
 
@@ -37,10 +35,11 @@ Start watch mode for base workspaces:
 npm run dev
 ```
 
-Start any supplemental apps:
+Start any example apps:
 
 ```bash
-$ npm run dev:login
+$ cd examples/connect-react
+$ npm run dev
 ```
 
 ### Contributing
@@ -48,5 +47,5 @@ $ npm run dev:login
 Before creating a PR, add a [changeset](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md) to your commit:
 
 ```bash
-npm run changeset
+npm run package:changeset
 ```

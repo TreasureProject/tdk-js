@@ -20,8 +20,6 @@ export { erc721Abi };
 export { erc1155Abi } from "./abis/erc1155Abi";
 export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
-export { paymentsModuleAbi } from "./abis/paymentsModuleAbi";
-export { priceFeedAbi } from "./abis/priceFeedAbi";
 export { magicSwapV2RouterABI } from "./abis/magicSwapV2RouterAbi";
 export { TDKAPI } from "./api";
 export { truncateEthAddress } from "./utils/address";
@@ -29,20 +27,16 @@ export { sumArray } from "./utils/array";
 export {
   getContractAddress,
   getContractAddresses,
-  getTokenPriceFeedContract,
 } from "./utils/contracts";
 export {
   formatAmount,
   formatUSD,
-  getCurrencyAddress,
-  getTokenAddress,
 } from "./utils/currency";
 export {
   getDateHoursFromNow,
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
-export { PaymentsPriceType, getPaymentsPriceType } from "./utils/payments";
 
 // Connect
 export { getAllActiveSigners } from "./connect/accounts";

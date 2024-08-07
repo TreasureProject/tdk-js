@@ -150,10 +150,6 @@ export const CONTRACT_ADDRESSES: Record<
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
     ARB: "0x912ce59144191c1204e64559fe8253a0e49e6548",
     VEE: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
-    // Price feeds
-    MAGICUSDPriceFeed: "0x47e55ccec6582838e173f252d08afd8116c2202d",
-    ARBUSDPriceFeed: "0xb2a824043730fe05f3da2efafa1cbbe83fa548d6",
-    ETHUSDPriceFeed: "0x639fe6ab55c921f74e7fac1ee960c0b6293ba612",
     // Bridgeworld
     Middleman: "0x3ea9ceaebdeb702fcbc576710084c464431584c8",
     Corruption: "0x6b66d774a862539f84128f171db1940302c4671e",
@@ -198,10 +194,6 @@ export const CONTRACT_ADDRESSES: Record<
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
     ARB: zeroAddress,
     VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
-    // Price feeds
-    MAGICUSDPriceFeed: "0x0fb99723aee6f420bead13e6bbb79b7e6f034298",
-    ARBUSDPriceFeed: zeroAddress,
-    ETHUSDPriceFeed: "0xd30e2101a97dcbaebcbc04f14c3f624e67a35165",
     // Bridgeworld
     Middleman: "0x81ece9e2a45e5c4c563316dae125e9dce2fa0d4b",
     Corruption: "0x4ab3969a7af0f97da1057a8eb5cc8f54cd5dc576",

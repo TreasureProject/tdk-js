@@ -1,5 +1,19 @@
 # @treasure-dev/tdk-core
 
+## 1.4.1
+
+## 1.4.0
+
+### Minor Changes
+
+- 72d45e9: add remove liquidity helpers and API endpoint
+- ea0053b: add eth based swap support
+- ac072df: add magicswap liquidity api helpers
+
+### Patch Changes
+
+- 361c861: Added telegram to social login options
+
 ## 1.3.0
 
 ### Minor Changes
