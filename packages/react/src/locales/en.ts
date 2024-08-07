@@ -11,21 +11,6 @@ export const en = {
       insufficientBalance: "Insufficient balance",
       copyAddress: "Copy Address",
     },
-    payments: {
-      cart: {
-        title: "Checkout Overview",
-        title_success: "Transaction Completed",
-        terms:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-        termsCopy: "© 2021-2023 Treasure. All Rights Reserved.",
-        optionsTitle: "Select payment token:",
-        submit: "Check out",
-        approveAndSubmit: "Approve & check out",
-        successMessageTitle: "Thanks for your order!",
-        successMessageDescription:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-      },
-    },
     login: {
       connect: "Connect",
       disconnect: "Disconnect",
