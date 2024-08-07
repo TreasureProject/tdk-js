@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "apps/api/**"
-      - "packages/**"
+      - "packages/core/**"
     branches:
       - main
     tags:

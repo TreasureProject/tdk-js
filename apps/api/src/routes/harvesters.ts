@@ -37,6 +37,7 @@ export const harvestersRoutes =
           summary: "Get Harvester",
           description:
             "Get Harvester details including user info if valid authorization token is provided",
+          deprecated: true,
           response: {
             200: readHarvesterReplySchema,
           },
@@ -94,6 +95,7 @@ export const harvestersRoutes =
           summary: "Get Harvester Corruption Removal",
           description:
             "Get Corruption Removal recipes for Harvester including user info if valid authorization token is provided",
+          deprecated: true,
           response: {
             200: readHarvesterCorruptionRemovalReplySchema,
           },

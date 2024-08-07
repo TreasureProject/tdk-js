@@ -37,10 +37,6 @@ export type OnErrorFn = (error?: Error) => void;
 
 // Contracts
 type TokenContract = "MAGIC" | "ARB" | "VEE" | "CRV";
-export type PriceFeedContract =
-  | "MAGICUSDPriceFeed"
-  | "ARBUSDPriceFeed"
-  | "ETHUSDPriceFeed";
 type BridgeworldContract =
   // General
   | "Middleman"
@@ -86,17 +82,12 @@ export type Contract =
   | "TreasureConduit"
   | "RubyNFT"
   | TokenContract
-  | PriceFeedContract
   | BridgeworldContract
   | MagicswapContract
   | ZeeverseContract;
 
 // Approvals
 export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";
-
-// Payments
-export type Token = "ARB" | "MAGIC" | "ETH" | AddressString;
-export type Currency = Token | "USD";
 
 // API
 export type Project = Awaited<
