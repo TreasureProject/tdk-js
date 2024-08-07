@@ -32,11 +32,37 @@ export const updateCurrentUserReplySchema = Type.Intersect([
   userProfileSchema,
 ]);
 
-const readCurrentUserSessionsQuerystringSchema = Type.Object({
+export const readCurrentUserSessionsQuerystringSchema = Type.Object({
   chainId: Type.Number(),
 });
 
 export const readCurrentUserSessionsReplySchema = Type.Array(sessionSchema);
+
+const readUserTransactionsParamsSchema = Type.Object({
+  address: Type.String(),
+});
+
+export const readUserTransactionsQuerystringSchema = Type.Object({
+  chainId: Type.Optional(Type.Number()),
+  toAddress: Type.Optional(Type.String()),
+  page: Type.Optional(Type.Number({ minimum: 1 })),
+  limit: Type.Optional(Type.Number({ minimum: 1, maximum: 50 })),
+});
+
+export const readUserTransactionsReplySchema = Type.Object({
+  results: Type.Array(
+    Type.Object({
+      chainId: Type.Number(),
+      blockNumber: Type.String(),
+      blockTimestamp: Type.String(),
+      transactionHash: Type.String(),
+      fromAddress: Type.String(),
+      toAddress: Type.String(),
+      value: Type.String(),
+    }),
+  ),
+  total: Type.Number(),
+});
 
 export type ReadCurrentUserReply = Static<typeof readCurrentUserReplySchema>;
 export type ReadCurrentUserSessionsQuerystring = Static<
@@ -48,4 +74,13 @@ export type ReadCurrentUserSessionsReply = Static<
 export type UpdateCurrentUserBody = Static<typeof updateCurrentUserBodySchema>;
 export type UpdateCurrentUserReply = Static<
   typeof updateCurrentUserReplySchema
+>;
+export type ReadUserTransactionsParams = Static<
+  typeof readUserTransactionsParamsSchema
+>;
+export type ReadUserTransactionsQuerystring = Static<
+  typeof readUserTransactionsQuerystringSchema
+>;
+export type ReadUserTransactionsReply = Static<
+  typeof readUserTransactionsReplySchema
 >;

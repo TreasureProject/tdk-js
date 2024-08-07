@@ -1,11 +1,12 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["tracing"]
+  previewFeatures = ["multiSchema", "tracing", "views"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "smart_account"]
 }
 
 // Partner within the Treasure ecosystem
@@ -31,6 +32,7 @@ model Project {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("project")
+  @@schema("public")
 }
 
 // Project wallet that can be used to cover gas when desired
@@ -51,6 +53,7 @@ model BackendWallet {
 
   @@unique([chainId, address])
   @@map("backend_wallet")
+  @@schema("public")
 }
 
 // Contracts that a project user's session should have write access to
@@ -71,6 +74,7 @@ model CallTarget {
 
   @@unique([chainId, address])
   @@map("call_target")
+  @@schema("public")
 }
 
 model User {
@@ -95,6 +99,7 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user")
+  @@schema("public")
 }
 
 model UserProfile {
@@ -142,6 +147,7 @@ model UserProfile {
 
   @@unique([tag, discriminant])
   @@map("user_profile")
+  @@schema("public")
 }
 
 enum SocialNetwork {
@@ -152,6 +158,8 @@ enum SocialNetwork {
   STEAM
   TWITCH
   TWITTER
+
+  @@schema("public")
 }
 
 model UserSocialAccount {
@@ -178,6 +186,7 @@ model UserSocialAccount {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user_social_account")
+  @@schema("public")
 }
 
 enum NotificationType {
@@ -186,6 +195,8 @@ enum NotificationType {
   ITEM_SOLD
   ITEM_PURCHASED
   MARKETING
+
+  @@schema("public")
 }
 
 model UserNotificationSettings {
@@ -212,4 +223,19 @@ model UserNotificationSettings {
   @@unique([type, userId])
   @@unique([type, legacyAddress])
   @@map("user_notification_settings")
+  @@schema("public")
+}
+
+view Transaction {
+  id              String   @id
+  chainId         Int      @map("chain_id")
+  blockNumber     Decimal  @map("block_number") @db.Decimal
+  blockTimestamp  DateTime @map("block_timestamp")
+  transactionHash String   @map("transaction_hash")
+  fromAddress     String   @map("from_address")
+  toAddress       String   @map("to_address")
+  value           Decimal? @db.Decimal
+
+  @@map("transactions")
+  @@schema("smart_account")
 }
