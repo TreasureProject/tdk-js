@@ -52,7 +52,7 @@ export const readUserTransactionsQuerystringSchema = Type.Object({
 export const readUserTransactionsReplySchema = Type.Object({
   results: Type.Array(
     Type.Object({
-      chain: Type.String(),
+      chainId: Type.Number(),
       blockNumber: Type.String(),
       blockTimestamp: Type.String(),
       transactionHash: Type.String(),

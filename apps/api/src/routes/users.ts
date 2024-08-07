@@ -256,9 +256,10 @@ export const usersRoutes =
       },
       async (req, reply) => {
         const { address } = req.params;
-        const { toAddress, page = 1, limit = 25 } = req.query;
+        const { chainId, toAddress, page = 1, limit = 25 } = req.query;
 
         const filter = {
+          chainId,
           fromAddress: address,
           toAddress,
         };

@@ -228,7 +228,7 @@ model UserNotificationSettings {
 
 view Transaction {
   id              String   @id
-  chain           String
+  chainId         Int      @map("chain_id")
   blockNumber     Decimal  @map("block_number") @db.Decimal
   blockTimestamp  DateTime @map("block_timestamp")
   transactionHash String   @map("transaction_hash")
