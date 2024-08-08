@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 1.5.0
+
+### Minor Changes
+
+- f4ff171: Removed payments module hooks, utils and components
+
 ## 1.4.1
 
 ## 1.4.0
