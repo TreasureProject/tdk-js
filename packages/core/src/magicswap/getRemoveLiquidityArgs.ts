@@ -1,7 +1,20 @@
+import type {
+  AbiParametersToPrimitiveTypes,
+  ExtractAbiFunction,
+} from "abitype";
+
+import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
 import type { AddressString, SupportedChainId } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { Pool } from "./fetchPools";
-import type { ContractArgs, NFTInput } from "./types";
+import type { NFTInput } from "./types";
+
+type RemoveLiquidityFunctionName =
+  | "removeLiquidity"
+  | "removeLiquidityETH"
+  | "removeLiquidityNFT"
+  | "removeLiquidityNFTETH"
+  | "removeLiquidityNFTNFT";
 
 export const getRemoveLiquidityArgs = ({
   pool,
@@ -25,13 +38,19 @@ export const getRemoveLiquidityArgs = ({
   nfts1?: NFTInput[];
 }): {
   address: AddressString;
-  functionName: string;
-  args: (ContractArgs | Record<string, ContractArgs>)[];
+  functionName: RemoveLiquidityFunctionName;
+  args: AbiParametersToPrimitiveTypes<
+    ExtractAbiFunction<
+      typeof magicSwapV2RouterABI,
+      RemoveLiquidityFunctionName
+    >["inputs"],
+    "inputs"
+  >;
   value?: bigint;
 } => {
   const contractAddresses = getContractAddresses(chainId);
   const magicSwapV2RouterAddress = contractAddresses.MagicswapV2Router;
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60).toString();
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 30 * 60);
 
   const isTokenAToken1 =
     pool.token1.isETH ||
@@ -47,27 +66,27 @@ export const getRemoveLiquidityArgs = ({
   if (pool.isNFTNFT) {
     return {
       address: magicSwapV2RouterAddress,
-      functionName: "addLiquidityNFTNFT",
+      functionName: "removeLiquidityNFTNFT",
       args: [
         {
           token: tokenA.id,
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
-          tokenId: nftsA.map(({ id }) => id),
-          amount: nftsA.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsA.map(({ id }) => BigInt(id)),
+          amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         {
           token: tokenB.id,
           collection: Array.from({ length: nftsB.length }).fill(
             tokenB.collectionId,
           ) as AddressString[],
-          tokenId: nftsB.map(({ id }) => id),
-          amount: nftsB.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsA.map(({ id }) => BigInt(id)),
+          amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
-        amountLP.toString(),
-        amountAMin.toString(),
-        amountBMin.toString(),
+        amountLP,
+        amountAMin,
+        amountBMin,
         toAddress,
         deadline,
       ],
@@ -85,15 +104,15 @@ export const getRemoveLiquidityArgs = ({
             collection: Array.from({ length: nftsB.length }).fill(
               tokenB.collectionId,
             ) as AddressString[],
-            tokenId: nftsB.map(({ id }) => id),
-            amount: nftsB.map(({ quantity }) => quantity.toString()),
+            tokenId: nftsA.map(({ id }) => BigInt(id)),
+            amount: nftsA.map(({ quantity }) => BigInt(quantity)),
           },
-          amountLP.toString(),
-          amountBMin.toString(),
-          amountAMin.toString(),
+          amountLP,
+          amountBMin,
+          amountAMin,
           toAddress,
           deadline,
-          swapLeftover.toString(),
+          swapLeftover,
         ],
       };
     }
@@ -107,16 +126,16 @@ export const getRemoveLiquidityArgs = ({
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
-          tokenId: nftsA.map(({ id }) => id),
-          amount: nftsA.map(({ quantity }) => quantity.toString()),
+          tokenId: nftsA.map(({ id }) => BigInt(id)),
+          amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         tokenB.id,
-        amountLP.toString(),
-        amountAMin.toString(),
-        amountBMin.toString(),
+        amountLP,
+        amountAMin,
+        amountBMin,
         toAddress,
         deadline,
-        swapLeftover.toString(),
+        swapLeftover,
       ],
     };
   }
@@ -126,14 +145,7 @@ export const getRemoveLiquidityArgs = ({
     return {
       address: magicSwapV2RouterAddress,
       functionName: "removeLiquidityETH",
-      args: [
-        tokenB.id,
-        amountLP.toString(),
-        amountBMin.toString(),
-        amountAMin.toString(),
-        toAddress,
-        deadline,
-      ],
+      args: [tokenB.id, amountLP, amountBMin, amountAMin, toAddress, deadline],
     };
   }
 
@@ -144,9 +156,9 @@ export const getRemoveLiquidityArgs = ({
     args: [
       tokenA.id,
       tokenB.id,
-      amountLP.toString(),
-      amountAMin.toString(),
-      amountBMin.toString(),
+      amountLP,
+      amountAMin,
+      amountBMin,
       toAddress,
       deadline,
     ],

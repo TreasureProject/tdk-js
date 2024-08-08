@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/node";
 import {
   fetchPool,
   fetchPools,
@@ -43,6 +42,7 @@ import {
   TdkError,
   parseEngineErrorMessage,
 } from "../utils/error";
+import { writeTransaction } from "../utils/transaction";
 
 export const magicswapRoutes =
   ({ env, wagmiConfig, engine }: TdkApiContext): FastifyPluginAsync =>
@@ -229,28 +229,21 @@ export const magicswapRoutes =
         }
 
         try {
-          Sentry.setExtra(
-            "transaction",
-            JSON.stringify(swapArguments, null, 2),
-          );
-          const { result } = await engine.contract.write(
-            chainId.toString(),
-            swapArguments.address,
+          const result = await writeTransaction({
+            engine,
+            chainId,
+            contractAddress: swapArguments.address,
             backendWallet,
-            {
-              abi: magicSwapV2RouterABI,
-              functionName: swapArguments.functionName,
-              args: swapArguments.args as string[],
-              txOverrides: swapArguments.value
-                ? {
-                    value: swapArguments.value.toString(),
-                  }
-                : undefined,
-            },
-            false,
-            undefined,
-            userAddress,
-          );
+            smartAccountAddress: userAddress,
+            abi: magicSwapV2RouterABI,
+            functionName: swapArguments.functionName,
+            args: swapArguments.args,
+            txOverrides: swapArguments.value
+              ? {
+                  value: swapArguments.value.toString(),
+                }
+              : undefined,
+          });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
@@ -334,28 +327,21 @@ export const magicswapRoutes =
         }
 
         try {
-          Sentry.setExtra(
-            "transaction",
-            JSON.stringify(addLiquidityArgs, null, 2),
-          );
-          const { result } = await engine.contract.write(
-            chainId.toString(),
-            addLiquidityArgs.address,
+          const result = await writeTransaction({
+            engine,
+            chainId,
+            contractAddress: addLiquidityArgs.address,
             backendWallet,
-            {
-              abi: magicSwapV2RouterABI,
-              functionName: addLiquidityArgs.functionName,
-              args: addLiquidityArgs.args as string[],
-              txOverrides: addLiquidityArgs.value
-                ? {
-                    value: addLiquidityArgs.value.toString(),
-                  }
-                : undefined,
-            },
-            false,
-            undefined,
-            userAddress,
-          );
+            smartAccountAddress: userAddress,
+            abi: magicSwapV2RouterABI,
+            functionName: addLiquidityArgs.functionName,
+            args: addLiquidityArgs.args,
+            txOverrides: addLiquidityArgs.value
+              ? {
+                  value: addLiquidityArgs.value.toString(),
+                }
+              : undefined,
+          });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
@@ -439,28 +425,21 @@ export const magicswapRoutes =
         }
 
         try {
-          Sentry.setExtra(
-            "transaction",
-            JSON.stringify(removeLiquidityArgs, null, 2),
-          );
-          const { result } = await engine.contract.write(
-            chainId.toString(),
-            removeLiquidityArgs.address,
+          const result = await writeTransaction({
+            engine,
+            chainId,
+            contractAddress: removeLiquidityArgs.address,
             backendWallet,
-            {
-              abi: magicSwapV2RouterABI,
-              functionName: removeLiquidityArgs.functionName,
-              args: removeLiquidityArgs.args as string[],
-              txOverrides: removeLiquidityArgs.value
-                ? {
-                    value: removeLiquidityArgs.value.toString(),
-                  }
-                : undefined,
-            },
-            false,
-            undefined,
-            userAddress,
-          );
+            smartAccountAddress: userAddress,
+            abi: magicSwapV2RouterABI,
+            functionName: removeLiquidityArgs.functionName,
+            args: removeLiquidityArgs.args,
+            txOverrides: removeLiquidityArgs.value
+              ? {
+                  value: removeLiquidityArgs.value.toString(),
+                }
+              : undefined,
+          });
           reply.send(result);
         } catch (err) {
           throw new TdkError({

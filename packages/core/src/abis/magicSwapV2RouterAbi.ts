@@ -797,4 +797,4 @@ export const magicSwapV2RouterABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
