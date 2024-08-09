@@ -1,5 +1,18 @@
 # @treasure-dev/tdk-react
 
+## 1.5.0
+
+### Minor Changes
+
+- f4ff171: Removed payments module hooks, utils and components
+
+### Patch Changes
+
+- 59f25c3: Removed global base CSS styles from package
+- Updated dependencies [f4ff171]
+- Updated dependencies [9e56447]
+  - @treasure-dev/tdk-core@1.5.0
+
 ## 1.4.1
 
 ### Patch Changes
