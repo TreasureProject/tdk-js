@@ -125,8 +125,8 @@ export const getAddLiquidityArgs = ({
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
-          tokenId: nftsB.map(({ id }) => BigInt(id)),
-          amount: nftsB.map(({ quantity }) => BigInt(quantity)),
+          tokenId: nftsA.map(({ id }) => BigInt(id)),
+          amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         tokenB.id,
         amountB,
