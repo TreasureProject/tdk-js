@@ -209,6 +209,7 @@ const PROJECT_DATA: Record<
         [arbitrum.id, "0x8f37db83fe482194b72309d144d996697ddaa5b3"],
         [arbitrum.id, "0x0a32100989e290d49cb550026158c7cea2eee445"],
         [arbitrum.id, "0x31496de3e78484bc0c30b92249f9b1aaebdc1ff5"],
+        [arbitrum.id, "0x5f04e5d409c5bd1b1545619931d3713f68e448d2"],
         [mainnet.id, "CRV"],
         [mainnet.id, "ZeeverseLlama"],
         [mainnet.id, "ZeeverseLlamaEvolve"],
