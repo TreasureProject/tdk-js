@@ -38,8 +38,7 @@
     "build": "tsup",
     "generate": "icons build -i ./icons -o ./src/icons --optimize",
     "dev": "npm run build -- --watch",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook": "storybook dev"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
