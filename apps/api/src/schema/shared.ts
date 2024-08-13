@@ -91,6 +91,46 @@ export const sessionSchema = Type.Object({
   }),
 });
 
+const tokenSchema = Type.Object({
+  address: Type.String({
+    description: "Token contract address",
+  }),
+  tokenId: Type.Number({
+    description: "Token ID",
+  }),
+  name: Type.String({
+    description: "Token name",
+  }),
+  image: Type.String({
+    description: "Token image URL",
+  }),
+  imageAlt: Type.Optional(
+    Type.String({
+      description: "Alternative token image URL",
+    }),
+  ),
+  attributes: Type.Array(
+    Type.Object({
+      type: Type.String({
+        description: "Attribute name",
+      }),
+      value: Type.Union([Type.String(), Type.Number()]),
+    }),
+  ),
+});
+
+export const inventoryTokenSchema = Type.Intersect([
+  tokenSchema,
+  Type.Object({
+    user: Type.String({
+      description: "Token owner address",
+    }),
+    balance: Type.Number({
+      description: "Token balance for owner",
+    }),
+  }),
+]);
+
 export const userSchema = Type.Object({
   id: Type.String({
     description: "User unique identifier",

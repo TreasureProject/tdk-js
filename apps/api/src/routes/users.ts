@@ -8,13 +8,17 @@ import {
   type ErrorReply,
   type ReadCurrentUserReply,
   type ReadCurrentUserSessionsQuerystring,
+  type ReadCurrentUserInventoryQuerystring,
   type ReadCurrentUserSessionsReply,
+  type ReadCurrentUserInventoryReply,
   type UpdateCurrentUserBody,
   type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
   readCurrentUserSessionsReplySchema,
+  readCurrentUserInventoryReplySchema,
   updateCurrentUserBodySchema,
   updateCurrentUserReplySchema,
+  readCurrentUserInventoryQuerystringSchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
@@ -22,7 +26,7 @@ import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({ env, db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply | ErrorReply;
@@ -86,7 +90,7 @@ export const usersRoutes =
           allActiveSigners: allActiveSigners.map((activeSigner) => ({
             ...activeSigner,
             approvedTargets: activeSigner.approvedTargets.map((target) =>
-              target.toLowerCase(),
+              target.toLowerCase()
             ),
             nativeTokenLimitPerTransaction:
               activeSigner.nativeTokenLimitPerTransaction.toString(),
@@ -94,7 +98,7 @@ export const usersRoutes =
             endTimestamp: activeSigner.endTimestamp.toString(),
           })),
         });
-      },
+      }
     );
 
     app.put<{
@@ -180,7 +184,7 @@ export const usersRoutes =
           ...transformUserProfileResponseFields(restProfile),
           smartAccountAddress: user.address,
         });
-      },
+      }
     );
 
     app.get<{
@@ -219,14 +223,195 @@ export const usersRoutes =
           allActiveSigners.map((activeSigner) => ({
             ...activeSigner,
             approvedTargets: activeSigner.approvedTargets.map((target) =>
-              target.toLowerCase(),
+              target.toLowerCase()
             ),
             nativeTokenLimitPerTransaction:
               activeSigner.nativeTokenLimitPerTransaction.toString(),
             startTimestamp: activeSigner.startTimestamp.toString(),
             endTimestamp: activeSigner.endTimestamp.toString(),
-          })),
+          }))
         );
+      }
+    );
+    app.get<{
+      Querystring: ReadCurrentUserInventoryQuerystring;
+      Reply: ReadCurrentUserInventoryReply | ErrorReply;
+    }>(
+      "/users/me/inventory",
+      {
+        schema: {
+          summary: "Get user inventory",
+          description: "Get current user's NFTs",
+          security: [{ authToken: [] }],
+          headers: {
+            type: "object",
+            properties: {
+              "x-api-key": {
+                type: "string",
+                description: "API key for authentication",
+              },
+            },
+            required: ["x-api-key"],
+          },
+          querystring: {
+            type: "object",
+            properties: {
+              userAddress: {
+                type: "string",
+                description: "The target user address to fetch tokens for",
+              },
+              chains: {
+                type: "array",
+                items: {
+                  type: "string",
+                  enum: ["arb", "ruby", "eth"],
+                },
+                description:
+                  "Chains to query Tokesn from. Can also be a comma separated list",
+              },
+              collectionStatus: {
+                type: "string",
+                enum: ["REGISTERED", "UNREGISTERED"],
+                description: "Collection Status",
+              },
+              slugs: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+                description:
+                  "Filter Tokens by slugs. Can also be a comma separated list",
+              },
+              ids: {
+                type: "array",
+                items: { type: "string" },
+                description: "Filter specific Token IDs",
+              },
+              traits: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+                description:
+                  "Filter Tokens by traits. Can also be a comma separated list",
+              },
+              projection: {
+                type: "string",
+                description:
+                  "Comma separated string of properties to project from results",
+              },
+              textSearch: {
+                type: "string",
+                description: "Text to search User Tokens by",
+              },
+              showHiddenTraits: {
+                type: "boolean",
+                description: "Are hidden traits shown in the results",
+              },
+              showHiddenTags: {
+                type: "boolean",
+                description: "Are hidden tags shown in the results",
+              },
+            },
+          },
+          response: {
+            200: readCurrentUserInventoryReplySchema,
+          },
+        },
       },
+      async (req, reply) => {
+        const {
+          userAddress,
+          chains,
+          collectionStatus,
+          slugs,
+          ids,
+          traits,
+          projection,
+          textSearch,
+          query,
+          showHiddenTraits,
+          showHiddenTags,
+        } = req.query;
+        const { "x-api-key": apiKey } = req.headers;
+        if (!apiKey || typeof apiKey !== "string") {
+          throw new Error(`Error fetching user inventory: missing x-api-key`);
+        }
+        const { TROVE_API_URL: apiUrl } = env;
+        const url = new URL(`${apiUrl}/tokens-for-user`);
+        url.searchParams.append("userAddress", userAddress);
+        if (!userAddress) {
+          throw new Error(`Error fetching user inventory: missing userAddress`);
+        }
+
+        if (chains) {
+          if (Array.isArray(chains)) {
+            url.searchParams.append("chains", chains.join(","));
+          } else {
+            url.searchParams.append("chains", chains);
+          }
+        }
+        if (collectionStatus) {
+          url.searchParams.append("collectionStatus", collectionStatus);
+        }
+        if (slugs) {
+          if (Array.isArray(slugs)) {
+            url.searchParams.append("slugs", slugs.join(","));
+          } else {
+            url.searchParams.append("slugs", slugs);
+          }
+        }
+        if (ids) {
+          if (Array.isArray(ids)) {
+            url.searchParams.append("ids", ids.join(","));
+          } else {
+            url.searchParams.append("ids", ids);
+          }
+        }
+        if (traits) {
+          if (Array.isArray(traits)) {
+            url.searchParams.append("traits", traits.join(","));
+          } else {
+            url.searchParams.append("traits", traits);
+          }
+        }
+        if (projection) {
+          url.searchParams.append("projection", projection);
+        }
+        if (textSearch) {
+          url.searchParams.append("textSearch", textSearch);
+        }
+        if (query) {
+          url.searchParams.append("query", query);
+        }
+        if (showHiddenTraits !== undefined) {
+          url.searchParams.append(
+            "showHiddenTraits",
+            showHiddenTraits ? "true" : "false"
+          );
+        }
+        if (showHiddenTags !== undefined) {
+          url.searchParams.append(
+            "showHiddenTags",
+            showHiddenTags ? "true" : "false"
+          );
+        }
+
+        const response = await fetch(url, {
+          headers: {
+            "X-API-Key": apiKey,
+          },
+        });
+        const results = await response.json();
+        if (!Array.isArray(results)) {
+          throw new Error(
+            `Error fetching user inventory: ${
+              results?.message ?? results?.errorMessage ?? "Unknown error"
+            }`
+          );
+        }
+
+        reply.send(results);
+      }
     );
   };
