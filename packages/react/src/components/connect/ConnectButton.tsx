@@ -14,6 +14,7 @@ type Props = {
   appIconUri?: string;
   theme?: "light" | "dark";
   supportedAuthOptions?: InAppWalletAuth[];
+  mode?: "redirect" | "popup" | undefined;
 };
 
 export const ConnectButton = ({
@@ -21,6 +22,7 @@ export const ConnectButton = ({
   appIconUri,
   theme = "light",
   supportedAuthOptions,
+  mode,
 }: Props) => {
   const { t } = useTranslation();
   const { user, isConnecting } = useTreasure();
@@ -30,6 +32,7 @@ export const ConnectButton = ({
       appIconUri,
       theme,
       supportedAuthOptions,
+      mode,
     });
   return (
     <>
