@@ -16,9 +16,15 @@ type Props = {
   open: boolean;
   appName: string;
   appIconUri?: string;
+  onOpenChange: (open: boolean) => void;
 };
 
-export const ConnectModal = ({ open, appName, appIconUri }: Props) => {
+export const ConnectModal = ({
+  open,
+  appName,
+  appIconUri,
+  onOpenChange,
+}: Props) => {
   const { client, chain, logIn, logOut } = useTreasure();
   const [email, setEmail] = useState("");
   const { connect } = useConnect();
@@ -72,7 +78,7 @@ export const ConnectModal = ({ open, appName, appIconUri }: Props) => {
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="tdk-max-w-lg">
         <div className="tdk-rounded-lg tdk-overflow-hidden">
           {email ? (

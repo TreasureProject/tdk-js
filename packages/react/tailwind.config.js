@@ -7,4 +7,7 @@ module.exports = {
     extend: {},
   },
   plugins: [require("tailwindcss-animate")],
+  corePlugins: {
+    preflight: false,
+  },
 };

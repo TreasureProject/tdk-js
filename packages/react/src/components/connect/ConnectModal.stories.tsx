@@ -18,7 +18,11 @@ const ConnectPage = () => {
       <button type="button" onClick={() => setOpen(true)}>
         Open Connect Modal
       </button>
-      <ConnectModal open={open} appName="ConnectModal Story" />
+      <ConnectModal
+        open={open}
+        onOpenChange={setOpen}
+        appName="ConnectModal Story"
+      />
     </>
   );
 };
