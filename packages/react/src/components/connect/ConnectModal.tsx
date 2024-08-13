@@ -8,7 +8,11 @@ type Props = {
 export const ConnectModal = ({ appName, appIconUri }: Props) => {
   return (
     <div className="tdk-rounded-lg">
-      <ConnectMethodView appName={appName} appIconUri={appIconUri} />
+      <ConnectMethodView
+        appName={appName}
+        appIconUri={appIconUri}
+        onConnect={() => {}}
+      />
     </div>
   );
 };

@@ -21,6 +21,15 @@ export type ConnectConfig = {
   sessionOptions?: SessionOptions;
 };
 
+export type ConnectMethod =
+  | "email"
+  | "google"
+  | "telegram"
+  | "discord"
+  | "apple"
+  | "passkey"
+  | "wallet";
+
 export type UserContext = {
   id: string;
   address: string;

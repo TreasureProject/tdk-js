@@ -9,8 +9,9 @@ const meta: Meta<typeof ConnectMethodView> = {
 export default meta;
 type Story = StoryObj<typeof ConnectMethodView>;
 
-export const Primary: Story = {
+export const Default: Story = {
   args: {
     appName: "Treasure",
+    onConnect: (method, email) => console.log({ method, email }),
   },
 };
