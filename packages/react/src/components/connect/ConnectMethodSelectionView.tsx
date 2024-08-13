@@ -12,7 +12,7 @@ type Props = {
   onConnect: (method: ConnectMethod, email?: string) => void;
 };
 
-export const ConnectMethodView = ({
+export const ConnectMethodSelectionView = ({
   appName,
   appIconUri = "https://images.treasure.lol/tdk/login/treasure_icon.png",
   onConnect,

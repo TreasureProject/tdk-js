@@ -42,6 +42,7 @@ export {
 export { getAllActiveSigners } from "./connect/accounts";
 export { decodeAuthToken } from "./connect/jwt";
 export {
+  connectWallet,
   createLoginUrl,
   createTreasureConnectClient,
   sendEmailVerificationCode,
@@ -49,7 +50,6 @@ export {
   logIn,
   logInWithEmail,
   logInWithPasskey,
-  logInWithPhoneNumber,
   logInWithSocial,
 } from "./connect/login";
 export {

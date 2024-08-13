@@ -1,12 +1,83 @@
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
-import type { InAppWalletSocialAuth, Wallet } from "thirdweb/wallets";
-import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
+import type { Wallet } from "thirdweb/wallets";
+import {
+  hasStoredPasskey,
+  inAppWallet,
+  preAuthenticate,
+} from "thirdweb/wallets/in-app";
+
 import { TDKAPI } from "../api";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "../constants";
-import type { ConnectConfig, TreasureConnectClient } from "../types";
+import type {
+  ConnectConfig,
+  SocialConnectMethod,
+  TreasureConnectClient,
+} from "../types";
 import { getContractAddress } from "../utils/contracts";
 import { startUserSession } from "./session";
+
+type ConnectWalletConfig = {
+  client: TreasureConnectClient;
+  chainId?: number;
+} & (
+  | {
+      mode: SocialConnectMethod;
+    }
+  | {
+      mode: "email";
+      email: string;
+      verificationCode: string;
+    }
+  | {
+      mode: "passkey";
+      passkeyName?: string;
+      authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
+    }
+);
+
+export const connectWallet = async (params: ConnectWalletConfig) => {
+  const { client, chainId = DEFAULT_TDK_CHAIN_ID } = params;
+  const chain = defineChain(chainId);
+
+  const wallet = inAppWallet({
+    smartAccount: {
+      chain,
+      factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
+      sponsorGas: true,
+    },
+  });
+
+  if (params.mode === "email") {
+    const { email, verificationCode } = params;
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "email",
+      email,
+      verificationCode,
+    });
+  } else if (params.mode === "passkey") {
+    const { passkeyName, authenticatorType } = params;
+    const hasPasskey = await hasStoredPasskey(client);
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "passkey",
+      type: hasPasskey ? "sign-in" : "sign-up",
+      passkeyName,
+      authenticatorType,
+    });
+  } else {
+    await wallet.connect({
+      client,
+      chain,
+      strategy: params.mode,
+    });
+  }
+
+  return wallet;
+};
 
 export const createLoginUrl = ({
   project,
@@ -73,83 +144,16 @@ export const sendEmailVerificationCode = async ({
     email,
   });
 
-export const logIn = async (
-  params: {
-    client: TreasureConnectClient;
-  } & (
-    | {
-        mode: InAppWalletSocialAuth;
-      }
-    | {
-        mode: "email";
-        email: string;
-        verificationCode: string;
-      }
-    | {
-        mode: "phone";
-        phoneNumber: string;
-        verificationCode: string;
-      }
-    | {
-        mode: "passkey";
-        type: "sign-up" | "sign-in";
-        passkeyName?: string;
-        authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
-      }
-  ) &
-    ConnectConfig,
-) => {
+export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
   const {
     client,
     chainId = DEFAULT_TDK_CHAIN_ID,
     apiUri = DEFAULT_TDK_API_BASE_URI,
     sessionOptions,
+    ...connectWalletParams
   } = params;
-  const chain = defineChain(chainId);
 
-  const wallet = inAppWallet({
-    smartAccount: {
-      chain,
-      factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
-      sponsorGas: true,
-    },
-  });
-
-  if (params.mode === "email") {
-    const { email, verificationCode } = params;
-    await wallet.connect({
-      client,
-      chain,
-      strategy: "email",
-      email,
-      verificationCode,
-    });
-  } else if (params.mode === "phone") {
-    const { phoneNumber, verificationCode } = params;
-    await wallet.connect({
-      client,
-      chain,
-      strategy: "phone",
-      phoneNumber,
-      verificationCode,
-    });
-  } else if (params.mode === "passkey") {
-    const { type, passkeyName, authenticatorType } = params;
-    await wallet.connect({
-      client,
-      chain,
-      strategy: "passkey",
-      type,
-      passkeyName,
-      authenticatorType,
-    });
-  } else {
-    await wallet.connect({
-      client,
-      chain,
-      strategy: params.mode,
-    });
-  }
+  const wallet = await connectWallet({ client, ...connectWalletParams });
 
   const tdk = new TDKAPI({
     baseUri: apiUri,
@@ -196,39 +200,25 @@ export const logInWithEmail = async ({
   });
 
 export const logInWithPasskey = async ({
-  type,
   passkeyName,
   authenticatorType,
   ...rest
 }: {
   client: TreasureConnectClient;
-  type: "sign-up" | "sign-in";
   passkeyName?: string;
   authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
 } & ConnectConfig) =>
   logIn({
     mode: "passkey",
-    type,
     passkeyName,
     authenticatorType,
     ...rest,
   });
-
-export const logInWithPhoneNumber = async ({
-  phoneNumber,
-  verificationCode,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  phoneNumber: string;
-  verificationCode: string;
-} & ConnectConfig) =>
-  logIn({ mode: "phone", phoneNumber, verificationCode, ...rest });
 
 export const logInWithSocial = async ({
   network,
   ...rest
 }: {
   client: TreasureConnectClient;
-  network: InAppWalletSocialAuth;
+  network: SocialConnectMethod;
 } & ConnectConfig) => logIn({ mode: network, ...rest });
