@@ -8,17 +8,17 @@ import {
   type ErrorReply,
   type ReadCurrentUserReply,
   type ReadCurrentUserSessionsQuerystring,
-  type ReadCurrentUserInventoryQuerystring,
+  type ReadCurrentUserTokensQuerystring,
   type ReadCurrentUserSessionsReply,
-  type ReadCurrentUserInventoryReply,
+  type ReadCurrentUserTokensReply,
   type UpdateCurrentUserBody,
   type UpdateCurrentUserReply,
   readCurrentUserReplySchema,
   readCurrentUserSessionsReplySchema,
-  readCurrentUserInventoryReplySchema,
+  readCurrentUserTokensReplySchema,
   updateCurrentUserBodySchema,
   updateCurrentUserReplySchema,
-  readCurrentUserInventoryQuerystringSchema,
+  readCurrentUserTokensQuerystringSchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
@@ -234,13 +234,13 @@ export const usersRoutes =
       }
     );
     app.get<{
-      Querystring: ReadCurrentUserInventoryQuerystring;
-      Reply: ReadCurrentUserInventoryReply | ErrorReply;
+      Querystring: ReadCurrentUserTokensQuerystring;
+      Reply: ReadCurrentUserTokensReply | ErrorReply;
     }>(
-      "/users/me/inventory",
+      "/users/tokens",
       {
         schema: {
-          summary: "Get user inventory",
+          summary: "Get user tokens",
           description: "Get current user's NFTs",
           security: [{ authToken: [] }],
           headers: {
@@ -261,13 +261,20 @@ export const usersRoutes =
                 description: "The target user address to fetch tokens for",
               },
               chains: {
-                type: "array",
-                items: {
-                  type: "string",
-                  enum: ["arb", "ruby", "eth"],
-                },
-                description:
-                  "Chains to query Tokesn from. Can also be a comma separated list",
+                oneOf: [
+                  {
+                    type: "array",
+                    items: {
+                      type: "string",
+                      enum: ["arb", "ruby", "eth"],
+                    },
+                    description: "Chains to query Tokens from",
+                  },
+                  {
+                    type: "string",
+                    description: "Comma separated list of chains",
+                  },
+                ],
               },
               collectionStatus: {
                 type: "string",
@@ -315,7 +322,7 @@ export const usersRoutes =
             },
           },
           response: {
-            200: readCurrentUserInventoryReplySchema,
+            200: readCurrentUserTokensReplySchema,
           },
         },
       },
@@ -335,13 +342,13 @@ export const usersRoutes =
         } = req.query;
         const { "x-api-key": apiKey } = req.headers;
         if (!apiKey || typeof apiKey !== "string") {
-          throw new Error(`Error fetching user inventory: missing x-api-key`);
+          throw new Error(`Error fetching user tokens: missing x-api-key`);
         }
         const { TROVE_API_URL: apiUrl } = env;
         const url = new URL(`${apiUrl}/tokens-for-user`);
         url.searchParams.append("userAddress", userAddress);
         if (!userAddress) {
-          throw new Error(`Error fetching user inventory: missing userAddress`);
+          throw new Error(`Error fetching user tokens: missing userAddress`);
         }
 
         if (chains) {
@@ -405,7 +412,7 @@ export const usersRoutes =
         const results = await response.json();
         if (!Array.isArray(results)) {
           throw new Error(
-            `Error fetching user inventory: ${
+            `Error fetching user tokens: ${
               results?.message ?? results?.errorMessage ?? "Unknown error"
             }`
           );

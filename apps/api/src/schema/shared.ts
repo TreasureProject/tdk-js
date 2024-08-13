@@ -119,18 +119,6 @@ const tokenSchema = Type.Object({
   ),
 });
 
-export const inventoryTokenSchema = Type.Intersect([
-  tokenSchema,
-  Type.Object({
-    user: Type.String({
-      description: "Token owner address",
-    }),
-    balance: Type.Number({
-      description: "Token balance for owner",
-    }),
-  }),
-]);
-
 export const userSchema = Type.Object({
   id: Type.String({
     description: "User unique identifier",
