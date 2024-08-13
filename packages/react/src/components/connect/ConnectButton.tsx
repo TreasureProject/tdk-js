@@ -36,16 +36,16 @@ export const ConnectButton = ({
       {user ? (
         <button
           type="button"
-          className="tdk-p-3 tdk-bg-[#FFFCF3] tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
+          className="tdk-p-3 tdk-bg-cream tdk-flex tdk-items-center tdk-justify-between tdk-gap-5 hover:tdk-bg-honey-400 tdk-transition-colors tdk-rounded-xl tdk-text-left focus:tdk-outline-none"
           onClick={openAccountModal}
         >
           <div>
             {user.email ? (
-              <span className="tdk-text-sm tdk-text-[#0A111C] tdk-font-medium tdk-block">
+              <span className="tdk-text-sm tdk-text-night-1000 tdk-font-medium tdk-block">
                 {user.email}
               </span>
             ) : null}
-            <span className="tdk-text-xs tdk-text-night-600 tdk-block">
+            <span className="tdk-text-xs tdk-text-silver-600 tdk-block">
               {truncateEthAddress(user.address)}
             </span>
           </div>

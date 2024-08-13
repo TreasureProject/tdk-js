@@ -19,13 +19,13 @@ export const ConnectMethodSelectionView = ({
 }: Props) => {
   const [email, setEmail] = useState("");
   return (
-    <div className="tdk-bg-night-1100 tdk-p-8 tdk-text-night-100 tdk-font-sans tdk-space-y-6">
+    <div className="tdk-bg-night tdk-p-8 tdk-text-silver-100 tdk-font-sans tdk-space-y-6">
       <div className="tdk-flex tdk-items-center tdk-gap-3">
-        <div className="tdk-w-12 tdk-h-12 tdk-bg-night-900 tdk-rounded-lg tdk-overflow-hidden">
+        <div className="tdk-w-12 tdk-h-12 tdk-bg-night-500 tdk-rounded-lg tdk-overflow-hidden">
           <img src={appIconUri} alt="" className="tdk-w-full tdk-h-full" />
         </div>
         <div>
-          <span className="tdk-text-sm tdk-text-[#9DA3AB] tdk-block">
+          <span className="tdk-text-sm tdk-text-silver tdk-block">
             Connect to
           </span>
           <span className="tdk-text-base tdk-block tdk-font-semibold">
@@ -44,7 +44,7 @@ export const ConnectMethodSelectionView = ({
           <input
             id="email"
             type="email"
-            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-night-800 tdk-bg-[#0C1D31] tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
+            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-silver tdk-bg-night tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -57,8 +57,8 @@ export const ConnectMethodSelectionView = ({
         </Button>
       </div>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">
-        <div className="tdk-h-[1px] tdk-bg-[#10263E] tdk-absolute tdk-left-0 tdk-right-0 tdk-z-0" />
-        <span className="tdk-text-sm tdk-text-[#6E747F] tdk-px-4 tdk-uppercase tdk-bg-night-1100 tdk-z-10">
+        <div className="tdk-h-[1px] tdk-bg-night-500 tdk-absolute tdk-left-0 tdk-right-0 tdk-z-0" />
+        <span className="tdk-text-sm tdk-text-silver-600 tdk-px-4 tdk-uppercase tdk-bg-night tdk-z-10">
           or
         </span>
       </div>
@@ -69,7 +69,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="google"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           <span className="tdk-block">Google</span>
         </ConnectMethodButton>
@@ -79,7 +79,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="telegram"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           <span className="tdk-block">Telegram</span>
         </ConnectMethodButton>
@@ -89,7 +89,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="discord"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           <span className="tdk-block">Discord</span>
         </ConnectMethodButton>
@@ -99,7 +99,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="apple"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           <span className="tdk-block">Apple</span>
         </ConnectMethodButton>
@@ -109,7 +109,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="passkey"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           <span className="tdk-block">Passkey</span>
         </ConnectMethodButton>
@@ -119,7 +119,7 @@ export const ConnectMethodSelectionView = ({
         >
           <Icon
             name="wallet"
-            className="tdk-w-6 tdk-h-6 tdk-text-[#E7E8E9] group-hover:tdk-text-[#071727] tdk-transition-colors"
+            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
           />
           Wallet
         </ConnectMethodButton>
@@ -137,7 +137,7 @@ const ConnectMethodButton = ({
     <button
       type="button"
       className={cn(
-        "tdk-bg-[#10263E] tdk-border tdk-border-solid tdk-border-[#152E49] tdk-p-3 tdk-text-xs tdk-text-[#E7E8E9] tdk-font-medium tdk-cursor-pointer hover:tdk-bg-[#FFFCF3] hover:tdk-border-[#FFFCF3] tdk-transition-colors hover:tdk-text-[#071727] tdk-rounded-lg",
+        "tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream tdk-transition-colors hover:tdk-text-night-800 tdk-rounded-lg",
         className,
       )}
       {...props}

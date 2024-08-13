@@ -58,7 +58,7 @@
     "@storybook/addon-essentials": "^8.2.8",
     "@storybook/react": "^8.2.8",
     "@storybook/react-vite": "^8.2.8",
-    "@treasure-project/tailwind-config": "^2.1.0",
+    "@treasure-dev/tailwind-config": "*",
     "@types/react": "^18.2.24",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",

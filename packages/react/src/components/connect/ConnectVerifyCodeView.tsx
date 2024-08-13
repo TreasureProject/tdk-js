@@ -19,23 +19,23 @@ export const ConnectVerifyCodeView = ({
 }: Props) => {
   const [code, setCode] = useState("");
   return (
-    <div className="tdk-bg-night-1100 tdk-p-8 tdk-font-sans tdk-space-y-6">
+    <div className="tdk-bg-night tdk-p-8 tdk-font-sans tdk-space-y-6">
       <div className="tdk-space-y-2">
         <h2 className="tdk-text-lg tdk-font-semibold tdk-text-white">
           Verify code
         </h2>
-        <p className="tdk-text-sm tdk-text-[#9DA3AB]">
+        <p className="tdk-text-sm tdk-text-silver">
           We have sent a verification code to{" "}
-          <span className="tdk-text-night-200 tdk-font-medium">
+          <span className="tdk-text-silver-200 tdk-font-medium">
             {recipient}
           </span>
           . You will be automatically logged in after entering your code.
         </p>
       </div>
-      <div className="tdk-h-[1px] tdk-bg-night-900" />
+      <div className="tdk-h-[1px] tdk-bg-silver-500" />
       <div className="tdk-space-y-6">
         <div>
-          <h3 className="tdk-text-sm tdk-font-normal tdk-text-night-200">
+          <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
             Enter verification code:
           </h3>
           <VerificationInput
@@ -46,10 +46,10 @@ export const ConnectVerifyCodeView = ({
             onComplete={onConnect}
             classNames={{
               character:
-                "tdk-rounded tdk-text-lg tdk-font-semibold tdk-flex tdk-items-center tdk-justify-center tdk-bg-[#071422] tdk-border tdk-border-[#10263E] tdk-text-[#FFFCF3]",
-              characterInactive: "tdk-bg-[#071422]",
+                "tdk-rounded tdk-text-lg tdk-font-semibold tdk-flex tdk-items-center tdk-justify-center tdk-bg-[#0C1420] tdk-border tdk-border-night-500 tdk-text-cream",
+              characterInactive: "tdk-bg-[#0C1420]",
               characterSelected:
-                "tdk-border-night-300 tdk-outline-night-300 tdk-text-[#FFFCF3]",
+                "tdk-border-silver-300 tdk-outline-silver-300 tdk-text-cream",
             }}
           />
         </div>
@@ -64,11 +64,11 @@ export const ConnectVerifyCodeView = ({
               "Connect"
             )}
           </Button>
-          <p className="tdk-text-[#6E747F] tdk-text-sm tdk-text-center">
+          <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
             Didn't get a code?{" "}
             <button
               type="button"
-              className="tdk-text-[#E7E8E9] hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
+              className="tdk-text-silver-100 hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
               onClick={onResend}
             >
               Resend
