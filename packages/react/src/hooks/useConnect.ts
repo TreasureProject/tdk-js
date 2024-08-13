@@ -20,6 +20,8 @@ type Props = {
   theme?: "light" | "dark";
   supportedAuthOptions?: InAppWalletAuth[];
   mode?: "redirect" | "popup" | undefined;
+  redirectUrl?: string;
+  redirectExternally?: boolean;
 };
 
 export const useConnect = ({
@@ -28,6 +30,8 @@ export const useConnect = ({
   theme = "light",
   supportedAuthOptions,
   mode,
+  redirectUrl,
+  redirectExternally,
 }: Props) => {
   const { chain, contractAddresses, client, logIn, logOut } = useTreasure();
   const { connect } = useConnectModal();
@@ -69,9 +73,7 @@ export const useConnect = ({
   const openConnectModal = async () => {
     const wallet = (await connect({
       client,
-      wallets: supportedAuthOptions
-        ? [inAppWallet({ auth: { options: supportedAuthOptions, mode } })]
-        : SUPPORTED_WALLETS,
+      wallets: [inAppWallet({ auth: { options: supportedAuthOptions ?? SUPPORTED_WALLETS, mode, redirectUrl, redirectExternally } })],
       chain,
       accountAbstraction: {
         chain,
