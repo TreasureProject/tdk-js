@@ -5,7 +5,7 @@ import {
   Button,
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
-  GoogleLogoIcon,
+  Icon,
   TDKAPI,
 } from "@treasure-dev/tdk-react";
 import { useState } from "react";
@@ -215,7 +215,10 @@ export default function LoginPage() {
                           onClick={() => logInWithSocial("google")}
                           disabled={isLoading}
                         >
-                          <GoogleLogoIcon className="h-6 w-6 text-night-700" />
+                          <Icon
+                            name="google"
+                            className="h-6 w-6 text-night-700"
+                          />
                           <span className="sr-only">Continue with Google</span>
                         </Button>
                       </div>

@@ -6,7 +6,9 @@ import { en } from "./locales/en";
 
 export * from "@treasure-dev/tdk-core";
 export { ConnectButton } from "./components/connect/ConnectButton";
+export { ConnectModal } from "./components/connect/ConnectModal";
 export { Button } from "./components/ui/Button";
+export { Icon } from "./components/ui/Icon";
 export { TreasureProvider, useTreasure } from "./contexts/treasure";
 export { useApproval } from "./hooks/approvals/useApproval";
 export { useHarvester } from "./hooks/harvesters/useHarvester";
@@ -15,9 +17,6 @@ export {
   useContractAddress,
   useContractAddresses,
 } from "./hooks/useContractAddress";
-export { AppleLogoIcon } from "./icons/AppleLogoIcon";
-export { GoogleLogoIcon } from "./icons/GoogleLogoIcon";
-export { XLogoIcon } from "./icons/XLogoIcon";
 
 i18n.use(initReactI18next).init({
   resources: { en },

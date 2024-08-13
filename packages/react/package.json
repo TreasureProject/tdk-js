@@ -36,26 +36,34 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "npm run build -- --watch"
+    "generate": "icons build -i ./icons -o ./src/icons --optimize",
+    "dev": "npm run build -- --watch",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
     "@tanstack/react-query": "^5.18.1",
     "@treasure-dev/tdk-core": "*",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
     "i18next": "^23.6.0",
     "react": "^18.2.0",
     "react-i18next": "^13.3.1",
-    "tailwind-merge": "^2.0.0",
+    "tailwind-merge": "^2.5.2",
     "thirdweb": "^5.44.0",
     "viem": "^2.7.6",
     "wagmi": "^2.5.6"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.2.8",
+    "@storybook/react": "^8.2.8",
+    "@storybook/react-vite": "^8.2.8",
     "@treasure-project/tailwind-config": "^2.1.0",
     "@types/react": "^18.2.24",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
+    "storybook": "^8.2.8",
+    "svg-icons-cli": "^0.0.8",
     "tailwindcss": "^3.3.3",
     "tailwindcss-animate": "^1.0.7"
   },

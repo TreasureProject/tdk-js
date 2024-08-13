@@ -259,3 +259,4 @@ terraform.rc
 
 # Ignore CLI configuration files
 .vscode
+*storybook.log
