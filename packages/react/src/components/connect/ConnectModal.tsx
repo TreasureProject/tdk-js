@@ -8,15 +8,17 @@ import { useConnect } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
 
 import { useTreasure } from "../../contexts/treasure";
+import { Dialog, DialogContent } from "../ui/Dialog";
 import { ConnectMethodSelectionView } from "./ConnectMethodSelectionView";
 import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
 type Props = {
+  open: boolean;
   appName: string;
   appIconUri?: string;
 };
 
-export const ConnectModal = ({ appName, appIconUri }: Props) => {
+export const ConnectModal = ({ open, appName, appIconUri }: Props) => {
   const { client, chain, logIn, logOut } = useTreasure();
   const [email, setEmail] = useState("");
   const { connect } = useConnect();
@@ -70,20 +72,24 @@ export const ConnectModal = ({ appName, appIconUri }: Props) => {
   };
 
   return (
-    <div className="tdk-rounded-lg">
-      {email ? (
-        <ConnectVerifyCodeView
-          recipient={email}
-          onConnect={handleConnectEmail}
-          onResend={() => {}}
-        />
-      ) : (
-        <ConnectMethodSelectionView
-          appName={appName}
-          appIconUri={appIconUri}
-          onConnect={handleConnect}
-        />
-      )}
-    </div>
+    <Dialog open={open}>
+      <DialogContent className="tdk-max-w-lg">
+        <div className="tdk-rounded-lg tdk-overflow-hidden">
+          {email ? (
+            <ConnectVerifyCodeView
+              recipient={email}
+              onConnect={handleConnectEmail}
+              onResend={() => sendEmailVerificationCode({ client, email })}
+            />
+          ) : (
+            <ConnectMethodSelectionView
+              appName={appName}
+              appIconUri={appIconUri}
+              onConnect={handleConnect}
+            />
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
