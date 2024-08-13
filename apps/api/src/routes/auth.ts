@@ -90,7 +90,7 @@ export const authRoutes =
         });
 
         // User is missing details we could fill in from the embedded wallet
-        if (!user.email && !user.phoneNumber) {
+        if (!user.email) {
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
@@ -101,14 +101,13 @@ export const authRoutes =
             adminAddress,
             env.THIRDWEB_SECRET_KEY,
           );
-          if (embeddedWalletUser?.email || embeddedWalletUser?.phone) {
+          if (embeddedWalletUser?.email) {
             user = await db.user.update({
               where: {
                 id: user.id,
               },
               data: {
                 email: embeddedWalletUser.email,
-                phoneNumber: embeddedWalletUser.phone,
               },
               select: USER_SELECT_FIELDS,
             });

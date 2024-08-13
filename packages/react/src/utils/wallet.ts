@@ -11,7 +11,6 @@ export const SUPPORTED_WALLETS = [
         "farcaster",
         "telegram",
         "passkey",
-        "phone",
       ],
     },
   }),

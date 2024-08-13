@@ -4,7 +4,6 @@ export const USER_SELECT_FIELDS = {
   id: true,
   address: true,
   email: true,
-  phoneNumber: true,
 } as const satisfies Prisma.UserSelect;
 
 export const USER_PROFILE_SELECT_FIELDS = {

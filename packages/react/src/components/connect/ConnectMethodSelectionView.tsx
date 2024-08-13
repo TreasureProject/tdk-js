@@ -44,7 +44,7 @@ export const ConnectMethodSelectionView = ({
           <input
             id="email"
             type="email"
-            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-night-900 tdk-bg-[#0C1D31] tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
+            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-night-800 tdk-bg-[#0C1D31] tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />

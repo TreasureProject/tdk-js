@@ -2,7 +2,6 @@ import { type Static, Type } from "@sinclair/typebox";
 
 const EXAMPLE_USER_ID = "clxtvrt7p00012e6m8yurr83z";
 const EXAMPLE_EMAIL = "example@treasure.lol";
-const EXAMPLE_PHONE_NUMBER = "+13235550000";
 export const EXAMPLE_CONTRACT_ADDRESS =
   "0x539bde0d7dbd336b79148aa742883198bbf60342";
 export const EXAMPLE_WALLET_ADDRESS =
@@ -121,13 +120,6 @@ export const userSchema = Type.Object({
     Type.String({
       description: "User email address",
       examples: [EXAMPLE_EMAIL],
-    }),
-    Type.Null(),
-  ]),
-  phoneNumber: Type.Union([
-    Type.String({
-      description: "User phone number",
-      examples: [EXAMPLE_PHONE_NUMBER],
     }),
     Type.Null(),
   ]),
