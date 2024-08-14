@@ -9,15 +9,24 @@ import type { Wallet } from "thirdweb/wallets";
 
 import { useTreasure } from "../../contexts/treasure";
 import { Dialog, DialogContent } from "../ui/Dialog";
-import { ConnectMethodSelectionView } from "./ConnectMethodSelectionView";
+import {
+  type Options as ConnectMethodSelectionOptions,
+  ConnectMethodSelectionView,
+} from "./ConnectMethodSelectionView";
 import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
-type Props = {
+export type Options = ConnectMethodSelectionOptions;
+
+type Props = Options & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export const ConnectModal = ({ open, onOpenChange }: Props) => {
+export const ConnectModal = ({
+  open,
+  onOpenChange,
+  ...methodSelectionProps
+}: Props) => {
   const { appName, appIconUri, client, chain, logIn, logOut } = useTreasure();
   const [email, setEmail] = useState("");
   const { connect } = useConnect();
@@ -85,6 +94,7 @@ export const ConnectModal = ({ open, onOpenChange }: Props) => {
               appName={appName}
               appIconUri={appIconUri}
               onConnect={handleConnect}
+              {...methodSelectionProps}
             />
           )}
         </div>

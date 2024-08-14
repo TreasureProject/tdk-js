@@ -1,16 +1,21 @@
 import { truncateEthAddress } from "@treasure-dev/tdk-core";
 import { useTranslation } from "react-i18next";
+
 import { useTreasure } from "../../contexts/treasure";
-import { useConnect } from "../../hooks/useConnect";
+import {
+  type Options as UseConnectOptions,
+  useConnect,
+} from "../../hooks/useConnect";
 import { TreasureIcon } from "../../icons/TreasureIcon";
 import { Button } from "../ui/Button";
-
 import { Spinner } from "../ui/Spinner";
 
-export const ConnectButton = () => {
+type Props = UseConnectOptions;
+
+export const ConnectButton = (props?: Props) => {
   const { t } = useTranslation();
   const { user, isConnecting } = useTreasure();
-  const { openConnectModal, openAccountModal } = useConnect();
+  const { openConnectModal, openAccountModal } = useConnect(props);
   return (
     <>
       {user ? (

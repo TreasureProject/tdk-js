@@ -45,6 +45,7 @@ export const ConnectVerifyCodeView = ({
             onChange={setCode}
             onComplete={onConnect}
             classNames={{
+              container: "tdk-max-w-full",
               character:
                 "tdk-rounded tdk-text-lg tdk-font-semibold tdk-flex tdk-items-center tdk-justify-center tdk-bg-[#0C1420] tdk-border tdk-border-night-500 tdk-text-cream",
               characterInactive: "tdk-bg-[#0C1420]",

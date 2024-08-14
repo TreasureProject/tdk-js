@@ -6,7 +6,12 @@ import { Button } from "../ui/Button";
 import { Icon } from "../ui/Icon";
 import { ConnectFooter } from "./ConnectFooter";
 
-type Props = {
+export type Options = {
+  disablePasskey?: boolean;
+  disableWallet?: boolean;
+};
+
+type Props = Options & {
   appName: string;
   appIconUri?: string;
   onConnect: (method: ConnectMethod, email?: string) => void;
@@ -15,6 +20,8 @@ type Props = {
 export const ConnectMethodSelectionView = ({
   appName,
   appIconUri = "https://images.treasure.lol/tdk/login/treasure_icon.png",
+  disablePasskey = false,
+  disableWallet = false,
   onConnect,
 }: Props) => {
   const [email, setEmail] = useState("");
@@ -65,7 +72,12 @@ export const ConnectMethodSelectionView = ({
           or
         </span>
       </div>
-      <div className="tdk-grid tdk-grid-cols-5 tdk-gap-2">
+      <div
+        className={cn(
+          "tdk-grid tdk-gap-2 tdk-grid-cols-2",
+          disablePasskey ? "md:tdk-grid-cols-4" : "md:tdk-grid-cols-5",
+        )}
+      >
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("google")}
@@ -106,26 +118,33 @@ export const ConnectMethodSelectionView = ({
           />
           <span className="tdk-block">Apple</span>
         </ConnectMethodButton>
-        <ConnectMethodButton
-          className="tdk-group"
-          onClick={() => onConnect("passkey")}
-        >
-          <Icon
-            name="passkey"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
-          <span className="tdk-block">Passkey</span>
-        </ConnectMethodButton>
-        <ConnectMethodButton
-          className="tdk-group tdk-col-span-5 tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2"
-          onClick={() => onConnect("wallet")}
-        >
-          <Icon
-            name="wallet"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
-          Wallet
-        </ConnectMethodButton>
+        {!disablePasskey ? (
+          <ConnectMethodButton
+            className="tdk-group tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
+            onClick={() => onConnect("passkey")}
+          >
+            <Icon
+              name="passkey"
+              className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
+            />
+            <span className="tdk-block">Passkey</span>
+          </ConnectMethodButton>
+        ) : null}
+        {!disableWallet ? (
+          <ConnectMethodButton
+            className={cn(
+              "tdk-group tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-2",
+              disablePasskey ? "md:tdk-col-span-4" : "md:tdk-col-span-5",
+            )}
+            onClick={() => onConnect("wallet")}
+          >
+            <Icon
+              name="wallet"
+              className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
+            />
+            Wallet
+          </ConnectMethodButton>
+        ) : null}
       </div>
       <ConnectFooter />
     </div>

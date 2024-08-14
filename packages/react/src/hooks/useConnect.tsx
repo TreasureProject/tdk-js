@@ -4,8 +4,15 @@ import {
   useWalletDetailsModal,
 } from "thirdweb/react";
 
-import { ConnectModal } from "../components/connect/ConnectModal";
+import {
+  ConnectModal,
+  type Options as ConnectModalOptions,
+} from "../components/connect/ConnectModal";
 import { useTreasure } from "../contexts/treasure";
+
+export type Options = ConnectModalOptions;
+
+type Props = Options;
 
 const theme = darkTheme({
   colors: {
@@ -20,17 +27,20 @@ const theme = darkTheme({
   },
 });
 
-export const useConnect = () => {
+export const useConnect = (props?: Props) => {
   const { chain, contractAddresses, client, logOut, setRootElement } =
     useTreasure();
   // const { connect } = useConnectModal();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
 
-  const openConnectModal = () => {
+  const openConnectModal = () =>
     setRootElement(
-      <ConnectModal open onOpenChange={() => setRootElement(null)} />,
+      <ConnectModal
+        open
+        onOpenChange={() => setRootElement(null)}
+        {...props}
+      />,
     );
-  };
 
   const openAccountModal = () =>
     openWalletDetailsModal({
