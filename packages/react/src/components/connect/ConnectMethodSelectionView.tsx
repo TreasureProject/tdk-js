@@ -4,6 +4,7 @@ import { type ButtonHTMLAttributes, useState } from "react";
 import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 import { Icon } from "../ui/Icon";
+import { Spinner } from "../ui/Spinner";
 import { ConnectFooter } from "./ConnectFooter";
 
 export type Options = {
@@ -14,12 +15,16 @@ export type Options = {
 type Props = Options & {
   appName: string;
   appIconUri?: string;
+  isLoading?: boolean;
+  error?: string;
   onConnect: (method: ConnectMethod, email?: string) => void;
 };
 
 export const ConnectMethodSelectionView = ({
   appName,
   appIconUri = "https://images.treasure.lol/tdk/login/treasure_icon.png",
+  isLoading = false,
+  error,
   disablePasskey = false,
   disableWallet = false,
   onConnect,
@@ -40,6 +45,11 @@ export const ConnectMethodSelectionView = ({
           </span>
         </div>
       </div>
+      {error ? (
+        <p className="tdk-bg-ruby-200 tdk-border tdk-border-ruby-800 tdk-text-ruby-800 tdk-px-3 tdk-py-2 tdk-rounded-md">
+          {error}
+        </p>
+      ) : null}
       <form
         className="tdk-space-y-6"
         onSubmit={(e) => {
@@ -62,8 +72,12 @@ export const ConnectMethodSelectionView = ({
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <Button type="submit" className="tdk-w-full tdk-font-medium">
-          Connect
+        <Button
+          type="submit"
+          className="tdk-w-full tdk-font-medium"
+          disabled={isLoading}
+        >
+          {isLoading ? <Spinner className="tdk-w-3.5 tdk-h-3.5" /> : "Connect"}
         </Button>
       </form>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">

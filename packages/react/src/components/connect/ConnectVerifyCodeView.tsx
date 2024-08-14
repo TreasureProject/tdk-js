@@ -6,14 +6,16 @@ import { ConnectFooter } from "./ConnectFooter";
 
 type Props = {
   recipient: string;
-  isConnecting?: boolean;
+  isLoading?: boolean;
+  error?: string;
   onConnect: (code: string) => void;
   onResend: () => void;
 };
 
 export const ConnectVerifyCodeView = ({
   recipient,
-  isConnecting = false,
+  isLoading = false,
+  error,
   onConnect,
   onResend,
 }: Props) => {
@@ -33,6 +35,11 @@ export const ConnectVerifyCodeView = ({
         </p>
       </div>
       <div className="tdk-h-[1px] tdk-bg-night-500" />
+      {error ? (
+        <p className="tdk-bg-ruby-200 tdk-border tdk-border-ruby-800 tdk-text-ruby-800 tdk-px-3 tdk-py-2 tdk-rounded-md">
+          {error}
+        </p>
+      ) : null}
       <div className="tdk-space-y-6">
         <div>
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
@@ -57,9 +64,10 @@ export const ConnectVerifyCodeView = ({
         <div className="tdk-space-y-3">
           <Button
             className="tdk-w-full tdk-font-medium"
+            disabled={isLoading}
             onClick={() => onConnect(code)}
           >
-            {isConnecting ? (
+            {isLoading ? (
               <Spinner className="tdk-w-3.5 tdk-h-3.5" />
             ) : (
               "Connect"
