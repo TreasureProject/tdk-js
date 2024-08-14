@@ -9,6 +9,10 @@ export const App = () => {
     contractAddresses.MAGIC,
     contractAddresses.MagicswapV2Router,
   );
+  const approveLP = useApprove(
+    "0x0626699bc82858c16ae557b2eaad03a58cfcc8bd",
+    contractAddresses.MagicswapV2Router,
+  );
 
   const approveTreasures = useSetApprovalForAll(
     contractAddresses.Treasures,
@@ -33,6 +37,7 @@ export const App = () => {
                 <Button onClick={() => approveMagic(1000)}>
                   Approve 1000 MAGIC
                 </Button>
+                <Button onClick={() => approveLP(1000)}>Approve 1000 LP</Button>
                 <Button onClick={() => approveTreasures()}>
                   Approve Treasures
                 </Button>
