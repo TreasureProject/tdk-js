@@ -29,7 +29,7 @@ export const ConnectMethodSelectionView = ({
             Connect to
           </span>
           <span className="tdk-text-base tdk-block tdk-font-semibold">
-            {appName}
+            {appName ?? "App"}
           </span>
         </div>
       </div>
@@ -44,7 +44,7 @@ export const ConnectMethodSelectionView = ({
           <input
             id="email"
             type="email"
-            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-silver tdk-bg-night tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
+            className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-night-500 tdk-bg-night tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />

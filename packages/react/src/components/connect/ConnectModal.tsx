@@ -14,18 +14,11 @@ import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
 type Props = {
   open: boolean;
-  appName: string;
-  appIconUri?: string;
   onOpenChange: (open: boolean) => void;
 };
 
-export const ConnectModal = ({
-  open,
-  appName,
-  appIconUri,
-  onOpenChange,
-}: Props) => {
-  const { client, chain, logIn, logOut } = useTreasure();
+export const ConnectModal = ({ open, onOpenChange }: Props) => {
+  const { appName, appIconUri, client, chain, logIn, logOut } = useTreasure();
   const [email, setEmail] = useState("");
   const { connect } = useConnect();
 

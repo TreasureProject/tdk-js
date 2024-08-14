@@ -13,8 +13,16 @@ import {
   getContractAddresses,
   startUserSession,
 } from "@treasure-dev/tdk-core";
-import type { PropsWithChildren } from "react";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  type PropsWithChildren,
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { I18nextProvider } from "react-i18next";
 import { type Chain, defineChain } from "thirdweb";
 import {
   ThirdwebProvider,
@@ -25,6 +33,8 @@ import {
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
+
+import { i18n } from "../i18n";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
@@ -33,6 +43,8 @@ import {
 import { SUPPORTED_WALLETS } from "../utils/wallet";
 
 type Config = {
+  appName: string;
+  appIconUri?: string;
   apiUri?: string;
   chainId?: number;
   clientId: string;
@@ -41,6 +53,8 @@ type Config = {
 };
 
 type ContextValues = {
+  appName: string;
+  appIconUri?: string;
   chain: Chain;
   contractAddresses: Record<Contract, AddressString>;
   tdk: TDKAPI;
@@ -50,6 +64,7 @@ type ContextValues = {
   logIn: (wallet: Wallet) => void;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
+  setRootElement: (el: ReactNode) => void;
 };
 
 const Context = createContext({} as ContextValues);
@@ -70,6 +85,8 @@ type Props = PropsWithChildren<Config>;
 
 const TreasureProviderInner = ({
   children,
+  appName,
+  appIconUri,
   apiUri = DEFAULT_TDK_API_BASE_URI,
   chainId = DEFAULT_TDK_CHAIN_ID,
   clientId,
@@ -78,6 +95,7 @@ const TreasureProviderInner = ({
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
+  const [el, setEl] = useState<ReactNode>(null);
   const tdk = useMemo(
     () =>
       new TDKAPI({
@@ -191,6 +209,8 @@ const TreasureProviderInner = ({
   return (
     <Context.Provider
       value={{
+        appName,
+        appIconUri,
         chain,
         contractAddresses,
         tdk,
@@ -219,15 +239,19 @@ const TreasureProviderInner = ({
             tdk,
             options,
           }),
+        setRootElement: setEl,
       }}
     >
       {children}
+      {el}
     </Context.Provider>
   );
 };
 
 export const TreasureProvider = (props: Props) => (
   <ThirdwebProvider>
-    <TreasureProviderInner {...props} />
+    <I18nextProvider i18n={i18n}>
+      <TreasureProviderInner {...props} />
+    </I18nextProvider>
   </ThirdwebProvider>
 );

@@ -5,32 +5,12 @@ import { useConnect } from "../../hooks/useConnect";
 import { TreasureIcon } from "../../icons/TreasureIcon";
 import { Button } from "../ui/Button";
 
-import type { InAppWalletAuth } from "thirdweb/wallets";
-import { Dialog, DialogContent } from "../ui/Dialog";
 import { Spinner } from "../ui/Spinner";
 
-type Props = {
-  appName: string;
-  appIconUri?: string;
-  theme?: "light" | "dark";
-  supportedAuthOptions?: InAppWalletAuth[];
-};
-
-export const ConnectButton = ({
-  appName,
-  appIconUri,
-  theme = "light",
-  supportedAuthOptions,
-}: Props) => {
+export const ConnectButton = () => {
   const { t } = useTranslation();
   const { user, isConnecting } = useTreasure();
-  const { status, description, openConnectModal, openAccountModal } =
-    useConnect({
-      appName,
-      appIconUri,
-      theme,
-      supportedAuthOptions,
-    });
+  const { openConnectModal, openAccountModal } = useConnect();
   return (
     <>
       {user ? (
@@ -69,27 +49,6 @@ export const ConnectButton = ({
           )}
         </Button>
       )}
-      <Dialog
-        open={
-          !user && (status === "loading" || status === "error") && !!description
-        }
-      >
-        <DialogContent>
-          <div className="tdk-max-w-[360px] tdk-bg-honey-25 tdk-shadow-lg tdk-rounded-[20px] tdk-p-6 tdk-mx-auto tdk-flex tdk-items-center tdk-justify-center tdk-flex-col tdk-text-lg">
-            {status === "error" ? (
-              <h1 className="tdk-text-xl tdk-font-medium">Error occurred:</h1>
-            ) : null}
-            <p className="tdk-space-y-4 tdk-text-center">
-              <span className="tdk-block">{description}</span>
-              {status === "loading" ? (
-                <Spinner className="tdk-text-ruby-900 tdk-w-6 tdk-h-6 tdk-mx-auto" />
-              ) : status === "error" ? (
-                <Button>{t("common.close")}</Button>
-              ) : null}
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

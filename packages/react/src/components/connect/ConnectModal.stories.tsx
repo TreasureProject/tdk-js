@@ -11,26 +11,16 @@ const meta: Meta<typeof ConnectModal> = {
 export default meta;
 type Story = StoryObj<typeof ConnectModal>;
 
-const ConnectPage = () => {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <button type="button" onClick={() => setOpen(true)}>
-        Open Connect Modal
-      </button>
-      <ConnectModal
-        open={open}
-        onOpenChange={setOpen}
-        appName="ConnectModal Story"
-      />
-    </>
-  );
-};
-
-export const Primary: Story = {
-  render: () => (
-    <ThirdwebProvider>
-      <ConnectPage />
-    </ThirdwebProvider>
-  ),
+export const Default: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <button type="button" onClick={() => setOpen(true)}>
+          Open Connect Modal
+        </button>
+        <ConnectModal open={open} onOpenChange={setOpen} />
+      </>
+    );
+  },
 };

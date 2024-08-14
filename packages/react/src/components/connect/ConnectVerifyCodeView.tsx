@@ -32,7 +32,7 @@ export const ConnectVerifyCodeView = ({
           . You will be automatically logged in after entering your code.
         </p>
       </div>
-      <div className="tdk-h-[1px] tdk-bg-silver-500" />
+      <div className="tdk-h-[1px] tdk-bg-night-500" />
       <div className="tdk-space-y-6">
         <div>
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
