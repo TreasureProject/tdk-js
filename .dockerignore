@@ -1,8 +1,6 @@
 .git/
 .github/
 .husky/
-cdk/
-cdk.out/
 deploy/
 .dockerignore
 .gitignore
@@ -13,5 +11,4 @@ biome.json
 **/dist/
 **/node_modules/
 **/.env*
-**/cdk.json
 **/README.md

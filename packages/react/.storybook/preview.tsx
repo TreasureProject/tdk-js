@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import type { Preview } from "@storybook/react";
 import React from "react";
 
@@ -16,7 +17,12 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <TreasureProvider appName="Storybook" clientId="unknown">
+      <TreasureProvider
+        appName="Storybook"
+        apiUri={import.meta.env.VITE_TDK_API_URL}
+        chainId={421614}
+        clientId={import.meta.env.VITE_TDK_CLIENT_ID}
+      >
         <Story />
       </TreasureProvider>
     ),

@@ -33,7 +33,13 @@ export const ConnectMethodSelectionView = ({
           </span>
         </div>
       </div>
-      <div className="tdk-space-y-6">
+      <form
+        className="tdk-space-y-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onConnect("email", email);
+        }}
+      >
         <div className="tdk-space-y-1.5">
           <label
             className="tdk-block tdk-text-sm tdk-font-medium"
@@ -49,13 +55,10 @@ export const ConnectMethodSelectionView = ({
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <Button
-          className="tdk-w-full tdk-font-medium"
-          onClick={() => onConnect("email", email)}
-        >
+        <Button type="submit" className="tdk-w-full tdk-font-medium">
           Connect
         </Button>
-      </div>
+      </form>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">
         <div className="tdk-h-[1px] tdk-bg-night-500 tdk-absolute tdk-left-0 tdk-right-0 tdk-z-0" />
         <span className="tdk-text-sm tdk-text-silver-600 tdk-px-4 tdk-uppercase tdk-bg-night tdk-z-10">

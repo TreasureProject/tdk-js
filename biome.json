@@ -4,13 +4,13 @@
     "ignore": [
       ".husky/**",
       "build/**",
-      "cdk.out/**",
       "dist/**",
       "node_modules/",
       ".dockerignore",
       ".gitignore",
       "./**/*/package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "./**/*/.tsup/**/*"
     ]
   },
   "organizeImports": {
