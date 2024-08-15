@@ -1,4 +1,4 @@
-import { InAppWalletAuth } from "thirdweb/wallets";
+import type { InAppWalletAuth } from "thirdweb/wallets";
 
 export const SUPPORTED_WALLETS: InAppWalletAuth[] = [
   "email",
