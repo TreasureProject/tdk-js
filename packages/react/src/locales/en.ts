@@ -22,6 +22,7 @@ export const en = {
         description:
           "We have sent a verification code to <2>{{recipient}}</2>. You will be automatically logged in after entering your code.",
         inputLabel: "Enter verification code:",
+        action: "Confirm",
         resend: {
           prompt: "Didn't get a code?",
           action: "Resend",

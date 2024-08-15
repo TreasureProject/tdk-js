@@ -22,6 +22,7 @@ export const es = {
         description:
           "Se envió un código de verificación a <2>{{recipient}}</2>. Iniciará sesión automáticamente después de ingresar su código.",
         inputLabel: "Entrar código de verificación:",
+        action: "Confirmar",
         resend: {
           prompt: "¿No recibió un código?",
           action: "Reenviar",

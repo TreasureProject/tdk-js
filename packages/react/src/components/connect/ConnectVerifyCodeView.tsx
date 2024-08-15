@@ -96,7 +96,7 @@ export const ConnectVerifyCodeView = ({
             {isLoading ? (
               <Spinner className="tdk-w-3.5 tdk-h-3.5" />
             ) : (
-              t("connect.action")
+              t("connect.verify.action")
             )}
           </Button>
           <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
