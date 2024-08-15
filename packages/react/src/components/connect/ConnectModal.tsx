@@ -51,6 +51,13 @@ export const ConnectModal = ({
   const setIsLoading = (isLoading = true) =>
     setState((curr) => ({ ...curr, isLoading }));
 
+  const setError = (error: string, resetEmail = false) =>
+    setState((curr) => ({
+      email: resetEmail ? "" : curr.email,
+      isLoading: false,
+      error,
+    }));
+
   const handleLogin = async (wallet: Wallet) => {
     try {
       await logIn(wallet);
@@ -58,7 +65,7 @@ export const ConnectModal = ({
       onOpenChange(false);
     } catch (err) {
       console.error("Error logging in wallet:", err);
-      setState({ email: "", isLoading: false, error: (err as Error).message });
+      setError((err as Error).message, true);
       logOut();
     }
   };
@@ -66,16 +73,33 @@ export const ConnectModal = ({
   const handleConnectEmail = async (verificationCode: string) => {
     // Finish connecting with email and verification code
     setIsLoading();
-    const wallet = (await connect(() =>
-      connectWallet({
-        client,
-        chainId: chain.id,
-        method: "email",
-        email,
-        verificationCode,
-      }),
-    )) as Wallet;
-    await handleLogin(wallet);
+
+    let wallet: Wallet | undefined | null;
+    try {
+      wallet = await connect(() =>
+        connectWallet({
+          client,
+          chainId: chain.id,
+          method: "email",
+          email,
+          verificationCode,
+        }),
+      );
+    } catch (err) {
+      console.error("Error connecting wallet with email:", err);
+      setError((err as Error).message);
+    }
+
+    if (wallet) {
+      try {
+        await handleLogin(wallet);
+      } catch (err) {
+        console.error("Error logging in wallet with email:", err);
+        setError((err as Error).message);
+      }
+    } else {
+      setIsLoading(false);
+    }
   };
 
   const handleConnect = async (method: ConnectMethod, nextEmail?: string) => {
@@ -92,11 +116,7 @@ export const ConnectModal = ({
         setState({ email: nextEmail, isLoading: false, error: undefined });
       } catch (err) {
         console.error("Error sending email verification code:", err);
-        setState((curr) => ({
-          ...curr,
-          isLoading: false,
-          error: (err as Error).message,
-        }));
+        setError((err as Error).message);
       }
 
       return;
@@ -110,17 +130,34 @@ export const ConnectModal = ({
 
     // Handle connecting with social / passkey
     setIsLoading();
-    const wallet = (await connect(() =>
-      connectWallet({
-        client,
-        chainId: chain.id,
-        method,
-        authMode,
-        redirectUrl,
-        redirectExternally,
-      }),
-    )) as Wallet;
-    await handleLogin(wallet);
+
+    let wallet: Wallet | undefined | null;
+    try {
+      wallet = await connect(() =>
+        connectWallet({
+          client,
+          chainId: chain.id,
+          method,
+          authMode,
+          redirectUrl,
+          redirectExternally,
+        }),
+      );
+    } catch (err) {
+      console.error("Error connecting wallet:", err);
+      setError((err as Error).message);
+    }
+
+    if (wallet) {
+      try {
+        await handleLogin(wallet);
+      } catch (err) {
+        console.error("Error logging in wallet:", err);
+        setError((err as Error).message);
+      }
+    } else {
+      setIsLoading(false);
+    }
   };
 
   const handleResendEmailVerificationCode = async () => {
@@ -128,10 +165,7 @@ export const ConnectModal = ({
       await sendEmailVerificationCode({ client, email });
     } catch (err) {
       console.error("Error resending email verification code:", err);
-      setState((curr) => ({
-        ...curr,
-        error: (err as Error).message,
-      }));
+      setError((err as Error).message);
     }
   };
 
