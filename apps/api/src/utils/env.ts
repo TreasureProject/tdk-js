@@ -87,5 +87,8 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
       envSecret?.TROVE_API_URL ??
       "https://trove-api.treasure.lol",
     TROVE_API_KEY: process.env.TROVE_API_KEY ?? envSecret?.TROVE_API_KEY ?? "",
+    ENGINE_MAINTENANCE_MODE_ENABLED:
+      (process.env.ENGINE_MAINTENANCE_MODE_ENABLED ??
+        envSecret?.ENGINE_MAINTENANCE_MODE_ENABLED) === "true",
   };
 };
