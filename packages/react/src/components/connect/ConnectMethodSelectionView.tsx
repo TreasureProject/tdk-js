@@ -112,28 +112,28 @@ export const ConnectMethodSelectionView = ({
           className="tdk-group"
           onClick={() => onConnect("google")}
         >
-          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">{t("connect.option.google")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("telegram")}
         >
-          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">{t("connect.option.telegram")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("discord")}
         >
-          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">{t("connect.option.discord")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group"
+          className="tdk-group tdk-space-y-0.5"
           onClick={() => onConnect("apple")}
         >
-          <AppleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <AppleIcon className="tdk-w-5 tdk-h-5 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">{t("connect.option.apple")}</span>
         </ConnectMethodButton>
         {!disablePasskey ? (
@@ -141,7 +141,7 @@ export const ConnectMethodSelectionView = ({
             className="tdk-group tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
             onClick={() => onConnect("passkey")}
           >
-            <PasskeyIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+            <PasskeyIcon className="tdk-w-6 tdk-h-6 md:tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
             <span className="tdk-block">{t("connect.option.passkey")}</span>
           </ConnectMethodButton>
         ) : null}
