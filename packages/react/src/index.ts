@@ -12,3 +12,4 @@ export {
   useContractAddress,
   useContractAddresses,
 } from "./hooks/useContractAddress";
+export { GoogleIcon } from "./icons/GoogleIcon";
