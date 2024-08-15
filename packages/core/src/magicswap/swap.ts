@@ -50,7 +50,7 @@ export const getSwapArgs = ({
   amountOut?: bigint;
   isExactOut: boolean;
   chainId: SupportedChainId;
-  path: string[];
+  path: AddressString[];
   slippage?: number;
 }): {
   address: AddressString;

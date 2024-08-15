@@ -71,7 +71,7 @@ export const getAddLiquidityArgs = ({
       functionName: "addLiquidityNFTNFT",
       args: [
         {
-          token: tokenA.id,
+          token: tokenA.id as AddressString,
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
@@ -79,7 +79,7 @@ export const getAddLiquidityArgs = ({
           amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         {
-          token: tokenB.id,
+          token: tokenB.id as AddressString,
           collection: Array.from({ length: nftsB.length }).fill(
             tokenB.collectionId,
           ) as AddressString[],
@@ -100,7 +100,7 @@ export const getAddLiquidityArgs = ({
         functionName: "addLiquidityNFTETH",
         args: [
           {
-            token: tokenB.id,
+            token: tokenB.id as AddressString,
             collection: Array.from({ length: nftsB.length }).fill(
               tokenB.collectionId,
             ) as AddressString[],
@@ -121,14 +121,14 @@ export const getAddLiquidityArgs = ({
       functionName: "addLiquidityNFT",
       args: [
         {
-          token: tokenA.id,
+          token: tokenA.id as AddressString,
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
           tokenId: nftsA.map(({ id }) => BigInt(id)),
           amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
-        tokenB.id,
+        tokenB.id as AddressString,
         amountB,
         amountBMin,
         toAddress,
@@ -142,7 +142,14 @@ export const getAddLiquidityArgs = ({
     return {
       address: magicSwapV2RouterAddress,
       functionName: "addLiquidityETH",
-      args: [tokenB.id, amountB, amountBMin, amountA, toAddress, deadline],
+      args: [
+        tokenB.id as AddressString,
+        amountB,
+        amountBMin,
+        amountA,
+        toAddress,
+        deadline,
+      ],
       value: amountA,
     };
   }
@@ -152,8 +159,8 @@ export const getAddLiquidityArgs = ({
     address: magicSwapV2RouterAddress,
     functionName: "addLiquidity",
     args: [
-      tokenA.id,
-      tokenB.id,
+      tokenA.id as AddressString,
+      tokenB.id as AddressString,
       amountA,
       amountB,
       amountAMin,
