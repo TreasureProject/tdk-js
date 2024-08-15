@@ -89,8 +89,8 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
     TROVE_API_KEY: process.env.TROVE_API_KEY ?? envSecret?.TROVE_API_KEY ?? "",
     ZEEVERSE_API_URL:
       process.env.ZEEVERSE_API_URL ?? "https://api.zee-verse.com",
-    ENGINE_MAINTENANCE_MODE:
-      (process.env.ENGINE_MAINTENANCE_MODE ??
-        envSecret?.ENGINE_MAINTENANCE_MODE) === "on",
+    ENGINE_MAINTENANCE_MODE_ENABLED:
+      (process.env.ENGINE_MAINTENANCE_MODE_ENABLED ??
+        envSecret?.ENGINE_MAINTENANCE_MODE_ENABLED) === "true",
   };
 };

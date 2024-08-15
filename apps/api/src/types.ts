@@ -28,7 +28,7 @@ export type TdkApiEnv = {
   TROVE_API_URL: string;
   TROVE_API_KEY: string;
   ZEEVERSE_API_URL: string;
-  ENGINE_MAINTENANCE_MODE: boolean;
+  ENGINE_MAINTENANCE_MODE_ENABLED: boolean;
 };
 
 export type TdkApiContext = {
