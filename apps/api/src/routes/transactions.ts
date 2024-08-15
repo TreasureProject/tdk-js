@@ -46,6 +46,15 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
+        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.TransactionError,
+            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
+            message:
+              "Sorry, this feature is in planned maintenance mode. Please try again later.",
+          });
+        }
+
         const {
           chainId,
           userAddress,
@@ -135,6 +144,15 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
+        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.TransactionError,
+            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
+            message:
+              "Sorry, this feature is in planned maintenance mode. Please try again later.",
+          });
+        }
+
         const {
           chainId,
           userAddress,
