@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { ThirdwebProvider } from "thirdweb/react";
 
 import { ConnectModal } from "./ConnectModal";
 

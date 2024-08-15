@@ -8,6 +8,9 @@ export const DEFAULT_TDK_API_BASE_URI = "https://tdk-api.treasure.lol";
 export const DEFAULT_TDK_APP = "app";
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
+export const DEFAULT_TDK_APP_NAME = "App";
+export const DEFAULT_TDK_APP_ICON_URI =
+  "https://images.treasure.lol/tdk/login/treasure_icon.png";
 
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:

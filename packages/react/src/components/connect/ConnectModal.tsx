@@ -1,10 +1,13 @@
 import {
   type ConnectMethod,
+  DEFAULT_TDK_APP_ICON_URI,
+  SUPPORTED_WEB3_WALLETS,
   connectWallet,
+  getContractAddress,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
 import { useEffect, useState } from "react";
-import { useConnect } from "thirdweb/react";
+import { useConnect, useConnectModal } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
 
 import { useTreasure } from "../../contexts/treasure";
@@ -40,16 +43,28 @@ export const ConnectModal = ({
   onOpenChange,
   ...methodSelectionProps
 }: Props) => {
-  const { appName, appIconUri, client, chain, logIn, logOut } = useTreasure();
+  const {
+    appName,
+    appIconUri = DEFAULT_TDK_APP_ICON_URI,
+    client,
+    chain,
+    logIn,
+    logOut,
+  } = useTreasure();
   const [{ email, isLoading, error }, setState] = useState<{
     email: string;
     isLoading: boolean;
     error: string | undefined;
   }>(DEFAULT_STATE);
   const { connect } = useConnect();
+  const { connect: connectWeb3Wallet } = useConnectModal();
 
   const setIsLoading = (isLoading = true) =>
-    setState((curr) => ({ ...curr, isLoading }));
+    setState((curr) => ({
+      ...curr,
+      isLoading,
+      error: isLoading ? undefined : curr.error,
+    }));
 
   const setError = (error: string, resetEmail = false) =>
     setState((curr) => ({
@@ -122,37 +137,59 @@ export const ConnectModal = ({
       return;
     }
 
+    setIsLoading();
+    let wallet: Wallet | undefined | null;
+
     // Handle connecting with wallet
     if (method === "wallet") {
-      // TODO: pop up Thirdweb Connect modal
-      return;
-    }
-
-    // Handle connecting with social / passkey
-    setIsLoading();
-
-    let wallet: Wallet | undefined | null;
-    try {
-      wallet = await connect(() =>
-        connectWallet({
+      try {
+        wallet = await connectWeb3Wallet({
           client,
-          chainId: chain.id,
-          method,
-          authMode,
-          redirectUrl,
-          redirectExternally,
-        }),
-      );
-    } catch (err) {
-      console.error("Error connecting wallet:", err);
-      setError((err as Error).message);
+          wallets: SUPPORTED_WEB3_WALLETS,
+          appMetadata: {
+            name: appName,
+            logoUrl: appIconUri,
+          },
+          accountAbstraction: {
+            chain,
+            factoryAddress: getContractAddress(
+              chain.id,
+              "ManagedAccountFactory",
+            ),
+            sponsorGas: true,
+          },
+        });
+      } catch (err) {
+        // Error can be undefined if user closed the connect modal
+        if (err) {
+          console.error("Error connecting Web3 wallet:", err);
+          setError((err as Error).message);
+        }
+      }
+    } else {
+      // Handle connecting with social / passkey
+      try {
+        wallet = await connect(() =>
+          connectWallet({
+            client,
+            chainId: chain.id,
+            method,
+            authMode,
+            redirectUrl,
+            redirectExternally,
+          }),
+        );
+      } catch (err) {
+        console.error("Error connecting in-app wallet:", err);
+        setError((err as Error).message);
+      }
     }
 
     if (wallet) {
       try {
         await handleLogin(wallet);
       } catch (err) {
-        console.error("Error logging in wallet:", err);
+        console.error("Error logging in with in-app wallet:", err);
         setError((err as Error).message);
       }
     } else {

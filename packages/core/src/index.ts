@@ -8,6 +8,8 @@ export {
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_LOGIN_DOMAIN,
+  DEFAULT_TDK_APP_NAME,
+  DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_CHAINS,
   SUPPORTED_CHAIN_IDS,
   TOKEN_IDS,
@@ -42,6 +44,8 @@ export {
 export { getAllActiveSigners } from "./connect/accounts";
 export { decodeAuthToken } from "./connect/jwt";
 export {
+  SUPPORTED_IN_APP_WALLET_OPTIONS,
+  SUPPORTED_WEB3_WALLETS,
   connectWallet,
   createLoginUrl,
   createTreasureConnectClient,

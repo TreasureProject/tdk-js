@@ -1,4 +1,8 @@
-import type { ConnectMethod } from "@treasure-dev/tdk-core";
+import {
+  type ConnectMethod,
+  DEFAULT_TDK_APP_ICON_URI,
+  DEFAULT_TDK_APP_NAME,
+} from "@treasure-dev/tdk-core";
 import { type ButtonHTMLAttributes, useRef, useState } from "react";
 
 import { Trans, useTranslation } from "react-i18next";
@@ -28,7 +32,7 @@ type Props = Options & {
 
 export const ConnectMethodSelectionView = ({
   appName,
-  appIconUri = "https://images.treasure.lol/tdk/login/treasure_icon.png",
+  appIconUri = DEFAULT_TDK_APP_ICON_URI,
   isLoading = false,
   error,
   disablePasskey = false,
@@ -47,7 +51,7 @@ export const ConnectMethodSelectionView = ({
         <div>
           <Trans
             i18nKey="connect.header"
-            values={{ appName: appName || "App" }}
+            values={{ appName: appName || DEFAULT_TDK_APP_NAME }}
           >
             <span className="tdk-text-sm tdk-text-silver tdk-block">
               Connect to

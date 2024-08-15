@@ -91,26 +91,36 @@ export const authRoutes =
 
         // User is missing details we could fill in from the embedded wallet
         if (!user.email) {
-          // Get admin wallet associated with this smart account address
-          const {
-            result: [adminAddress],
-          } = await engine.account.getAllAdmins(chainId, address);
+          let adminAddress: string | undefined;
 
-          // Look up any associated user details in the embedded wallet
-          const embeddedWalletUser = await fetchEmbeddedWalletUser(
-            adminAddress,
-            env.THIRDWEB_SECRET_KEY,
-          );
-          if (embeddedWalletUser?.email) {
-            user = await db.user.update({
-              where: {
-                id: user.id,
-              },
-              data: {
-                email: embeddedWalletUser.email,
-              },
-              select: USER_SELECT_FIELDS,
-            });
+          // Get admin wallet associated with this smart account address
+          try {
+            const { result } = await engine.account.getAllAdmins(
+              chainId,
+              address,
+            );
+            adminAddress = result[0];
+          } catch {
+            // Ignore lookup if this fails, address may not be a smart account if user connected with Web3 wallet
+          }
+
+          if (adminAddress) {
+            // Look up any associated user details in the embedded wallet
+            const embeddedWalletUser = await fetchEmbeddedWalletUser(
+              adminAddress,
+              env.THIRDWEB_SECRET_KEY,
+            );
+            if (embeddedWalletUser?.email) {
+              user = await db.user.update({
+                where: {
+                  id: user.id,
+                },
+                data: {
+                  email: embeddedWalletUser.email,
+                },
+                select: USER_SELECT_FIELDS,
+              });
+            }
           }
         }
 

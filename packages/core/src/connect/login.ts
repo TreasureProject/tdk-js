@@ -1,6 +1,10 @@
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
-import type { Wallet } from "thirdweb/wallets";
+import {
+  type InAppWalletAuth,
+  type Wallet,
+  createWallet,
+} from "thirdweb/wallets";
 import {
   hasStoredPasskey,
   inAppWallet,
@@ -42,6 +46,25 @@ type ConnectWalletConfig = {
     }
 );
 
+export const SUPPORTED_IN_APP_WALLET_OPTIONS: InAppWalletAuth[] = [
+  "google",
+  "apple",
+  "discord",
+  "telegram",
+  "email",
+  "passkey",
+];
+
+export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
+  createWallet("io.metamask"),
+  createWallet("walletConnect"),
+  createWallet("io.rabby"),
+  createWallet("com.brave.wallet"),
+  createWallet("me.rainbow"),
+  createWallet("global.safe"),
+  createWallet("com.ledger"),
+];
+
 export const connectWallet = async (params: ConnectWalletConfig) => {
   const {
     client,
@@ -54,7 +77,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   const wallet = inAppWallet({
     auth: {
-      options: ["google", "apple", "discord", "telegram", "email", "passkey"], // This list is unused, but required by the Thirdweb type, so let's match it up with actual supported options
+      options: SUPPORTED_IN_APP_WALLET_OPTIONS,
       mode: authMode,
       redirectUrl,
       redirectExternally,

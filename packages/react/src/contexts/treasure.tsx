@@ -3,6 +3,8 @@ import {
   type Contract,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
+  SUPPORTED_IN_APP_WALLET_OPTIONS,
+  SUPPORTED_WEB3_WALLETS,
   type SessionOptions,
   TDKAPI,
   type TreasureConnectClient,
@@ -40,7 +42,6 @@ import {
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
-import { SUPPORTED_WALLETS } from "../utils/wallet";
 
 type Config = {
   appName: string;
@@ -184,7 +185,10 @@ const TreasureProviderInner = ({
   // Attempt an automatic background connection
   useAutoConnect({
     client,
-    wallets: [inAppWallet({ auth: { options: SUPPORTED_WALLETS } })],
+    wallets: [
+      inAppWallet({ auth: { options: SUPPORTED_IN_APP_WALLET_OPTIONS } }),
+      ...SUPPORTED_WEB3_WALLETS,
+    ],
     accountAbstraction: {
       chain,
       factoryAddress: contractAddresses.ManagedAccountFactory,
