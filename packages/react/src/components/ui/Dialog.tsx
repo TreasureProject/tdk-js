@@ -1,8 +1,8 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 
+import { CloseIcon } from "../../icons/CloseIcon";
 import { cn } from "../../utils/classnames";
-import { Icon } from "./Icon";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -39,10 +39,7 @@ const DialogContent = React.forwardRef<
     >
       <div className="tdk-p-4 sm:tdk-px-6">{children}</div>
       <DialogPrimitive.Close className="tdk-absolute tdk-top-5 tdk-right-4 tdk-bg-transparent tdk-border-none tdk-cursor-pointer tdk-group">
-        <Icon
-          name="close"
-          className="tdk-h-5 tdk-w-5 tdk-pt-4 tdk-pr-4 tdk-pb-3 tdk-pl-3 tdk-text-[#B7BABE] group-hover:tdk-text-white tdk-transition-colors"
-        />
+        <CloseIcon className="tdk-h-5 tdk-w-5 tdk-pt-4 tdk-pr-4 tdk-pb-3 tdk-pl-3 tdk-text-[#B7BABE] group-hover:tdk-text-white tdk-transition-colors" />
         <span className="tdk-sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>

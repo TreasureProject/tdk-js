@@ -37,12 +37,6 @@ Use [Storybook](https://storybook.js.org) to preview development of UI component
 npm run storybook
 ```
 
-To add icons to the SVG spritesheet, drop SVG files in the `./icons` folder and run the following command:
-
-```bash
-npm run generate
-```
-
 ## Deployment
 
 Merge [changeset-bot](https://github.com/apps/changeset-bot)'s versioning PR to the `main` branch to push a new package version to npm.

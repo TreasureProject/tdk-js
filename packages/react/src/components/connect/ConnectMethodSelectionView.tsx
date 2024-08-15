@@ -1,9 +1,14 @@
 import type { ConnectMethod } from "@treasure-dev/tdk-core";
 import { type ButtonHTMLAttributes, useState } from "react";
 
+import { AppleIcon } from "../../icons/AppleIcon";
+import { DiscordIcon } from "../../icons/DiscordIcon";
+import { GoogleIcon } from "../../icons/GoogleIcon";
+import { PasskeyIcon } from "../../icons/PasskeyIcon";
+import { TelegramIcon } from "../../icons/TelegramIcon";
+import { WalletIcon } from "../../icons/WalletIcon";
 import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
-import { Icon } from "../ui/Icon";
 import { Spinner } from "../ui/Spinner";
 import { ConnectFooter } from "./ConnectFooter";
 
@@ -96,40 +101,28 @@ export const ConnectMethodSelectionView = ({
           className="tdk-group"
           onClick={() => onConnect("google")}
         >
-          <Icon
-            name="google"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
+          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">Google</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("telegram")}
         >
-          <Icon
-            name="telegram"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
+          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">Telegram</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("discord")}
         >
-          <Icon
-            name="discord"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
+          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">Discord</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("apple")}
         >
-          <Icon
-            name="apple"
-            className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-          />
+          <AppleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
           <span className="tdk-block">Apple</span>
         </ConnectMethodButton>
         {!disablePasskey ? (
@@ -137,10 +130,7 @@ export const ConnectMethodSelectionView = ({
             className="tdk-group tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
             onClick={() => onConnect("passkey")}
           >
-            <Icon
-              name="passkey"
-              className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-            />
+            <PasskeyIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
             <span className="tdk-block">Passkey</span>
           </ConnectMethodButton>
         ) : null}
@@ -152,10 +142,7 @@ export const ConnectMethodSelectionView = ({
             )}
             onClick={() => onConnect("wallet")}
           >
-            <Icon
-              name="wallet"
-              className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors"
-            />
+            <WalletIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
             Wallet
           </ConnectMethodButton>
         ) : null}

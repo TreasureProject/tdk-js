@@ -1,5 +1,4 @@
-// Taken from https://github.com/thirdweb-dev/js/blob/main/packages/thirdweb/src/react/web/ui/ConnectWallet/PoweredByTW.tsx
-
+// https://github.com/thirdweb-dev/js/blob/main/packages/thirdweb/src/react/web/ui/ConnectWallet/PoweredByTW.tsx
 export const ThirdwebTextIcon = (props: { height: number }) => {
   return (
     <svg

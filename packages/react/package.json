@@ -36,7 +36,6 @@
   ],
   "scripts": {
     "build": "tsup",
-    "generate": "icons build -i ./icons -o ./src/icons --optimize",
     "dev": "npm run build -- --watch",
     "storybook": "storybook dev -p 6006"
   },
@@ -63,7 +62,6 @@
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "storybook": "^8.2.8",
-    "svg-icons-cli": "^0.0.8",
     "tailwindcss": "^3.3.3",
     "tailwindcss-animate": "^1.0.7"
   },
