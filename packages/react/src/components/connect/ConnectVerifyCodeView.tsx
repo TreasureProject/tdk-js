@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import VerificationInput from "react-verification-input";
 import { Button } from "../ui/Button";
 import { Spinner } from "../ui/Spinner";
@@ -20,6 +20,28 @@ export const ConnectVerifyCodeView = ({
   onResend,
 }: Props) => {
   const [code, setCode] = useState("");
+  const resendInterval = useRef<NodeJS.Timeout | null>(null);
+  const [resendAvailableInSec, setResendAvailableInSec] = useState(0);
+
+  const handleResend = () => {
+    onResend();
+
+    if (resendInterval.current) {
+      clearInterval(resendInterval.current);
+    }
+
+    setResendAvailableInSec(15);
+    resendInterval.current = setInterval(() => {
+      setResendAvailableInSec((curr) => {
+        if (curr === 1 && resendInterval.current) {
+          clearInterval(resendInterval.current);
+        }
+
+        return curr - 1;
+      });
+    }, 1_000);
+  };
+
   return (
     <div className="tdk-bg-night tdk-p-8 tdk-font-sans tdk-space-y-6">
       <div className="tdk-space-y-2">
@@ -75,13 +97,19 @@ export const ConnectVerifyCodeView = ({
           </Button>
           <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
             Didn't get a code?{" "}
-            <button
-              type="button"
-              className="tdk-text-silver-100 hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
-              onClick={onResend}
-            >
-              Resend
-            </button>
+            {resendAvailableInSec > 0 ? (
+              <span className="tdk-text-silver-100">
+                Resend available in {resendAvailableInSec}s...
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="tdk-text-silver-100 hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
+                onClick={handleResend}
+              >
+                Resend
+              </button>
+            )}
           </p>
         </div>
       </div>

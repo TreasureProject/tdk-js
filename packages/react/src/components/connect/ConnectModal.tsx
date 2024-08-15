@@ -120,6 +120,18 @@ export const ConnectModal = ({
     await handleLogin(wallet);
   };
 
+  const handleResendEmailVerificationCode = async () => {
+    try {
+      await sendEmailVerificationCode({ client, email });
+    } catch (err) {
+      console.error("Error resending email verification code:", err);
+      setState((curr) => ({
+        ...curr,
+        error: (err as Error).message,
+      }));
+    }
+  };
+
   // Reset modal state when it's opened
   useEffect(() => {
     if (open) {
@@ -137,7 +149,7 @@ export const ConnectModal = ({
               isLoading={isLoading}
               error={error}
               onConnect={handleConnectEmail}
-              onResend={() => sendEmailVerificationCode({ client, email })}
+              onResend={handleResendEmailVerificationCode}
             />
           ) : (
             <ConnectMethodSelectionView
