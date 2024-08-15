@@ -21,8 +21,7 @@ export const App = () => {
     useAccount();
   const chainId = useChainId();
   const contractAddresses = useContractAddresses();
-  const smartAccountAddress = (user?.smartAccountAddress ??
-    zeroAddress) as AddressString;
+  const smartAccountAddress = (user?.address ?? zeroAddress) as AddressString;
 
   const {
     data: {
@@ -40,7 +39,7 @@ export const App = () => {
   } = useHarvester({
     chainId,
     contract: "HarvesterEmberwing",
-    userAddress: eoaAddress,
+    userAddress: eoaAddress as AddressString,
   });
 
   const {
@@ -62,7 +61,7 @@ export const App = () => {
       },
     ],
     query: {
-      enabled: !!user?.smartAccountAddress,
+      enabled: !!user?.address,
       select: (data) => ({
         eoaMagic: data[0].result ?? 0n,
         eoaPermits: data[1].result ?? 0n,
@@ -146,12 +145,12 @@ export const App = () => {
         <TreasureConnectButton appName="Zeeverse" />
       </header>
       <main className="space-y-6">
-        {user?.smartAccountAddress ? (
+        {user?.address ? (
           <>
             <div className="space-y-2">
               <h2>
                 <span className="font-semibold">Smart Account:</span>{" "}
-                {user.smartAccountAddress}
+                {user.address}
               </h2>
               <ul className="list-disc px-8">
                 <li>{formatEther(smartAccountMagic)} MAGIC balance</li>

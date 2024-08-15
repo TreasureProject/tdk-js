@@ -123,36 +123,36 @@ const poolSchema = Type.Object({
 
 // Define the schema for the main object with descriptions
 export const poolsReplySchema = Type.Object({
-  pools: Type.Array(poolSchema),
+  pools: Type.Array(poolSchema, { description: "Array of pools" }),
 });
 
 export const poolReplySchema = poolSchema;
 
-const routeBodySchema = Type.Object({
-  tokenInId: Type.String(),
-  tokenOutId: Type.String(),
-  amount: Type.String(),
-  isExactOut: Type.Boolean(),
+export const routeBodySchema = Type.Object({
+  tokenInId: Type.String({
+    description: "The unique identifier of the `in` token",
+  }),
+  tokenOutId: Type.String({
+    description: "The unique identifier of the `out` token",
+  }),
+  amount: Type.String({ description: "Amount to calculate route and quote" }),
+  isExactOut: Type.Boolean({ description: "Boolean indicating if exact out" }),
+});
+
+const legTokenSchema = Type.Object({
+  name: Type.String({ description: "Token name" }),
+  symbol: Type.String({ description: "Token symbol" }),
+  address: Type.String({ description: "Token address" }),
+  decimals: Type.Number({ description: "Token decimals" }),
+  tokenId: Type.Optional(Type.String({ description: "Token ID" })),
 });
 
 const legSchema = Type.Object({
   poolAddress: Type.String({ description: "Pool address" }),
   poolType: Type.String({ description: "Pool type" }),
   poolFee: Type.Number({ description: "Pool fee" }),
-  tokenFrom: Type.Object({
-    name: Type.String(),
-    symbol: Type.String(),
-    address: Type.String(),
-    decimals: Type.Number(),
-    tokenId: Type.Optional(Type.String()),
-  }),
-  tokenTo: Type.Object({
-    name: Type.String(),
-    symbol: Type.String(),
-    address: Type.String(),
-    decimals: Type.Number(),
-    tokenId: Type.Optional(Type.String()),
-  }),
+  tokenFrom: legTokenSchema,
+  tokenTo: legTokenSchema,
   assumedAmountIn: Type.Number({ description: "Assumed amount in" }),
   assumedAmountOut: Type.Number({ description: "Assumed amount out" }),
   swapPortion: Type.Number({ description: "Swap portion" }),
@@ -164,31 +164,80 @@ export const routeReplySchema = Type.Object({
   amountOut: Type.String({ description: "Amount out" }),
   tokenIn: tokenSchema,
   tokenOut: tokenSchema,
-  legs: Type.Array(legSchema),
-  path: Type.Array(Type.String()),
-  priceImpact: Type.Number(),
-  derivedValue: Type.Number(),
-  lpFee: Type.Number(),
-  protocolFee: Type.Number(),
-  royaltiesFee: Type.Number(),
+  legs: Type.Array(legSchema, { description: "Array of route legs" }),
+  path: Type.Array(Type.String(), {
+    description: "Array that defines the swap path",
+  }),
+  priceImpact: Type.Number({ description: "Price impact" }),
+  derivedValue: Type.Number({ description: "Derived value" }),
+  lpFee: Type.Number({ description: "Liquidity provider fee" }),
+  protocolFee: Type.Number({ description: "Protocol fee" }),
+  royaltiesFee: Type.Number({ description: "Royalties fee" }),
 });
 
 const nftInputSchema = Type.Object({
-  id: Type.String(),
-  quantity: Type.Number(),
+  id: Type.String({ description: "The unique identifier of the NFT" }),
+  quantity: Type.Number({ description: "The quantity of the NFT" }),
 });
 
-const swapBodySchema = Type.Object({
+export const swapBodySchema = Type.Object({
   backendWallet: Type.Optional(Type.String()),
-  tokenInId: Type.String(),
-  tokenOutId: Type.String(),
-  amountIn: Type.Optional(Type.String()),
-  amountOut: Type.Optional(Type.String()),
-  path: Type.Array(Type.String()),
-  isExactOut: Type.Boolean(),
-  nftsIn: Type.Optional(Type.Array(nftInputSchema)),
-  nftsOut: Type.Optional(Type.Array(nftInputSchema)),
-  slippage: Type.Optional(Type.Number()),
+  tokenInId: Type.String({
+    description: "The unique identifier of the `in` token",
+  }),
+  tokenOutId: Type.String({
+    description: "The unique identifier of the `out` token",
+  }),
+  amountIn: Type.Optional(Type.String({ description: "Amount to swap" })),
+  amountOut: Type.Optional(Type.String({ description: "Amount to swap" })),
+  path: Type.Array(
+    Type.String({ description: "Array that defines the swap path" }),
+  ),
+  isExactOut: Type.Boolean({ description: "Boolean indicating if exact out" }),
+  nftsIn: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs to swap in" }),
+  ),
+  nftsOut: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs to swap out" }),
+  ),
+  slippage: Type.Optional(Type.Number({ description: "Slippage tolerance" })),
+});
+
+export const addLiquidityBodySchema = Type.Object({
+  backendWallet: Type.Optional(Type.String()),
+  nfts0: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
+  ),
+  nfts1: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs for token1" }),
+  ),
+  amount0: Type.Optional(Type.String({ description: "Amount for token0" })),
+  amount1: Type.Optional(Type.String({ description: "Amount for token1" })),
+  amount0Min: Type.Optional(
+    Type.String({ description: "Minimum amount for token0" }),
+  ),
+  amount1Min: Type.Optional(
+    Type.String({ description: "Minimum amount for token1" }),
+  ),
+});
+
+export const removeLiquidityBodySchema = Type.Object({
+  backendWallet: Type.Optional(Type.String()),
+  nfts0: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
+  ),
+  nfts1: Type.Optional(
+    Type.Array(nftInputSchema, { description: "Array of NFTs for token1" }),
+  ),
+  amountLP: Type.String({ description: "Amount of LP tokens" }),
+  amount0Min: Type.String({ description: "Minimum amount for token0" }),
+  amount1Min: Type.String({ description: "Minimum amount for token1" }),
+  swapLeftover: Type.Optional(
+    Type.Boolean({
+      default: true,
+      description: "Boolean indicating if swap leftover",
+    }),
+  ),
 });
 
 const poolParamsSchema = Type.Object({
@@ -204,3 +253,6 @@ export type RouteBody = Static<typeof routeBodySchema>;
 export type RouteReply = Static<typeof routeReplySchema>;
 
 export type SwapBody = Static<typeof swapBodySchema>;
+
+export type AddLiquidityBody = Static<typeof addLiquidityBodySchema>;
+export type RemoveLiquidityBody = Static<typeof removeLiquidityBodySchema>;

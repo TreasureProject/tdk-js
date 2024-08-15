@@ -1,5 +1,36 @@
 # @treasure-dev/tdk-core
 
+## 1.5.0
+
+### Minor Changes
+
+- f4ff171: Removed payments module hooks, utils and components
+
+### Patch Changes
+
+- 9e56447: Added strict typing on Magicswap argument utils
+
+## 1.4.1
+
+## 1.4.0
+
+### Minor Changes
+
+- 72d45e9: add remove liquidity helpers and API endpoint
+- ea0053b: add eth based swap support
+- ac072df: add magicswap liquidity api helpers
+
+### Patch Changes
+
+- 361c861: Added telegram to social login options
+
+## 1.3.0
+
+### Minor Changes
+
+- af94875: add magicswap method to get arguments to add liquidity
+- f272eb2: Renamed user smartAccountAddress field to address
+
 ## 1.2.0
 
 ### Minor Changes

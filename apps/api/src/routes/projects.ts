@@ -5,6 +5,7 @@ import "../middleware/swagger";
 import {
   type ReadProjectParams,
   type ReadProjectReply,
+  notFoundReplySchema,
   readProjectReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
@@ -24,6 +25,7 @@ export const projectsRoutes =
           description: "Get project details to power login experience",
           response: {
             200: readProjectReplySchema,
+            404: notFoundReplySchema,
           },
         },
       },
@@ -60,6 +62,7 @@ export const projectsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.ProjectError,
             code: TDK_ERROR_CODES.PROJECT_NOT_FOUND,
+            statusCode: 404,
             message: "Project not found",
             data: { slug },
           });

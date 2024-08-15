@@ -1,7 +1,6 @@
 import Decimal from "decimal.js-light";
 import { zeroAddress } from "viem";
 
-import type { Currency, Token } from "../types";
 import { getContractAddresses } from "./contracts";
 
 export const formatUSD = (value: number | string) =>
@@ -33,19 +32,3 @@ export const formatAmount = (value: string | number, toLocale = true) => {
 
   return rounded.toString();
 };
-
-export const getTokenAddress = (chainId: number, token: Token) => {
-  const contractAddresses = getContractAddresses(chainId);
-  switch (token) {
-    case "ARB":
-    case "MAGIC":
-      return contractAddresses[token];
-    case "ETH":
-      return zeroAddress;
-    default:
-      return token;
-  }
-};
-
-export const getCurrencyAddress = (chainId: number, currency: Currency) =>
-  currency === "USD" ? zeroAddress : getTokenAddress(chainId, currency);

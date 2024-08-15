@@ -14,9 +14,7 @@ packages/react/ @alecananian
 
 # Examples
 
+examples/connect-core/ @alecananian
+examples/connect-react/ @alecananian
 examples/harvester/ @alecananian
-examples/payments/ @alecananian
-
-# Infrastructure
-
-cdk/ @mfar @aphexyuri @alecananian
+examples/magicswap/ @cdotta

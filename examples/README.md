@@ -1,4 +1,5 @@
-# Treasure.js Examples
+# Treasure Development Kit Examples
 
-- [Harvester](./harvester) ([Demo](https://tdk-examples-harvester.vercel.app))
-- [Payments](./payments)
+- [Treasure Connect (Core)](./connect-core)
+- [Treasure Connect (React)](./connect-react) - [Live Demo](https://tdk-examples-connect.vercel.app)
+- [Magicswap](./magicswap)

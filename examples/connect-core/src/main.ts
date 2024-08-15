@@ -190,7 +190,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           ] as const,
           functionName: "mint",
           args: [
-            user.smartAccountAddress as AddressString,
+            user.address as AddressString,
             1000000000000000000000n, // 1,000
           ],
         },

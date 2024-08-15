@@ -6,6 +6,7 @@ export type Token = {
   name: string;
   symbol: string;
   isNFT: boolean;
+  isETH: boolean;
   decimals: string;
   derivedMAGIC: string;
   vaultCollections: {
@@ -76,3 +77,5 @@ export type TokensByCollectionMap = Record<
   string,
   Record<string, InventoryTokenItem>
 >;
+
+export type NFTInput = { id: string; quantity: number };

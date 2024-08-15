@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-core",
-  "version": "1.2.0",
+  "version": "1.5.0",
   "description": "Treasure Development Kit for TypeScript/JavaScript-based projects",
   "keywords": [
     "treasure",
@@ -40,7 +40,7 @@
     "abitype": "^1.0.2",
     "decimal.js-light": "^2.5.1",
     "jwt-decode": "^4.0.0",
-    "thirdweb": "^5.29.1",
+    "thirdweb": "^5.44.0",
     "viem": "^2.7.6"
   },
   "engines": {

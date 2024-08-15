@@ -1,5 +1,6 @@
 import {
   DEFAULT_TDK_CHAIN_ID,
+  type UserContext,
   getAllActiveSigners,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
@@ -20,7 +21,9 @@ import {
   readLoginPayloadReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
+import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
 import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
+import { transformUserProfileResponseFields } from "../utils/user";
 
 export const authRoutes =
   ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
@@ -70,84 +73,81 @@ export const authRoutes =
         }
 
         const { payload } = verifiedPayload;
-        const {
-          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
-          address: smartAccountAddress,
-        } = payload;
+        const { chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(), address } =
+          payload;
 
         let user = await db.user.upsert({
           where: {
-            smartAccountAddress,
+            address,
           },
           update: {
             lastLoginAt: new Date(),
           },
           create: {
-            smartAccountAddress,
+            address,
           },
-          select: {
-            id: true,
-            smartAccountAddress: true,
-            email: true,
-          },
+          select: USER_SELECT_FIELDS,
         });
 
-        // User does not have an email address registered yet
-        if (!user.email) {
+        // User is missing details we could fill in from the embedded wallet
+        if (!user.email && !user.phoneNumber) {
           // Get admin wallet associated with this smart account address
           const {
             result: [adminAddress],
-          } = await engine.account.getAllAdmins(chainId, smartAccountAddress);
+          } = await engine.account.getAllAdmins(chainId, address);
 
-          // Look up any possible associated email addresses (for embedded wallets)
+          // Look up any associated user details in the embedded wallet
           const embeddedWalletUser = await fetchEmbeddedWalletUser(
             adminAddress,
             env.THIRDWEB_SECRET_KEY,
           );
-          if (embeddedWalletUser) {
-            const { email } = embeddedWalletUser;
-            if (email) {
-              // Check if email was migrated from TreasureTag system, and delete existing record if so
-              const existingUser = await db.user.findUnique({
-                where: { email },
-                select: { id: true },
-              });
-              if (existingUser) {
-                await db.user.delete({ where: { id: existingUser.id } });
-              }
-
-              // Set user's email address
-              user = await db.user.update({
-                where: {
-                  id: user.id,
-                },
-                data: { email },
-                select: {
-                  id: true,
-                  smartAccountAddress: true,
-                  email: true,
-                },
-              });
-            }
+          if (embeddedWalletUser?.email || embeddedWalletUser?.phone) {
+            user = await db.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                email: embeddedWalletUser.email,
+                phoneNumber: embeddedWalletUser.phone,
+              },
+              select: USER_SELECT_FIELDS,
+            });
           }
         }
 
+        const userContext: UserContext = {
+          id: user.id,
+          address: user.address,
+          email: user.email,
+          smartAccountAddress: user.address,
+        };
+
         // Add user data to JWT payload's context
-        const [authToken, allActiveSigners] = await Promise.all([
+        const [authToken, allActiveSigners, profile] = await Promise.all([
           auth.generateJWT({
             payload,
-            context: user,
+            context: userContext,
           }),
           getAllActiveSigners({
             chainId: Number(chainId),
-            address: user.smartAccountAddress,
+            address: user.address,
             wagmiConfig,
           }),
+          db.userProfile.upsert({
+            where: { userId: user.id },
+            update: {},
+            create: { userId: user.id },
+            select: USER_PROFILE_SELECT_FIELDS,
+          }),
         ]);
+
         reply.send({
           token: authToken,
           user: {
+            ...userContext,
             ...user,
+            ...profile,
+            ...transformUserProfileResponseFields(profile),
             allActiveSigners: allActiveSigners.map((activeSigner) => ({
               ...activeSigner,
               approvedTargets: activeSigner.approvedTargets.map((target) =>

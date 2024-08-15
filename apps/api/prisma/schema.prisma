@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "tracing", "views"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "smart_account"]
 }
 
 // Partner within the Treasure ecosystem
@@ -30,6 +32,7 @@ model Project {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("project")
+  @@schema("public")
 }
 
 // Project wallet that can be used to cover gas when desired
@@ -50,6 +53,7 @@ model BackendWallet {
 
   @@unique([chainId, address])
   @@map("backend_wallet")
+  @@schema("public")
 }
 
 // Contracts that a project user's session should have write access to
@@ -70,6 +74,7 @@ model CallTarget {
 
   @@unique([chainId, address])
   @@map("call_target")
+  @@schema("public")
 }
 
 model User {
@@ -77,14 +82,160 @@ model User {
   id String @id @default(cuid())
 
   // Fields
-  smartAccountAddress String    @unique @map("smart_account_address")
-  email               String?   @unique
-  treasureTag         String?   @unique @map("treasure_tag")
-  lastLoginAt         DateTime? @map("last_login_at")
+  address     String    @unique @map("address") @db.VarChar(42)
+  email       String?   @unique
+  phoneNumber String?   @unique @map("phone_number")
+  banned      Boolean   @default(false)
+  comment     String?
+  lastLoginAt DateTime? @map("last_login_at")
+
+  // Relations
+  profile              UserProfile?
+  socialAccounts       UserSocialAccount[]
+  notificationSettings UserNotificationSettings[]
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user")
+  @@schema("public")
+}
+
+model UserProfile {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  // TreasureTag
+  tag              String?
+  discriminant     Int?      @db.SmallInt
+  tagClaimed       Boolean   @default(false) @map("tag_claimed")
+  tagModifiedAt    DateTime? @map("tag_modified_at")
+  tagLastCheckedAt DateTime? @map("tag_last_checked_at")
+
+  // Email security
+  emailSecurityPhrase          String?   @map("email_security_phrase")
+  emailSecurityPhraseUpdatedAt DateTime? @map("email_security_phrase_updated_at")
+
+  // Bio
+  featuredNftIds        String[] @map("featured_nft_ids")
+  featuredBadgeIds      String[] @map("featured_badge_ids")
+  highlyFeaturedBadgeId String?  @map("highly_featured_badge_id")
+  about                 String?
+  pfp                   String?
+  banner                String?
+
+  // UI
+  showMagicBalance Boolean @default(true) @map("show_magic_balance")
+  showEthBalance   Boolean @default(true) @map("show_eth_balance")
+  showGemsBalance  Boolean @default(true) @map("show_gems_balance")
+
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  // Other
+  testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
+
+  // Relations
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tag, discriminant])
+  @@map("user_profile")
+  @@schema("public")
+}
+
+enum SocialNetwork {
+  APPLE
+  DISCORD
+  FARCASTER
+  GOOGLE
+  STEAM
+  TWITCH
+  TWITTER
+
+  @@schema("public")
+}
+
+model UserSocialAccount {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  network       SocialNetwork
+  accountId     String        @map("account_id")
+  accountName   String        @map("account_name")
+  accountHandle String?       @map("account_handle")
+  accountData   Json?         @map("account_data")
+  isPublic      Boolean       @default(false) @map("is_public")
+
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_social_account")
+  @@schema("public")
+}
+
+enum NotificationType {
+  BADGE
+  BID_ACTIVITY
+  ITEM_SOLD
+  ITEM_PURCHASED
+  MARKETING
+
+  @@schema("public")
+}
+
+model UserNotificationSettings {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  type           NotificationType
+  threshold      Int?
+  isEnabledEmail Boolean          @default(true) @map("is_enabled_email")
+  isEnabledInApp Boolean          @default(true) @map("is_enabled_in_app")
+
+  // Migration
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  // Relations
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([type, userId])
+  @@unique([type, legacyAddress])
+  @@map("user_notification_settings")
+  @@schema("public")
+}
+
+view Transaction {
+  id              String   @id
+  chainId         Int      @map("chain_id")
+  blockNumber     Decimal  @map("block_number") @db.Decimal
+  blockTimestamp  DateTime @map("block_timestamp")
+  transactionHash String   @map("transaction_hash")
+  fromAddress     String   @map("from_address")
+  toAddress       String   @map("to_address")
+  value           Decimal? @db.Decimal
+
+  @@map("transactions")
+  @@schema("smart_account")
 }

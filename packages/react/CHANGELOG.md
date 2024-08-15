@@ -1,5 +1,46 @@
 # @treasure-dev/tdk-react
 
+## 1.5.0
+
+### Minor Changes
+
+- f4ff171: Removed payments module hooks, utils and components
+
+### Patch Changes
+
+- 59f25c3: Removed global base CSS styles from package
+- Updated dependencies [f4ff171]
+- Updated dependencies [9e56447]
+  - @treasure-dev/tdk-core@1.5.0
+
+## 1.4.1
+
+### Patch Changes
+
+- d25ce6b: Temporarily allow consumer apps to specify auth options
+  - @treasure-dev/tdk-core@1.4.1
+
+## 1.4.0
+
+### Patch Changes
+
+- 361c861: Added telegram to social login options
+- Updated dependencies [361c861]
+- Updated dependencies [72d45e9]
+- Updated dependencies [ea0053b]
+- Updated dependencies [ac072df]
+  - @treasure-dev/tdk-core@1.4.0
+
+## 1.3.0
+
+### Patch Changes
+
+- 7494c70: Added Farcaster social auth option
+- a2de146: Exposed the useConnect hook
+- Updated dependencies [af94875]
+- Updated dependencies [f272eb2]
+  - @treasure-dev/tdk-core@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

@@ -5,6 +5,7 @@ import { useConnect } from "../../hooks/useConnect";
 import { TreasureIcon } from "../../icons/TreasureIcon";
 import { Button } from "../ui/Button";
 
+import type { InAppWalletAuth } from "thirdweb/wallets";
 import { Dialog, DialogContent } from "../ui/Dialog";
 import { Spinner } from "../ui/Spinner";
 
@@ -12,12 +13,14 @@ type Props = {
   appName: string;
   appIconUri?: string;
   theme?: "light" | "dark";
+  supportedAuthOptions?: InAppWalletAuth[];
 };
 
 export const ConnectButton = ({
   appName,
   appIconUri,
   theme = "light",
+  supportedAuthOptions,
 }: Props) => {
   const { t } = useTranslation();
   const { user, isConnecting } = useTreasure();
@@ -26,6 +29,7 @@ export const ConnectButton = ({
       appName,
       appIconUri,
       theme,
+      supportedAuthOptions,
     });
   return (
     <>
@@ -42,7 +46,7 @@ export const ConnectButton = ({
               </span>
             ) : null}
             <span className="tdk-text-xs tdk-text-night-600 tdk-block">
-              {truncateEthAddress(user.smartAccountAddress)}
+              {truncateEthAddress(user.address)}
             </span>
           </div>
           <TreasureIcon className="tdk-w-8 tdk-h-8 tdk-text-ruby-900" />

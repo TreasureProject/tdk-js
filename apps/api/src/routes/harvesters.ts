@@ -18,6 +18,7 @@ import {
   type ErrorReply,
   type ReadHarvesterParams,
   type ReadHarvesterReply,
+  notFoundReplySchema,
   readHarvesterCorruptionRemovalReplySchema,
   readHarvesterReplySchema,
 } from "../schema";
@@ -37,8 +38,10 @@ export const harvestersRoutes =
           summary: "Get Harvester",
           description:
             "Get Harvester details including user info if valid authorization token is provided",
+          deprecated: true,
           response: {
             200: readHarvesterReplySchema,
+            404: notFoundReplySchema,
           },
         },
       },
@@ -61,6 +64,7 @@ export const harvestersRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.HarvesterError,
             code: TDK_ERROR_CODES.HARVESTER_NFT_HANDLER_NOT_FOUND,
+            statusCode: 404,
             message: "NftHandler not found",
           });
         }
@@ -94,6 +98,7 @@ export const harvestersRoutes =
           summary: "Get Harvester Corruption Removal",
           description:
             "Get Corruption Removal recipes for Harvester including user info if valid authorization token is provided",
+          deprecated: true,
           response: {
             200: readHarvesterCorruptionRemovalReplySchema,
           },

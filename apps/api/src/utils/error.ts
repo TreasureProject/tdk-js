@@ -23,22 +23,26 @@ export const TDK_ERROR_CODES = {
 
 export class TdkError extends Error {
   code: string | undefined;
+  statusCode: number | undefined;
   data: object | undefined;
 
   constructor({
     name,
     code,
     message,
+    statusCode,
     data,
   }: {
     name: string;
     code: string;
     message: string;
+    statusCode?: number;
     data?: object;
   }) {
     super(message);
     this.name = name;
     this.code = code;
+    this.statusCode = statusCode;
     this.data = data;
     Sentry.setExtra("error", this);
   }
