@@ -49,7 +49,7 @@ export const ConnectButton = (props?: Props) => {
                 className="tdk-w-5 tdk-h-5 tdk-text-white"
                 starsFill="#C62222"
               />
-              <span>{t("login.connect")}</span>
+              <span>{t("connect.action")}</span>
             </>
           )}
         </Button>

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import VerificationInput from "react-verification-input";
 import { Button } from "../ui/Button";
 import { Spinner } from "../ui/Spinner";
@@ -19,6 +20,7 @@ export const ConnectVerifyCodeView = ({
   onConnect,
   onResend,
 }: Props) => {
+  const { t } = useTranslation();
   const [code, setCode] = useState("");
   const resendInterval = useRef<NodeJS.Timeout | null>(null);
   const [resendAvailableInSec, setResendAvailableInSec] = useState(0);
@@ -46,14 +48,16 @@ export const ConnectVerifyCodeView = ({
     <div className="tdk-bg-night tdk-p-8 tdk-font-sans tdk-space-y-6">
       <div className="tdk-space-y-2">
         <h2 className="tdk-text-lg tdk-font-semibold tdk-text-white">
-          Verify code
+          {t("connect.verify.header")}
         </h2>
         <p className="tdk-text-sm tdk-text-silver">
-          We have sent a verification code to{" "}
-          <span className="tdk-text-silver-200 tdk-font-medium">
-            {recipient}
-          </span>
-          . You will be automatically logged in after entering your code.
+          <Trans i18nKey="connect.verify.description" values={{ recipient }}>
+            We have sent a verification code to{" "}
+            <span className="tdk-text-silver-200 tdk-font-medium">
+              {recipient}
+            </span>
+            . You will be automatically logged in after entering your code.
+          </Trans>
         </p>
       </div>
       <div className="tdk-h-[1px] tdk-bg-night-500" />
@@ -65,7 +69,7 @@ export const ConnectVerifyCodeView = ({
       <div className="tdk-space-y-6">
         <div>
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
-            Enter verification code:
+            {t("connect.verify.inputLabel")}
           </h3>
           <VerificationInput
             length={6}
@@ -92,14 +96,14 @@ export const ConnectVerifyCodeView = ({
             {isLoading ? (
               <Spinner className="tdk-w-3.5 tdk-h-3.5" />
             ) : (
-              "Connect"
+              t("connect.action")
             )}
           </Button>
           <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
-            Didn't get a code?{" "}
+            {t("connect.verify.resend.prompt")}{" "}
             {resendAvailableInSec > 0 ? (
               <span className="tdk-text-silver-100">
-                Resend available in {resendAvailableInSec}s...
+                {t("connect.verify.resend.countdown", { resendAvailableInSec })}
               </span>
             ) : (
               <button
@@ -107,7 +111,7 @@ export const ConnectVerifyCodeView = ({
                 className="tdk-text-silver-100 hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
                 onClick={handleResend}
               >
-                Resend
+                {t("connect.verify.resend.action")}
               </button>
             )}
           </p>

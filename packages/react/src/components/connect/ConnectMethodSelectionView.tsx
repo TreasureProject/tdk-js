@@ -1,6 +1,7 @@
 import type { ConnectMethod } from "@treasure-dev/tdk-core";
 import { type ButtonHTMLAttributes, useState } from "react";
 
+import { Trans, useTranslation } from "react-i18next";
 import { AppleIcon } from "../../icons/AppleIcon";
 import { DiscordIcon } from "../../icons/DiscordIcon";
 import { GoogleIcon } from "../../icons/GoogleIcon";
@@ -34,6 +35,7 @@ export const ConnectMethodSelectionView = ({
   disableWallet = false,
   onConnect,
 }: Props) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   return (
     <div className="tdk-bg-night tdk-p-8 tdk-text-silver-100 tdk-font-sans tdk-space-y-6">
@@ -42,12 +44,17 @@ export const ConnectMethodSelectionView = ({
           <img src={appIconUri} alt="" className="tdk-w-full tdk-h-full" />
         </div>
         <div>
-          <span className="tdk-text-sm tdk-text-silver tdk-block">
-            Connect to
-          </span>
-          <span className="tdk-text-base tdk-block tdk-font-semibold">
-            {appName ?? "App"}
-          </span>
+          <Trans
+            i18nKey="connect.header"
+            values={{ appName: appName || "App" }}
+          >
+            <span className="tdk-text-sm tdk-text-silver tdk-block">
+              Connect to
+            </span>
+            <span className="tdk-text-base tdk-block tdk-font-semibold">
+              {appName}
+            </span>
+          </Trans>
         </div>
       </div>
       {error ? (
@@ -67,7 +74,7 @@ export const ConnectMethodSelectionView = ({
             className="tdk-block tdk-text-sm tdk-font-medium"
             htmlFor="email"
           >
-            Email address
+            {t("common.emailLabel")}
           </label>
           <input
             id="email"
@@ -82,13 +89,17 @@ export const ConnectMethodSelectionView = ({
           className="tdk-w-full tdk-font-medium"
           disabled={isLoading}
         >
-          {isLoading ? <Spinner className="tdk-w-3.5 tdk-h-3.5" /> : "Connect"}
+          {isLoading ? (
+            <Spinner className="tdk-w-3.5 tdk-h-3.5" />
+          ) : (
+            t("connect.action")
+          )}
         </Button>
       </form>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">
         <div className="tdk-h-[1px] tdk-bg-night-500 tdk-absolute tdk-left-0 tdk-right-0 tdk-z-0" />
         <span className="tdk-text-sm tdk-text-silver-600 tdk-px-4 tdk-uppercase tdk-bg-night tdk-z-10">
-          or
+          {t("common.or")}
         </span>
       </div>
       <div
@@ -102,28 +113,28 @@ export const ConnectMethodSelectionView = ({
           onClick={() => onConnect("google")}
         >
           <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">Google</span>
+          <span className="tdk-block">{t("connect.option.google")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("telegram")}
         >
           <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">Telegram</span>
+          <span className="tdk-block">{t("connect.option.telegram")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("discord")}
         >
           <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">Discord</span>
+          <span className="tdk-block">{t("connect.option.discord")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
           className="tdk-group"
           onClick={() => onConnect("apple")}
         >
           <AppleIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">Apple</span>
+          <span className="tdk-block">{t("connect.option.apple")}</span>
         </ConnectMethodButton>
         {!disablePasskey ? (
           <ConnectMethodButton
@@ -131,7 +142,7 @@ export const ConnectMethodSelectionView = ({
             onClick={() => onConnect("passkey")}
           >
             <PasskeyIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-            <span className="tdk-block">Passkey</span>
+            <span className="tdk-block">{t("connect.option.passkey")}</span>
           </ConnectMethodButton>
         ) : null}
         {!disableWallet ? (
@@ -143,7 +154,7 @@ export const ConnectMethodSelectionView = ({
             onClick={() => onConnect("wallet")}
           >
             <WalletIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-            Wallet
+            {t("connect.option.wallet")}
           </ConnectMethodButton>
         ) : null}
       </div>
