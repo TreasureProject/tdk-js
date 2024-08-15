@@ -20,19 +20,20 @@ import { startUserSession } from "./session";
 type ConnectWalletConfig = {
   client: TreasureConnectClient;
   chainId?: number;
+  authMode?: "popup" | "redirect";
+  redirectUrl?: string;
+  redirectExternally?: boolean;
 } & (
   | {
-      mode: SocialConnectMethod;
-      redirectUrl?: string;
-      redirectExternally?: string;
+      method: SocialConnectMethod;
     }
   | {
-      mode: "email";
+      method: "email";
       email: string;
       verificationCode: string;
     }
   | {
-      mode: "passkey";
+      method: "passkey";
       passkeyName?: string;
       domain?: {
         displayName: string;
@@ -42,10 +43,22 @@ type ConnectWalletConfig = {
 );
 
 export const connectWallet = async (params: ConnectWalletConfig) => {
-  const { client, chainId = DEFAULT_TDK_CHAIN_ID } = params;
+  const {
+    client,
+    chainId = DEFAULT_TDK_CHAIN_ID,
+    authMode,
+    redirectUrl,
+    redirectExternally,
+  } = params;
   const chain = defineChain(chainId);
 
   const wallet = inAppWallet({
+    auth: {
+      options: ["google", "apple", "discord", "telegram", "email", "passkey"], // This list is unused, but required by the Thirdweb type, so let's match it up with actual supported options
+      mode: authMode,
+      redirectUrl,
+      redirectExternally,
+    },
     smartAccount: {
       chain,
       factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
@@ -53,7 +66,8 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
     },
   });
 
-  if (params.mode === "email") {
+  // Connect with email
+  if (params.method === "email") {
     const { email, verificationCode } = params;
     await wallet.connect({
       client,
@@ -62,7 +76,11 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       email,
       verificationCode,
     });
-  } else if (params.mode === "passkey") {
+    return wallet;
+  }
+
+  // Connect with passkey
+  if (params.method === "passkey") {
     const { passkeyName, domain } = params;
     const hasPasskey = await hasStoredPasskey(client);
     await wallet.connect({
@@ -73,16 +91,15 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       passkeyName,
       domain,
     });
-  } else {
-    await wallet.connect({
-      client,
-      chain,
-      strategy: params.mode,
-      redirectUrl: params.redirectUrl,
-      // redirectExternally: params.redirectExternally,
-    });
+    return wallet;
   }
 
+  // Connect with social
+  await wallet.connect({
+    client,
+    chain,
+    strategy: params.method,
+  });
   return wallet;
 };
 
@@ -200,7 +217,7 @@ export const logInWithEmail = async ({
   verificationCode: string;
 } & ConnectConfig) =>
   logIn({
-    mode: "email",
+    method: "email",
     email,
     verificationCode,
     ...rest,
@@ -214,15 +231,15 @@ export const logInWithPasskey = async ({
   passkeyName?: string;
 } & ConnectConfig) =>
   logIn({
-    mode: "passkey",
+    method: "passkey",
     passkeyName,
     ...rest,
   });
 
 export const logInWithSocial = async ({
-  network,
+  method,
   ...rest
 }: {
   client: TreasureConnectClient;
-  network: SocialConnectMethod;
-} & ConnectConfig) => logIn({ mode: network, ...rest });
+  method: SocialConnectMethod;
+} & ConnectConfig) => logIn({ method, ...rest });

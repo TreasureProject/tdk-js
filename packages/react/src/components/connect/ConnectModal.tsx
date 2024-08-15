@@ -16,6 +16,7 @@ import {
 import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
 export type Options = ConnectMethodSelectionOptions & {
+  authMode?: "popup" | "redirect";
   redirectUrl?: string;
   redirectExternally?: boolean;
 };
@@ -33,6 +34,7 @@ const DEFAULT_STATE = {
 
 export const ConnectModal = ({
   open,
+  authMode,
   redirectUrl,
   redirectExternally,
   onOpenChange,
@@ -68,7 +70,7 @@ export const ConnectModal = ({
       connectWallet({
         client,
         chainId: chain.id,
-        mode: "email",
+        method: "email",
         email,
         verificationCode,
       }),
@@ -112,9 +114,10 @@ export const ConnectModal = ({
       connectWallet({
         client,
         chainId: chain.id,
-        mode: method,
+        method,
+        authMode,
         redirectUrl,
-        // redirectExternally,
+        redirectExternally,
       }),
     )) as Wallet;
     await handleLogin(wallet);
