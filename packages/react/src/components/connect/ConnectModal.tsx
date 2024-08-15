@@ -15,7 +15,10 @@ import {
 } from "./ConnectMethodSelectionView";
 import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
-export type Options = ConnectMethodSelectionOptions;
+export type Options = ConnectMethodSelectionOptions & {
+  redirectUrl?: string;
+  redirectExternally?: boolean;
+};
 
 type Props = Options & {
   open: boolean;
@@ -30,6 +33,8 @@ const DEFAULT_STATE = {
 
 export const ConnectModal = ({
   open,
+  redirectUrl,
+  redirectExternally,
   onOpenChange,
   ...methodSelectionProps
 }: Props) => {
@@ -108,6 +113,8 @@ export const ConnectModal = ({
         client,
         chainId: chain.id,
         mode: method,
+        redirectUrl,
+        // redirectExternally,
       }),
     )) as Wallet;
     await handleLogin(wallet);

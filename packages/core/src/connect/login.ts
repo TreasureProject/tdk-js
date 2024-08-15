@@ -23,6 +23,8 @@ type ConnectWalletConfig = {
 } & (
   | {
       mode: SocialConnectMethod;
+      redirectUrl?: string;
+      redirectExternally?: string;
     }
   | {
       mode: "email";
@@ -73,6 +75,8 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       client,
       chain,
       strategy: params.mode,
+      redirectUrl: params.redirectUrl,
+      // redirectExternally: params.redirectExternally,
     });
   }
 
