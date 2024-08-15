@@ -25,6 +25,7 @@ import {
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
+import { inAppWallet } from "thirdweb/wallets";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
@@ -166,7 +167,7 @@ const TreasureProviderInner = ({
   // Attempt an automatic background connection
   useAutoConnect({
     client,
-    wallets: SUPPORTED_WALLETS,
+    wallets: [inAppWallet({ auth: { options: SUPPORTED_WALLETS } })],
     accountAbstraction: {
       chain,
       factoryAddress: contractAddresses.ManagedAccountFactory,
