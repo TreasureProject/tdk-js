@@ -32,7 +32,7 @@ import {
   useIsAutoConnecting,
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
-import type { Wallet } from "thirdweb/wallets";
+import { type Wallet, inAppWallet } from "thirdweb/wallets";
 
 import { i18n } from "../i18n";
 import {
@@ -184,7 +184,7 @@ const TreasureProviderInner = ({
   // Attempt an automatic background connection
   useAutoConnect({
     client,
-    wallets: SUPPORTED_WALLETS,
+    wallets: [inAppWallet({ auth: { options: SUPPORTED_WALLETS } })],
     accountAbstraction: {
       chain,
       factoryAddress: contractAddresses.ManagedAccountFactory,

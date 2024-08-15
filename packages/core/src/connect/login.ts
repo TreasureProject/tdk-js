@@ -34,7 +34,10 @@ type ConnectWalletConfig = {
   | {
       mode: "passkey";
       passkeyName?: string;
-      authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
+      domain?: {
+        displayName: string;
+        hostname: string;
+      };
     }
 );
 
@@ -60,7 +63,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       verificationCode,
     });
   } else if (params.mode === "passkey") {
-    const { passkeyName, authenticatorType } = params;
+    const { passkeyName, domain } = params;
     const hasPasskey = await hasStoredPasskey(client);
     await wallet.connect({
       client,
@@ -68,7 +71,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       strategy: "passkey",
       type: hasPasskey ? "sign-in" : "sign-up",
       passkeyName,
-      authenticatorType,
+      domain,
     });
   } else {
     await wallet.connect({
@@ -205,17 +208,14 @@ export const logInWithEmail = async ({
 
 export const logInWithPasskey = async ({
   passkeyName,
-  authenticatorType,
   ...rest
 }: {
   client: TreasureConnectClient;
   passkeyName?: string;
-  authenticatorType?: "auto" | "local" | "extern" | "roaming" | "both";
 } & ConnectConfig) =>
   logIn({
     mode: "passkey",
     passkeyName,
-    authenticatorType,
     ...rest,
   });
 

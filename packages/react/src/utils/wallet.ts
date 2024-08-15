@@ -1,17 +1,12 @@
-import { inAppWallet } from "thirdweb/wallets";
+import type { InAppWalletAuth } from "thirdweb/wallets";
 
-export const SUPPORTED_WALLETS = [
-  inAppWallet({
-    auth: {
-      options: [
-        "email",
-        "google",
-        "apple",
-        "discord",
-        "farcaster",
-        "telegram",
-        "passkey",
-      ],
-    },
-  }),
+export const SUPPORTED_WALLETS: InAppWalletAuth[] = [
+  "email",
+  "google",
+  "apple",
+  "discord",
+  "farcaster",
+  "telegram",
+  "passkey",
+  "phone",
 ];

@@ -1,5 +1,17 @@
 # @treasure-dev/tdk-react
 
+## 1.6.0
+
+### Minor Changes
+
+- 9d7bb39: Allow authentication via redirect. Update thirdweb sdk to latest and remove old param authenticatorType from passkey auth
+
+### Patch Changes
+
+- Updated dependencies [9d7bb39]
+- Updated dependencies [6e391d7]
+  - @treasure-dev/tdk-core@1.6.0
+
 ## 1.5.0
 
 ### Minor Changes

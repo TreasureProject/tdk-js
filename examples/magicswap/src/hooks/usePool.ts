@@ -17,3 +17,5 @@ export const usePool = (poolId: string) => {
 
   return pool;
 };
+
+export type Pool = NonNullable<ReturnType<typeof usePool>>;

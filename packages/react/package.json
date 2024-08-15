@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-react",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Treasure Development Kit for React-based projects",
   "keywords": [
     "treasure",
@@ -49,7 +49,7 @@
     "react-i18next": "^15.0.1",
     "react-verification-input": "^4.1.2",
     "tailwind-merge": "^2.5.2",
-    "thirdweb": "^5.45.1",
+    "thirdweb": "^5.46.1",
     "viem": "^2.7.6",
     "wagmi": "^2.5.6"
   },

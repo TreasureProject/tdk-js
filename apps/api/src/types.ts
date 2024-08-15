@@ -27,6 +27,7 @@ export type TdkApiEnv = {
   THIRDWEB_SECRET_KEY: string;
   TROVE_API_URL: string;
   TROVE_API_KEY: string;
+  ENGINE_MAINTENANCE_MODE_ENABLED: boolean;
 };
 
 export type TdkApiContext = {
