@@ -73,7 +73,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       client,
       chain,
       strategy: "email",
-      email,
+      email: email.toLowerCase(),
       verificationCode,
     });
     return wallet;
@@ -165,7 +165,7 @@ export const sendEmailVerificationCode = async ({
   preAuthenticate({
     client,
     strategy: "email",
-    email,
+    email: email.toLowerCase(),
   });
 
 export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {

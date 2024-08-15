@@ -1,5 +1,5 @@
 import type { ConnectMethod } from "@treasure-dev/tdk-core";
-import { type ButtonHTMLAttributes, useState } from "react";
+import { type ButtonHTMLAttributes, useRef, useState } from "react";
 
 import { Trans, useTranslation } from "react-i18next";
 import { AppleIcon } from "../../icons/AppleIcon";
@@ -36,6 +36,7 @@ export const ConnectMethodSelectionView = ({
   onConnect,
 }: Props) => {
   const { t } = useTranslation();
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
   const [email, setEmail] = useState("");
   return (
     <div className="tdk-bg-night tdk-p-8 tdk-text-silver-100 tdk-font-sans tdk-space-y-6">
@@ -66,7 +67,12 @@ export const ConnectMethodSelectionView = ({
         className="tdk-space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
-          onConnect("email", email);
+
+          if (email) {
+            onConnect("email", email);
+          } else {
+            emailInputRef.current?.focus();
+          }
         }}
       >
         <div className="tdk-space-y-1.5">
@@ -77,6 +83,7 @@ export const ConnectMethodSelectionView = ({
             {t("common.emailLabel")}
           </label>
           <input
+            ref={emailInputRef}
             id="email"
             type="email"
             className="tdk-w-full tdk-rounded-lg tdk-border tdk-border-solid tdk-border-night-500 tdk-bg-night tdk-px-3 tdk-py-2.5 tdk-text-white tdk-box-border"
