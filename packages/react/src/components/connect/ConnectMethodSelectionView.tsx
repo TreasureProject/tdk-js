@@ -90,7 +90,7 @@ export const ConnectMethodSelectionView = ({
           disabled={isLoading}
         >
           {isLoading ? (
-            <Spinner className="tdk-w-3.5 tdk-h-3.5" />
+            <Spinner className="tdk-w-3.5 tdk-h-3.5 tdk-mx-auto" />
           ) : (
             t("connect.action")
           )}

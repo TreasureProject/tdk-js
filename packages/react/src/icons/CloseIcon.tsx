@@ -7,17 +7,17 @@ export const CloseIcon = ({ className }: IconProps) => (
         id="Vector"
         d="M14.375 5.625L5.625 14.375"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         id="Vector_2"
         d="M5.625 5.625L14.375 14.375"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
   </svg>

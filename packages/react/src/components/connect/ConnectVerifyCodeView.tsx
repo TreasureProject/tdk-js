@@ -9,7 +9,7 @@ type Props = {
   recipient: string;
   isLoading?: boolean;
   error?: string;
-  onConnect: (code: string) => void;
+  onConfirm: (code: string) => void;
   onResend: () => void;
 };
 
@@ -17,7 +17,7 @@ export const ConnectVerifyCodeView = ({
   recipient,
   isLoading = false,
   error,
-  onConnect,
+  onConfirm,
   onResend,
 }: Props) => {
   const { t } = useTranslation();
@@ -67,7 +67,7 @@ export const ConnectVerifyCodeView = ({
         </p>
       ) : null}
       <div className="tdk-space-y-6">
-        <div>
+        <div className="space-y-1">
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
             {t("connect.verify.inputLabel")}
           </h3>
@@ -76,7 +76,7 @@ export const ConnectVerifyCodeView = ({
             placeholder=""
             autoFocus
             onChange={setCode}
-            onComplete={onConnect}
+            onComplete={onConfirm}
             classNames={{
               container: "tdk-max-w-full",
               character:
@@ -91,10 +91,10 @@ export const ConnectVerifyCodeView = ({
           <Button
             className="tdk-w-full tdk-font-medium"
             disabled={isLoading}
-            onClick={() => onConnect(code)}
+            onClick={() => onConfirm(code)}
           >
             {isLoading ? (
-              <Spinner className="tdk-w-3.5 tdk-h-3.5" />
+              <Spinner className="tdk-w-3.5 tdk-h-3.5 tdk-mx-auto" />
             ) : (
               t("connect.verify.action")
             )}

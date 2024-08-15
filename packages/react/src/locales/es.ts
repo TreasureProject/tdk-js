@@ -18,7 +18,7 @@ export const es = {
         wallet: "Cartera",
       },
       verify: {
-        header: "Verifar código",
+        header: "Verificar código",
         description:
           "Se envió un código de verificación a <2>{{recipient}}</2>. Iniciará sesión automáticamente después de ingresar su código.",
         inputLabel: "Entrar código de verificación:",

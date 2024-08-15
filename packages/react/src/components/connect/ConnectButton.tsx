@@ -39,14 +39,14 @@ export const ConnectButton = (props?: Props) => {
       ) : (
         <Button
           className="tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-min-w-32"
-          onClick={openConnectModal}
+          onClick={isConnecting ? undefined : openConnectModal}
         >
           {isConnecting ? (
-            <Spinner className="tdk-w-5 tdk-h-5" />
+            <Spinner className="tdk-w-3.5 tdk-h-3.5" />
           ) : (
             <>
               <TreasureIcon
-                className="tdk-w-5 tdk-h-5 tdk-text-white"
+                className="tdk-w-5 tdk-h-5 tdk-text-cream"
                 starsFill="#C62222"
               />
               <span>{t("connect.action")}</span>

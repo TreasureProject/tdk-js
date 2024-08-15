@@ -5,8 +5,8 @@ export const WalletIcon = ({ className }: IconProps) => (
     <g id="wallet">
       <g id="Subtract">
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M19.25 9.91667V17.25C19.25 18.3546 18.3546 19.25 17.25 19.25H6.75C5.64543 19.25 4.75 18.3546 4.75 17.25V6.75C4.75 8.04688 5.58333 8.29036 6 8.25H17.5833C18.5038 8.25 19.25 8.99619 19.25 9.91667ZM16 15.1289C17.1046 15.1289 18 14.2335 18 13.1289C18 12.0243 17.1046 11.1289 16 11.1289C14.8954 11.1289 14 12.0243 14 13.1289C14 14.2335 14.8954 15.1289 16 15.1289Z"
           fill="currentColor"
         />
@@ -19,9 +19,9 @@ export const WalletIcon = ({ className }: IconProps) => (
         id="Vector"
         d="M17.25 8.25H6.5C5.5335 8.25 4.75 7.4665 4.75 6.5C4.75 5.5335 5.5335 4.75 6.5 4.75H15.25C16.3546 4.75 17.25 5.64543 17.25 6.75V8.25ZM17.25 8.25L17.5 8.25"
         stroke="currentColor"
-        stroke-width="1.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
   </svg>

@@ -22,7 +22,7 @@ type Props = AsButtonProps | AsLinkProps;
 export const Button = (props: Props) => {
   const { variant = "primary", size = "md" } = props;
   const className = cn(
-    "focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2 disabled:tdk-cursor-not-allowed disabled:tdk-opacity-50 tdk-cursor-pointer tdk-rounded-lg tdk-px-4 tdk-py-2 tdk-font-medium tdk-transition-colors tdk-text-sm tdk-border tdk-border-solid",
+    "focus:tdk-outline-none focus:tdk-ring-2 focus:tdk-ring-offset-2 disabled:tdk-cursor-not-allowed disabled:tdk-opacity-50 tdk-cursor-pointer tdk-rounded-lg tdk-px-4 tdk-py-2 tdk-font-medium tdk-transition-colors tdk-text-sm tdk-border tdk-border-solid tdk-min-h-10",
     variant === "primary" &&
       "focus:tdk-ring-ruby-500 tdk-text-cream tdk-border-ruby tdk-bg-ruby-700 hover:tdk-border-ruby-400 hover:tdk-bg-ruby-500",
     variant === "secondary" &&

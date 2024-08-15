@@ -151,7 +151,7 @@ export const ConnectModal = ({
               recipient={email}
               isLoading={isLoading}
               error={error}
-              onConnect={handleConnectEmail}
+              onConfirm={handleConnectEmail}
               onResend={handleResendEmailVerificationCode}
             />
           ) : (
