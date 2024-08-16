@@ -4,7 +4,6 @@ import {
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   SUPPORTED_IN_APP_WALLET_OPTIONS,
-  SUPPORTED_WEB3_WALLETS,
   type SessionOptions,
   TDKAPI,
   type TreasureConnectClient,
@@ -188,7 +187,6 @@ const TreasureProviderInner = ({
     client,
     wallets: [
       inAppWallet({ auth: { options: SUPPORTED_IN_APP_WALLET_OPTIONS } }),
-      ...SUPPORTED_WEB3_WALLETS,
     ],
     accountAbstraction: {
       chain,
