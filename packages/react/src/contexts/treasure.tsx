@@ -36,7 +36,7 @@ import {
 } from "thirdweb/react";
 import { type Wallet, inAppWallet } from "thirdweb/wallets";
 
-import { i18n } from "../i18n";
+import { type SupportedLanguage, i18n } from "../i18n";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
@@ -44,6 +44,7 @@ import {
 } from "../utils/store";
 
 type Config = {
+  language?: SupportedLanguage;
   appName: string;
   appIconUri?: string;
   apiUri?: string;
@@ -252,10 +253,18 @@ const TreasureProviderInner = ({
   );
 };
 
-export const TreasureProvider = (props: Props) => (
-  <ThirdwebProvider>
-    <I18nextProvider i18n={i18n}>
-      <TreasureProviderInner {...props} />
-    </I18nextProvider>
-  </ThirdwebProvider>
-);
+export const TreasureProvider = (props: Props) => {
+  useEffect(() => {
+    if (props.language) {
+      i18n.changeLanguage(props.language);
+    }
+  }, [props.language]);
+
+  return (
+    <ThirdwebProvider>
+      <I18nextProvider i18n={i18n}>
+        <TreasureProviderInner {...props} />
+      </I18nextProvider>
+    </ThirdwebProvider>
+  );
+};

@@ -9,6 +9,7 @@ import {
   type Options as ConnectModalOptions,
 } from "../components/connect/ConnectModal";
 import { useTreasure } from "../contexts/treasure";
+import { getLocaleId } from "../i18n";
 
 export type Options = ConnectModalOptions;
 
@@ -46,6 +47,7 @@ export const useConnect = (props?: Props) => {
     openWalletDetailsModal({
       client,
       theme,
+      locale: getLocaleId(),
       supportedTokens: {
         [chain.id]: [
           ...(contractAddresses.MAGIC

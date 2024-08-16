@@ -11,6 +11,7 @@ import { useConnect, useConnectModal } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
 
 import { useTreasure } from "../../contexts/treasure";
+import { getLocaleId } from "../../i18n";
 import { Dialog, DialogContent } from "../ui/Dialog";
 import {
   type Options as ConnectMethodSelectionOptions,
@@ -145,6 +146,7 @@ export const ConnectModal = ({
       try {
         wallet = await connectWeb3Wallet({
           client,
+          locale: getLocaleId(),
           wallets: SUPPORTED_WEB3_WALLETS,
           appMetadata: {
             name: appName,
