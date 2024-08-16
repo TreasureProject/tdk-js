@@ -8,7 +8,6 @@ import {
 } from "../../hooks/useConnect";
 import { TreasureIcon } from "../../icons/TreasureIcon";
 import { Button } from "../ui/Button";
-import { Spinner } from "../ui/Spinner";
 
 type Props = UseConnectOptions;
 
@@ -38,20 +37,15 @@ export const ConnectButton = (props?: Props) => {
         </button>
       ) : (
         <Button
-          className="tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-min-w-32"
-          onClick={isConnecting ? undefined : openConnectModal}
+          className="tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-min-w-[115px]"
+          isLoading={isConnecting}
+          onClick={openConnectModal}
         >
-          {isConnecting ? (
-            <Spinner className="tdk-w-3.5 tdk-h-3.5" />
-          ) : (
-            <>
-              <TreasureIcon
-                className="tdk-w-5 tdk-h-5 tdk-text-cream"
-                starsFill="#C62222"
-              />
-              <span>{t("connect.action")}</span>
-            </>
-          )}
+          <TreasureIcon
+            className="tdk-w-5 tdk-h-5 tdk-text-cream"
+            starsFill="#C62222"
+          />
+          <span>{t("connect.action")}</span>
         </Button>
       )}
     </>

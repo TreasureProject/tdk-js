@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import VerificationInput from "react-verification-input";
 import { Button } from "../ui/Button";
-import { Spinner } from "../ui/Spinner";
 import { ConnectFooter } from "./ConnectFooter";
 
 type Props = {
@@ -90,14 +89,10 @@ export const ConnectVerifyCodeView = ({
         <div className="tdk-space-y-3">
           <Button
             className="tdk-w-full tdk-font-medium"
-            disabled={isLoading}
+            isLoading={isLoading}
             onClick={() => onConfirm(code)}
           >
-            {isLoading ? (
-              <Spinner className="tdk-w-3.5 tdk-h-3.5 tdk-mx-auto" />
-            ) : (
-              t("connect.verify.action")
-            )}
+            {t("connect.verify.action")}
           </Button>
           <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
             {t("connect.verify.resend.prompt")}{" "}

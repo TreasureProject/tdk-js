@@ -183,7 +183,6 @@ export default function LoginPage() {
                   <div>
                     <Button
                       className="flex w-full items-center justify-center"
-                      size="lg"
                       onClick={() => finishEmailLogin(verificationInput)}
                       disabled={isLoading}
                     >
@@ -194,7 +193,7 @@ export default function LoginPage() {
                       )}
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="tertiary"
                       className="w-full"
                       onClick={() => reset()}
                       disabled={isLoading}
@@ -266,7 +265,6 @@ export default function LoginPage() {
                     <Button
                       type="submit"
                       className="flex w-full items-center justify-center"
-                      size="lg"
                       disabled={isLoading}
                     >
                       {isLoading ? (

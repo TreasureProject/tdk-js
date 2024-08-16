@@ -14,7 +14,6 @@ import { TelegramIcon } from "../../icons/TelegramIcon";
 import { WalletIcon } from "../../icons/WalletIcon";
 import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
-import { Spinner } from "../ui/Spinner";
 import { ConnectFooter } from "./ConnectFooter";
 
 export type Options = {
@@ -98,13 +97,9 @@ export const ConnectMethodSelectionView = ({
         <Button
           type="submit"
           className="tdk-w-full tdk-font-medium"
-          disabled={isLoading}
+          isLoading={isLoading}
         >
-          {isLoading ? (
-            <Spinner className="tdk-w-3.5 tdk-h-3.5 tdk-mx-auto" />
-          ) : (
-            t("connect.action")
-          )}
+          {t("connect.action")}
         </Button>
       </form>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">
