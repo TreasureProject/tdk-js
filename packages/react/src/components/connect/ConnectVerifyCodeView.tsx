@@ -48,7 +48,7 @@ export const ConnectVerifyCodeView = ({
       <div className="tdk-space-y-2">
         {/* biome-ignore lint/a11y/useHeadingContent: screen reader title is in ConnectModal */}
         <h2
-          className="tdk-text-lg tdk-font-semibold tdk-text-white"
+          className="tdk-text-lg tdk-font-semibold tdk-text-white tdk-m-0"
           aria-hidden="true"
         >
           {t("connect.verify.header")}
@@ -70,8 +70,8 @@ export const ConnectVerifyCodeView = ({
         </p>
       ) : null}
       <div className="tdk-space-y-6">
-        <div className="space-y-1">
-          <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200">
+        <div>
+          <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200 tdk-mt-0 tdk-mb-2">
             {t("connect.verify.inputLabel")}
           </h3>
           <VerificationInput
