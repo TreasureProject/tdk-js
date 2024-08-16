@@ -6,14 +6,15 @@ import type { LocaleId } from "thirdweb/react";
 import { en } from "./translations/en";
 import { es } from "./translations/es";
 import { ru } from "./translations/ru";
+import { ja } from "./translations/ja";
 
-export type SupportedLanguage = "en" | "es" | "ru";
+export type SupportedLanguage = "en" | "es" | "ru" | "ja";
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: { en, es, ru },
+    resources: { en, es, ru, ja },
     fallbackLng: "en",
     cleanCode: true,
     interpolation: {
