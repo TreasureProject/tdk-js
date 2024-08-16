@@ -1,7 +1,3 @@
 {
-  "ignore": [
-    "./apps/login/postcss.config.mjs",
-    "./packages/react/svgo.config.mjs"
-  ],
-  "ignoreDependencies": ["vite/client"]
+  "ignore": ["./apps/login/postcss.config.mjs"]
 }
