@@ -51,7 +51,7 @@ export const Button = (props: Props) => {
   );
 
   if (props.as === "link") {
-    const { as: _, variant: __, ...linkProps } = props;
+    const { as: _, variant: __, isLoading: ___, ...linkProps } = props;
     return (
       <a {...linkProps} className={className}>
         {children}
@@ -59,7 +59,7 @@ export const Button = (props: Props) => {
     );
   }
 
-  const { as: _, variant: __, ...buttonProps } = props;
+  const { as: _, variant: __, isLoading: ___, ...buttonProps } = props;
   return (
     <button
       {...buttonProps}

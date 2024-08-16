@@ -1,3 +1,4 @@
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
   type ConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
@@ -10,9 +11,10 @@ import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
 
+import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
 import { getLocaleId } from "../../i18n";
-import { Dialog, DialogContent } from "../ui/Dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
 import {
   type Options as ConnectMethodSelectionOptions,
   ConnectMethodSelectionView,
@@ -44,6 +46,7 @@ export const ConnectModal = ({
   onOpenChange,
   ...methodSelectionProps
 }: Props) => {
+  const { t } = useTranslation();
   const {
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
@@ -217,7 +220,19 @@ export const ConnectModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="tdk-max-w-lg">
+      <DialogContent className="tdk-max-w-lg" aria-describedby={undefined}>
+        <VisuallyHidden.Root>
+          <DialogTitle>
+            {email ? (
+              t("connect.verify.header")
+            ) : (
+              <Trans i18nKey="connect.header" values={{ appName }}>
+                <span>Connect to</span>
+                <span>{appName}</span>
+              </Trans>
+            )}
+          </DialogTitle>
+        </VisuallyHidden.Root>
         <div className="tdk-rounded-lg tdk-overflow-hidden">
           {email ? (
             <ConnectVerifyCodeView

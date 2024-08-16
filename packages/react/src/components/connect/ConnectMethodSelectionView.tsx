@@ -47,7 +47,8 @@ export const ConnectMethodSelectionView = ({
         <div className="tdk-w-12 tdk-h-12 tdk-bg-night-500 tdk-rounded-lg tdk-overflow-hidden">
           <img src={appIconUri} alt="" className="tdk-w-full tdk-h-full" />
         </div>
-        <div>
+        {/* Screen reader title is in ConnectModal */}
+        <div aria-hidden="true">
           <Trans
             i18nKey="connect.header"
             values={{ appName: appName || DEFAULT_TDK_APP_NAME }}
