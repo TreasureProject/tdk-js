@@ -7,7 +7,7 @@ export const es = {
     },
     connect: {
       action: "Conectar",
-      header: "<1>Conectarse a</1> <2>{{appName}}</2>",
+      header: "Conectarse a <1>{{appName}}</1>",
       footer: "Con tecnología de <ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
         google: "Google",

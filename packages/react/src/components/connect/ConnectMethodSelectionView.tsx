@@ -48,15 +48,13 @@ export const ConnectMethodSelectionView = ({
           <img src={appIconUri} alt="" className="tdk-w-full tdk-h-full" />
         </div>
         {/* Screen reader title is in ConnectModal */}
-        <div aria-hidden="true">
+        <div aria-hidden="true" className="tdk-text-silver-400 tdk-text-sm">
           <Trans
             i18nKey="connect.header"
             values={{ appName: appName || DEFAULT_TDK_APP_NAME }}
           >
-            <span className="tdk-text-sm tdk-text-silver tdk-block">
-              Connect to
-            </span>
-            <span className="tdk-text-base tdk-block tdk-font-semibold">
+            Connect to
+            <span className="tdk-text-lg tdk-block tdk-font-semibold tdk-text-silver-100">
               {appName}
             </span>
           </Trans>

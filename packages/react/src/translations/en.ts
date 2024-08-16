@@ -7,7 +7,7 @@ export const en = {
     },
     connect: {
       action: "Connect",
-      header: "<1>Connect to</1> <2>{{appName}}</2>",
+      header: "Connect to <1>{{appName}}</1>",
       footer: "Powered by <ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
         google: "Google",

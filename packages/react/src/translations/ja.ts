@@ -7,7 +7,7 @@ export const ja = {
     },
     connect: {
       action: "接続",
-      header: "<1>{{appName}}</1> <2>に接続する</2>",
+      header: "<1>{{appName}}</1> に接続する",
       footer: "提供元：<ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
         google: "Google",

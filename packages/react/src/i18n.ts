@@ -5,16 +5,16 @@ import { initReactI18next } from "react-i18next";
 import type { LocaleId } from "thirdweb/react";
 import { en } from "./translations/en";
 import { es } from "./translations/es";
-import { ru } from "./translations/ru";
 import { ja } from "./translations/ja";
+import { ru } from "./translations/ru";
 
-export type SupportedLanguage = "en" | "es" | "ru" | "ja";
+export type SupportedLanguage = "en" | "es" | "ja" | "ru";
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: { en, es, ru, ja },
+    resources: { en, es, ja, ru },
     fallbackLng: "en",
     cleanCode: true,
     interpolation: {
@@ -28,6 +28,8 @@ export const getLocaleId = (): LocaleId | undefined => {
       return "en_US";
     case "es":
       return "es_ES";
+    case "ja":
+      return "ja_JP";
     default:
       return undefined;
   }

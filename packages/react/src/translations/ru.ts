@@ -7,7 +7,7 @@ export const ru = {
     },
     connect: {
       action: "Подключиться",
-      header: "<1>Подключиться к</1> <2>{{appName}}</2>",
+      header: "Подключиться к <1>{{appName}}</1>",
       footer: "На платформе <ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
         google: "Google",
