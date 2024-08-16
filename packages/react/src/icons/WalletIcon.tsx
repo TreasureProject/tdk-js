@@ -2,8 +2,8 @@ import type { IconProps } from "./types";
 
 export const WalletIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className}>
-    <g id="wallet">
-      <g id="Subtract">
+    <g>
+      <g>
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -16,7 +16,6 @@ export const WalletIcon = ({ className }: IconProps) => (
         />
       </g>
       <path
-        id="Vector"
         d="M17.25 8.25H6.5C5.5335 8.25 4.75 7.4665 4.75 6.5C4.75 5.5335 5.5335 4.75 6.5 4.75H15.25C16.3546 4.75 17.25 5.64543 17.25 6.75V8.25ZM17.25 8.25L17.5 8.25"
         stroke="currentColor"
         strokeWidth="1.25"
