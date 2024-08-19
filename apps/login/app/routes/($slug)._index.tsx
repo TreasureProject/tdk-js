@@ -5,7 +5,7 @@ import {
   Button,
   DEFAULT_TDK_APP,
   DEFAULT_TDK_CHAIN_ID,
-  GoogleLogoIcon,
+  GoogleIcon,
   TDKAPI,
 } from "@treasure-dev/tdk-react";
 import { useState } from "react";
@@ -183,7 +183,6 @@ export default function LoginPage() {
                   <div>
                     <Button
                       className="flex w-full items-center justify-center"
-                      size="lg"
                       onClick={() => finishEmailLogin(verificationInput)}
                       disabled={isLoading}
                     >
@@ -194,7 +193,7 @@ export default function LoginPage() {
                       )}
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="tertiary"
                       className="w-full"
                       onClick={() => reset()}
                       disabled={isLoading}
@@ -215,7 +214,7 @@ export default function LoginPage() {
                           onClick={() => logInWithSocial("google")}
                           disabled={isLoading}
                         >
-                          <GoogleLogoIcon className="h-6 w-6 text-night-700" />
+                          <GoogleIcon className="h-6 w-6 text-night-700" />
                           <span className="sr-only">Continue with Google</span>
                         </Button>
                       </div>
@@ -266,7 +265,6 @@ export default function LoginPage() {
                     <Button
                       type="submit"
                       className="flex w-full items-center justify-center"
-                      size="lg"
                       disabled={isLoading}
                     >
                       {isLoading ? (

@@ -69,7 +69,7 @@ export const getRemoveLiquidityArgs = ({
       functionName: "removeLiquidityNFTNFT",
       args: [
         {
-          token: tokenA.id,
+          token: tokenA.id as AddressString,
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
@@ -77,7 +77,7 @@ export const getRemoveLiquidityArgs = ({
           amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
         {
-          token: tokenB.id,
+          token: tokenB.id as AddressString,
           collection: Array.from({ length: nftsB.length }).fill(
             tokenB.collectionId,
           ) as AddressString[],
@@ -100,7 +100,7 @@ export const getRemoveLiquidityArgs = ({
         functionName: "removeLiquidityNFTETH",
         args: [
           {
-            token: tokenB.id,
+            token: tokenB.id as AddressString,
             collection: Array.from({ length: nftsB.length }).fill(
               tokenB.collectionId,
             ) as AddressString[],
@@ -122,14 +122,14 @@ export const getRemoveLiquidityArgs = ({
       functionName: "removeLiquidityNFT",
       args: [
         {
-          token: tokenA.id,
+          token: tokenA.id as AddressString,
           collection: Array.from({ length: nftsA.length }).fill(
             tokenA.collectionId,
           ) as AddressString[],
           tokenId: nftsA.map(({ id }) => BigInt(id)),
           amount: nftsA.map(({ quantity }) => BigInt(quantity)),
         },
-        tokenB.id,
+        tokenB.id as AddressString,
         amountLP,
         amountAMin,
         amountBMin,
@@ -145,7 +145,14 @@ export const getRemoveLiquidityArgs = ({
     return {
       address: magicSwapV2RouterAddress,
       functionName: "removeLiquidityETH",
-      args: [tokenB.id, amountLP, amountBMin, amountAMin, toAddress, deadline],
+      args: [
+        tokenB.id as AddressString,
+        amountLP,
+        amountBMin,
+        amountAMin,
+        toAddress,
+        deadline,
+      ],
     };
   }
 
@@ -154,8 +161,8 @@ export const getRemoveLiquidityArgs = ({
     address: magicSwapV2RouterAddress,
     functionName: "removeLiquidity",
     args: [
-      tokenA.id,
-      tokenB.id,
+      tokenA.id as AddressString,
+      tokenB.id as AddressString,
       amountLP,
       amountAMin,
       amountBMin,

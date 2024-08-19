@@ -10,12 +10,32 @@ Treasure Development Kit for React-based projects
 ## Installation
 
 ```bash
-npm i @treasure-dev/tdk-react
+npm install @treasure-dev/tdk-react
 ```
 
 ## Usage
 
 [Documentation](https://docs.treasure.lol/tdk/react/getting-started)
+
+## Development
+
+In the root directory of the `tdk-js` project, install dependencies:
+
+```bash
+npm install
+```
+
+Start the package in development mode to listen for changes:
+
+```bash
+npm run dev
+```
+
+Use [Storybook](https://storybook.js.org) to preview development of UI components by running the following command in the `packages/react` directory:
+
+```bash
+npm run storybook
+```
 
 ## Deployment
 

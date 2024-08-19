@@ -9,6 +9,7 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <TreasureProvider
+    appName="Treasure"
     apiUri={import.meta.env.VITE_TDK_API_URL}
     chainId={421614}
     clientId={import.meta.env.VITE_TDK_CLIENT_ID}

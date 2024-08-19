@@ -24,7 +24,7 @@ const sessionOptions: SessionOptions = {
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <main>
-    <h1>TDK Core - Treasure Connect Example</h1>
+    <h1>Treasure Connect - TypeScript Example</h1>
     <div id="connect-container">
       <button
         id="connect-google"

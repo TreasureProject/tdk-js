@@ -10,6 +10,7 @@ SDK for the Treasure ecosystem
 
 - [@treasure-dev/tdk-core](./packages/core)
 - [@treasure-dev/tdk-react](./packages/react)
+- [@treasure-dev/tailwind-config](./packages/tailwind-config)
 
 ## Examples
 

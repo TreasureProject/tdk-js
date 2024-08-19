@@ -1,3 +1,6 @@
 {
-  "ignore": ["./apps/login/postcss.config.mjs"]
+  "ignore": [
+    "./apps/login/postcss.config.mjs",
+    "./examples/connect-electron/**/*"
+  ]
 }

@@ -1,4 +1,5 @@
 import {
+  type AddressString,
   fetchPool,
   fetchPools,
   getAddLiquidityArgs,
@@ -216,7 +217,7 @@ export const magicswapRoutes =
           amountIn: amountIn ? BigInt(amountIn) : undefined,
           amountOut: amountOut ? BigInt(amountOut) : undefined,
           isExactOut,
-          path,
+          path: path as AddressString[],
           slippage,
         });
 

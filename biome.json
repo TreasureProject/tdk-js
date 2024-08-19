@@ -2,14 +2,15 @@
   "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
   "files": {
     "ignore": [
-      ".husky/**",
-      "build/**",
-      "cdk.out/**",
-      "dist/**",
+      ".husky/",
+      ".tsup/",
+      "build/",
+      "dist/",
       "node_modules/",
+      "out/",
       ".dockerignore",
       ".gitignore",
-      "./**/*/package.json",
+      "package.json",
       "package-lock.json"
     ]
   },
