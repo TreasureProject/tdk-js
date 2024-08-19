@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tailwind-config",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Tailwind CSS configuration for the Treasure ecosystem",
   "keywords": [
     "treasure",
@@ -17,7 +17,6 @@
   },
   "main": "./index.js",
   "scripts": {
-    "build": "tsup",
     "analyze": "tailwind-config-viewer -o"
   },
   "devDependencies": {
