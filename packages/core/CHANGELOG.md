@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.0.0
+
+### Major Changes
+
+- e4dd9d7: Updated Treasure Connect flow to use custom modal
+
 ## 1.6.0
 
 ### Minor Changes
