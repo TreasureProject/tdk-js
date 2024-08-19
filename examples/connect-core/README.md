@@ -1,4 +1,4 @@
-# TDK Core - Treasure Connect Example
+# Treasure Connect - TypeScript Example
 
 Example showing how vanilla JS/TS front-ends can interact with the Treasure Development Kit's Treasure Connect feature, powering login flows and account abstraction.
 
