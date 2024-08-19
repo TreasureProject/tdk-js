@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-react
 
+## 2.0.0
+
+### Major Changes
+
+- e4dd9d7: Updated Treasure Connect flow to use custom modal
+
+### Patch Changes
+
+- Updated dependencies [e4dd9d7]
+  - @treasure-dev/tdk-core@2.0.0
+
 ## 1.6.0
 
 ### Minor Changes
