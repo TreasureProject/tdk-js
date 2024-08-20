@@ -13,8 +13,7 @@ DROP INDEX "user_treasure_tag_key";
 -- AlterTable
 ALTER TABLE "user" DROP COLUMN "treasure_tag",
 ADD COLUMN     "banned" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "comment" TEXT,
-ADD COLUMN     "phone_number" TEXT;
+ADD COLUMN     "comment" TEXT;
 ALTER TABLE "user" RENAME COLUMN "smart_account_address" TO "address";
 ALTER TABLE "user" ALTER COLUMN "address" TYPE VARCHAR(42);
 
@@ -85,13 +84,7 @@ CREATE UNIQUE INDEX "user_profile_legacy_address_key" ON "user_profile"("legacy_
 CREATE UNIQUE INDEX "user_profile_user_id_key" ON "user_profile"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_profile_tag_discriminant_key" ON "user_profile"("tag", "discriminant");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_social_account_legacy_address_key" ON "user_social_account"("legacy_address");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_notification_settings_legacy_address_key" ON "user_notification_settings"("legacy_address");
+CREATE UNIQUE INDEX "user_social_account_network_legacy_address_key" ON "public"."user_social_account"("network", "legacy_address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_notification_settings_user_id_key" ON "user_notification_settings"("user_id");
@@ -104,9 +97,6 @@ CREATE UNIQUE INDEX "user_notification_settings_type_legacy_address_key" ON "use
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_address_key" ON "user"("address");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_phone_number_key" ON "user"("phone_number");
 
 -- AddForeignKey
 ALTER TABLE "user_profile" ADD CONSTRAINT "user_profile_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;

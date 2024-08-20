@@ -144,7 +144,6 @@ model UserProfile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([tag, discriminant])
   @@map("user_profile")
   @@schema("public")
 }
@@ -174,7 +173,7 @@ model UserSocialAccount {
   isPublic      Boolean       @default(false) @map("is_public")
 
   // Migration
-  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+  legacyAddress String? @map("legacy_address") @db.VarChar(42)
 
   // Relations
   userId String? @map("user_id")
@@ -184,6 +183,7 @@ model UserSocialAccount {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([network, legacyAddress])
   @@map("user_social_account")
   @@schema("public")
 }
@@ -209,7 +209,7 @@ model UserNotificationSettings {
   isEnabledInApp Boolean          @default(true) @map("is_enabled_in_app")
 
   // Migration
-  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+  legacyAddress String? @map("legacy_address") @db.VarChar(42)
 
   // Relations
   userId String? @unique @map("user_id")
@@ -236,5 +236,24 @@ view Transaction {
   value           Decimal? @db.Decimal
 
   @@map("transactions")
+  @@schema("smart_account")
+}
+
+// Ignored models and views added here for diff parity
+model RawTransaction {
+  key  String @id @map("_key")
+  body Json
+
+  @@map("transactions_jsonb")
+  @@ignore
+  @@schema("smart_account")
+}
+
+model RawTreasureAccount {
+  key  String @id @map("_key")
+  body Json
+
+  @@map("treasure_accounts_jsonb")
+  @@ignore
   @@schema("smart_account")
 }
