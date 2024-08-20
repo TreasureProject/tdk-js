@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-react
 
+## 2.1.0
+
+### Minor Changes
+
+- 9b2218d: Enabled chain switching in connected account modal
+
+### Patch Changes
+
+- @treasure-dev/tdk-core@2.1.0
+
 ## 2.0.1
 
 ### Patch Changes
