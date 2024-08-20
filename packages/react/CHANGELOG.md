@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 2.0.1
+
+### Patch Changes
+
+- 2b4137c: Replaced react-input-verification with input-otp
+  - @treasure-dev/tdk-core@2.0.1
+
 ## 2.0.0
 
 ### Major Changes
