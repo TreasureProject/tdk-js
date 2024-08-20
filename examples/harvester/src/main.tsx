@@ -26,8 +26,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <TreasureProvider
+            appName="Emberwing"
             apiUri={import.meta.env.VITE_TDK_API_URL}
-            chainId={arbitrumSepolia.id}
+            defaultChainId={arbitrumSepolia.id}
             clientId={import.meta.env.VITE_TDK_CLIENT_ID}
             sessionOptions={{
               backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,

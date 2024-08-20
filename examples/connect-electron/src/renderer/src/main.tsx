@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <TreasureProvider
       appName="Electron App"
       apiUri={import.meta.env.VITE_TDK_API_URL}
-      chainId={421614}
+      defaultChainId={421614}
       clientId={import.meta.env.VITE_TDK_CLIENT_ID}
       language="en"
     >

@@ -28,6 +28,7 @@ import { type Chain, defineChain } from "thirdweb";
 import {
   ThirdwebProvider,
   useActiveWallet,
+  useActiveWalletChain,
   useActiveWalletConnectionStatus,
   useAutoConnect,
   useIsAutoConnecting,
@@ -47,7 +48,7 @@ type Config = {
   appName: string;
   appIconUri?: string;
   apiUri?: string;
-  chainId?: number;
+  defaultChainId?: number;
   clientId: string;
   sessionOptions?: SessionOptions;
   onConnect?: (user: User) => void;
@@ -65,6 +66,7 @@ type ContextValues = {
   logIn: (wallet: Wallet) => void;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
+  switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
 };
 
@@ -89,7 +91,7 @@ const TreasureProviderInner = ({
   appName,
   appIconUri,
   apiUri = DEFAULT_TDK_API_BASE_URI,
-  chainId = DEFAULT_TDK_CHAIN_ID,
+  defaultChainId = DEFAULT_TDK_CHAIN_ID,
   clientId,
   sessionOptions,
   onConnect,
@@ -97,27 +99,28 @@ const TreasureProviderInner = ({
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
   const [el, setEl] = useState<ReactNode>(null);
-  const tdk = useMemo(
-    () =>
-      new TDKAPI({
-        baseUri: apiUri,
-        chainId,
-        backendWallet: sessionOptions?.backendWallet,
-      }),
-    [apiUri, chainId, sessionOptions?.backendWallet],
-  );
   const client = useMemo(
     () => createTreasureConnectClient({ clientId }),
     [clientId],
   );
   const activeWallet = useActiveWallet();
   const activeWalletStatus = useActiveWalletConnectionStatus();
+  const activeWalletChain = useActiveWalletChain();
   const switchActiveWalletChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
-  const chain = useMemo(() => defineChain(chainId), [chainId]);
+  const chain = activeWalletChain ?? defineChain(defaultChainId);
+  const tdk = useMemo(
+    () =>
+      new TDKAPI({
+        baseUri: apiUri,
+        chainId: chain.id,
+        backendWallet: sessionOptions?.backendWallet,
+      }),
+    [apiUri, chain.id, sessionOptions?.backendWallet],
+  );
   const contractAddresses = useMemo(
-    () => getContractAddresses(chainId),
-    [chainId],
+    () => getContractAddresses(chain.id),
+    [chain.id],
   );
 
   const logOut = () => {
@@ -162,7 +165,7 @@ const TreasureProviderInner = ({
       await startUserSession({
         client,
         wallet,
-        chainId,
+        chainId: chain.id,
         tdk,
         options: sessionOptions,
       });
@@ -175,12 +178,6 @@ const TreasureProviderInner = ({
     // Trigger completion callback
     onConnect?.(nextUser);
   };
-
-  // Switch the Thirdweb SDK's chain if the provider's chain changes
-  useEffect(() => {
-    console.debug("[TreasureProvider] Switching chain:", chain.id);
-    switchActiveWalletChain(chain);
-  }, [switchActiveWalletChain, chain]);
 
   // Attempt an automatic background connection
   useAutoConnect({
@@ -238,10 +235,12 @@ const TreasureProviderInner = ({
           startUserSession({
             client,
             wallet: activeWallet,
-            chainId,
+            chainId: chain.id,
             tdk,
             options,
           }),
+        switchChain: (chainId: number) =>
+          switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
       }}
     >

@@ -20,7 +20,7 @@ const preview: Preview = {
       <TreasureProvider
         appName="Storybook"
         apiUri={import.meta.env.VITE_TDK_API_URL}
-        chainId={421614}
+        defaultChainId={421614}
         clientId={import.meta.env.VITE_TDK_CLIENT_ID}
       >
         <Story />

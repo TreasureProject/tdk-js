@@ -233,7 +233,7 @@ export const ConnectModal = ({
             )}
           </DialogTitle>
         </VisuallyHidden.Root>
-        <div className="tdk-rounded-lg tdk-overflow-hidden">
+        <div className="tdk-rounded-lg tdk-overflow-hidden tdk-bg-night tdk-border tdk-border-night-600">
           {email ? (
             <ConnectVerifyCodeView
               recipient={email}

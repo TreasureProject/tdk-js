@@ -1,9 +1,11 @@
 import {
+  type SupportedTokens,
   darkTheme,
-  // useConnectModal,
   useWalletDetailsModal,
 } from "thirdweb/react";
 
+import { getContractAddresses } from "@treasure-dev/tdk-core";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
@@ -11,67 +13,82 @@ import {
 import { useTreasure } from "../contexts/treasure";
 import { getLocaleId } from "../i18n";
 
-export type Options = ConnectModalOptions;
+export type Options = ConnectModalOptions & {
+  supportedChainIds?: number[];
+};
 
 type Props = Options;
 
-const theme = darkTheme({
+const THEME = darkTheme({
   colors: {
-    accentButtonBg: "#DC2626",
-    accentButtonText: "#E7E8E9",
-    accentText: "#DC2626",
-    primaryButtonBg: "#DC2626",
-    primaryButtonText: "#E7E8E9",
-    modalBg: "#19253A",
+    modalBg: "#131D2E",
     modalOverlayBg: "rgba(0, 0, 0, 0.3)",
-    borderColor: "#70747D",
+    borderColor: "#172135",
+    separatorLine: "#19253A",
+    danger: "#DC2626",
+    success: "#4AE387",
+    accentText: "#FFFCF5",
+    accentButtonBg: "#DC2626",
+    accentButtonText: "#FFFCF5",
+    primaryText: "#FFFCF5",
+    primaryButtonText: "#131418",
+    secondaryText: "#B7BABE",
+    secondaryButtonBg: "#22232b",
+    secondaryIconColor: "#B7BABE",
+    secondaryIconHoverColor: "#FFFCF5",
+    secondaryIconHoverBg: "transparent",
+    tertiaryBg: "#19253A",
+    connectedButtonBg: "#131D2E",
+    connectedButtonBgHover: "#283852",
   },
 });
 
+const SUPPORTED_TOKENS = [
+  {
+    symbol: "MAGIC",
+    name: "MAGIC",
+    icon: "https://images.treasure.lol/tdk/login/magic.png",
+  },
+  {
+    symbol: "VEE",
+    name: "VEE",
+    icon: "https://images.treasure.lol/tdk/login/vee.png",
+  },
+] as const;
+
 export const useConnect = (props?: Props) => {
-  const { chain, contractAddresses, client, logOut, setRootElement } =
-    useTreasure();
-  // const { connect } = useConnectModal();
+  const { chain, client, logOut, setRootElement } = useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
+  const { supportedChainIds, ...connectModalProps } = props ?? {};
+
+  const chains =
+    supportedChainIds && supportedChainIds.length > 0
+      ? supportedChainIds.map((chainId) => defineChain(chainId))
+      : [chain];
 
   const openConnectModal = () =>
     setRootElement(
       <ConnectModal
         open
         onOpenChange={() => setRootElement(null)}
-        {...props}
+        {...connectModalProps}
       />,
     );
 
   const openAccountModal = () =>
     openWalletDetailsModal({
       client,
-      theme,
+      chains,
+      theme: THEME,
       locale: getLocaleId(),
-      supportedTokens: {
-        [chain.id]: [
-          ...(contractAddresses.MAGIC
-            ? [
-                {
-                  address: contractAddresses.MAGIC,
-                  name: "MAGIC",
-                  symbol: "MAGIC",
-                  icon: "https://images.treasure.lol/tdk/login/magic.png",
-                },
-              ]
-            : []),
-          ...(contractAddresses.VEE
-            ? [
-                {
-                  address: contractAddresses.VEE,
-                  name: "VEE",
-                  symbol: "VEE",
-                  icon: "https://images.treasure.lol/tdk/login/vee.png",
-                },
-              ]
-            : []),
-        ],
-      },
+      supportedTokens: chains.reduce((acc, chain) => {
+        const addresses = getContractAddresses(chain.id);
+        acc[chain.id] = SUPPORTED_TOKENS.map((token) => ({
+          ...token,
+          address: addresses[token.symbol] ?? ZERO_ADDRESS,
+        })).filter(({ address }) => address !== ZERO_ADDRESS);
+        return acc;
+      }, {} as SupportedTokens),
       onDisconnect: () => {
         logOut();
       },

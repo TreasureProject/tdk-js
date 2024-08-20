@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <TreasureProvider
     appName="Treasure"
     apiUri={import.meta.env.VITE_TDK_API_URL}
-    chainId={421614}
+    defaultChainId={421614}
     clientId={import.meta.env.VITE_TDK_CLIENT_ID}
     sessionOptions={{
       backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,
