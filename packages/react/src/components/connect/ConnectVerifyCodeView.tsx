@@ -1,7 +1,9 @@
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import VerificationInput from "react-verification-input";
+
 import { Button } from "../ui/Button";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/InputOTP";
 import { ConnectFooter } from "./ConnectFooter";
 
 type Props = {
@@ -11,6 +13,8 @@ type Props = {
   onConfirm: (code: string) => void;
   onResend: () => void;
 };
+
+const OTP_CODE_LENGTH = 6;
 
 export const ConnectVerifyCodeView = ({
   recipient,
@@ -74,21 +78,26 @@ export const ConnectVerifyCodeView = ({
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200 tdk-mt-0 tdk-mb-2">
             {t("connect.verify.inputLabel")}
           </h3>
-          <VerificationInput
-            length={6}
-            placeholder=""
-            autoFocus
-            onChange={setCode}
-            onComplete={onConfirm}
-            classNames={{
-              container: "tdk-max-w-full",
-              character:
-                "tdk-rounded tdk-text-lg tdk-font-semibold tdk-flex tdk-items-center tdk-justify-center tdk-bg-[#0C1420] tdk-border tdk-border-night-500 tdk-text-cream",
-              characterInactive: "tdk-bg-[#0C1420]",
-              characterSelected:
-                "tdk-border-silver-300 tdk-outline-silver-300 tdk-text-cream",
+          <InputOTP
+            maxLength={OTP_CODE_LENGTH}
+            pattern={REGEXP_ONLY_DIGITS}
+            value={code}
+            onChange={(nextCode) => {
+              setCode(nextCode);
+              if (nextCode.length === OTP_CODE_LENGTH) {
+                onConfirm(nextCode);
+              }
             }}
-          />
+            autoComplete="off"
+            disabled={isLoading}
+          >
+            <InputOTPGroup>
+              {Array.from({ length: OTP_CODE_LENGTH }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: index is the only key
+                <InputOTPSlot key={i} index={i} />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
         </div>
         <div className="tdk-space-y-3">
           <Button
