@@ -8,7 +8,7 @@ export const ConnectFooter = () => {
         href="https://thirdweb.com/connect?utm_source=cw_text"
         target="_blank"
         rel="noopener noreferrer"
-        className="tdk-inline-flex tdk-items-center tdk-gap-1 tdk-text-silver tdk-font-semibold hover:tdk-text-white tdk-transition-colors tdk-text-xs tdk-no-underline"
+        className="tdk-inline-flex tdk-items-center tdk-gap-1 tdk-text-silver tdk-font-semibold hover:tdk-text-white tdk-transition-colors tdk-text-xs tdk-no-underline hover:tdk-no-underline"
       >
         <Trans
           i18nKey="connect.footer"
