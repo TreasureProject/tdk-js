@@ -132,6 +132,7 @@ model UserProfile {
 
   // Migration
   legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+  legacyEmail   String? @map("legacy_email")
 
   // Other
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
@@ -144,6 +145,7 @@ model UserProfile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([legacyAddress])
   @@map("user_profile")
   @@schema("public")
 }
