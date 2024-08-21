@@ -14,6 +14,7 @@ import type { Wallet } from "thirdweb/wallets";
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
 import { getLocaleId } from "../../i18n";
+import { cn } from "../../utils/classnames";
 import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
 import {
   type Options as ConnectMethodSelectionOptions,
@@ -27,8 +28,9 @@ export type Options = ConnectMethodSelectionOptions & {
   redirectExternally?: boolean;
 };
 
-type Props = Options & {
+export type Props = Options & {
   open: boolean;
+  size?: "lg" | "xl" | "2xl" | "3xl";
   onOpenChange: (open: boolean) => void;
 };
 
@@ -40,6 +42,7 @@ const DEFAULT_STATE = {
 
 export const ConnectModal = ({
   open,
+  size = "lg",
   authMode,
   redirectUrl,
   redirectExternally,
@@ -221,7 +224,15 @@ export const ConnectModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="tdk-max-w-lg" aria-describedby={undefined}>
+      <DialogContent
+        className={cn(
+          size === "lg" && "tdk-max-w-lg",
+          size === "xl" && "tdk-max-w-xl",
+          size === "2xl" && "tdk-max-w-2xl",
+          size === "3xl" && "tdk-max-w-3xl",
+        )}
+        aria-describedby={undefined}
+      >
         <VisuallyHidden.Root>
           <DialogTitle>
             {email ? (
