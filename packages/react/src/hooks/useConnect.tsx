@@ -9,12 +9,14 @@ import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
+  type Props as ConnectModalProps,
 } from "../components/connect/ConnectModal";
 import { useTreasure } from "../contexts/treasure";
 import { getLocaleId } from "../i18n";
 
 export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
+  connectModalSize?: ConnectModalProps["size"];
 };
 
 type Props = Options;
@@ -59,7 +61,8 @@ const SUPPORTED_TOKENS = [
 export const useConnect = (props?: Props) => {
   const { chain, client, logOut, setRootElement } = useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
-  const { supportedChainIds, ...connectModalProps } = props ?? {};
+  const { supportedChainIds, connectModalSize, ...connectModalProps } =
+    props ?? {};
 
   const chains =
     supportedChainIds && supportedChainIds.length > 0
@@ -70,6 +73,7 @@ export const useConnect = (props?: Props) => {
     setRootElement(
       <ConnectModal
         open
+        size={connectModalSize}
         onOpenChange={() => setRootElement(null)}
         {...connectModalProps}
       />,

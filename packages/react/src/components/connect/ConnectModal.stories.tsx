@@ -11,14 +11,14 @@ export default meta;
 type Story = StoryObj<typeof ConnectModal>;
 
 export const Default: Story = {
-  render: () => {
+  render: (args) => {
     const [open, setOpen] = useState(false);
     return (
       <>
         <button type="button" onClick={() => setOpen(true)}>
           Open Connect Modal
         </button>
-        <ConnectModal open={open} onOpenChange={setOpen} />
+        <ConnectModal {...args} open={open} onOpenChange={setOpen} />
       </>
     );
   },
