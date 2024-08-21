@@ -177,6 +177,8 @@ export const ConnectModal = ({
     } else {
       // Handle connecting with social / passkey
       try {
+        // This will start the wallet connection process
+        // When redirectExternally is true, it will redirect out of the app here
         const inAppWallet = await connectWallet({
           client,
           chainId: chain.id,
@@ -185,6 +187,9 @@ export const ConnectModal = ({
           redirectUrl,
           redirectExternally,
         });
+        // No need to call connect here when redirectExternally is true. This call would fail inside
+        // of the useConnect hook. The wallet variable will be undefined still, so no need to call
+        // handleLogin below. The wallet will connct from the useAutoConnect hook in the TreasureProviderInner.
         if (!redirectExternally) {
           wallet = await connect(inAppWallet);
         }
