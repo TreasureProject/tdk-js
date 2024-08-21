@@ -15,18 +15,12 @@ const PROJECT_DATA: Record<
   string,
   {
     metadata: ProjectMetadata;
-    redirectUris: Record<Environment, string[]>;
     callTargets: Record<RemoteEnvironment, [number, Contract | string][]>;
   }
 > = {
   "aliyas-ascent": {
     metadata: {
       name: "Aliya's Ascent",
-    },
-    redirectUris: {
-      local: [],
-      dev: [],
-      prod: [],
     },
     callTargets: {
       dev: [],
@@ -37,11 +31,6 @@ const PROJECT_DATA: Record<
     metadata: {
       name: "Treasure",
     },
-    redirectUris: {
-      local: ["http://localhost:3000", "http://localhost:5174"],
-      dev: ["https://app-testnet.treasure.lol"],
-      prod: ["https://app.treasure.lol"],
-    },
     callTargets: {
       dev: [[treasureRuby.id, "RubyNFT"]],
       prod: [],
@@ -51,11 +40,6 @@ const PROJECT_DATA: Record<
     metadata: {
       name: "Bitmates",
     },
-    redirectUris: {
-      local: [],
-      dev: [],
-      prod: [],
-    },
     callTargets: {
       dev: [],
       prod: [],
@@ -64,11 +48,6 @@ const PROJECT_DATA: Record<
   harness: {
     metadata: {
       name: "TDK Harness",
-    },
-    redirectUris: {
-      local: [],
-      dev: [],
-      prod: [],
     },
     callTargets: {
       dev: [
@@ -93,11 +72,6 @@ const PROJECT_DATA: Record<
     metadata: {
       name: "Realm",
     },
-    redirectUris: {
-      local: [],
-      dev: [],
-      prod: [],
-    },
     callTargets: {
       dev: [],
       prod: [],
@@ -108,11 +82,6 @@ const PROJECT_DATA: Record<
       name: "Smolbound",
       icon: "https://images.treasure.lol/tdk/login/smolbound_icon.png",
     },
-    redirectUris: {
-      local: [],
-      dev: [],
-      prod: [],
-    },
     callTargets: {
       dev: [],
       prod: [],
@@ -122,17 +91,6 @@ const PROJECT_DATA: Record<
     metadata: {
       name: "Zeeverse",
       icon: "https://images.treasure.lol/tdk/login/zeeverse_icon.png",
-    },
-    redirectUris: {
-      local: [
-        "http://localhost:5174",
-        "http://localhost:3000/harvesters/zeeverse",
-      ],
-      dev: [
-        "https://tdk-examples-harvester.vercel.app",
-        "https://bridgeworld-staging.treasure.lol/harvesters/zeeverse",
-      ],
-      prod: ["https://bridgeworld.treasure.lol/harvesters/zeeverse"],
     },
     callTargets: {
       dev: [
@@ -223,18 +181,15 @@ const prisma = new PrismaClient();
 const createProject = async ({
   slug,
   metadata,
-  redirectUris = [],
   callTargets = [],
 }: {
   slug: string;
   metadata: ProjectMetadata;
-  redirectUris?: string[];
   callTargets?: [number, Contract | string][];
 }) => {
   const data = {
     ...metadata,
     slug,
-    redirectUris,
     callTargets: {
       connectOrCreate: callTargets.map(([chainId, contract]) => {
         const address = contract.startsWith("0x")
@@ -271,14 +226,12 @@ const createProject = async ({
     await prisma.callTarget.deleteMany();
 
     // Upsert projects
-    for (const [
-      slug,
-      { metadata, redirectUris, callTargets },
-    ] of Object.entries(PROJECT_DATA)) {
+    for (const [slug, { metadata, callTargets }] of Object.entries(
+      PROJECT_DATA,
+    )) {
       await createProject({
         slug,
         metadata,
-        redirectUris: redirectUris[environment],
         callTargets: callTargets[environment === "local" ? "dev" : environment],
       });
     }
