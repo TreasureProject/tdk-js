@@ -14,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       defaultChainId={421614}
       clientId={import.meta.env.VITE_TDK_CLIENT_ID}
       language="en"
+      timeout={30000}
     >
       <App />
     </TreasureProvider>

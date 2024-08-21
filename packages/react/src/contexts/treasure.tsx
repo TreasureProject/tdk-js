@@ -51,6 +51,7 @@ type Config = {
   defaultChainId?: number;
   clientId: string;
   sessionOptions?: SessionOptions;
+  timeout?: number;
   onConnect?: (user: User) => void;
 };
 
@@ -94,6 +95,7 @@ const TreasureProviderInner = ({
   defaultChainId = DEFAULT_TDK_CHAIN_ID,
   clientId,
   sessionOptions,
+  timeout,
   onConnect,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -190,7 +192,7 @@ const TreasureProviderInner = ({
       factoryAddress: contractAddresses.ManagedAccountFactory,
       sponsorGas: true,
     },
-    timeout: 5_000,
+    timeout: timeout ?? 5_000,
     onConnect: async (wallet) => {
       setIsAuthenticating(true);
       try {

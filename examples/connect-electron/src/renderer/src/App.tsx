@@ -5,7 +5,7 @@ function App(): JSX.Element {
   return (
     <>
       <p>
-        <ConnectButton />
+        <ConnectButton authMode="redirect" redirectExternally={true} redirectUrl="http://google.com/" />
       </p>
       <Versions />
     </>

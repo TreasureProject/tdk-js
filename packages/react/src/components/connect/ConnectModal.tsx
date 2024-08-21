@@ -174,16 +174,17 @@ export const ConnectModal = ({
     } else {
       // Handle connecting with social / passkey
       try {
-        wallet = await connect(() =>
-          connectWallet({
-            client,
-            chainId: chain.id,
-            method,
-            authMode,
-            redirectUrl,
-            redirectExternally,
-          }),
-        );
+        const inAppWallet = await connectWallet({
+          client,
+          chainId: chain.id,
+          method,
+          authMode,
+          redirectUrl,
+          redirectExternally,
+        });
+        if (!redirectExternally) {
+          wallet = await connect(inAppWallet);
+        }
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);
         setError((err as Error).message);
