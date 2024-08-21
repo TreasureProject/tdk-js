@@ -119,6 +119,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   // Connect with social
   if (redirectExternally) {
+    // wallet.connectExternal is optional in the wallet interface, so we have to check to see if it's defined first
     if (wallet.connectExternal) {
       await wallet.connectExternal({
         client,
