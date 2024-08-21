@@ -42,7 +42,6 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-visually-hidden": "^1.1.0",
-    "@tanstack/react-query": "^5.18.1",
     "@treasure-dev/tdk-core": "*",
     "clsx": "^2.1.1",
     "i18next": "^23.12.3",
@@ -51,9 +50,7 @@
     "react": "^18.2.0",
     "react-i18next": "^15.0.1",
     "tailwind-merge": "^2.5.2",
-    "thirdweb": "^5.46.1",
-    "viem": "^2.7.6",
-    "wagmi": "^2.5.6"
+    "thirdweb": "^5.46.1"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.2.8",

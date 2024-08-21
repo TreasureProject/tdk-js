@@ -3,16 +3,17 @@ import {
   getContractAddress,
   getContractAddresses,
 } from "@treasure-dev/tdk-core";
-import { useChainId } from "wagmi";
+import { useTreasure } from "../contexts/treasure";
 
-export const useContractAddress = (contract: Contract) => {
-  const chainId = useChainId();
-  return {
-    address: getContractAddress(chainId, contract),
-  };
+export const useContractAddress = ({
+  chainId,
+  contract,
+}: { chainId?: number; contract: Contract }) => {
+  const { chain } = useTreasure();
+  return getContractAddress(chainId ?? chain.id, contract);
 };
 
-export const useContractAddresses = () => {
-  const chainId = useChainId();
-  return getContractAddresses(chainId);
+export const useContractAddresses = ({ chainId }: { chainId?: number }) => {
+  const { chain } = useTreasure();
+  return getContractAddresses(chainId ?? chain.id);
 };
