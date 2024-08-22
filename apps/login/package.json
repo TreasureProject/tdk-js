@@ -19,7 +19,7 @@
     "react-hook-form": "^7.50.1",
     "react-verification-input": "^4.0.0",
     "remix-utils": "^7.3.0",
-    "thirdweb": "^5.46.1"
+    "thirdweb": "^5.48.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.2.0",
