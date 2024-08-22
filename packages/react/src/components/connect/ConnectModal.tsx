@@ -1,6 +1,7 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
   type ConnectMethod,
+  type SocialConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_WEB3_WALLETS,
   connectWallet,
@@ -182,10 +183,10 @@ export const ConnectModal = ({
         if (redirectUrl || authMode === 'redirect') {
           await authenticate({
             client,
-            strategy: method,
+            strategy: method as SocialConnectMethod,
             redirectUrl,
             mode: authMode,
-          })
+          });
         } else {
           wallet = await connect(() =>
            connectWallet({

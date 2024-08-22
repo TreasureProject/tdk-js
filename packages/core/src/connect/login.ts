@@ -38,10 +38,6 @@ type ConnectWalletConfig = {
   | {
       method: "passkey";
       passkeyName?: string;
-      domain?: {
-        displayName: string;
-        hostname: string;
-      };
     }
 );
 
@@ -101,7 +97,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   // Connect with passkey
   if (params.method === "passkey") {
-    const { passkeyName, domain } = params;
+    const { passkeyName } = params;
     const hasPasskey = await hasStoredPasskey(client);
     await wallet.connect({
       client,
@@ -109,7 +105,6 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       strategy: "passkey",
       type: hasPasskey ? "sign-in" : "sign-up",
       passkeyName,
-      domain,
     });
     return wallet;
   }

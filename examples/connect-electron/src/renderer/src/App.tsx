@@ -16,7 +16,7 @@ function App(): JSX.Element {
   return (
     <>
       <p>
-        <ConnectButton authMode="redirect" redirectUrl={`${window.location.origin}/auth/`} />
+        <ConnectButton redirectUrl={`${window.location.origin}/auth/`} />
       </p>
       <Versions />
     </>
