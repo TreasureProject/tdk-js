@@ -1,5 +1,20 @@
 # @treasure-dev/tdk-react
 
+## 2.2.0
+
+### Minor Changes
+
+- 61ec250: Moved thirdweb to peer dependency to share context with consumer apps
+
+### Patch Changes
+
+- c569aa4: Added option for custom auto-connect timeout
+- d07b6a1: Added size options to Treasure Connect modal
+- d110c16: Added new redirect support
+- Updated dependencies [d110c16]
+- Updated dependencies [61ec250]
+  - @treasure-dev/tdk-core@2.2.0
+
 ## 2.1.0
 
 ### Minor Changes
