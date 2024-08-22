@@ -62,8 +62,12 @@ const SUPPORTED_TOKENS = [
 export const useConnect = (props?: Props) => {
   const { chain, client, logOut, setRootElement } = useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
-  const { supportedChainIds, connectModalSize, hideDisconnect, ...connectModalProps } =
-    props ?? {};
+  const {
+    supportedChainIds,
+    connectModalSize,
+    hideDisconnect,
+    ...connectModalProps
+  } = props ?? {};
 
   const chains =
     supportedChainIds && supportedChainIds.length > 0
