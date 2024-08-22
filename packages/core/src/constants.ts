@@ -11,6 +11,7 @@ export const DEFAULT_TDK_APP_NAME = "App";
 export const DEFAULT_TDK_APP_ICON_URI =
   "https://images.treasure.lol/tdk/login/treasure_icon.png";
 
+// APIs
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
@@ -56,15 +57,6 @@ export const TREASURE_RUBY_CHAIN_DEFINITION = {
   testnet: true,
 };
 export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
-
-const SUPPORTED_CHAINS = [
-  arbitrum,
-  arbitrumSepolia,
-  mainnet,
-  sepolia,
-  treasureRuby,
-] as const;
-export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
 
 // Tokens
 export const TOKEN_IDS = {
