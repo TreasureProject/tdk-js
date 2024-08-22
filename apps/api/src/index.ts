@@ -4,10 +4,8 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
-import type { SupportedChainId } from "@treasure-dev/tdk-core";
-import { SUPPORTED_CHAINS } from "@treasure-dev/tdk-core";
-import type { Transport } from "@wagmi/core";
 import { http, createConfig, fallback } from "@wagmi/core";
+import { arbitrum, arbitrumSepolia } from "@wagmi/core/chains";
 import Fastify from "fastify";
 import { createThirdwebClient } from "thirdweb";
 import { createAuth } from "thirdweb/auth";
@@ -57,23 +55,22 @@ const main = async () => {
       url: env.THIRDWEB_ENGINE_URL,
       accessToken: env.THIRDWEB_ENGINE_ACCESS_TOKEN,
     }),
-    wagmiConfig: env.THIRDWEB_CLIENT_ID
-      ? createConfig({
-          chains: SUPPORTED_CHAINS,
-          transports: SUPPORTED_CHAINS.reduce(
-            (acc, chain) => {
-              acc[chain.id] = fallback([
-                http(
-                  `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-                ),
-                http(),
-              ]);
-              return acc;
-            },
-            {} as Record<SupportedChainId, Transport>,
+    wagmiConfig: createConfig({
+      chains: [arbitrum, arbitrumSepolia],
+      transports: {
+        [arbitrum.id]: fallback([
+          http(
+            `https://${arbitrum.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
           ),
-        })
-      : undefined,
+          http(),
+        ]),
+        [arbitrumSepolia.id]: fallback([
+          http(
+            `https://${arbitrumSepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+        ]),
+      },
+    }),
   };
 
   // Middleware

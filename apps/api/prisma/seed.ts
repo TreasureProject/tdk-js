@@ -5,7 +5,7 @@ import {
   getContractAddress,
   treasureRuby,
 } from "@treasure-dev/tdk-core";
-import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
 
 type RemoteEnvironment = "dev" | "prod";
 type Environment = "local" | RemoteEnvironment;

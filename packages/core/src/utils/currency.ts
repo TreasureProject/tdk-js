@@ -1,7 +1,4 @@
 import Decimal from "decimal.js-light";
-import { zeroAddress } from "viem";
-
-import { getContractAddresses } from "./contracts";
 
 export const formatUSD = (value: number | string) =>
   `$${Number(value).toLocaleString("en-US", {

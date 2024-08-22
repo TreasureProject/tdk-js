@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run generate && tsup",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run generate && npm run typecheck && tsup",
     "generate": "prisma generate",
     "dev": "npm run generate && tsup --watch --onSuccess 'npm run start'",
     "start": "node ./dist/index.js",
@@ -28,7 +29,7 @@
     "abitype": "^1.0.5",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
-    "thirdweb": "^5.46.1",
+    "thirdweb": "^5.48.0",
     "viem": "^2.5.0"
   },
   "devDependencies": {

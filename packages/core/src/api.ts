@@ -104,7 +104,7 @@ export class TDKAPI {
     if (params) {
       const searchParams = new URLSearchParams();
       for (const key in params) {
-        searchParams.append(key, params[key].toString());
+        searchParams.append(key, params[key]?.toString() ?? "");
       }
 
       pathWithParams += `?${searchParams}`;

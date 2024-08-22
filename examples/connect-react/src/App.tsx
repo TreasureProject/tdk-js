@@ -1,11 +1,6 @@
-import {
-  type AddressString,
-  Button,
-  ConnectButton,
-  formatAmount,
-  useTreasure,
-} from "@treasure-dev/tdk-react";
-import { formatEther, parseEther } from "viem";
+import { type AddressString, formatAmount } from "@treasure-dev/tdk-core";
+import { Button, ConnectButton, useTreasure } from "@treasure-dev/tdk-react";
+import { toEther, toWei } from "thirdweb";
 
 export const App = () => {
   const { tdk, user, contractAddresses } = useTreasure();
@@ -40,7 +35,7 @@ export const App = () => {
             },
           ] as const,
           functionName: "mint",
-          args: [user.address as AddressString, parseEther(amount.toString())],
+          args: [user.address as AddressString, toWei(amount.toString())],
         },
         { includeAbi: true },
       );
@@ -57,7 +52,7 @@ export const App = () => {
     try {
       await tdk.transaction.sendNative({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
-        amount: parseEther(amount.toString()),
+        amount: toWei(amount.toString()),
       });
     } catch (err) {
       console.error("Error sending ETH:", err);
@@ -125,7 +120,7 @@ export const App = () => {
                                   Native token limit per transaction:
                                 </span>{" "}
                                 {formatAmount(
-                                  formatEther(
+                                  toEther(
                                     BigInt(nativeTokenLimitPerTransaction),
                                   ),
                                 )}

@@ -199,13 +199,32 @@ export const magicswapRoutes =
 
         const poolTokens = pools
           .flatMap(({ token0, token1 }) => [token0, token1])
-          .reduce((acc, poolToken) => {
-            acc[poolToken.id] = poolToken;
-            return acc;
-          }, {});
+          .reduce(
+            (acc, poolToken) => {
+              acc[poolToken.id] = poolToken;
+              return acc;
+            },
+            {} as Record<string, (typeof pools)[number]["token0"]>,
+          );
 
         const tokenIn = poolTokens[tokenInId];
         const tokenOut = poolTokens[tokenOutId];
+
+        if (!tokenIn) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `Token ${tokenInId} not found`,
+          });
+        }
+
+        if (!tokenOut) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `Token ${tokenOutId} not found`,
+          });
+        }
 
         const swapArguments = getSwapArgs({
           chainId,
@@ -250,7 +269,7 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error performing swap: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error performing swap: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },
@@ -307,6 +326,14 @@ export const magicswapRoutes =
           wagmiConfig,
         });
 
+        if (!pool) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Error adding liquidity: pool not found",
+          });
+        }
+
         const addLiquidityArgs = getAddLiquidityArgs({
           chainId,
           toAddress: userAddress,
@@ -348,7 +375,7 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error adding liquidity: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error adding liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },
@@ -405,6 +432,14 @@ export const magicswapRoutes =
           wagmiConfig,
         });
 
+        if (!pool) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Error removing liquidity: pool not found",
+          });
+        }
+
         const removeLiquidityArgs = getRemoveLiquidityArgs({
           chainId,
           toAddress: userAddress,
@@ -446,7 +481,7 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error removing liquidity: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error removing liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },

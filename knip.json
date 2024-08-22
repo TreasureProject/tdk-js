@@ -1,6 +1,4 @@
 {
-  "ignore": [
-    "./apps/login/postcss.config.mjs",
-    "./examples/connect-electron/**/*"
-  ]
+  "ignore": ["./packages/*/dist/**/*", "./examples/connect-electron/**/*"],
+  "ignoreDependencies": ["tslib"]
 }

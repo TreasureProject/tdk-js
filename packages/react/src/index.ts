@@ -1,6 +1,5 @@
 import "./globals.css";
 
-export * from "@treasure-dev/tdk-core";
 export { ConnectButton } from "./components/connect/ConnectButton";
 export { ConnectModal } from "./components/connect/ConnectModal";
 export { Button } from "./components/ui/Button";

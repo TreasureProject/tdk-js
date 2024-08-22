@@ -1,7 +1,7 @@
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrumSepolia } from "thirdweb/chains";
 
 import type { InventoryToken, Token } from "../../../../apps/api/src/schema";
-import type { CollectionResponse, SupportedChainId } from "../types";
+import type { CollectionResponse } from "../types";
 
 type TokenResponse = {
   collectionAddr: string;
@@ -25,7 +25,7 @@ type InventoryTokenResponse = TokenResponse & {
   queryUserQuantityOwned: number;
 };
 
-const getChainSlug = (chainId: SupportedChainId) =>
+const getChainSlug = (chainId: number) =>
   chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
 
 export type InventoryTokenItem = Awaited<
@@ -38,7 +38,7 @@ export const fetchTokens = async ({
   apiKey,
   tokens,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   apiUrl: string;
   apiKey: string;
   tokens: { address: string; tokenId: number | string }[];
@@ -94,7 +94,7 @@ export const fetchCollections = async ({
   apiKey,
   addresses,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   apiUrl: string;
   apiKey: string;
   addresses: string[];
@@ -124,7 +124,7 @@ export const fetchUserInventory = async ({
   tokens = [],
   projection = "collectionAddr,collectionUrlSlug,queryUserQuantityOwned,metadata,image",
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   apiUrl: string;
   apiKey: string;
   userAddress: string;

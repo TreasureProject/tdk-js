@@ -26,7 +26,6 @@ import {
 import { I18nextProvider } from "react-i18next";
 import { type Chain, defineChain } from "thirdweb";
 import {
-  ThirdwebProvider,
   useActiveWallet,
   useActiveWalletChain,
   useActiveWalletConnectionStatus,
@@ -260,10 +259,8 @@ export const TreasureProvider = (props: Props) => {
   }, [props.language]);
 
   return (
-    <ThirdwebProvider>
-      <I18nextProvider i18n={i18n}>
-        <TreasureProviderInner {...props} />
-      </I18nextProvider>
-    </ThirdwebProvider>
+    <I18nextProvider i18n={i18n}>
+      <TreasureProviderInner {...props} />
+    </I18nextProvider>
   );
 };

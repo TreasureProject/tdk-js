@@ -1,4 +1,4 @@
-import { arbitrum } from "viem/chains";
+import { arbitrum } from "thirdweb/chains";
 
 import { CONTRACT_ADDRESSES } from "../constants";
 import type { AddressString, Contract } from "../types";

@@ -5,8 +5,7 @@ import type {
 } from "abitype";
 
 import { managedAccountAbi } from "../abis/managedAccountAbi";
-import type { AddressString, SupportedChainId } from "../types";
-import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
+import type { AddressString } from "../types";
 
 type Signer = AbiParametersToPrimitiveTypes<
   ExtractAbiFunction<
@@ -21,11 +20,11 @@ type Signer = AbiParametersToPrimitiveTypes<
 export const getAllActiveSigners = async ({
   chainId,
   address,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   address: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }): Promise<Signer[]> => {
   const [{ result: allActiveSigners = [] }, { result: allAdmins = [] }] =
     await readContracts(wagmiConfig, {

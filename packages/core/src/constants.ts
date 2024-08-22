@@ -1,5 +1,5 @@
-import { defineChain, zeroAddress } from "viem";
-import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
 
 import type { AddressString, Contract } from "./types";
 
@@ -57,7 +57,7 @@ export const TREASURE_RUBY_CHAIN_DEFINITION = {
 };
 export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
 
-export const SUPPORTED_CHAINS = [
+const SUPPORTED_CHAINS = [
   arbitrum,
   arbitrumSepolia,
   mainnet,
@@ -194,7 +194,7 @@ export const CONTRACT_ADDRESSES: Record<
   [arbitrumSepolia.id]: {
     // Tokens
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
-    ARB: zeroAddress,
+    ARB: ZERO_ADDRESS,
     VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
     // Bridgeworld
     Middleman: "0x81ece9e2a45e5c4c563316dae125e9dce2fa0d4b",

@@ -1,4 +1,5 @@
-import { Button, formatAmount, useTreasure } from "@treasure-dev/tdk-react";
+import { formatAmount } from "@treasure-dev/tdk-core";
+import { Button, useTreasure } from "@treasure-dev/tdk-react";
 import { useEffect, useState } from "react";
 import { formatUnits, parseEther, parseUnits } from "viem";
 import { useAddLiquidity } from "./hooks/useAddLiquidity";

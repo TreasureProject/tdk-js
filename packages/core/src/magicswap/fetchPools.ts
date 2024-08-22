@@ -1,10 +1,10 @@
 import { type Config, readContracts } from "@wagmi/core";
-import { parseUnits } from "viem";
+import { toUnits } from "thirdweb";
+
 import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
 import { MAGICSWAPV2_API_URL } from "../constants";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { fetchCollections, fetchTokens } from "../utils/inventory";
-import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 import { getPair, getPairs, getStats } from "./graph-queries";
 import type {
   Collection,
@@ -16,16 +16,18 @@ import type {
   TokensByCollectionMap,
 } from "./types";
 
-const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
-  const response = await fetch(
-    MAGICSWAPV2_API_URL[chainId as keyof typeof MAGICSWAPV2_API_URL],
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: getPairs,
-      }),
-    },
-  );
+const fetchPairs = async ({ chainId }: { chainId: number }) => {
+  const apiUrl = MAGICSWAPV2_API_URL[chainId];
+  if (!apiUrl) {
+    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+  }
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      query: getPairs,
+    }),
+  });
   const {
     data: { pairs },
   } = (await response.json()) as { data: { pairs: Pair[] } };
@@ -36,17 +38,19 @@ const fetchPairs = async ({ chainId }: { chainId: SupportedChainId }) => {
 const fetchPair = async ({
   chainId,
   pairId,
-}: { chainId: SupportedChainId; pairId: string }) => {
-  const response = await fetch(
-    MAGICSWAPV2_API_URL[chainId as keyof typeof MAGICSWAPV2_API_URL],
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: getPair,
-        variables: { id: pairId },
-      }),
-    },
-  );
+}: { chainId: number; pairId: string }) => {
+  const apiUrl = MAGICSWAPV2_API_URL[chainId];
+  if (!apiUrl) {
+    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+  }
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      query: getPair,
+      variables: { id: pairId },
+    }),
+  });
   const {
     data: { pair },
   } = (await response.json()) as { data: { pair: Pair } };
@@ -54,16 +58,18 @@ const fetchPair = async ({
   return pair;
 };
 
-const fetchStats = async ({ chainId }: { chainId: SupportedChainId }) => {
-  const response = await fetch(
-    MAGICSWAPV2_API_URL[chainId as keyof typeof MAGICSWAPV2_API_URL],
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: getStats,
-      }),
-    },
-  );
+const fetchStats = async ({ chainId }: { chainId: number }) => {
+  const apiUrl = MAGICSWAPV2_API_URL[chainId];
+  if (!apiUrl) {
+    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+  }
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      query: getStats,
+    }),
+  });
   const { data } = (await response.json()) as {
     data: {
       factories: {
@@ -95,7 +101,7 @@ const fetchPairAssociatedData = async ({
   inventoryApiKey,
 }: {
   pairs: Pair[];
-  chainId: SupportedChainId;
+  chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
 }) => {
@@ -283,13 +289,13 @@ const createPoolFromPair = (
   const token0 = {
     ...createPoolToken(pair.token0, collectionsMap, tokensMap, magicUSD),
     reserve: (
-      reserves?.[0] ?? parseUnits(pair.reserve0, Number(pair.token0.decimals))
+      reserves?.[0] ?? toUnits(pair.reserve0, Number(pair.token0.decimals))
     ).toString(),
   };
   const token1 = {
     ...createPoolToken(pair.token1, collectionsMap, tokensMap, magicUSD),
     reserve: (
-      reserves?.[1] ?? parseUnits(pair.reserve1, Number(pair.token1.decimals))
+      reserves?.[1] ?? toUnits(pair.reserve1, Number(pair.token1.decimals))
     ).toString(),
   };
 
@@ -337,7 +343,7 @@ const buildPools = async ({
 }: {
   pairs: Pair[];
   stats: Awaited<ReturnType<typeof fetchStats>>;
-  chainId: SupportedChainId;
+  chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
   wagmiConfig: Config;
@@ -383,12 +389,12 @@ export const fetchPools = async ({
   chainId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }) => {
   const [pairs, stats] = await Promise.all([
     fetchPairs({ chainId }),
@@ -410,13 +416,13 @@ export const fetchPool = async ({
   chainId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
   pairId: string;
-  chainId: SupportedChainId;
+  chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }) => {
   const [pair, stats] = await Promise.all([
     fetchPair({ chainId, pairId }),

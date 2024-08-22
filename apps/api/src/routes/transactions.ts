@@ -120,7 +120,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error creating transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },
@@ -188,7 +188,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating native send transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error creating native send transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },
@@ -217,7 +217,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_READ_FAILED,
-            message: `Error fetching transaction: ${parseEngineErrorMessage(err) ?? "Unknown error"}`,
+            message: `Error fetching transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },

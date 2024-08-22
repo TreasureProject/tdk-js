@@ -1,6 +1,6 @@
 import { type Config, readContracts } from "@wagmi/core";
-import { erc20Abi, erc721Abi, formatEther, zeroAddress } from "viem";
-import { arbitrumSepolia } from "viem/chains";
+import { ZERO_ADDRESS, toEther } from "thirdweb";
+import { arbitrumSepolia } from "thirdweb/chains";
 
 import type {
   CorruptionRemoval,
@@ -14,6 +14,8 @@ import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
 import { corruptionAbi } from "../abis/corruptionAbi";
+import { erc20Abi } from "../abis/erc20Abi";
+import { erc721Abi } from "../abis/erc721Abi";
 import { erc1155Abi } from "../abis/erc1155Abi";
 import { harvesterAbi } from "../abis/harvesterAbi";
 import { legionsStakingRulesAbi } from "../abis/legionsStakingRulesAbi";
@@ -21,11 +23,10 @@ import { middlemanAbi } from "../abis/middlemanAbi";
 import { nftHandlerAbi } from "../abis/nftHandlerAbi";
 import { permitsStakingRulesAbi } from "../abis/permitsStakingRulesAbi";
 import { BRIDGEWORLD_API_URL, TOKEN_IDS } from "../constants";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { sumArray } from "../utils/array";
 import { getContractAddress, getContractAddresses } from "../utils/contracts";
 import { fetchTokens, fetchUserInventory } from "../utils/inventory";
-import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 import {
   fetchCorruptionRemovalRecipes,
   fetchCorruptionRemovals,
@@ -55,16 +56,19 @@ const fetchIndexedHarvester = async ({
   harvesterAddress,
   userAddress,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   harvesterAddress: string;
   userAddress: string;
 }) => {
-  const response = await fetch(
-    BRIDGEWORLD_API_URL[chainId as keyof typeof BRIDGEWORLD_API_URL],
-    {
-      method: "POST",
-      body: JSON.stringify({
-        query: `
+  const apiUrl = BRIDGEWORLD_API_URL[chainId];
+  if (!apiUrl) {
+    throw new Error(`No Bridgeworld API URL found for chain ID ${chainId}`);
+  }
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      query: `
       {
         harvester(id: "${harvesterAddress.toLowerCase()}") {
           userStakedCharacters: stakedTokens(
@@ -96,9 +100,8 @@ const fetchIndexedHarvester = async ({
         }
       }
       `,
-      }),
-    },
-  );
+    }),
+  });
   const {
     data: { harvester },
   } = (await response.json()) as {
@@ -127,20 +130,20 @@ const fetchIndexedHarvester = async ({
 export const getHarvesterInfo = async ({
   chainId,
   harvesterAddress,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   harvesterAddress: AddressString;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }): Promise<HarvesterInfo> => {
   const contractAddresses = getContractAddresses(chainId);
 
   // Fetch global and config data
   const [
-    { result: nftHandlerAddress = zeroAddress },
+    { result: nftHandlerAddress = ZERO_ADDRESS },
     {
       result: [permitsAddress, permitsTokenId, permitsMagicMaxStakeable] = [
-        zeroAddress,
+        ZERO_ADDRESS,
         0n,
         0n,
       ] as const,
@@ -204,8 +207,8 @@ export const getHarvesterInfo = async ({
   });
   const [
     { result: stakingRulesAddresses = [] },
-    { result: permitsStakingRulesAddress = zeroAddress },
-    { result: boostersStakingRulesAddress = zeroAddress },
+    { result: permitsStakingRulesAddress = ZERO_ADDRESS },
+    { result: boostersStakingRulesAddress = ZERO_ADDRESS },
     { result: legionsStakingRulesAddress },
     { result: treasuresStakingRulesAddress },
   ] = await readContracts(wagmiConfig, {
@@ -267,7 +270,7 @@ export const getHarvesterInfo = async ({
     { result: boostersLifetimes = DEFAULT_BOOSTERS_LIFETIMES },
     { result: totalBoostersBoost = 0n },
     { result: boosters = [] },
-    { result: charactersAddress = zeroAddress },
+    { result: charactersAddress = ZERO_ADDRESS },
   ] = await readContracts(wagmiConfig, {
     contracts: [
       {
@@ -304,7 +307,7 @@ export const getHarvesterInfo = async ({
       // TODO: don't call this if no characters staking rules
       {
         chainId,
-        address: charactersStakingRulesAddress ?? zeroAddress,
+        address: charactersStakingRulesAddress ?? ZERO_ADDRESS,
         abi: charactersStakingRulesAbi,
         functionName: "nftAddress",
       },
@@ -313,7 +316,11 @@ export const getHarvesterInfo = async ({
 
   const boostersLifetimesMap = boostersLifetimes.reduce(
     (acc, curr, i) => {
-      acc[BOOSTER_TOKEN_IDS[i].toString()] = Number(curr);
+      const tokenId = BOOSTER_TOKEN_IDS[i];
+      if (tokenId) {
+        acc[tokenId.toString()] = Number(curr);
+      }
+
       return acc;
     },
     {} as Record<string, number>,
@@ -337,10 +344,10 @@ export const getHarvesterInfo = async ({
     ).toString(),
     boostersMaxStakeable: Number(boostersMaxStakeable),
     corruptionMaxGenerated: corruptionMaxGenerated.toString(),
-    totalEmissionsActivated: Number(formatEther(totalEmissionsActivated)),
+    totalEmissionsActivated: Number(toEther(totalEmissionsActivated)),
     totalMagicStaked: totalMagicStaked.toString(),
-    totalBoost: Number(formatEther(totalBoost)),
-    totalBoostersBoost: Number(formatEther(totalBoostersBoost)),
+    totalBoost: Number(toEther(totalBoost)),
+    totalBoostersBoost: Number(toEther(totalBoostersBoost)),
     totalCorruption: totalCorruption.toString(),
     boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
       tokenId: Number(tokenId),
@@ -367,14 +374,14 @@ export const getHarvesterUserInfo = async ({
   userAddress,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   harvesterInfo: HarvesterInfo;
   userAddress: AddressString;
   inventoryApiUrl?: string;
   inventoryApiKey?: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }): Promise<HarvesterUserInfo> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
@@ -464,7 +471,7 @@ export const getHarvesterUserInfo = async ({
         // TODO: handle non-ERC721 characters?
         {
           chainId,
-          address: (charactersAddress ?? zeroAddress) as AddressString,
+          address: (charactersAddress ?? ZERO_ADDRESS) as AddressString,
           abi: erc721Abi,
           functionName: "isApprovedForAll",
           args: [userAddress, nftHandlerAddress as AddressString],
@@ -472,14 +479,14 @@ export const getHarvesterUserInfo = async ({
         {
           chainId,
           address: (charactersStakingRulesAddress ??
-            zeroAddress) as AddressString,
+            ZERO_ADDRESS) as AddressString,
           abi: charactersStakingRulesAbi,
           functionName: "maxStakeablePerUser",
         },
         {
           chainId,
           address: (charactersStakingRulesAddress ??
-            zeroAddress) as AddressString,
+            ZERO_ADDRESS) as AddressString,
           abi: charactersStakingRulesAbi,
           functionName: "amountStaked",
           args: [userAddress],
@@ -487,7 +494,7 @@ export const getHarvesterUserInfo = async ({
         {
           chainId,
           address: (charactersStakingRulesAddress ??
-            zeroAddress) as AddressString,
+            ZERO_ADDRESS) as AddressString,
           abi: charactersStakingRulesAbi,
           // TODO: change this to be generic
           functionName: "levelToUserDepositBoost",
@@ -503,13 +510,15 @@ export const getHarvesterUserInfo = async ({
         // TODO: don't call this if no legions staking rules
         {
           chainId,
-          address: (legionsStakingRulesAddress ?? zeroAddress) as AddressString,
+          address: (legionsStakingRulesAddress ??
+            ZERO_ADDRESS) as AddressString,
           abi: legionsStakingRulesAbi,
           functionName: "maxLegionWeight",
         },
         {
           chainId,
-          address: (legionsStakingRulesAddress ?? zeroAddress) as AddressString,
+          address: (legionsStakingRulesAddress ??
+            ZERO_ADDRESS) as AddressString,
           abi: legionsStakingRulesAbi,
           functionName: "weightStaked",
           args: [userAddress],
@@ -638,7 +647,7 @@ export const getHarvesterUserInfo = async ({
     userCharactersMaxStakeable: Number(userCharactersMaxStakeable),
     userCharactersStaked: Number(userCharactersStaked),
     userCharactersMaxBoost:
-      Number(formatEther(userCharacterMaxBoost)) *
+      Number(toEther(userCharacterMaxBoost)) *
       Number(userCharactersMaxStakeable),
     userCharactersBoost: sumArray(
       userStakedCharacters.map(
@@ -656,9 +665,9 @@ export const getHarvesterUserInfo = async ({
     userStakedLegions,
     userLegionsApproved,
     userLegionsMaxWeightStakeable: Number(
-      formatEther(userLegionsMaxWeightStakeable),
+      toEther(userLegionsMaxWeightStakeable),
     ),
-    userLegionsWeightStaked: Number(formatEther(userLegionsWeightStaked)),
+    userLegionsWeightStaked: Number(toEther(userLegionsWeightStaked)),
     userLegionsBoost: sumArray(
       userStakedLegions.map(
         ({ attributes }) =>
@@ -674,7 +683,7 @@ export const getHarvesterUserInfo = async ({
     userMagicMaxStakeable: userMagicMaxStakeable.toString(),
     userMagicStaked: userMagicStaked.toString(),
     userTotalBoost:
-      Number(formatEther(userTotalBoost)) +
+      Number(toEther(userTotalBoost)) +
       (chainId === arbitrumSepolia.id ? 0.05 : 0), // Testnet has a timelock boost applied to it
     userMagicRewardsClaimable: userMagicRewardsClaimable.toString(),
   };
@@ -686,14 +695,14 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
   userAddress,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   harvesterAddress: string;
   userAddress?: string;
   inventoryApiUrl?: string;
   inventoryApiKey?: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }): Promise<HarvesterCorruptionRemovalInfo> => {
   const corruptionRemovalAddress = getContractAddress(
     chainId,
@@ -765,10 +774,15 @@ export const fetchHarvesterCorruptionRemovalInfo = async ({
     userInventoryCorruptionRemovalRecipeItems = inventoryTokens;
     userApprovalsCorruptionRemovalRecipeItems = approvals.reduce(
       (acc, { result }, i) => {
-        acc[addressesAndOperators[i][0]] = {
-          operator: addressesAndOperators[i][1],
-          approved: !!result,
-        };
+        const addressAndOperator = addressesAndOperators[i];
+        if (addressAndOperator) {
+          const [address, operator] = addressAndOperator;
+          acc[address] = {
+            operator,
+            approved: !!result,
+          };
+        }
+
         return acc;
       },
       {} as Record<

@@ -25,7 +25,7 @@ export const App = () => {
         <h1 className="font-semibold text-2xl text-ruby-900">
           TDK Magicswap v2 Example
         </h1>
-        <ConnectButton appName="Treasure" />
+        <ConnectButton />
       </header>
       <main className="space-y-6">
         {user ? (
