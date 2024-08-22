@@ -118,7 +118,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
   }
 
   // Connect with social
-  wallet.connect({
+  await wallet.connect({
     client,
     chain,
     strategy: params.method,
