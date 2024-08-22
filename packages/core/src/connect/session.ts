@@ -3,6 +3,7 @@ import {
   defineChain,
   getContract,
   sendTransaction,
+  toEther,
 } from "thirdweb";
 import { addSessionKey } from "thirdweb/extensions/erc4337";
 import type { Account, Wallet } from "thirdweb/wallets";
@@ -13,7 +14,6 @@ import {
   getDateYearsFromNow,
 } from "../utils/date";
 
-import { formatEther } from "viem";
 import type { TDKAPI } from "../api";
 import type { Session, SessionOptions, TreasureConnectClient } from "../types";
 
@@ -94,7 +94,7 @@ export const createSession = async ({
     chain: defineChain(chainId),
     address: account.address,
   });
-  const nativeTokenLimitPerTransaction = formatEther(
+  const nativeTokenLimitPerTransaction = toEther(
     nativeTokenLimitPerTransactionBI,
   );
   const startDate = getDateHoursFromNow(-1);

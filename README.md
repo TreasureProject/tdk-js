@@ -16,6 +16,7 @@ SDK for the Treasure ecosystem
 
 - [Treasure Connect (Core)](./examples/connect-core)
 - [Treasure Connect (React)](./examples/connect-react) - [Live Demo](https://tdk-examples-connect.vercel.app)
+- [Treasure Connect (Electron)](./examples/connect-electron)
 - [Magicswap](./examples/magicswap)
 
 ## Development

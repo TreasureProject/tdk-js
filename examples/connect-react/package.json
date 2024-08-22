@@ -10,10 +10,10 @@
     "@treasure-dev/tdk-react": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "viem": "^2.15.1"
+    "thirdweb": "^5.48.0"
   },
   "devDependencies": {
-    "@treasure-project/tailwind-config": "^2.1.0",
+    "@treasure-dev/tailwind-config": "*",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",

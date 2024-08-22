@@ -22,10 +22,10 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="font-semibold text-2xl text-ruby-900">
+        <h1 className="font-semibold text-2xl text-ruby">
           TDK Magicswap v2 Example
         </h1>
-        <ConnectButton appName="Treasure" />
+        <ConnectButton />
       </header>
       <main className="space-y-6">
         {user ? (

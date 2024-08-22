@@ -1,6 +1,8 @@
-import { formatAmount, useTreasure } from "@treasure-dev/tdk-react";
+import { useTreasure } from "@treasure-dev/tdk-react";
 import { formatEther } from "viem";
+
 import { PoolSection } from "./PoolSection";
+import { formatAmount } from "./helpers/currency";
 import { useAllowance } from "./hooks/useAllowance";
 import { useIsApprovedForAll } from "./hooks/useIsApprovedForAll";
 import { usePool } from "./hooks/usePool";

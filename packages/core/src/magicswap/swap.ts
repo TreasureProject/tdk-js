@@ -4,7 +4,7 @@ import type {
 } from "abitype";
 
 import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { NFTInput, PoolToken } from "./types";
 
@@ -49,7 +49,7 @@ export const getSwapArgs = ({
   amountIn?: bigint;
   amountOut?: bigint;
   isExactOut: boolean;
-  chainId: SupportedChainId;
+  chainId: number;
   path: AddressString[];
   slippage?: number;
 }): {

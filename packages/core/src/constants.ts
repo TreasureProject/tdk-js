@@ -1,5 +1,5 @@
-import { defineChain, zeroAddress } from "viem";
-import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "viem/chains";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
 
 import type { AddressString, Contract } from "./types";
 
@@ -7,11 +7,11 @@ import type { AddressString, Contract } from "./types";
 export const DEFAULT_TDK_API_BASE_URI = "https://tdk-api.treasure.lol";
 export const DEFAULT_TDK_APP = "app";
 export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
-export const DEFAULT_TDK_LOGIN_DOMAIN = "https://login.treasure.lol";
 export const DEFAULT_TDK_APP_NAME = "App";
 export const DEFAULT_TDK_APP_ICON_URI =
   "https://images.treasure.lol/tdk/login/treasure_icon.png";
 
+// APIs
 export const BRIDGEWORLD_API_URL = {
   [arbitrum.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
@@ -57,15 +57,6 @@ export const TREASURE_RUBY_CHAIN_DEFINITION = {
   testnet: true,
 };
 export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
-
-export const SUPPORTED_CHAINS = [
-  arbitrum,
-  arbitrumSepolia,
-  mainnet,
-  sepolia,
-  treasureRuby,
-] as const;
-export const SUPPORTED_CHAIN_IDS = SUPPORTED_CHAINS.map(({ id }) => id);
 
 // Tokens
 export const TOKEN_IDS = {
@@ -195,7 +186,7 @@ export const CONTRACT_ADDRESSES: Record<
   [arbitrumSepolia.id]: {
     // Tokens
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
-    ARB: zeroAddress,
+    ARB: ZERO_ADDRESS,
     VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
     // Bridgeworld
     Middleman: "0x81ece9e2a45e5c4c563316dae125e9dce2fa0d4b",

@@ -1,5 +1,6 @@
-import { type User, truncateEthAddress } from "@treasure-dev/tdk-core";
+import type { User } from "@treasure-dev/tdk-core";
 import type { ButtonHTMLAttributes } from "react";
+import { shortenAddress } from "thirdweb/utils";
 
 import { TreasureSparklesIcon } from "../../icons/TreasureSparklesIcon";
 import { cn } from "../../utils/classnames";
@@ -26,7 +27,7 @@ export const ConnectButtonAuthenticatedView = ({
       {/* <span className="tdk-w-6 tdk-h-6 tdk-bg-ruby tdk-rounded-md" /> */}
       <span className="tdk-flex tdk-items-center tdk-gap-1">
         <TreasureSparklesIcon className="tdk-w-3.5 tdk-h-3.5 tdk-text-ruby" />
-        {truncateEthAddress(user.address)}
+        {shortenAddress(user.address)}
       </span>
     </Button>
   );

@@ -1,4 +1,4 @@
-import { formatUnits } from "viem";
+import { toTokens } from "thirdweb";
 
 export const bigIntToNumber = (value: bigint, decimals = 18) =>
-  Number(formatUnits(value, decimals));
+  Number(toTokens(value, decimals));

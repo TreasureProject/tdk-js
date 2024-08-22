@@ -5,7 +5,7 @@ import {
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
-import { zeroAddress } from "viem";
+import { ZERO_ADDRESS } from "thirdweb";
 
 import "../middleware/auth";
 import "../middleware/chain";
@@ -60,7 +60,7 @@ export const harvestersRoutes =
           wagmiConfig,
         });
 
-        if (harvesterInfo.nftHandlerAddress === zeroAddress) {
+        if (harvesterInfo.nftHandlerAddress === ZERO_ADDRESS) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.HarvesterError,
             code: TDK_ERROR_CODES.HARVESTER_NFT_HANDLER_NOT_FOUND,

@@ -2,10 +2,9 @@ import {
   type AddressString,
   Button,
   ConnectButton,
-  formatAmount,
   useTreasure,
 } from "@treasure-dev/tdk-react";
-import { formatEther, parseEther } from "viem";
+import { toEther, toWei } from "thirdweb";
 
 export const App = () => {
   const { tdk, user, contractAddresses } = useTreasure();
@@ -40,7 +39,7 @@ export const App = () => {
             },
           ] as const,
           functionName: "mint",
-          args: [user.address as AddressString, parseEther(amount.toString())],
+          args: [user.address as AddressString, toWei(amount.toString())],
         },
         { includeAbi: true },
       );
@@ -57,7 +56,7 @@ export const App = () => {
     try {
       await tdk.transaction.sendNative({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
-        amount: parseEther(amount.toString()),
+        amount: toWei(amount.toString()),
       });
     } catch (err) {
       console.error("Error sending ETH:", err);
@@ -67,7 +66,7 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="font-semibold text-2xl text-ruby-900">
+        <h1 className="font-semibold text-2xl text-ruby">
           TDK React - Connect Example
         </h1>
         <ConnectButton supportedChainIds={[421614, 42161]} />
@@ -95,7 +94,7 @@ export const App = () => {
                           <p className="font-medium">
                             {signer}{" "}
                             {isAdmin ? (
-                              <span className="rounded bg-ruby-900 px-1 font-medium text-white text-xs uppercase">
+                              <span className="rounded bg-ruby px-1 font-medium text-white text-xs uppercase">
                                 Admin
                               </span>
                             ) : (
@@ -124,10 +123,8 @@ export const App = () => {
                                 <span className="font-medium">
                                   Native token limit per transaction:
                                 </span>{" "}
-                                {formatAmount(
-                                  formatEther(
-                                    BigInt(nativeTokenLimitPerTransaction),
-                                  ),
+                                {toEther(
+                                  BigInt(nativeTokenLimitPerTransaction),
                                 )}
                               </p>
                             </>

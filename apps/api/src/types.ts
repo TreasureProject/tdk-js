@@ -36,5 +36,5 @@ export type TdkApiContext = {
   client: ThirdwebClient;
   auth: ThirdwebAuth;
   engine: Engine;
-  wagmiConfig: WagmiConfig | undefined;
+  wagmiConfig: WagmiConfig;
 };

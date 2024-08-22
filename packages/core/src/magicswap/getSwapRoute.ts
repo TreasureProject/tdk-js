@@ -1,10 +1,12 @@
-import type { NetworkInfo, RToken } from "@sushiswap/tines";
 import {
   ConstantProductRPool,
+  type NetworkInfo,
+  type RToken,
   findMultiRouteExactIn,
   findMultiRouteExactOut,
 } from "@sushiswap/tines";
-import { parseUnits } from "viem";
+import { toUnits } from "thirdweb";
+
 import type { AddressString } from "../types";
 import { multiplyArray, sumArray } from "../utils/array";
 import { bigIntToNumber } from "../utils/number";
@@ -43,8 +45,8 @@ const createSwapRoute = (
         tokenToRToken(token0),
         tokenToRToken(token1),
         Number(totalFee ?? 0),
-        parseUnits(reserve0.toString(), token0.decimals),
-        parseUnits(reserve1.toString(), token0.decimals),
+        toUnits(reserve0.toString(), token0.decimals),
+        toUnits(reserve1.toString(), token0.decimals),
       );
     },
   );
@@ -99,9 +101,17 @@ export const getSwapRoute = ({
   const tokenIn = poolTokens[tokenInId];
   const tokenOut = poolTokens[tokenOutId];
 
-  const amountBI = parseUnits(
+  if (!tokenIn) {
+    throw new Error(`Token ${tokenInId} not found`);
+  }
+
+  if (!tokenOut) {
+    throw new Error(`Token ${tokenOutId} not found`);
+  }
+
+  const amountBI = toUnits(
     amount,
-    isExactOut ? tokenOut?.decimals ?? 18 : tokenIn.decimals,
+    isExactOut ? tokenOut.decimals : tokenIn.decimals,
   );
 
   const isSampleRoute = amountBI <= 0;

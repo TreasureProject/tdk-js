@@ -1,8 +1,6 @@
 import type { ThirdwebClient } from "thirdweb";
-import type { TransactionReceipt } from "viem";
 
 import type { TDKAPI } from "./api";
-import type { SUPPORTED_CHAIN_IDS } from "./constants";
 
 // Treasure Connect
 export type TreasureConnectClient = ThirdwebClient;
@@ -39,9 +37,6 @@ export type UserContext = {
 
 // General transactions
 export type AddressString = `0x${string}`;
-export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
-export type OnSuccessFn = (data?: TransactionReceipt) => void;
-export type OnErrorFn = (error?: Error) => void;
 
 // Contracts
 type TokenContract = "MAGIC" | "ARB" | "VEE" | "CRV";

@@ -22,5 +22,3 @@ jobs:
         run: npm test
       - name: Build code
         run: npm run build
-      - name: Check types
-        run: npm run typecheck

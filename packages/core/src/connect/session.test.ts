@@ -1,5 +1,6 @@
-import { parseEther, zeroAddress } from "viem";
+import { ZERO_ADDRESS, toWei } from "thirdweb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import { validateSession } from "./session";
 
 const DATE = new Date(2024, 5, 4, 11);
@@ -7,9 +8,9 @@ const DEFAULT_SESSION = {
   isAdmin: false,
   startTimestamp: (DATE.getTime() / 1000 - 60).toString(),
   endTimestamp: (DATE.getTime() / 1000 + 7_200).toString(),
-  signer: zeroAddress,
-  approvedTargets: [zeroAddress],
-  nativeTokenLimitPerTransaction: parseEther("1").toString(),
+  signer: ZERO_ADDRESS,
+  approvedTargets: [ZERO_ADDRESS],
+  nativeTokenLimitPerTransaction: toWei("1").toString(),
 };
 
 describe("session utils", () => {
@@ -26,7 +27,7 @@ describe("session utils", () => {
     // No approved targets required, so session is not needed
     expect(
       validateSession({
-        backendWallet: zeroAddress,
+        backendWallet: ZERO_ADDRESS,
         approvedTargets: [],
         sessions: [],
       }),
@@ -35,9 +36,9 @@ describe("session utils", () => {
     // Session exists with correct signer, approved targets and native token limit
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
-        nativeTokenLimitPerTransaction: parseEther("1"),
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
+        nativeTokenLimitPerTransaction: toWei("1"),
         sessions: [DEFAULT_SESSION],
       }),
     ).toBe(true);
@@ -45,8 +46,8 @@ describe("session utils", () => {
     // Session exists with admin
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
         sessions: [
           {
             ...DEFAULT_SESSION,
@@ -61,8 +62,8 @@ describe("session utils", () => {
     // Session exists, but it's expired
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
         sessions: [
           {
             ...DEFAULT_SESSION,
@@ -75,8 +76,8 @@ describe("session utils", () => {
     // Session exists, but doesn't meet the minimum duration
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
         sessions: [DEFAULT_SESSION],
         sessionMinDurationLeftSec: 10_800,
       }),
@@ -85,8 +86,8 @@ describe("session utils", () => {
     // Session exists, but doesn't have the correct signer
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
         sessions: [
           {
             ...DEFAULT_SESSION,
@@ -99,8 +100,8 @@ describe("session utils", () => {
     // Session exists, but doesn't have the correct approved targets
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
         sessions: [
           {
             ...DEFAULT_SESSION,
@@ -113,9 +114,9 @@ describe("session utils", () => {
     // Session exists, but doesn't have the correct native token limit
     expect(
       validateSession({
-        backendWallet: zeroAddress,
-        approvedTargets: [zeroAddress],
-        nativeTokenLimitPerTransaction: parseEther("2"),
+        backendWallet: ZERO_ADDRESS,
+        approvedTargets: [ZERO_ADDRESS],
+        nativeTokenLimitPerTransaction: toWei("2"),
         sessions: [DEFAULT_SESSION],
       }),
     ).toBe(false);

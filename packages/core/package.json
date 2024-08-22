@@ -31,17 +31,20 @@
     "./dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && tsup",
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
     "@sushiswap/tines": "^1.0.3",
     "@wagmi/core": "^2.9.1",
     "abitype": "^1.0.2",
-    "decimal.js-light": "^2.5.1",
     "jwt-decode": "^4.0.0",
     "thirdweb": "^5.48.1",
     "viem": "^2.7.6"
+  },
+  "peerDependencies": {
+    "thirdweb": "^5.48.0"
   },
   "engines": {
     "node": ">=14.0.0"

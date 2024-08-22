@@ -4,7 +4,7 @@ import type {
 } from "abitype";
 
 import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { Pool } from "./fetchPools";
 import type { NFTInput } from "./types";
@@ -28,7 +28,7 @@ export const getRemoveLiquidityArgs = ({
   swapLeftover,
 }: {
   pool: Pool;
-  chainId: SupportedChainId;
+  chainId: number;
   toAddress: AddressString;
   amountLP: bigint;
   amount0Min: bigint;

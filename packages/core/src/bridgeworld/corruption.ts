@@ -7,9 +7,8 @@ import type {
 } from "../../../../apps/api/src/schema";
 import { corruptionRemovalAbi } from "../abis/corruptionRemovalAbi";
 import { BRIDGEWORLD_CORRUPTION_API_URL } from "../constants";
-import type { AddressString, SupportedChainId } from "../types";
+import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import { DEFAULT_WAGMI_CONFIG } from "../utils/wagmi";
 
 const ERC1155_TOKEN_SET_CORRUPTION_HANDLER_ABI_PARAMS = parseAbiParameters(
   "(uint256 amount, address collection, uint256[] tokenIds)",
@@ -18,11 +17,11 @@ const ERC1155_TOKEN_SET_CORRUPTION_HANDLER_ABI_PARAMS = parseAbiParameters(
 export const fetchCorruptionRemovalRecipes = async ({
   chainId,
   buildingAddress,
-  wagmiConfig = DEFAULT_WAGMI_CONFIG,
+  wagmiConfig,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   buildingAddress: string;
-  wagmiConfig?: Config;
+  wagmiConfig: Config;
 }): Promise<CorruptionRemovalRecipe[]> => {
   const contractAddresses = getContractAddresses(chainId);
   const [
@@ -48,7 +47,7 @@ export const fetchCorruptionRemovalRecipes = async ({
   });
 
   return corruptionRemovalRecipeInfo.map(({ corruptionRemoved, items }, i) => ({
-    id: corruptionRemovalRecipeIds[i].toString(),
+    id: corruptionRemovalRecipeIds[i]?.toString() ?? "",
     corruptionRemoved: corruptionRemoved.toString(),
     items: items.map(
       ({
@@ -91,14 +90,14 @@ export const fetchCorruptionRemovals = async ({
   buildingAddress,
   userAddress,
 }: {
-  chainId: SupportedChainId;
+  chainId: number;
   buildingAddress: string;
   userAddress: string;
 }): Promise<CorruptionRemoval[]> => {
   const response = await fetch(
     BRIDGEWORLD_CORRUPTION_API_URL[
       chainId as keyof typeof BRIDGEWORLD_CORRUPTION_API_URL
-    ],
+    ] ?? "",
     {
       method: "POST",
       body: JSON.stringify({
