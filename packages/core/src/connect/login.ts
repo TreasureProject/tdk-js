@@ -26,7 +26,6 @@ type ConnectWalletConfig = {
   chainId?: number;
   authMode?: "popup" | "redirect";
   redirectUrl?: string;
-  redirectExternally?: boolean;
 } & (
   | {
       method: SocialConnectMethod;
@@ -71,7 +70,6 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
     chainId = DEFAULT_TDK_CHAIN_ID,
     authMode,
     redirectUrl,
-    redirectExternally,
   } = params;
   const chain = defineChain(chainId);
 
@@ -80,7 +78,6 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       options: SUPPORTED_IN_APP_WALLET_OPTIONS,
       mode: authMode,
       redirectUrl,
-      redirectExternally,
     },
     smartAccount: {
       chain,

@@ -26,7 +26,6 @@ import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 export type Options = ConnectMethodSelectionOptions & {
   authMode?: "popup" | "redirect";
   redirectUrl?: string;
-  redirectExternally?: boolean;
 };
 
 export type Props = Options & {
@@ -46,7 +45,6 @@ export const ConnectModal = ({
   size = "lg",
   authMode,
   redirectUrl,
-  redirectExternally,
   onOpenChange,
   ...methodSelectionProps
 }: Props) => {
@@ -178,15 +176,15 @@ export const ConnectModal = ({
     } else {
       // Handle connecting with social / passkey
       try {
-        // When redirectExternally is true, can use the headless `authenticate` function instead of connect
-        // it will redirect out of the app here
-        if (redirectExternally) {
+        // When redirectUrl is set or authMode is set to redirect
+        // can use the headless `authenticate` function instead of connect
+        // and it will redirect out of the app here
+        if (redirectUrl || authMode === 'redirect') {
           await authenticate({
             client,
             strategy: method,
-            redirect: true,
             redirectUrl,
-            redirectExternally,
+            mode: authMode,
           })
         } else {
           wallet = await connect(() =>
@@ -196,7 +194,6 @@ export const ConnectModal = ({
              method,
              authMode,
              redirectUrl,
-             redirectExternally,
            }),
          );
         }
