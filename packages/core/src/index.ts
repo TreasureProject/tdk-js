@@ -19,7 +19,6 @@ export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { magicSwapV2RouterABI } from "./abis/magicSwapV2RouterAbi";
 export { TDKAPI } from "./api";
-export { truncateEthAddress } from "./utils/address";
 export { sumArray } from "./utils/array";
 export {
   getContractAddress,
