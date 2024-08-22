@@ -1,6 +1,6 @@
-import http from 'http';
+import http from 'node:http';
 import express from 'express';
-import { BrowserWindow } from 'electron';
+import type { BrowserWindow } from 'electron';
 
 export default class RedirectApp {
   public app = express();
@@ -45,5 +45,7 @@ export default class RedirectApp {
 
 let redirectApp: RedirectApp;
 export function startRedirectApp(mainWindow: BrowserWindow) {
-  redirectApp = new RedirectApp(mainWindow);
+  if (!redirectApp) {
+    redirectApp = new RedirectApp(mainWindow);
+  }
 }
