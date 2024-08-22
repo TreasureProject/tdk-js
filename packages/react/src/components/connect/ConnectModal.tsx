@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
+import { authenticate } from "thirdweb/wallets/in-app";
 
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
@@ -177,21 +178,27 @@ export const ConnectModal = ({
     } else {
       // Handle connecting with social / passkey
       try {
-        // This will start the wallet connection process
-        // When redirectExternally is true, it will redirect out of the app here
-        const inAppWallet = await connectWallet({
-          client,
-          chainId: chain.id,
-          method,
-          authMode,
-          redirectUrl,
-          redirectExternally,
-        });
-        // No need to call connect here when redirectExternally is true. This call would fail inside
-        // of the useConnect hook. The wallet variable will be undefined still, so no need to call
-        // handleLogin below. The wallet will connct from the useAutoConnect hook in the TreasureProviderInner.
-        if (!redirectExternally) {
-          wallet = await connect(inAppWallet);
+        // When redirectExternally is true, can use the headless `authenticate` function instead of connect
+        // it will redirect out of the app here
+        if (redirectExternally) {
+          await authenticate({
+            client,
+            strategy: method,
+            redirect: true,
+            redirectUrl,
+            redirectExternally,
+          })
+        } else {
+          wallet = await connect(() =>
+           connectWallet({
+             client,
+             chainId: chain.id,
+             method,
+             authMode,
+             redirectUrl,
+             redirectExternally,
+           }),
+         );
         }
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);

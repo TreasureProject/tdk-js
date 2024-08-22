@@ -118,24 +118,11 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
   }
 
   // Connect with social
-  if (redirectExternally) {
-    // wallet.connectExternal is optional in the wallet interface, so we have to check to see if it's defined first
-    if (wallet.connectExternal) {
-      await wallet.connectExternal({
-        client,
-        chain,
-        strategy: params.method,
-      });
-    } else {
-      throw new Error('Failed to authenticate externally because wallet had no connectExternal function');
-    }
-  } else {
-    await wallet.connect({
-      client,
-      chain,
-      strategy: params.method,
-    });
-  }
+  wallet.connect({
+    client,
+    chain,
+    strategy: params.method,
+  });
   return wallet;
 };
 
