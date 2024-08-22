@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 2.2.1
+
+### Patch Changes
+
+- d4d5e77: Added the hideDisconnect prop
+  - @treasure-dev/tdk-core@2.2.1
+
 ## 2.2.0
 
 ### Minor Changes
