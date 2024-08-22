@@ -16,7 +16,7 @@ function App(): JSX.Element {
   return (
     <>
       <p>
-        <ConnectButton redirectUrl={`${window.location.origin}/auth/`} />
+        <ConnectButton redirectUrl={`${window.location.origin}/auth/`} hideDisconnect={true} showAllWallets={false} disablePay={true} />
       </p>
       <Versions />
     </>

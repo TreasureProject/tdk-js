@@ -17,6 +17,7 @@ import { getLocaleId } from "../i18n";
 export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
   connectModalSize?: ConnectModalProps["size"];
+  hideDisconnect?: boolean;
 };
 
 type Props = Options;
@@ -61,7 +62,7 @@ const SUPPORTED_TOKENS = [
 export const useConnect = (props?: Props) => {
   const { chain, client, logOut, setRootElement } = useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
-  const { supportedChainIds, connectModalSize, ...connectModalProps } =
+  const { supportedChainIds, connectModalSize, hideDisconnect, ...connectModalProps } =
     props ?? {};
 
   const chains =
@@ -93,6 +94,7 @@ export const useConnect = (props?: Props) => {
         })).filter(({ address }) => address !== ZERO_ADDRESS);
         return acc;
       }, {} as SupportedTokens),
+      hideDisconnect,
       onDisconnect: () => {
         logOut();
       },
