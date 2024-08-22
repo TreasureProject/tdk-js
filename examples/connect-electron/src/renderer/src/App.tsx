@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { ConnectButton } from "@treasure-dev/tdk-react";
+import { useEffect } from "react";
+import { initIpcListeners } from "./IpcListeners";
 import Versions from "./components/Versions";
-import { initIpcListeners } from './IpcListeners';
 
 let started = false;
 

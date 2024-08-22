@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { BrowserWindow, app, ipcMain, shell } from "electron";
 import icon from "../../resources/icon.png?asset";
-import { startRedirectApp  } from "./app";
+import { startRedirectApp } from "./app";
 
 let mainWindow: BrowserWindow;
 
