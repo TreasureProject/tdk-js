@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-core
 
+## 2.2.0
+
+### Minor Changes
+
+- 61ec250: Reduced dependencies on wagmi/viem
+  Removed exports of supported chains and other undocumented utilities
+
+### Patch Changes
+
+- d110c16: Added new redirect support
+
 ## 2.1.0
 
 ## 2.0.1
