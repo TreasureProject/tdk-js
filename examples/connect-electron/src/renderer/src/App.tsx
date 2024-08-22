@@ -18,7 +18,7 @@ function App(): JSX.Element {
       <p>
         <ConnectButton
           redirectUrl={`${window.location.origin}/auth/`}
-          disablePay={true}
+          hideDisconnect={true}
         />
       </p>
       <Versions />
