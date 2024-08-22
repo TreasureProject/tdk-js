@@ -3,4 +3,4 @@
 "@treasure-dev/tdk-core": patch
 ---
 
-Added new redirect support and timeout field
+Added new redirect support
