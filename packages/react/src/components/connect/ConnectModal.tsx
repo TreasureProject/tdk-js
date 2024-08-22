@@ -1,9 +1,9 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
   type ConnectMethod,
-  type SocialConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_WEB3_WALLETS,
+  type SocialConnectMethod,
   connectWallet,
   getContractAddress,
   sendEmailVerificationCode,
@@ -174,30 +174,32 @@ export const ConnectModal = ({
           setError((err as Error).message);
         }
       }
+    } else if (redirectUrl || authMode === "redirect") {
+      // When redirectUrl is set or authMode is set to redirect
+      // can use the headless `authenticate` function instead of connect
+      // and it will redirect out of the app here
+      try {
+        await authenticate({
+          client,
+          strategy: method as SocialConnectMethod,
+          redirectUrl,
+          mode: authMode,
+        });
+      } catch (err) {
+        console.error("Error connecting in-app wallet with redirect:", err);
+        setError((err as Error).message);
+      }
     } else {
       // Handle connecting with social / passkey
       try {
-        // When redirectUrl is set or authMode is set to redirect
-        // can use the headless `authenticate` function instead of connect
-        // and it will redirect out of the app here
-        if (redirectUrl || authMode === 'redirect') {
-          await authenticate({
-            client,
-            strategy: method as SocialConnectMethod,
-            redirectUrl,
-            mode: authMode,
-          });
-        } else {
-          wallet = await connect(() =>
-           connectWallet({
-             client,
-             chainId: chain.id,
-             method,
-             authMode,
-             redirectUrl,
-           }),
-         );
-        }
+        const inAppWallet = await connectWallet({
+          client,
+          chainId: chain.id,
+          method,
+          authMode: "popup",
+          redirectUrl,
+        });
+        wallet = await connect(inAppWallet);
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);
         setError((err as Error).message);
@@ -208,7 +210,7 @@ export const ConnectModal = ({
       try {
         await handleLogin(wallet);
       } catch (err) {
-        console.error("Error logging in with in-app wallet:", err);
+        console.error("Error logging in wallet:", err);
         setError((err as Error).message);
       }
     } else {
