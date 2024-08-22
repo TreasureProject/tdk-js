@@ -54,7 +54,7 @@ export const magicswapRoutes =
       "/magicswap/pools",
       {
         schema: {
-          summary: "Get Magicswap Pools",
+          summary: "Get pools",
           description: "Get Magicswap pools aggregated information",
           response: {
             200: poolsReplySchema,
@@ -62,10 +62,8 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { chainId } = req;
-
         const pools = await fetchPools({
-          chainId,
+          chainId: req.chainId,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -84,7 +82,7 @@ export const magicswapRoutes =
       "/magicswap/pools/:id",
       {
         schema: {
-          summary: "Get Magicswap Pool",
+          summary: "Get pool",
           description: "Get Magicswap pool aggregated information",
           response: {
             200: poolReplySchema,
@@ -92,18 +90,22 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const {
-          chainId,
-          params: { id },
-        } = req;
-
         const pool = await fetchPool({
-          pairId: id,
-          chainId,
+          pairId: req.params.id,
+          chainId: req.chainId,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
         });
+
+        if (!pool) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: "Pool not found",
+          });
+        }
 
         reply.send(pool);
       },
@@ -116,12 +118,12 @@ export const magicswapRoutes =
       "/magicswap/route",
       {
         schema: {
-          summary: "Get pool quote",
-          description: "Get Magicswap pool quote",
+          summary: "Get swap route",
+          description: "Get route to swap Magicswap tokens",
+          body: routeBodySchema,
           response: {
             200: routeReplySchema,
           },
-          body: routeBodySchema,
         },
       },
       async (req, reply) => {
@@ -135,11 +137,11 @@ export const magicswapRoutes =
         });
 
         const route = getSwapRoute({
+          pools,
           tokenInId: body.tokenInId,
           tokenOutId: body.tokenOutId,
           amount: body.amount,
           isExactOut: body.isExactOut,
-          pools,
         });
 
         reply.send({
@@ -155,11 +157,11 @@ export const magicswapRoutes =
       {
         schema: {
           summary: "Swap tokens",
-          description: "Swap tokens using Magicswap",
+          description: "Swap Magicswap tokens",
+          body: swapBodySchema,
           response: {
             200: createTransactionReplySchema,
           },
-          body: swapBodySchema,
         },
       },
       async (req, reply) => {
@@ -214,7 +216,7 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Token ${tokenInId} not found`,
+            message: "Input token not found",
           });
         }
 
@@ -222,7 +224,7 @@ export const magicswapRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Token ${tokenOutId} not found`,
+            message: "Output token not found",
           });
         }
 
@@ -239,14 +241,6 @@ export const magicswapRoutes =
           path: path as AddressString[],
           slippage,
         });
-
-        if (!swapArguments.address) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Error performing swap: missing contract address",
-          });
-        }
 
         try {
           const result = await writeTransaction({
@@ -283,12 +277,12 @@ export const magicswapRoutes =
       "/magicswap/pools/:id/add-liquidity",
       {
         schema: {
-          summary: "Adds liquidity to a pool",
-          description: "Adds liquidity to a pool using Magicswap",
+          summary: "Add liquidity",
+          description: "Add liquidity to a Magicswap pool",
+          body: addLiquidityBodySchema,
           response: {
             200: createTransactionReplySchema,
           },
-          body: addLiquidityBodySchema,
         },
       },
       async (req, reply) => {
@@ -302,8 +296,6 @@ export const magicswapRoutes =
             data: { authError },
           });
         }
-
-        const { id: poolId } = params;
 
         const {
           amount0,
@@ -319,7 +311,7 @@ export const magicswapRoutes =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
-          pairId: poolId,
+          pairId: params.id,
           chainId,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
@@ -329,8 +321,9 @@ export const magicswapRoutes =
         if (!pool) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Error adding liquidity: pool not found",
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: "Pool not found",
           });
         }
 
@@ -345,14 +338,6 @@ export const magicswapRoutes =
           nfts1,
           pool,
         });
-
-        if (!addLiquidityArgs.address) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Error adding liquidity: missing contract address",
-          });
-        }
 
         try {
           const result = await writeTransaction({
@@ -389,12 +374,12 @@ export const magicswapRoutes =
       "/magicswap/pools/:id/remove-liquidity",
       {
         schema: {
-          summary: "Removes liquidity to a pool",
-          description: "Removes liquidity to a pool using Magicswap",
+          summary: "Remove liquidity",
+          description: "Remove liquidity from a Magicswap pool",
+          body: removeLiquidityBodySchema,
           response: {
             200: createTransactionReplySchema,
           },
-          body: removeLiquidityBodySchema,
         },
       },
       async (req, reply) => {
@@ -409,15 +394,13 @@ export const magicswapRoutes =
           });
         }
 
-        const { id: poolId } = params;
-
         const {
           amountLP,
           amount0Min,
           amount1Min,
           nfts0,
           nfts1,
-          swapLeftover,
+          swapLeftover = true,
           backendWallet: overrideBackendWallet,
         } = body;
 
@@ -425,7 +408,7 @@ export const magicswapRoutes =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
-          pairId: poolId,
+          pairId: params.id,
           chainId,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
@@ -435,8 +418,9 @@ export const magicswapRoutes =
         if (!pool) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Error removing liquidity: pool not found",
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: "Pool not found",
           });
         }
 
@@ -449,16 +433,8 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           pool,
-          swapLeftover: swapLeftover ?? true,
+          swapLeftover,
         });
-
-        if (!removeLiquidityArgs.address) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Error removing liquidity: missing contract address",
-          });
-        }
 
         try {
           const result = await writeTransaction({
