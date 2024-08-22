@@ -1,11 +1,5 @@
 import Decimal from "decimal.js-light";
 
-export const formatUSD = (value: number | string) =>
-  `$${Number(value).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
-
 export const formatAmount = (value: string | number, toLocale = true) => {
   const decimal = new Decimal(value);
   let decimalPlaces: number;

@@ -25,10 +25,6 @@ export {
   getContractAddresses,
 } from "./utils/contracts";
 export {
-  formatAmount,
-  formatUSD,
-} from "./utils/currency";
-export {
   getDateHoursFromNow,
   getDateDaysFromNow,
   getDateYearsFromNow,

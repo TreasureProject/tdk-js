@@ -1,4 +1,4 @@
-import { type AddressString, formatAmount } from "@treasure-dev/tdk-core";
+import type { AddressString } from "@treasure-dev/tdk-core";
 import { Button, ConnectButton, useTreasure } from "@treasure-dev/tdk-react";
 import { toEther, toWei } from "thirdweb";
 
@@ -119,10 +119,8 @@ export const App = () => {
                                 <span className="font-medium">
                                   Native token limit per transaction:
                                 </span>{" "}
-                                {formatAmount(
-                                  toEther(
-                                    BigInt(nativeTokenLimitPerTransaction),
-                                  ),
+                                {toEther(
+                                  BigInt(nativeTokenLimitPerTransaction),
                                 )}
                               </p>
                             </>

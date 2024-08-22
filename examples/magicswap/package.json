@@ -7,8 +7,8 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@treasure-dev/tdk-core": "*",
     "@treasure-dev/tdk-react": "*",
+    "decimal.js-light": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "thirdweb": "^5.48.0",
