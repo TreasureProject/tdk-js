@@ -1,5 +1,9 @@
-import type { AddressString } from "@treasure-dev/tdk-core";
-import { Button, ConnectButton, useTreasure } from "@treasure-dev/tdk-react";
+import {
+  type AddressString,
+  Button,
+  ConnectButton,
+  useTreasure,
+} from "@treasure-dev/tdk-react";
 import { toEther, toWei } from "thirdweb";
 
 export const App = () => {
@@ -62,7 +66,7 @@ export const App = () => {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
-        <h1 className="font-semibold text-2xl text-ruby-900">
+        <h1 className="font-semibold text-2xl text-ruby">
           TDK React - Connect Example
         </h1>
         <ConnectButton supportedChainIds={[421614, 42161]} />
@@ -90,7 +94,7 @@ export const App = () => {
                           <p className="font-medium">
                             {signer}{" "}
                             {isAdmin ? (
-                              <span className="rounded bg-ruby-900 px-1 font-medium text-white text-xs uppercase">
+                              <span className="rounded bg-ruby px-1 font-medium text-white text-xs uppercase">
                                 Admin
                               </span>
                             ) : (

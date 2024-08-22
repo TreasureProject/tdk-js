@@ -1,5 +1,5 @@
 import "@treasure-dev/tdk-react/dist/index.css";
-import "@treasure-project/tailwind-config/fonts.css";
+import "@treasure-dev/tailwind-config/fonts.css";
 
 import { TreasureProvider } from "@treasure-dev/tdk-react";
 import ReactDOM from "react-dom/client";
