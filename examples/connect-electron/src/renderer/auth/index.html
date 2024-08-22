@@ -152,9 +152,9 @@
 
     <script>
       const searchParams = window.location.search;
-      // if (searchParams.length > 0) {
-      //   window.location.search = '';
-      // }
+      if (searchParams.length > 0) {
+        window.location.search = '';
+      }
 
       const openApp = () => {
         const url = `http://localhost:5180/auth`;

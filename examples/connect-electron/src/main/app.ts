@@ -32,6 +32,8 @@ export default class RedirectApp {
 
       mainWindow.webContents.send('auth_event', { searchParams });
 
+      mainWindow.show();
+
       res.sendStatus(200);
     });
 
