@@ -18,7 +18,6 @@ function App(): JSX.Element {
       <p>
         <ConnectButton
           redirectUrl={`${window.location.origin}/auth/`}
-          hideDisconnect={true}
         />
       </p>
       <Versions />

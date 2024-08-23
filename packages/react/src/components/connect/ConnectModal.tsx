@@ -7,6 +7,7 @@ import {
   connectWallet,
   getContractAddress,
   sendEmailVerificationCode,
+  isSocialConnectMethod,
 } from "@treasure-dev/tdk-core";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
@@ -174,7 +175,7 @@ export const ConnectModal = ({
           setError((err as Error).message);
         }
       }
-    } else if (redirectUrl || authMode === "redirect") {
+    } else if ((redirectUrl || authMode === "redirect") && isSocialConnectMethod(method)) {
       // When redirectUrl is set or authMode is set to redirect
       // can use the headless `authenticate` function instead of connect
       // and it will redirect out of the app here
