@@ -28,11 +28,6 @@ export type ConnectMethod =
   | "passkey"
   | "wallet";
 
-export function isSocialConnectMethod(method: ConnectMethod): method is SocialConnectMethod {
-  const methodMap = {} as SocialConnectMethodMap;
-  return method in methodMap;
-}
-
 export type UserContext = {
   id: string;
   address: string;
