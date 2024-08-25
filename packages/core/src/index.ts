@@ -29,6 +29,7 @@ export {
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
+export { isSocialConnectMethod } from "./utils/connectMethods";
 
 // Connect
 export { getAllActiveSigners } from "./connect/accounts";

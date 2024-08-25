@@ -20,6 +20,7 @@ export type ConnectConfig = {
 };
 
 export type SocialConnectMethod = "google" | "telegram" | "discord" | "apple";
+export type SocialConnectMethodMap = { [K in SocialConnectMethod]: true };
 
 export type ConnectMethod =
   | SocialConnectMethod
