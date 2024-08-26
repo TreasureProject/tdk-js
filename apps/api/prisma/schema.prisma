@@ -133,6 +133,7 @@ model UserProfile {
   // Migration
   legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
   legacyEmail   String? @map("legacy_email")
+  legacyEmailVerifiedAt DateTime? @map("legacy_email_verified_at")
 
   // Other
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
