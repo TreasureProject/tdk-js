@@ -4,8 +4,12 @@ import {
   useWalletDetailsModal,
 } from "thirdweb/react";
 
-import { getContractAddresses } from "@treasure-dev/tdk-core";
+import {
+  getContractAddress,
+  getContractAddresses,
+} from "@treasure-dev/tdk-core";
 import { ZERO_ADDRESS, defineChain } from "thirdweb";
+import { arbitrum, arbitrumSepolia } from "thirdweb/chains";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
@@ -18,6 +22,7 @@ export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
   connectModalSize?: ConnectModalProps["size"];
   hideDisconnect?: boolean;
+  hideSwitchWallet?: boolean;
 };
 
 type Props = Options;
@@ -66,6 +71,7 @@ export const useConnect = (props?: Props) => {
     supportedChainIds,
     connectModalSize,
     hideDisconnect,
+    hideSwitchWallet,
     ...connectModalProps
   } = props ?? {};
 
@@ -87,9 +93,20 @@ export const useConnect = (props?: Props) => {
   const openAccountModal = () =>
     openWalletDetailsModal({
       client,
-      chains,
+      chains: [arbitrum, arbitrumSepolia],
       theme: THEME,
       locale: getLocaleId(),
+      displayBalanceToken: chains.reduce(
+        (acc, chain) => {
+          const magicAddress = getContractAddress(chain.id, "MAGIC");
+          if (magicAddress) {
+            acc[chain.id] = magicAddress;
+          }
+
+          return acc;
+        },
+        {} as Record<number, string>,
+      ),
       supportedTokens: chains.reduce((acc, chain) => {
         const addresses = getContractAddresses(chain.id);
         acc[chain.id] = SUPPORTED_TOKENS.map((token) => ({
@@ -98,7 +115,9 @@ export const useConnect = (props?: Props) => {
         })).filter(({ address }) => address !== ZERO_ADDRESS);
         return acc;
       }, {} as SupportedTokens),
+      showTestnetFaucet: true,
       hideDisconnect,
+      hideSwitchWallet,
       onDisconnect: () => {
         logOut();
       },
