@@ -114,51 +114,54 @@ export const ConnectMethodSelectionView = ({
         )}
       >
         <ConnectMethodButton
-          className="tdk-group"
           onClick={() => onConnect("google")}
+          disabled={isLoading}
         >
-          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto" />
           <span className="tdk-block">{t("connect.option.google")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group"
           onClick={() => onConnect("telegram")}
+          disabled={isLoading}
         >
-          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto" />
           <span className="tdk-block">{t("connect.option.telegram")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group"
           onClick={() => onConnect("discord")}
+          disabled={isLoading}
         >
-          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto" />
           <span className="tdk-block">{t("connect.option.discord")}</span>
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group tdk-space-y-0.5"
+          className="tdk-space-y-0.5"
           onClick={() => onConnect("apple")}
+          disabled={isLoading}
         >
-          <AppleIcon className="tdk-w-5 tdk-h-5 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+          <AppleIcon className="tdk-w-5 tdk-h-5 tdk-mx-auto" />
           <span className="tdk-block">{t("connect.option.apple")}</span>
         </ConnectMethodButton>
         {!disablePasskey ? (
           <ConnectMethodButton
-            className="tdk-group tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
+            className="tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
             onClick={() => onConnect("passkey")}
+            disabled={isLoading}
           >
-            <PasskeyIcon className="tdk-w-6 tdk-h-6 md:tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+            <PasskeyIcon className="tdk-w-6 tdk-h-6 md:tdk-mx-auto" />
             <span className="tdk-block">{t("connect.option.passkey")}</span>
           </ConnectMethodButton>
         ) : null}
         {!disableWallet ? (
           <ConnectMethodButton
             className={cn(
-              "tdk-group tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-2",
+              "tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-2",
               disablePasskey ? "md:tdk-col-span-4" : "md:tdk-col-span-5",
             )}
             onClick={() => onConnect("wallet")}
+            disabled={isLoading}
           >
-            <WalletIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+            <WalletIcon className="tdk-w-6 tdk-h-6" />
             {t("connect.option.wallet")}
           </ConnectMethodButton>
         ) : null}
@@ -176,7 +179,10 @@ const ConnectMethodButton = ({
     <button
       type="button"
       className={cn(
-        "tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream tdk-transition-colors hover:tdk-text-night-800 tdk-rounded-lg",
+        "tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-transition-colors tdk-rounded-lg",
+        props.disabled
+          ? "tdk-opacity-50 tdk-cursor-not-allowed"
+          : "tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream hover:tdk-text-night-800",
         className,
       )}
       {...props}

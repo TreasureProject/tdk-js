@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import type { Preview } from "@storybook/react";
 import React from "react";
+import { ThirdwebProvider } from "thirdweb/react";
 
 import { TreasureProvider } from "../src/contexts/treasure";
 
@@ -17,14 +18,16 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <TreasureProvider
-        appName="Storybook"
-        apiUri={import.meta.env.VITE_TDK_API_URL}
-        defaultChainId={421614}
-        clientId={import.meta.env.VITE_TDK_CLIENT_ID}
-      >
-        <Story />
-      </TreasureProvider>
+      <ThirdwebProvider>
+        <TreasureProvider
+          appName="Storybook"
+          apiUri={import.meta.env.VITE_TDK_API_URL}
+          defaultChainId={421614}
+          clientId={import.meta.env.VITE_TDK_CLIENT_ID}
+        >
+          <Story />
+        </TreasureProvider>
+      </ThirdwebProvider>
     ),
   ],
 };
