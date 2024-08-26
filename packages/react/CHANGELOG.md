@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-react
 
+## 2.2.2
+
+### Patch Changes
+
+- 34cfc5c: Fix passkey when using redirect for social
+- f88258b: Added hideSwitchWallet connected account modal param; set balance token to MAGIC
+- 77e0aa7: Disabled connect methods while modal is loading
+- Updated dependencies [34cfc5c]
+  - @treasure-dev/tdk-core@2.2.2
+
 ## 2.2.1
 
 ### Patch Changes

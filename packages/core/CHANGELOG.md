@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.2.2
+
+### Patch Changes
+
+- 34cfc5c: Fix passkey when using redirect for social
+
 ## 2.2.1
 
 ## 2.2.0
