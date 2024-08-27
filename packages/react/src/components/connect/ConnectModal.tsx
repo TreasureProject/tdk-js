@@ -28,6 +28,7 @@ import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 export type Options = ConnectMethodSelectionOptions & {
   authMode?: "popup" | "redirect";
   redirectUrl?: string;
+  hasStoredPasskey?: boolean;
 };
 
 export type Props = Options & {
@@ -47,6 +48,7 @@ export const ConnectModal = ({
   size = "lg",
   authMode,
   redirectUrl,
+  hasStoredPasskey,
   onOpenChange,
   ...methodSelectionProps
 }: Props) => {
@@ -202,6 +204,7 @@ export const ConnectModal = ({
           method,
           authMode: "popup",
           redirectUrl,
+          ...(method === "passkey" && { hasStoredPasskey }),
         });
         wallet = await connect(inAppWallet);
       } catch (err) {
