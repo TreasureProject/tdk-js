@@ -1,4 +1,3 @@
-//
 import { describe, expect, it } from "vitest";
 import { createLoginUrl, isSocialConnectMethod } from "./login";
 

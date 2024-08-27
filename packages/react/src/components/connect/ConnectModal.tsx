@@ -18,6 +18,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
 import { getLocaleId } from "../../i18n";
 import { cn } from "../../utils/classnames";
+import { getErrorMessage } from "../../utils/error";
 import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
 import {
   type Options as ConnectMethodSelectionOptions,
@@ -31,6 +32,8 @@ export type Options = ConnectMethodSelectionOptions & {
   passkeyDomain?: string;
   passkeyName?: string;
   hasStoredPasskey?: boolean;
+  onConnected?: (method: ConnectMethod, wallet: Wallet) => void;
+  onConnectError?: (method: ConnectMethod, err: unknown) => void;
 };
 
 export type Props = Options & {
@@ -54,6 +57,8 @@ export const ConnectModal = ({
   passkeyName,
   hasStoredPasskey,
   onOpenChange,
+  onConnected,
+  onConnectError,
   ...methodSelectionProps
 }: Props) => {
   const { t } = useTranslation();
@@ -80,23 +85,17 @@ export const ConnectModal = ({
       error: isLoading ? undefined : curr.error,
     }));
 
-  const setError = (error: string, resetEmail = false) =>
+  const setError = (error: string, resetEmail = false) => {
+    // Skip displaying error if user manually closed login window (message comes from Thirdweb)
+    if (error === "User closed login window") {
+      return;
+    }
+
     setState((curr) => ({
       email: resetEmail ? "" : curr.email,
       isLoading: false,
       error,
     }));
-
-  const handleLogin = async (wallet: Wallet) => {
-    try {
-      await logIn(wallet);
-      // Login was successful, close the connect modal
-      onOpenChange(false);
-    } catch (err) {
-      console.error("Error logging in wallet:", err);
-      setError((err as Error).message, true);
-      logOut();
-    }
   };
 
   const handleConnectEmail = async (verificationCode: string) => {
@@ -105,26 +104,31 @@ export const ConnectModal = ({
 
     let wallet: Wallet | undefined | null;
     try {
-      wallet = await connect(() =>
-        connectWallet({
-          client,
-          chainId: chain.id,
-          method: "email",
-          email,
-          verificationCode,
-        }),
-      );
+      const inAppWallet = await connectWallet({
+        client,
+        chainId: chain.id,
+        method: "email",
+        email,
+        verificationCode,
+      });
+      wallet = await connect(inAppWallet);
     } catch (err) {
       console.error("Error connecting wallet with email:", err);
-      setError((err as Error).message);
+      setError(getErrorMessage(err));
+      onConnectError?.("email", err);
     }
 
     if (wallet) {
       try {
-        await handleLogin(wallet);
+        await logIn(wallet);
+        // Login was successful, close the connect modal
+        onConnected?.("email", wallet);
+        onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet with email:", err);
-        setError((err as Error).message);
+        setError(getErrorMessage(err), true);
+        onConnectError?.("email", err);
+        logOut();
       }
     } else {
       setIsLoading(false);
@@ -145,7 +149,8 @@ export const ConnectModal = ({
         setState({ email: nextEmail, isLoading: false, error: undefined });
       } catch (err) {
         console.error("Error sending email verification code:", err);
-        setError((err as Error).message);
+        setError(getErrorMessage(err));
+        onConnectError?.("email", err);
       }
 
       return;
@@ -178,7 +183,8 @@ export const ConnectModal = ({
         // Error can be undefined if user closed the connect modal
         if (err) {
           console.error("Error connecting Web3 wallet:", err);
-          setError((err as Error).message);
+          setError(getErrorMessage(err));
+          onConnectError?.(method, err);
         }
       }
     } else if (
@@ -197,7 +203,8 @@ export const ConnectModal = ({
         });
       } catch (err) {
         console.error("Error connecting in-app wallet with redirect:", err);
-        setError((err as Error).message);
+        setError(getErrorMessage(err));
+        onConnectError?.(method, err);
       }
     } else {
       // Handle connecting with social / passkey
@@ -217,16 +224,22 @@ export const ConnectModal = ({
         wallet = await connect(inAppWallet);
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);
-        setError((err as Error).message);
+        setError(getErrorMessage(err));
+        onConnectError?.(method, err);
       }
     }
 
     if (wallet) {
       try {
-        await handleLogin(wallet);
+        await logIn(wallet);
+        // Login was successful, close the connect modal
+        onConnected?.(method, wallet);
+        onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet:", err);
-        setError((err as Error).message);
+        setError(getErrorMessage(err));
+        onConnectError?.(method, err);
+        logOut();
       }
     } else {
       setIsLoading(false);
@@ -238,7 +251,8 @@ export const ConnectModal = ({
       await sendEmailVerificationCode({ client, email });
     } catch (err) {
       console.error("Error resending email verification code:", err);
-      setError((err as Error).message);
+      setError(getErrorMessage(err));
+      onConnectError?.("email", err);
     }
   };
 
