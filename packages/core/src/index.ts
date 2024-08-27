@@ -40,7 +40,6 @@ export {
   SUPPORTED_WEB3_WALLETS,
   isSocialConnectMethod,
   connectWallet,
-  createLoginUrl,
   createTreasureConnectClient,
   sendEmailVerificationCode,
   authenticateWallet,
