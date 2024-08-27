@@ -147,6 +147,7 @@ model UserProfile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([legacyAddress])
+  @@index([tag])
   @@map("user_profile")
   @@schema("public")
 }
