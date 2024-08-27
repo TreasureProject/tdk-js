@@ -8,7 +8,7 @@ import type { TdkApiEnv, TdkDbSecret } from "../types";
 
 const AWS_REGION = process.env.AWS_REGION ?? "us-east-1";
 const DATABASE_SECRET_NAME =
-  process.env.DATABASE_SECRET_NAME ?? "noumena-tdk-db";
+  process.env.DATABASE_SECRET_NAME ?? "production-identity-db";
 const API_ENV_SECRET_NAME = process.env.API_ENV_SECRET_NAME ?? "tdkApiEnv";
 
 const client = new SecretsManagerClient({

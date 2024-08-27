@@ -85,18 +85,12 @@ export const ConnectModal = ({
       error: isLoading ? undefined : curr.error,
     }));
 
-  const setError = (error: string, resetEmail = false) => {
-    // Skip displaying error if user manually closed login window (message comes from Thirdweb)
-    if (error === "User closed login window") {
-      return;
-    }
-
+  const setError = (err: unknown, resetEmail = false) =>
     setState((curr) => ({
       email: resetEmail ? "" : curr.email,
       isLoading: false,
-      error,
+      error: getErrorMessage(err),
     }));
-  };
 
   const handleConnectEmail = async (verificationCode: string) => {
     // Finish connecting with email and verification code
@@ -114,7 +108,7 @@ export const ConnectModal = ({
       wallet = await connect(inAppWallet);
     } catch (err) {
       console.error("Error connecting wallet with email:", err);
-      setError(getErrorMessage(err));
+      setError(err);
       onConnectError?.("email", err);
     }
 
@@ -126,7 +120,7 @@ export const ConnectModal = ({
         onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet with email:", err);
-        setError(getErrorMessage(err), true);
+        setError(err, true);
         onConnectError?.("email", err);
         logOut();
       }
@@ -149,7 +143,7 @@ export const ConnectModal = ({
         setState({ email: nextEmail, isLoading: false, error: undefined });
       } catch (err) {
         console.error("Error sending email verification code:", err);
-        setError(getErrorMessage(err));
+        setError(err);
         onConnectError?.("email", err);
       }
 
@@ -183,7 +177,7 @@ export const ConnectModal = ({
         // Error can be undefined if user closed the connect modal
         if (err) {
           console.error("Error connecting Web3 wallet:", err);
-          setError(getErrorMessage(err));
+          setError(err);
           onConnectError?.(method, err);
         }
       }
@@ -203,7 +197,7 @@ export const ConnectModal = ({
         });
       } catch (err) {
         console.error("Error connecting in-app wallet with redirect:", err);
-        setError(getErrorMessage(err));
+        setError(err);
         onConnectError?.(method, err);
       }
     } else {
@@ -224,7 +218,7 @@ export const ConnectModal = ({
         wallet = await connect(inAppWallet);
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);
-        setError(getErrorMessage(err));
+        setError(err);
         onConnectError?.(method, err);
       }
     }
@@ -237,7 +231,7 @@ export const ConnectModal = ({
         onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet:", err);
-        setError(getErrorMessage(err));
+        setError(err);
         onConnectError?.(method, err);
         logOut();
       }
@@ -251,7 +245,7 @@ export const ConnectModal = ({
       await sendEmailVerificationCode({ client, email });
     } catch (err) {
       console.error("Error resending email verification code:", err);
-      setError(getErrorMessage(err));
+      setError(err);
       onConnectError?.("email", err);
     }
   };
