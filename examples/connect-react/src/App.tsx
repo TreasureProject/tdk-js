@@ -69,7 +69,15 @@ export const App = () => {
         <h1 className="font-semibold text-2xl text-ruby">
           TDK React - Connect Example
         </h1>
-        <ConnectButton supportedChainIds={[421614, 42161]} />
+        <ConnectButton
+          supportedChainIds={[421614, 42161]}
+          onConnected={(method, wallet) => {
+            console.log("Connect successful:", { method, wallet });
+          }}
+          onConnectError={(method, err) => {
+            console.log("Connect failed:", { method, err });
+          }}
+        />
       </header>
       <main className="space-y-6">
         {user ? (
