@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-react
 
+## 2.2.3
+
+### Patch Changes
+
+- b75e4c8: Added connect success and error callbacks
+- Updated dependencies [f42c891]
+- Updated dependencies [b75e4c8]
+- Updated dependencies [0137720]
+  - @treasure-dev/tdk-core@2.2.3
+
 ## 2.2.2
 
 ### Patch Changes

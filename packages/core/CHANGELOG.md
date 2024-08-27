@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-core
 
+## 2.2.3
+
+### Patch Changes
+
+- f42c891: Fixes the implementation of isSocialConnectMethod
+- b75e4c8: Added connect with passkey param to override sign in type
+- 0137720: Removed deprecated `createLoginUrl` helper
+
 ## 2.2.2
 
 ### Patch Changes
