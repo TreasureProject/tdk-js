@@ -60,6 +60,7 @@ type ConnectWalletConfig = {
   | {
       method: "passkey";
       passkeyName?: string;
+      hasStoredPasskey?: boolean;
     }
 );
 
@@ -105,7 +106,8 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   // Connect with passkey
   if (params.method === "passkey") {
-    const hasPasskey = await hasStoredPasskey(client);
+    const hasPasskey =
+      params.hasStoredPasskey ?? (await hasStoredPasskey(client));
     await wallet.connect({
       client,
       chain,
