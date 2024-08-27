@@ -1,12 +1,13 @@
+import {
+  SocialConnectMethodMap,
+} from "../types";
 import type {
   ConnectMethod,
-  SocialConnectMethod,
-  SocialConnectMethodMap,
 } from "../types";
 
 export function isSocialConnectMethod(
   method: ConnectMethod,
-): method is SocialConnectMethod {
-  const methodMap = {} as SocialConnectMethodMap;
-  return method in methodMap;
+): boolean {
+  console.log(method in SocialConnectMethodMap);
+  return method in SocialConnectMethodMap;
 }

@@ -19,8 +19,15 @@ export type ConnectConfig = {
   sessionOptions?: SessionOptions;
 };
 
-export type SocialConnectMethod = "google" | "telegram" | "discord" | "apple";
-export type SocialConnectMethodMap = { [K in SocialConnectMethod]: true };
+
+export const SocialConnectMethodMap = {
+  google: true,
+  telegram: true,
+  discord: true,
+  apple: true
+}
+
+export type SocialConnectMethod = keyof typeof SocialConnectMethodMap;
 
 export type ConnectMethod =
   | SocialConnectMethod
