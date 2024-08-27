@@ -28,6 +28,8 @@ import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 export type Options = ConnectMethodSelectionOptions & {
   authMode?: "popup" | "redirect";
   redirectUrl?: string;
+  passkeyDomain?: string;
+  passkeyName?: string;
   hasStoredPasskey?: boolean;
 };
 
@@ -48,6 +50,8 @@ export const ConnectModal = ({
   size = "lg",
   authMode,
   redirectUrl,
+  passkeyDomain,
+  passkeyName,
   hasStoredPasskey,
   onOpenChange,
   ...methodSelectionProps
@@ -204,7 +208,11 @@ export const ConnectModal = ({
           method,
           authMode: "popup",
           redirectUrl,
-          ...(method === "passkey" && { hasStoredPasskey }),
+          ...(method === "passkey" && {
+            passkeyDomain,
+            passkeyName,
+            hasStoredPasskey,
+          }),
         });
         wallet = await connect(inAppWallet);
       } catch (err) {
