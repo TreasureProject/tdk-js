@@ -184,7 +184,7 @@ const TreasureProviderInner = ({
   useAutoConnect({
     client,
     wallets: [
-      inAppWallet({ auth: { options: SUPPORTED_IN_APP_WALLET_OPTIONS } }),
+      inAppWallet({ auth: { options: [...SUPPORTED_IN_APP_WALLET_OPTIONS] } }),
     ],
     accountAbstraction: {
       chain,

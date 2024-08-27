@@ -19,22 +19,6 @@ export type ConnectConfig = {
   sessionOptions?: SessionOptions;
 };
 
-
-export const SocialConnectMethodMap = {
-  google: true,
-  telegram: true,
-  discord: true,
-  apple: true
-}
-
-export type SocialConnectMethod = keyof typeof SocialConnectMethodMap;
-
-export type ConnectMethod =
-  | SocialConnectMethod
-  | "email"
-  | "passkey"
-  | "wallet";
-
 export type UserContext = {
   id: string;
   address: string;
