@@ -8,6 +8,5 @@ import type {
 export function isSocialConnectMethod(
   method: ConnectMethod,
 ): boolean {
-  console.log(method in SocialConnectMethodMap);
   return method in SocialConnectMethodMap;
 }
