@@ -5,7 +5,12 @@ import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
 import { http, createConfig, fallback } from "@wagmi/core";
-import { arbitrum, arbitrumSepolia } from "@wagmi/core/chains";
+import {
+  arbitrum,
+  arbitrumSepolia,
+  mainnet,
+  sepolia,
+} from "@wagmi/core/chains";
 import Fastify from "fastify";
 import { createThirdwebClient } from "thirdweb";
 import { createAuth } from "thirdweb/auth";
@@ -56,7 +61,7 @@ const main = async () => {
       accessToken: env.THIRDWEB_ENGINE_ACCESS_TOKEN,
     }),
     wagmiConfig: createConfig({
-      chains: [arbitrum, arbitrumSepolia],
+      chains: [arbitrum, arbitrumSepolia, mainnet, sepolia],
       transports: {
         [arbitrum.id]: fallback([
           http(
@@ -68,6 +73,19 @@ const main = async () => {
           http(
             `https://${arbitrumSepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
           ),
+          http(),
+        ]),
+        [mainnet.id]: fallback([
+          http(
+            `https://${mainnet.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+          http(),
+        ]),
+        [sepolia.id]: fallback([
+          http(
+            `https://${sepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+          http(),
         ]),
       },
     }),
