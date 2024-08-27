@@ -29,14 +29,16 @@ export {
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
-export { isSocialConnectMethod } from "./utils/connectMethods";
 
 // Connect
 export { getAllActiveSigners } from "./connect/accounts";
 export { decodeAuthToken } from "./connect/jwt";
 export {
+  type SocialConnectMethod,
+  type ConnectMethod,
   SUPPORTED_IN_APP_WALLET_OPTIONS,
   SUPPORTED_WEB3_WALLETS,
+  isSocialConnectMethod,
   connectWallet,
   createLoginUrl,
   createTreasureConnectClient,

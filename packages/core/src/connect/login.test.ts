@@ -1,6 +1,6 @@
 //
 import { describe, expect, it } from "vitest";
-import { createLoginUrl } from "./login";
+import { createLoginUrl, isSocialConnectMethod } from "./login";
 
 describe("login utils", () => {
   it("should construct login url", () => {
@@ -15,5 +15,10 @@ describe("login utils", () => {
     ).toBe(
       'https://login.treasure.lol/app?redirect_uri=https://app.treasure.lol/callback&chain_id=1&data={"customData":"1234"}',
     );
+  });
+
+  it("should detect social connect method", () => {
+    expect(isSocialConnectMethod("apple")).toBe(true);
+    expect(isSocialConnectMethod("passkey")).toBe(false);
   });
 });
