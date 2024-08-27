@@ -73,8 +73,11 @@ export const authRoutes =
         }
 
         const { payload } = verifiedPayload;
-        const { chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(), address } =
-          payload;
+        const {
+          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
+          address: payloadAddress,
+        } = payload;
+        const address = payloadAddress.toLowerCase();
 
         let user = await db.user.upsert({
           where: {
