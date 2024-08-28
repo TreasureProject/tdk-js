@@ -188,6 +188,7 @@ model UserSocialAccount {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([network, legacyAddress])
+  @@index([userId])
   @@map("user_social_account")
   @@schema("public")
 }
@@ -216,7 +217,7 @@ model UserNotificationSettings {
   legacyAddress String? @map("legacy_address") @db.VarChar(42)
 
   // Relations
-  userId String? @unique @map("user_id")
+  userId String? @map("user_id")
   user   User?   @relation(fields: [userId], references: [id])
 
   // Computed
@@ -225,6 +226,7 @@ model UserNotificationSettings {
 
   @@unique([type, userId])
   @@unique([type, legacyAddress])
+  @@index([userId])
   @@map("user_notification_settings")
   @@schema("public")
 }
