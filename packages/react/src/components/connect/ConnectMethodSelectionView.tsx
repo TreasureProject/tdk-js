@@ -34,7 +34,7 @@ export const ConnectMethodSelectionView = ({
   appIconUri = DEFAULT_TDK_APP_ICON_URI,
   isLoading = false,
   error,
-  disablePasskey = false,
+  disablePasskey = true,
   disableWallet = false,
   onConnect,
 }: Props) => {
