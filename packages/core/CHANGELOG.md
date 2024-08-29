@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.2.4
+
+### Patch Changes
+
+- 83aab09: Added txOverrides option for creating transactions through TDK API client
+
 ## 2.2.3
 
 ### Patch Changes

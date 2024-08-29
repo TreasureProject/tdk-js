@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-react
 
+## 2.2.4
+
+### Patch Changes
+
+- 1cfd245: Fixed connect modal colors
+- b9fa738: Disable passkey login option by default
+- 550a319: Streamlined error message in connect flow
+- 83aab09: Added txOverrides option for creating transactions through TDK API client
+- Updated dependencies [83aab09]
+  - @treasure-dev/tdk-core@2.2.4
+
 ## 2.2.3
 
 ### Patch Changes
