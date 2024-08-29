@@ -265,7 +265,7 @@ export const usersRoutes =
 
         const filter = {
           chainId,
-          fromAddress: address,
+          fromAddress: address.toLowerCase(),
           toAddress,
         };
 
