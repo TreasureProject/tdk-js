@@ -180,6 +180,7 @@ export class TDKAPI {
           ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
           "inputs"
         >;
+        txOverrides?: CreateTransactionBody["txOverrides"];
         backendWallet?: string;
       },
       {
