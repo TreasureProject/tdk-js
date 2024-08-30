@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.3.0
+
+### Minor Changes
+
+- 0608a3d: Refactored send native TDK API function to send any raw transaction
+
 ## 2.2.4
 
 ### Patch Changes
