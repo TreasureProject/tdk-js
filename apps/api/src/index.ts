@@ -4,6 +4,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
+import { TREASURE_RUBY_CHAIN_DEFINITION } from "@treasure-dev/tdk-core";
 import { http, createConfig, fallback } from "@wagmi/core";
 import {
   arbitrum,
@@ -15,6 +16,7 @@ import Fastify from "fastify";
 import { createThirdwebClient } from "thirdweb";
 import { createAuth } from "thirdweb/auth";
 import { privateKeyToAccount } from "thirdweb/wallets";
+import { defineChain } from "viem";
 
 import { withAuth } from "./middleware/auth";
 import { withChain } from "./middleware/chain";
@@ -61,7 +63,13 @@ const main = async () => {
       accessToken: env.THIRDWEB_ENGINE_ACCESS_TOKEN,
     }),
     wagmiConfig: createConfig({
-      chains: [arbitrum, arbitrumSepolia, mainnet, sepolia],
+      chains: [
+        arbitrum,
+        arbitrumSepolia,
+        mainnet,
+        sepolia,
+        defineChain(TREASURE_RUBY_CHAIN_DEFINITION),
+      ],
       transports: {
         [arbitrum.id]: fallback([
           http(
@@ -84,6 +92,12 @@ const main = async () => {
         [sepolia.id]: fallback([
           http(
             `https://${sepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+          http(),
+        ]),
+        [TREASURE_RUBY_CHAIN_DEFINITION.id]: fallback([
+          http(
+            `https://${TREASURE_RUBY_CHAIN_DEFINITION.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
           ),
           http(),
         ]),
