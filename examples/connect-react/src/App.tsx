@@ -4,10 +4,37 @@ import {
   ConnectButton,
   useTreasure,
 } from "@treasure-dev/tdk-react";
-import { toEther, toWei } from "thirdweb";
+import {
+  encode,
+  getContract,
+  prepareContractCall,
+  toEther,
+  toWei,
+} from "thirdweb";
+
+const ERC20_MINTABLE_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 export const App = () => {
-  const { tdk, user, contractAddresses } = useTreasure();
+  const { client, chain, tdk, user, contractAddresses } = useTreasure();
 
   const handleMintMagic = async (amount: number) => {
     if (!user?.address) {
@@ -18,26 +45,7 @@ export const App = () => {
       await tdk.transaction.create(
         {
           address: contractAddresses.MAGIC,
-          abi: [
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "_to",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "_amount",
-                  type: "uint256",
-                },
-              ],
-              name: "mint",
-              outputs: [],
-              stateMutability: "nonpayable",
-              type: "function",
-            },
-          ] as const,
+          abi: ERC20_MINTABLE_ABI,
           functionName: "mint",
           args: [user.address as AddressString, toWei(amount.toString())],
         },
@@ -48,15 +56,45 @@ export const App = () => {
     }
   };
 
+  const handleRawMintMagic = async (amount: number) => {
+    if (!user?.address) {
+      return;
+    }
+
+    const contract = getContract({
+      client,
+      chain,
+      address: contractAddresses.MAGIC,
+      abi: ERC20_MINTABLE_ABI,
+    });
+
+    const transaction = prepareContractCall({
+      contract,
+      method: "mint",
+      params: [user.address, toWei(amount.toString())],
+    });
+
+    try {
+      const data = await encode(transaction);
+      await tdk.transaction.sendRaw({
+        to: contractAddresses.MAGIC,
+        data,
+      });
+    } catch (err) {
+      console.error("Error minting MAGIC with raw transaction:", err);
+    }
+  };
+
   const handleSendEth = async (amount: number) => {
     if (!user?.address) {
       return;
     }
 
     try {
-      await tdk.transaction.sendNative({
+      await tdk.transaction.sendRaw({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
-        amount: toWei(amount.toString()),
+        value: toWei(amount.toString()),
+        data: "0x",
       });
     } catch (err) {
       console.error("Error sending ETH:", err);
@@ -150,6 +188,9 @@ export const App = () => {
               <div className="flex flex-wrap gap-2">
                 <Button onClick={() => handleMintMagic(1000)}>
                   Mint 1,000 MAGIC
+                </Button>
+                <Button onClick={() => handleRawMintMagic(1000)}>
+                  Mint 1,000 MAGIC (Raw)
                 </Button>
                 <Button onClick={() => handleSendEth(0.0001)}>
                   Send 0.0001 ETH

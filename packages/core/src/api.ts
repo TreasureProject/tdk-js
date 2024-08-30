@@ -5,27 +5,26 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import { toHex } from "thirdweb";
 import type {
-  CreateSendNativeTransactionBody,
-  CreateSendNativeTransactionReply,
+  CreateRawTransactionBody,
+  CreateRawTransactionReply,
   CreateTransactionBody,
+  CreateTransactionReply,
+  ErrorReply,
   LoginBody,
   LoginReply,
   PoolReply,
   PoolsReply,
+  ReadCurrentUserReply,
   ReadCurrentUserSessionsQuerystring,
   ReadCurrentUserSessionsReply,
-  ReadLoginPayloadReply,
-  RouteReply,
-} from "../../../apps/api/src/schema";
-import type {
-  CreateTransactionReply,
-  ErrorReply,
-  ReadCurrentUserReply,
   ReadHarvesterReply,
   ReadLoginPayloadQuerystring,
+  ReadLoginPayloadReply,
   ReadProjectReply,
   ReadTransactionReply,
+  RouteReply,
 } from "../../../apps/api/src/schema";
 import type {
   AddLiquidityBody,
@@ -202,22 +201,18 @@ export class TDKAPI {
 
       return waitForCompletion ? this.transaction.wait(result.queueId) : result;
     },
-    sendNative: async (
-      params: {
-        to: string;
-        amount: bigint;
-        backendWallet?: string;
+    sendRaw: async (
+      params: Omit<CreateRawTransactionBody, "value"> & {
+        value?: bigint;
       },
-      {
-        waitForCompletion = true,
-      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
+      { waitForCompletion = true }: { waitForCompletion?: boolean } = {},
     ) => {
       const result = await this.post<
-        CreateSendNativeTransactionBody,
-        CreateSendNativeTransactionReply
-      >("/transactions/send-native", {
+        CreateRawTransactionBody,
+        CreateRawTransactionReply
+      >("/transactions/raw", {
         ...params,
-        amount: params.amount.toString(),
+        value: params.value ? toHex(params.value) : undefined,
         backendWallet: params.backendWallet ?? this.backendWallet,
       });
 

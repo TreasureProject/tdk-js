@@ -5,15 +5,15 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import {
-  type CreateSendNativeTransactionBody,
-  type CreateSendNativeTransactionReply,
+  type CreateRawTransactionBody,
+  type CreateRawTransactionReply,
   type CreateTransactionBody,
   type CreateTransactionReply,
   type ErrorReply,
   type ReadTransactionParams,
   type ReadTransactionReply,
-  createSendNativeTransactionBodySchema,
-  createSendNativeTransactionReplySchema,
+  createRawTransactionBodySchema,
+  createRawTransactionReplySchema,
   createTransactionBodySchema,
   createTransactionReplySchema,
   readTransactionReplySchema,
@@ -127,19 +127,19 @@ export const transactionsRoutes =
     );
 
     app.post<{
-      Body: CreateSendNativeTransactionBody;
-      Reply: CreateSendNativeTransactionReply | ErrorReply;
+      Body: CreateRawTransactionBody;
+      Reply: CreateRawTransactionReply | ErrorReply;
     }>(
-      "/transactions/send-native",
+      "/transactions/raw",
       {
         schema: {
-          summary: "Send native tokens",
+          summary: "Send raw transaction",
           description:
-            "Send the chain's native (gas) token to the provided recipient",
+            "Send a raw transaction, including native token transfer",
           security: [{ authToken: [] }],
-          body: createSendNativeTransactionBodySchema,
+          body: createRawTransactionBodySchema,
           response: {
-            200: createSendNativeTransactionReplySchema,
+            200: createRawTransactionReplySchema,
           },
         },
       },
@@ -157,7 +157,13 @@ export const transactionsRoutes =
           chainId,
           userAddress,
           authError,
-          body: { to, amount, backendWallet: overrideBackendWallet },
+          body: {
+            to,
+            value = "0x00",
+            data,
+            txOverrides,
+            backendWallet: overrideBackendWallet,
+          },
         } = req;
         if (!userAddress) {
           throw new TdkError({
@@ -171,16 +177,18 @@ export const transactionsRoutes =
         const backendWallet =
           overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
-          Sentry.setExtra("transaction", { to, amount });
+          Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
             chainId.toString(),
             backendWallet,
             {
               toAddress: to,
-              value: amount,
-              data: "0x",
+              value: value,
+              data,
+              txOverrides,
             },
             false,
+            undefined,
             userAddress,
           );
           reply.send(result);
@@ -188,7 +196,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating native send transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: `Error creating raw transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
           });
         }
       },
