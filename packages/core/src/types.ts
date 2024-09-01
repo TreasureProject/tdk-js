@@ -71,7 +71,6 @@ type ZeeverseContract =
   | "ZeeverseLlamaEvolve"
   | "ZeeverseGame";
 export type Contract =
-  | "PaymentsModule"
   | "ManagedAccountFactory"
   | "BulkTransferHelper"
   | "TreasureConduit"

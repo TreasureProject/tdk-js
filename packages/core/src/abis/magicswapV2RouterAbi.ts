@@ -1,4 +1,4 @@
-export const magicSwapV2RouterABI = [
+export const magicswapV2RouterAbi = [
   {
     inputs: [
       { internalType: "address", name: "_factory", type: "address" },
@@ -182,6 +182,13 @@ export const magicSwapV2RouterABI = [
   },
   {
     inputs: [],
+    name: "BURN_ADDRESS",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "ONE",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
@@ -326,6 +333,8 @@ export const magicSwapV2RouterABI = [
         name: "_vaultB",
         type: "tuple",
       },
+      { internalType: "uint256", name: "_amountAMin", type: "uint256" },
+      { internalType: "uint256", name: "_amountBMin", type: "uint256" },
       { internalType: "address", name: "_to", type: "address" },
       { internalType: "uint256", name: "_deadline", type: "uint256" },
     ],
@@ -797,4 +806,5 @@ export const magicSwapV2RouterABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  { stateMutability: "payable", type: "receive" },
 ] as const;

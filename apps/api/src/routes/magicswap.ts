@@ -6,7 +6,7 @@ import {
   getRemoveLiquidityArgs,
   getSwapArgs,
   getSwapRoute,
-  magicSwapV2RouterABI,
+  magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
@@ -249,7 +249,7 @@ export const magicswapRoutes =
             contractAddress: swapArguments.address,
             backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: swapArguments.functionName,
             args: swapArguments.args,
             txOverrides: swapArguments.value
@@ -346,7 +346,7 @@ export const magicswapRoutes =
             contractAddress: addLiquidityArgs.address,
             backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: addLiquidityArgs.functionName,
             args: addLiquidityArgs.args,
             txOverrides: addLiquidityArgs.value
@@ -443,7 +443,7 @@ export const magicswapRoutes =
             contractAddress: removeLiquidityArgs.address,
             backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: removeLiquidityArgs.functionName,
             args: removeLiquidityArgs.args,
             txOverrides: removeLiquidityArgs.value

@@ -3,7 +3,7 @@ import type {
   ExtractAbiFunction,
 } from "abitype";
 
-import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
+import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { Pool } from "./fetchPools";
@@ -41,7 +41,7 @@ export const getAddLiquidityArgs = ({
   functionName: AddLiquidityFunctionName;
   args: AbiParametersToPrimitiveTypes<
     ExtractAbiFunction<
-      typeof magicSwapV2RouterABI,
+      typeof magicswapV2RouterAbi,
       AddLiquidityFunctionName
     >["inputs"],
     "inputs"
@@ -86,6 +86,8 @@ export const getAddLiquidityArgs = ({
           tokenId: nftsB.map(({ id }) => BigInt(id)),
           amount: nftsB.map(({ quantity }) => BigInt(quantity)),
         },
+        amountAMin,
+        amountBMin,
         toAddress,
         deadline,
       ],
