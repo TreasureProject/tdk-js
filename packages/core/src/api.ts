@@ -163,7 +163,7 @@ export class TDKAPI {
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
     getTransactions: (
       address: string,
-      query: ReadUserTransactionsQuerystring,
+      query?: ReadUserTransactionsQuerystring,
     ) =>
       this.get<ReadUserTransactionsReply>(
         `/users/${address}/transactions`,
