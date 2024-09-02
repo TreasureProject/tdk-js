@@ -24,6 +24,8 @@ import type {
   ReadLoginPayloadReply,
   ReadProjectReply,
   ReadTransactionReply,
+  ReadUserTransactionsQuerystring,
+  ReadUserTransactionsReply,
   RouteReply,
 } from "../../../apps/api/src/schema";
 import type {
@@ -159,6 +161,14 @@ export class TDKAPI {
       ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
+    getTransactions: (
+      address: string,
+      query?: ReadUserTransactionsQuerystring,
+    ) =>
+      this.get<ReadUserTransactionsReply>(
+        `/users/${address}/transactions`,
+        query,
+      ),
   };
 
   transaction = {
