@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 2.4.0
+
+### Patch Changes
+
+- Updated dependencies [db210bc]
+  - @treasure-dev/tdk-core@2.4.0
+
 ## 2.3.0
 
 ### Patch Changes

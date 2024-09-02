@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.4.0
+
+### Minor Changes
+
+- db210bc: Added get user transactions helper to TDK API client
+
 ## 2.3.0
 
 ### Minor Changes
