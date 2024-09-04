@@ -60,3 +60,8 @@ export const parseEngineErrorMessage = (err: ApiError | Error) => {
 
   return undefined;
 };
+
+export const normalizeEngineErrorMessage = (message: string) => {
+  const matches = /reason: '(.*)' at txHash/gi.exec(message);
+  return matches?.[1] ? matches[1] : message;
+};

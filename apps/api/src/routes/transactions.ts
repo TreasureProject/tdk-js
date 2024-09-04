@@ -23,6 +23,7 @@ import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
+  normalizeEngineErrorMessage,
   parseEngineErrorMessage,
 } from "../utils/error";
 
@@ -219,8 +220,20 @@ export const transactionsRoutes =
       async (req, reply) => {
         const { queueId } = req.params;
         try {
-          const data = await engine.transaction.status(queueId);
-          reply.send(data.result);
+          const { result: transaction } =
+            await engine.transaction.status(queueId);
+          reply.send({
+            ...transaction,
+            status:
+              // Normalize status when the AA transaction is mined but the underlying user op failed
+              transaction.status === "mined" &&
+              transaction.onChainTxStatus === 0
+                ? "errored"
+                : transaction.status,
+            errorMessage: transaction.errorMessage
+              ? normalizeEngineErrorMessage(transaction.errorMessage)
+              : null,
+          });
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
