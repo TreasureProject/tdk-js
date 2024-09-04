@@ -62,6 +62,9 @@ export const parseEngineErrorMessage = (err: ApiError | Error) => {
 };
 
 export const normalizeEngineErrorMessage = (message: string) => {
-  const matches = /reason: '(.*)' at txHash/gi.exec(message);
-  return matches?.[1] ? matches[1] : message;
+  const groups =
+    /(?:reason: '(.*)' at txHash)|(?:reason="execution reverted: (.*)", method=)/gi.exec(
+      message,
+    );
+  return groups?.slice(1).find((group) => group) ?? message;
 };
