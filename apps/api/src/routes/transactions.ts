@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { getContractAddress } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
@@ -115,6 +116,7 @@ export const transactionsRoutes =
             false,
             undefined,
             userAddress,
+            getContractAddress(chainId, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
@@ -191,6 +193,7 @@ export const transactionsRoutes =
             false,
             undefined,
             userAddress,
+            getContractAddress(chainId, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
