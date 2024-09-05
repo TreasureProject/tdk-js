@@ -171,7 +171,7 @@ export const CONTRACT_ADDRESSES: Record<
     HarvesterThundermane: "0x3fbfcdc02f649d5875bc9f97281b7ef5a7a9c491",
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
     // Magicswap
-    MagicswapV2Router: "0xb740d5804ea2061432469119cfa40cbb4586dd17",
+    MagicswapV2Router: "0xf7c8f888720d5af7c54dfc04afe876673d7f5f43",
     // Treasure Misc
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
