@@ -8,6 +8,7 @@ SDK for the Treasure ecosystem
 
 ## Packages
 
+- [@treasure-dev/auth](./packages/auth)
 - [@treasure-dev/tdk-core](./packages/core)
 - [@treasure-dev/tdk-react](./packages/react)
 - [@treasure-dev/tailwind-config](./packages/tailwind-config)

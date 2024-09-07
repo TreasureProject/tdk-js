@@ -3,7 +3,6 @@ import type { AddressString, UserContext } from "@treasure-dev/tdk-core";
 import type { FastifyInstance } from "fastify";
 
 import type { TdkApiContext } from "../types";
-import { verifyAuth } from "../utils/auth";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -25,16 +24,18 @@ export const withAuth = async (
   app.decorateRequest("authError", undefined);
   app.addHook("onRequest", async (req) => {
     if (req.headers.authorization) {
-      const authResult = await verifyAuth(auth, req);
-      if (authResult.valid) {
-        req.userId = (authResult.parsedJWT.ctx as UserContext | undefined)?.id;
-        req.userAddress = authResult.parsedJWT.sub as AddressString;
+      try {
+        const decoded = await auth.verifyJWT<UserContext>(
+          req.headers.authorization.replace("Bearer ", ""),
+        );
+        req.userId = decoded.ctx.id;
+        req.userAddress = decoded.sub as AddressString;
         Sentry.setUser({
           id: req.userId,
           username: req.userAddress,
         });
-      } else {
-        req.authError = authResult.error;
+      } catch (err) {
+        req.authError = err instanceof Error ? err.message : "Unknown error";
       }
     }
 

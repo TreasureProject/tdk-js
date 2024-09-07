@@ -9,6 +9,7 @@ apps/api/ @alecananian
 
 # Packages
 
+packages/auth/ @alecananian
 packages/core/ @alecananian
 packages/react/ @alecananian
 packages/tailwind-config/ @alecananian
