@@ -19,10 +19,7 @@ npm i @treasure-dev/auth
 ```ts
 import { createAuth } from "@treasure-dev/auth";
 
-const auth = createAuth({
-  kmsRegion: "us-west-2",
-  kmsKeyArn: "arn:kms-auth",
-});
+const auth = createAuth({ kmsKey: "arn:kms-auth" });
 
 try {
   const token = await auth.generateJWT("engineer1", {
@@ -42,10 +39,7 @@ type User = {
   email: string;
 };
 
-const auth = createAuth({
-  kmsRegion: "us-west-2",
-  kmsKeyArn: "arn:kms-auth",
-});
+const auth = createAuth({ kmsKey: "arn:kms-auth" });
 
 try {
   const user = await auth.verifyJWT<User>("ey...");
