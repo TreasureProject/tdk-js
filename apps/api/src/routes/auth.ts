@@ -144,8 +144,8 @@ export const authRoutes =
         const [authToken, allActiveSigners, profile] = await Promise.all([
           auth.generateJWT(user.address, {
             issuer: payload.domain,
-            issuedAt: Number(payload.issued_at),
-            expiresAt: Number(payload.expiration_time),
+            issuedAt: new Date(payload.issued_at),
+            expiresAt: new Date(payload.expiration_time),
             context: userContext,
           }),
           getAllActiveSigners({

@@ -24,6 +24,7 @@ export type TdkApiEnv = {
   THIRDWEB_ENGINE_URL: string;
   THIRDWEB_ENGINE_ACCESS_TOKEN: string;
   THIRDWEB_SECRET_KEY: string;
+  TREASURE_AUTH_KMS_KEY: string;
   TROVE_API_URL: string;
   TROVE_API_KEY: string;
   ENGINE_MAINTENANCE_MODE_ENABLED: boolean;

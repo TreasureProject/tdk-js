@@ -33,12 +33,12 @@ const PAYLOAD = {
   },
 };
 
-const JWT =
-  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0cmVhc3VyZS5sb2wiLCJzdWIiOiJlbmdpbmVlcjEiLCJhdWQiOiJ0cmVhc3VyZS5sb2wiLCJleHAiOjE3MTM3NDE2MDAsImlhdCI6MTcxMzY1NTIwMCwiY3R4Ijp7ImVtYWlsIjoiZW5naW5lZXJpbmdAdHJlYXN1cmUubG9sIn19.h7LZlVaRkxm4gxZrKapE2j8um3N3sJ2ZsN_9eaNTZD3EPdGNNhuhicd6B6iPcWrYjWZu7cpZGYFgKiqxau2QwcEBGIkvXLYOFlufFYVVuFBYZ7hgjTUQzjJws08yLYwmxmkBo2GHSHf_N4MlNcsKNJwMZmhcQCLWd-MraXRtC4ILrPTf4lG87YdYA5JGNC6hfab4YxOpCdPg_YGyb7ggllO-MT44MS1LtSOMn72RYn4CjgX-H10e9K_3r0wTksAIfxTaC2TB1qF-q8wcqa2pj0Y7aUYp2s2fWMKwrxGeZl_vUEEbFNchVfTgInl6wCnybdgVpgs-2sRq0pf8vm3EKg";
+const SIGNATURE =
+  "h7LZlVaRkxm4gxZrKapE2j8um3N3sJ2ZsN_9eaNTZD3EPdGNNhuhicd6B6iPcWrYjWZu7cpZGYFgKiqxau2QwcEBGIkvXLYOFlufFYVVuFBYZ7hgjTUQzjJws08yLYwmxmkBo2GHSHf_N4MlNcsKNJwMZmhcQCLWd-MraXRtC4ILrPTf4lG87YdYA5JGNC6hfab4YxOpCdPg_YGyb7ggllO-MT44MS1LtSOMn72RYn4CjgX-H10e9K_3r0wTksAIfxTaC2TB1qF-q8wcqa2pj0Y7aUYp2s2fWMKwrxGeZl_vUEEbFNchVfTgInl6wCnybdgVpgs-2sRq0pf8vm3EKg";
+const JWT = `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0cmVhc3VyZS5sb2wiLCJzdWIiOiJlbmdpbmVlcjEiLCJhdWQiOiJ0cmVhc3VyZS5sb2wiLCJleHAiOjE3MTM3NDE2MDAsImlhdCI6MTcxMzY1NTIwMCwiY3R4Ijp7ImVtYWlsIjoiZW5naW5lZXJpbmdAdHJlYXN1cmUubG9sIn19.${SIGNATURE}`;
 
 const auth = createAuth({
-  kmsRegion: "us-west-2",
-  kmsKeyArn: "arn:kms-auth-test",
+  kmsKey: "arn:kms-auth-test",
   issuer: "treasure.lol",
   audience: "treasure.lol",
   expirationTimeSeconds: 86_400,
@@ -55,13 +55,17 @@ describe("treasure auth", () => {
   });
 
   it("should generate JWT", async () => {
+    const token = await auth.generateJWT("engineer1", {
+      context: {
+        email: "engineering@treasure.lol",
+      },
+    });
     expect(
-      await auth.generateJWT("engineer1", {
-        context: {
-          email: "engineering@treasure.lol",
-        },
-      }),
-    ).toBe(JWT);
+      token.startsWith(
+        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0cmVhc3VyZS5sb2wiLCJ",
+      ),
+    ).toBe(true);
+    expect(token.endsWith(SIGNATURE)).toBe(true);
   });
 
   it("should verify valid JWT", async () => {

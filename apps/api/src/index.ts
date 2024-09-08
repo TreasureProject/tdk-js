@@ -53,8 +53,7 @@ const main = async () => {
     }),
     client,
     auth: createAuth({
-      kmsRegion: "us-west-2",
-      kmsKeyArn: "arn:test",
+      kmsKey: env.TREASURE_AUTH_KMS_KEY,
       issuer: env.THIRDWEB_AUTH_DOMAIN,
       audience: adminAccount.address,
       expirationTimeSeconds: 86_400, // 1 day

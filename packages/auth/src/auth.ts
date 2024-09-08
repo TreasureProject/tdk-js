@@ -1,6 +1,6 @@
 import { KMS } from "@aws-sdk/client-kms";
-import { decode as decodeJWT, verify as verifyJWT } from "jsonwebtoken";
-import { base64url } from "./base64url";
+import jwt from "jsonwebtoken";
+import { base64url } from "./base64";
 import { kmsGetPublicKey, kmsSign } from "./kms";
 
 type Payload<TContext = unknown> = {
@@ -13,57 +13,54 @@ type Payload<TContext = unknown> = {
 };
 
 type AuthOptions = {
-  kmsRegion: string;
-  kmsKeyArn: string;
+  kmsKey: string;
   issuer?: string;
   audience?: string;
   expirationTimeSeconds?: number;
 };
 
-const ALGORITHM = "RS256";
-
 const JWT_HEADER = base64url(
   JSON.stringify({
-    alg: ALGORITHM,
+    alg: "RS256",
     typ: "JWT",
   }),
 );
 
 export const createAuth = ({
-  kmsRegion,
-  kmsKeyArn,
+  kmsKey,
   issuer = "treasure.lol",
   audience = "treasure.lol",
   expirationTimeSeconds = 86_400, // 1 day
 }: AuthOptions) => {
-  const kms = new KMS({ region: kmsRegion });
+  const kms = new KMS();
   return {
     generateJWT: async (
       subject: string,
       overrides?: {
         issuer?: string;
         audience?: string;
-        expiresAt?: number;
-        issuedAt?: number;
+        expiresAt?: Date;
+        issuedAt?: Date;
         context?: unknown;
       },
     ) => {
-      const now = Math.floor(Date.now() / 1000);
       const payload: Payload = {
         iss: overrides?.issuer ?? issuer,
         aud: overrides?.audience ?? audience,
         sub: subject,
-        iat: overrides?.issuedAt ?? now,
-        exp: overrides?.expiresAt ?? now + expirationTimeSeconds,
+        iat: Math.floor((overrides?.issuedAt ?? new Date()).getTime() / 1000),
+        exp:
+          Math.floor((overrides?.expiresAt ?? new Date()).getTime() / 1000) +
+          expirationTimeSeconds,
         ctx: overrides?.context ?? {},
       };
-      const message = JSON.stringify(payload);
-      const signature = await kmsSign(kms, kmsKeyArn, message);
-      return `${JWT_HEADER}.${base64url(message)}.${signature}`;
+      const message = `${JWT_HEADER}.${base64url(JSON.stringify(payload))}`;
+      const signature = await kmsSign(kms, kmsKey, message);
+      return `${message}.${signature}`;
     },
     verifyJWT: async <TContext = unknown>(token: string) => {
       // Decode the token first and run some initial checks before doing a full verification
-      const decoded = decodeJWT(token) as Payload<TContext>;
+      const decoded = jwt.decode(token) as Payload<TContext>;
 
       // Check expiration time
       const now = Math.floor(Date.now() / 1000);
@@ -88,9 +85,9 @@ export const createAuth = ({
       }
 
       // Initial checks passed, now verify the token
-      const publicKey = await kmsGetPublicKey(kms, kmsKeyArn);
-      return verifyJWT(token, publicKey, {
-        algorithms: [ALGORITHM],
+      const publicKey = await kmsGetPublicKey(kms, kmsKey);
+      return jwt.verify(token, publicKey, {
+        algorithms: ["RS256"],
       }) as Payload<TContext>;
     },
   };
