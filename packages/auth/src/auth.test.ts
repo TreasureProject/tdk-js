@@ -75,7 +75,7 @@ describe("treasure auth", () => {
   it("should throw error for expired JWT", async () => {
     vi.setSystemTime(new Date(2024, 3, 22, 16, 20));
     await expect(auth.verifyJWT(JWT)).rejects.toThrow(
-      "Token expired at 1713741600, current time is 1713828000",
+      "Token expired at 1713741600, current time is 1713802800",
     );
   });
 

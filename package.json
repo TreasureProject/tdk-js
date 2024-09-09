@@ -18,7 +18,7 @@
     "lint": "biome lint .",
     "fix": "biome check --write --unsafe .",
     "knip": "knip",
-    "test": "vitest run",
+    "test": "TZ=UTC vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
     "package:publish": "npm run build:auth && npm run build:core && npm run build:react && changeset publish",
