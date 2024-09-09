@@ -29,7 +29,7 @@ import {
 } from "../utils/error";
 
 export const transactionsRoutes =
-  ({ engine, env }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.post<{
       Body: CreateTransactionBody;
@@ -223,20 +223,37 @@ export const transactionsRoutes =
       async (req, reply) => {
         const { queueId } = req.params;
         try {
-          const { result: transaction } =
-            await engine.transaction.status(queueId);
-          reply.send({
-            ...transaction,
+          const { result } = await engine.transaction.status(queueId);
+          const transaction = {
+            ...result,
             status:
               // Normalize status when the AA transaction is mined but the underlying user op failed
-              transaction.status === "mined" &&
-              transaction.onChainTxStatus === 0
+              result.status === "mined" && result.onChainTxStatus === 0
                 ? "errored"
-                : transaction.status,
-            errorMessage: transaction.errorMessage
-              ? normalizeEngineErrorMessage(transaction.errorMessage)
+                : result.status,
+            errorMessage: result.errorMessage
+              ? normalizeEngineErrorMessage(result.errorMessage)
               : null,
-          });
+          };
+
+          if (transaction.status === "errored") {
+            await db.transactionErrorLog.upsert({
+              where: { queueId },
+              create: {
+                queueId,
+                queuedAt: transaction.queuedAt ?? new Date(),
+                chainId: Number(transaction.chainId ?? 0),
+                signerAddress: transaction.signerAddress ?? "",
+                accountAddress: transaction.accountAddress ?? "",
+                target: transaction.target ?? "",
+                functionName: transaction.functionName ?? "",
+                errorMessage: transaction.errorMessage ?? "",
+              },
+              update: {},
+            });
+          }
+
+          reply.send(transaction);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
