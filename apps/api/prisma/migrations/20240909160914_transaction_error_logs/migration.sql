@@ -8,7 +8,7 @@ CREATE TABLE "public"."transaction_error_log" (
     "account_address" TEXT NOT NULL,
     "target" TEXT NOT NULL,
     "function_name" TEXT NOT NULL,
-    "errorMessage" TEXT NOT NULL,
+    "error_message" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
