@@ -4,8 +4,7 @@ import {
   DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_WEB3_WALLETS,
   type SocialConnectMethod,
-  connectWallet,
-  getContractAddress,
+  connectEcosystemWallet,
   isSocialConnectMethod,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
@@ -66,16 +65,27 @@ export const ConnectModal = ({
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
     client,
+    ecosystemId,
+    ecosystemPartnerId,
     chain,
+    contractAddresses,
     logIn,
     logOut,
   } = useTreasure();
+  const accountAbstraction = {
+    chain,
+    factoryAddress: contractAddresses.ManagedAccountFactory,
+    sponsorGas: true,
+  };
   const [{ email, isLoading, error }, setState] = useState<{
     email: string;
     isLoading: boolean;
     error: string | undefined;
   }>(DEFAULT_STATE);
-  const { connect } = useConnect();
+  const { connect } = useConnect({
+    client,
+    accountAbstraction,
+  });
   const { connect: connectWeb3Wallet } = useConnectModal();
 
   const setIsLoading = (isLoading = true) =>
@@ -98,14 +108,16 @@ export const ConnectModal = ({
 
     let wallet: Wallet | undefined | null;
     try {
-      const inAppWallet = await connectWallet({
+      const ecosystemWallet = await connectEcosystemWallet({
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         chainId: chain.id,
         method: "email",
         email,
         verificationCode,
       });
-      wallet = await connect(inAppWallet);
+      wallet = await connect(ecosystemWallet);
     } catch (err) {
       console.error("Error connecting wallet with email:", err);
       setError(err);
@@ -164,14 +176,7 @@ export const ConnectModal = ({
             name: appName,
             logoUrl: appIconUri,
           },
-          accountAbstraction: {
-            chain,
-            factoryAddress: getContractAddress(
-              chain.id,
-              "ManagedAccountFactory",
-            ),
-            sponsorGas: true,
-          },
+          accountAbstraction,
         });
       } catch (err) {
         // Error can be undefined if user closed the connect modal
@@ -203,8 +208,10 @@ export const ConnectModal = ({
     } else {
       // Handle connecting with social / passkey
       try {
-        const inAppWallet = await connectWallet({
+        const ecosystemWallet = await connectEcosystemWallet({
           client,
+          ecosystemId,
+          ecosystemPartnerId,
           chainId: chain.id,
           method,
           authMode: "popup",
@@ -215,7 +222,7 @@ export const ConnectModal = ({
             hasStoredPasskey,
           }),
         });
-        wallet = await connect(inAppWallet);
+        wallet = await connect(ecosystemWallet);
       } catch (err) {
         console.error("Error connecting in-app wallet:", err);
         setError(err);
