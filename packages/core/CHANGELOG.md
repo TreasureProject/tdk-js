@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-core
 
+## 2.5.0
+
+### Minor Changes
+
+- df6d965: add user update api
+
+### Patch Changes
+
+- 65d384f: Updated Magicswap router ABI and addresses
+
 ## 2.4.0
 
 ### Minor Changes
