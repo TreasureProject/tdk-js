@@ -31,6 +31,17 @@ import {
 export const transactionsRoutes =
   ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
+    const checkMaintenanceMode = () => {
+      if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
+        throw new TdkError({
+          name: TDK_ERROR_NAMES.TransactionError,
+          code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
+          message:
+            "Sorry, this feature is in planned maintenance mode. Please try again later.",
+        });
+      }
+    };
+
     app.post<{
       Body: CreateTransactionBody;
       Reply: CreateTransactionReply | ErrorReply;
@@ -48,14 +59,7 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.TransactionError,
-            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
-            message:
-              "Sorry, this feature is in planned maintenance mode. Please try again later.",
-          });
-        }
+        checkMaintenanceMode();
 
         const {
           chainId,
@@ -67,7 +71,8 @@ export const transactionsRoutes =
             functionName,
             args,
             txOverrides,
-            backendWallet: overrideBackendWallet,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
         if (!userAddress) {
@@ -79,8 +84,6 @@ export const transactionsRoutes =
           });
         }
 
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
           const transactionAbi =
             typeof abi === "string" && abi.length > 0
@@ -113,7 +116,7 @@ export const transactionsRoutes =
               args,
               txOverrides,
             },
-            false,
+            simulateTransaction,
             undefined,
             userAddress,
             getContractAddress(chainId, "ManagedAccountFactory"),
@@ -123,7 +126,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -147,14 +150,7 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.TransactionError,
-            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
-            message:
-              "Sorry, this feature is in planned maintenance mode. Please try again later.",
-          });
-        }
+        checkMaintenanceMode();
 
         const {
           chainId,
@@ -165,7 +161,8 @@ export const transactionsRoutes =
             value = "0x00",
             data,
             txOverrides,
-            backendWallet: overrideBackendWallet,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
         if (!userAddress) {
@@ -177,8 +174,6 @@ export const transactionsRoutes =
           });
         }
 
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
@@ -190,7 +185,7 @@ export const transactionsRoutes =
               data,
               txOverrides,
             },
-            false,
+            simulateTransaction,
             undefined,
             userAddress,
             getContractAddress(chainId, "ManagedAccountFactory"),
@@ -200,7 +195,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating raw transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -258,7 +253,7 @@ export const transactionsRoutes =
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_READ_FAILED,
-            message: `Error fetching transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },

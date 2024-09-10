@@ -26,5 +26,13 @@ describe("error utils", () => {
         `eth_sendUserOperation error: {"message":"Invalid UserOperation signature or paymaster signature","code":-32507} Status: 200 Code: UNKNOWN`,
       ),
     ).toBe("Invalid UserOperation signature or paymaster signature");
+    expect(
+      normalizeEngineErrorMessage(
+        "Simulation failed: TransactionError: Error - ERC20: transfer amount exceeds balance",
+      ),
+    ).toBe("ERC20: transfer amount exceeds balance");
+    expect(normalizeEngineErrorMessage("Simulation failed: Other error")).toBe(
+      "Other error",
+    );
   });
 });

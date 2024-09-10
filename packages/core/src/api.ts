@@ -198,8 +198,7 @@ export class TDKAPI {
         "nonpayable" | "payable"
       >,
     >(
-      params: {
-        address: string;
+      params: Omit<CreateTransactionBody, "abi" | "functionName" | "args"> & {
         abi: TAbi;
         functionName:
           | TFunctionName
@@ -208,13 +207,8 @@ export class TDKAPI {
           ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
           "inputs"
         >;
-        txOverrides?: CreateTransactionBody["txOverrides"];
-        backendWallet?: string;
       },
-      {
-        includeAbi = false,
-        waitForCompletion = true,
-      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
+      options?: { includeAbi?: boolean; skipWaitForCompletion?: boolean },
     ) => {
       const result = await this.post<
         CreateTransactionBody,
@@ -222,19 +216,21 @@ export class TDKAPI {
       >("/transactions", {
         ...params,
         // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        ...(includeAbi ? { abi: params.abi as any } : {}),
+        ...(options?.includeAbi ? { abi: params.abi as any } : {}),
         // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
         args: params.args as any,
         backendWallet: params.backendWallet ?? this.backendWallet,
       });
 
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
     sendRaw: async (
       params: Omit<CreateRawTransactionBody, "value"> & {
         value?: bigint;
       },
-      { waitForCompletion = true }: { waitForCompletion?: boolean } = {},
+      options?: { skipWaitForCompletion?: boolean },
     ) => {
       const result = await this.post<
         CreateRawTransactionBody,
@@ -245,18 +241,24 @@ export class TDKAPI {
         backendWallet: params.backendWallet ?? this.backendWallet,
       });
 
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
     get: (queueId: string) =>
       this.get<ReadTransactionReply>(`/transactions/${queueId}`),
-    wait: async (queueId: string, maxRetries = 15, retryMs = 2_500) => {
+    wait: async (
+      queueId: string,
+      maxRetries = 15,
+      retryMs = 2_500,
+      initialWaitMs = 4_000,
+    ) => {
       let retries = 0;
       let transaction: ReadTransactionReply;
       do {
-        if (retries > 0) {
-          await new Promise((r) => setTimeout(r, retryMs));
-        }
-
+        await new Promise((r) =>
+          setTimeout(r, retries === 0 ? initialWaitMs : retryMs),
+        );
         transaction = await this.transaction.get(queueId);
         retries += 1;
       } while (

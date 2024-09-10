@@ -16,6 +16,8 @@ export const TDK_ERROR_CODES = {
   HARVESTER_NFT_HANDLER_NOT_FOUND: "HARVESTER_NFT_HANDLER_NOT_FOUND",
   MAGICSWAP_POOL_NOT_FOUND: "MAGICSWAP_POOL_NOT_FOUND",
   MAGICSWAP_SWAP_FAILED: "MAGICSWAP_SWAP_FAILED",
+  MAGICSWAP_ADD_LIQUIDITY_FAILED: "MAGICSWAP_ADD_LIQUIDITY_FAILED",
+  MAGICSWAP_REMOVE_LIQUIDITY_FAILED: "MAGICSWAP_REMOVE_LIQUIDITY_FAILED",
   PROJECT_NOT_FOUND: "PROJECT_NOT_FOUND",
   TRANSACTION_CREATE_FAILED: "TRANSACTION_CREATE_FAILED",
   TRANSACTION_READ_FAILED: "TRANSACTION_READ_FAILED",
@@ -49,22 +51,24 @@ export class TdkError extends Error {
   }
 }
 
-export const parseEngineErrorMessage = (err: ApiError | Error) => {
-  if (err instanceof ApiError && err.body.error?.message) {
-    return err.body.error.message as string;
-  }
-
-  if (err instanceof Error) {
-    return err.message;
-  }
-
-  return undefined;
-};
-
 export const normalizeEngineErrorMessage = (message: string) => {
   const groups =
-    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)")/gi.exec(
+    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)"|(?:Simulation failed: TransactionError: Error - (.*))|(?:Simulation failed: (.*)))/gi.exec(
       message,
     );
   return groups?.slice(1).find((group) => group) ?? message;
+};
+
+export const parseEngineErrorMessage = (err: unknown) => {
+  let message: string | undefined;
+
+  if (err instanceof ApiError && err.body.error?.message) {
+    message = err.body.error.message;
+  } else if (err instanceof Error) {
+    message = err.message;
+  } else if (typeof err === "string") {
+    message = err;
+  }
+
+  return message ? normalizeEngineErrorMessage(message) : "Unknown error";
 };
