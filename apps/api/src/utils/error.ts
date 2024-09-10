@@ -63,7 +63,7 @@ export const parseEngineErrorMessage = (err: ApiError | Error) => {
 
 export const normalizeEngineErrorMessage = (message: string) => {
   const groups =
-    /(?:reason: '(.*?)')|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)")/gi.exec(
+    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)")/gi.exec(
       message,
     );
   return groups?.slice(1).find((group) => group) ?? message;
