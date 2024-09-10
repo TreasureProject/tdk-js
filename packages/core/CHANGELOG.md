@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- df6d965: add user update api
+- df6d965: Added update user to TDK API client
 
 ### Patch Changes
 
@@ -42,8 +42,6 @@
 
 - 34cfc5c: Fix passkey when using redirect for social
 
-## 2.2.1
-
 ## 2.2.0
 
 ### Minor Changes
@@ -54,10 +52,6 @@
 ### Patch Changes
 
 - d110c16: Added new redirect support
-
-## 2.1.0
-
-## 2.0.1
 
 ## 2.0.0
 
@@ -81,8 +75,6 @@
 ### Patch Changes
 
 - 9e56447: Added strict typing on Magicswap argument utils
-
-## 1.4.1
 
 ## 1.4.0
 
@@ -120,8 +112,6 @@
 ### Patch Changes
 
 - fea2894: Added Magicswap utils
-
-## 1.0.1
 
 ## 1.0.0
 
