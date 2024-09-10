@@ -27,6 +27,8 @@ import type {
   ReadUserTransactionsQuerystring,
   ReadUserTransactionsReply,
   RouteReply,
+  UpdateCurrentUserBody,
+  UpdateCurrentUserReply,
 } from "../../../apps/api/src/schema";
 import type {
   AddLiquidityBody,
@@ -126,6 +128,18 @@ export class TDKAPI {
     });
   }
 
+  async put<T, U>(path: string, body?: T, options?: RequestInit): Promise<U> {
+    return this.fetch<U>(path, {
+      method: "PUT",
+      ...(body ? { body: JSON.stringify(body) } : undefined),
+      ...options,
+      headers: {
+        "content-type": "application/json",
+        ...options?.headers,
+      },
+    });
+  }
+
   setAuthToken(authToken: string) {
     this.authToken = authToken;
   }
@@ -158,6 +172,11 @@ export class TDKAPI {
               },
             }
           : undefined,
+      ),
+    update: (params: UpdateCurrentUserBody) =>
+      this.put<UpdateCurrentUserBody, UpdateCurrentUserReply>(
+        "/users/me",
+        params,
       ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
