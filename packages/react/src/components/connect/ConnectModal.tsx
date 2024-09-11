@@ -201,7 +201,7 @@ export const ConnectModal = ({
           mode: authMode,
         });
       } catch (err) {
-        console.error("Error connecting in-app wallet with redirect:", err);
+        console.error("Error connecting ecosystem wallet with redirect:", err);
         setError(err);
         onConnectError?.(method, err);
       }
@@ -224,7 +224,7 @@ export const ConnectModal = ({
         });
         wallet = await connect(ecosystemWallet);
       } catch (err) {
-        console.error("Error connecting in-app wallet:", err);
+        console.error("Error connecting ecosystem wallet:", err);
         setError(err);
         onConnectError?.(method, err);
       }

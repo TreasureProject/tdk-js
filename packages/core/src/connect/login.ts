@@ -29,12 +29,6 @@ const SUPPORTED_SOCIAL_OPTIONS = [
   "telegram",
 ] as const;
 
-export const SUPPORTED_IN_APP_WALLET_OPTIONS = [
-  ...SUPPORTED_SOCIAL_OPTIONS,
-  "email",
-  "passkey",
-] as const;
-
 export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
   createWallet("io.metamask"),
   createWallet("walletConnect"),
@@ -48,7 +42,9 @@ export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
 export type SocialConnectMethod = (typeof SUPPORTED_SOCIAL_OPTIONS)[number];
 
 export type ConnectMethod =
-  | (typeof SUPPORTED_IN_APP_WALLET_OPTIONS)[number]
+  | (typeof SUPPORTED_SOCIAL_OPTIONS)[number]
+  | "email"
+  | "passkey"
   | "wallet";
 
 type ConnectWalletConfig = {
