@@ -34,5 +34,13 @@ describe("error utils", () => {
     expect(normalizeEngineErrorMessage("Simulation failed: Other error")).toBe(
       "Other error",
     );
+    expect(
+      normalizeEngineErrorMessage(
+        "Error - ERC20: transfer amount exceeds balance",
+      ),
+    ).toBe("ERC20: transfer amount exceeds balance");
+    expect(normalizeEngineErrorMessage("Unknown Error - test error")).toBe(
+      "Unknown Error - test error",
+    );
   });
 });

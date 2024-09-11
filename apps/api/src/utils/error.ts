@@ -53,7 +53,7 @@ export class TdkError extends Error {
 
 export const normalizeEngineErrorMessage = (message: string) => {
   const groups =
-    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)"|(?:Simulation failed: TransactionError: Error - (.*))|(?:Simulation failed: (.*)))/gi.exec(
+    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)"|(?:Simulation failed: TransactionError: Error - (.*))|(?:^Simulation failed: (.*))|(?:^Error - (.*)))/gi.exec(
       message,
     );
   return groups?.slice(1).find((group) => group) ?? message;
