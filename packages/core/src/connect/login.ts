@@ -58,7 +58,6 @@ type ConnectWalletConfig = {
   chainId?: number;
   authMode?: "popup" | "redirect" | "window";
   redirectUrl?: string;
-  passkeyDomain?: string;
 } & (
   | {
       method: SocialConnectMethod;
@@ -86,7 +85,6 @@ export const connectEcosystemWallet = async (params: ConnectWalletConfig) => {
     chainId = DEFAULT_TDK_CHAIN_ID,
     authMode,
     redirectUrl,
-    // passkeyDomain,
   } = params;
   const chain = defineChain(chainId);
 
@@ -239,49 +237,3 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
 
   return { token, user, tdk };
 };
-
-export const logInWithEmail = async ({
-  email,
-  verificationCode,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  email: string;
-  verificationCode: string;
-} & ConnectConfig) =>
-  logIn({
-    method: "email",
-    email,
-    verificationCode,
-    ...rest,
-  });
-
-export const logInWithPasskey = async ({
-  passkeyName,
-  passkeyDomain,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  passkeyName?: string;
-  passkeyDomain?: string;
-} & ConnectConfig) =>
-  logIn({
-    method: "passkey",
-    passkeyName,
-    passkeyDomain,
-    ...rest,
-  });
-
-export const logInWithSocial = async ({
-  method,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  method: SocialConnectMethod;
-} & ConnectConfig) => logIn({ method, ...rest });

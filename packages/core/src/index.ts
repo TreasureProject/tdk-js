@@ -46,9 +46,6 @@ export {
   sendEmailVerificationCode,
   authenticateWallet,
   logIn,
-  logInWithEmail,
-  logInWithPasskey,
-  logInWithSocial,
 } from "./connect/login";
 export {
   createSession,
