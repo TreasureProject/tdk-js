@@ -10,12 +10,13 @@ export const en = {
       header: "Connect to <1>{{appName}}</1>",
       footer: "Powered by <ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
-        google: "Google",
-        telegram: "Telegram",
-        discord: "Discord",
         apple: "Apple",
+        discord: "Discord",
+        google: "Google",
         passkey: "Passkey",
+        telegram: "Telegram",
         wallet: "Wallet",
+        x: "X",
       },
       verify: {
         header: "Verify code",

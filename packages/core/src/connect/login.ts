@@ -18,6 +18,7 @@ const SUPPORTED_SOCIAL_OPTIONS = [
   "apple",
   "discord",
   "telegram",
+  "x",
 ] as const;
 
 export const SUPPORTED_IN_APP_WALLET_OPTIONS = [
