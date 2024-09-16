@@ -60,6 +60,7 @@ export const withAuth = async (
       "backendWallet" in req.params
         ? req.params.backendWallet
         : undefined;
+    // TODO: Remove default backend wallet when all partners upgrade to their own
     req.backendWallet = isHex(backendWallet)
       ? backendWallet
       : (env.DEFAULT_BACKEND_WALLET as AddressString);
@@ -86,6 +87,7 @@ export const withAuth = async (
     }
 
     // Fall back to legacy Thirdweb auth
+    // TODO: remove fallback when all legacy JWTs expire
     try {
       const authResult = await thirdwebAuth.verifyJWT({
         jwt: req.headers.authorization.replace("Bearer ", ""),
