@@ -68,3 +68,12 @@ export const normalizeEngineErrorMessage = (message: string) => {
     );
   return groups?.slice(1).find((group) => group) ?? message;
 };
+
+export const throwUnauthorizedError = (message: string) => {
+  throw new TdkError({
+    name: TDK_ERROR_NAMES.AuthError,
+    code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+    message: "Unauthorized",
+    data: { authError: message },
+  });
+};
