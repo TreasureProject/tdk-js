@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-react",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Treasure Development Kit for React-based projects",
   "keywords": [
     "treasure",
@@ -66,7 +66,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "thirdweb": "^5.48.1"
+    "thirdweb": "^5.55.0"
   },
   "engines": {
     "node": ">=14.0.0"

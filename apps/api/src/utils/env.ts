@@ -94,5 +94,8 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
     ENGINE_MAINTENANCE_MODE_ENABLED:
       (process.env.ENGINE_MAINTENANCE_MODE_ENABLED ??
         envSecret?.ENGINE_MAINTENANCE_MODE_ENABLED) === "true",
+    ENGINE_TRANSACTION_SIMULATION_ENABLED:
+      (process.env.ENGINE_TRANSACTION_SIMULATION_ENABLED ??
+        envSecret?.ENGINE_TRANSACTION_SIMULATION_ENABLED) === "true",
   };
 };

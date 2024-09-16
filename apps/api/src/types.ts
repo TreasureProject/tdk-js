@@ -28,6 +28,7 @@ export type TdkApiEnv = {
   TROVE_API_URL: string;
   TROVE_API_KEY: string;
   ENGINE_MAINTENANCE_MODE_ENABLED: boolean;
+  ENGINE_TRANSACTION_SIMULATION_ENABLED: boolean;
 };
 
 export type TdkApiContext = {

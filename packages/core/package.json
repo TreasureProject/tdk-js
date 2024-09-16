@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tdk-core",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Treasure Development Kit for TypeScript/JavaScript-based projects",
   "keywords": [
     "treasure",
@@ -44,7 +44,7 @@
     "viem": "^2.7.6"
   },
   "peerDependencies": {
-    "thirdweb": "^5.48.0"
+    "thirdweb": "^5.55.0"
   },
   "engines": {
     "node": ">=14.0.0"

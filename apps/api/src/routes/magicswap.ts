@@ -186,11 +186,9 @@ export const magicswapRoutes =
           nftsOut,
           isExactOut,
           slippage,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
-
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pools = await fetchPools({
           chainId,
@@ -257,13 +255,14 @@ export const magicswapRoutes =
                   value: swapArguments.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error performing swap: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -304,11 +303,9 @@ export const magicswapRoutes =
           amount1Min,
           nfts0,
           nfts1,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
-
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
           pairId: params.id,
@@ -354,13 +351,14 @@ export const magicswapRoutes =
                   value: addLiquidityArgs.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error adding liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            code: TDK_ERROR_CODES.MAGICSWAP_ADD_LIQUIDITY_FAILED,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -401,11 +399,9 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           swapLeftover = true,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
-
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
           pairId: params.id,
@@ -451,13 +447,14 @@ export const magicswapRoutes =
                   value: removeLiquidityArgs.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error removing liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            code: TDK_ERROR_CODES.MAGICSWAP_REMOVE_LIQUIDITY_FAILED,
+            message: parseEngineErrorMessage(err),
           });
         }
       },

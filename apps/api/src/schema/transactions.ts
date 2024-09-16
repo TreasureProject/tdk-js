@@ -83,6 +83,7 @@ export const createTransactionBodySchema = Type.Object({
   args: txArgsSchema,
   txOverrides: Type.Optional(txOverridesSchema),
   backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 export const createTransactionReplySchema = Type.Object({
@@ -108,6 +109,7 @@ export const createRawTransactionBodySchema = Type.Object({
   }),
   txOverrides: Type.Optional(Type.Omit(txOverridesSchema, ["value"])),
   backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 export const createRawTransactionReplySchema = Type.Object({
