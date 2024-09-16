@@ -93,6 +93,7 @@ export const withAuth = async (
         jwt: req.headers.authorization.replace("Bearer ", ""),
       });
       if (authResult.valid) {
+        req.authError = undefined;
         req.userId = (authResult.parsedJWT.ctx as UserContext | undefined)?.id;
         req.userAddress = authResult.parsedJWT.sub as AddressString;
         Sentry.setUser({
