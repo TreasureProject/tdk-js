@@ -8,21 +8,19 @@ declare module "fastify" {
   interface FastifyRequest {
     userId: string | undefined;
     userAddress: AddressString | undefined;
-    overrideUserAddress: AddressString | undefined;
     authError: string | undefined;
   }
 }
 
 export const withAuth = async (
   app: FastifyInstance,
-  { auth }: TdkApiContext,
+  { auth, thirdwebAuth }: TdkApiContext,
 ) => {
-  // Parse JWT header and obtain user address in middleware
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
-  app.decorateRequest("overrideUserAddress", undefined);
   app.decorateRequest("authError", undefined);
   app.addHook("onRequest", async (req) => {
+    // Parse user info from JWT token header
     if (req.headers.authorization) {
       try {
         const decoded = await auth.verifyJWT<UserContext>(
@@ -37,13 +35,29 @@ export const withAuth = async (
       } catch (err) {
         req.authError = err instanceof Error ? err.message : "Unknown error";
       }
-    }
 
-    req.overrideUserAddress = req.headers["x-account-address"]?.toString() as
-      | AddressString
-      | undefined;
-    if (req.overrideUserAddress) {
-      Sentry.setUser({ username: req.overrideUserAddress });
+      // Fall back to legacy Thirdweb auth
+      if (!req.userAddress) {
+        try {
+          const authResult = await thirdwebAuth.verifyJWT({
+            jwt: req.headers.authorization.replace("Bearer ", ""),
+          });
+          if (authResult.valid) {
+            req.userId = (
+              authResult.parsedJWT.ctx as UserContext | undefined
+            )?.id;
+            req.userAddress = authResult.parsedJWT.sub as AddressString;
+            Sentry.setUser({
+              id: req.userId,
+              username: req.userAddress,
+            });
+          } else {
+            req.authError = authResult.error;
+          }
+        } catch (err) {
+          req.authError = err instanceof Error ? err.message : "Unknown error";
+        }
+      }
     }
   });
 };
