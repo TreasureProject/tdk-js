@@ -6,7 +6,6 @@ Backend server powering the Treasure Development Kit
 
 - [>= Node 20.11.0](https://nodejs.org/en)
 - [PostgreSQL](https://www.postgresql.org) server
-- AWS credentials set up for Secrets Manager and Key Management Service access
 
 ## Development
 

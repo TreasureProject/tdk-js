@@ -4,7 +4,6 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
-import { createAuth } from "@treasure-dev/auth";
 import { TREASURE_RUBY_CHAIN_DEFINITION } from "@treasure-dev/tdk-core";
 import { http, createConfig, fallback } from "@wagmi/core";
 import {
@@ -15,7 +14,7 @@ import {
 } from "@wagmi/core/chains";
 import Fastify from "fastify";
 import { createThirdwebClient } from "thirdweb";
-import { createAuth as createThirdwebAuth } from "thirdweb/auth";
+import { createAuth } from "thirdweb/auth";
 import { privateKeyToAccount } from "thirdweb/wallets";
 import { defineChain } from "viem";
 
@@ -38,10 +37,6 @@ const main = async () => {
 
   const env = await getEnv();
   const client = createThirdwebClient({ secretKey: env.THIRDWEB_SECRET_KEY });
-  const adminAccount = privateKeyToAccount({
-    client,
-    privateKey: env.THIRDWEB_AUTH_PRIVATE_KEY,
-  });
   const ctx: TdkApiContext = {
     env,
     db: new PrismaClient({
@@ -53,15 +48,12 @@ const main = async () => {
     }),
     client,
     auth: createAuth({
-      kmsKey: env.TREASURE_AUTH_KMS_KEY,
-      issuer: env.THIRDWEB_AUTH_DOMAIN,
-      audience: adminAccount.address,
-      expirationTimeSeconds: 86_400, // 1 day
-    }),
-    thirdwebAuth: createThirdwebAuth({
-      domain: env.THIRDWEB_AUTH_DOMAIN,
+      domain: env.THIRDWEB_AUTH_DOMAIN!,
       client,
-      adminAccount,
+      adminAccount: privateKeyToAccount({
+        client,
+        privateKey: env.THIRDWEB_AUTH_PRIVATE_KEY!,
+      }),
       login: {
         uri: `https://${env.THIRDWEB_AUTH_DOMAIN}`,
       },

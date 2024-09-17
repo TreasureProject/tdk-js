@@ -82,10 +82,6 @@ export const getEnv = async (): Promise<TdkApiEnv> => {
       "",
     THIRDWEB_SECRET_KEY:
       process.env.THIRDWEB_SECRET_KEY ?? envSecret?.THIRDWEB_SECRET_KEY ?? "",
-    TREASURE_AUTH_KMS_KEY:
-      process.env.TREASURE_AUTH_KMS_KEY ??
-      envSecret?.TREASURE_AUTH_KMS_KEY ??
-      "",
     TROVE_API_URL:
       process.env.TROVE_API_URL ??
       envSecret?.TROVE_API_URL ??
