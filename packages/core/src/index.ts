@@ -32,6 +32,7 @@ export {
 
 // Connect
 export { getAllActiveSigners } from "./connect/accounts";
+export { generateAccountSignature } from "./connect/auth";
 export { decodeAuthToken } from "./connect/jwt";
 export {
   type SocialConnectMethod,

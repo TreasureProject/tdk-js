@@ -101,7 +101,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     try {
       const result = await logInWithSocial({
         client,
-        network: "google",
+        method: "google",
         apiUri,
         chainId,
         sessionOptions,
