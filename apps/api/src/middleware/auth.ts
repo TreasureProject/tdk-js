@@ -10,21 +10,18 @@ declare module "fastify" {
   interface FastifyRequest {
     userId: string | undefined;
     userAddress: AddressString | undefined;
-    backendWallet: AddressString;
+    backendWallet: AddressString | undefined;
     authError: string | undefined;
   }
 }
 
 export const withAuth = async (
   app: FastifyInstance,
-  { auth, thirdwebAuth, env }: TdkApiContext,
+  { auth, thirdwebAuth }: TdkApiContext,
 ) => {
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
-  app.decorateRequest(
-    "backendWallet",
-    env.DEFAULT_BACKEND_WALLET as AddressString,
-  );
+  app.decorateRequest("backendWallet", undefined);
   app.decorateRequest("authError", undefined);
   app.addHook("onRequest", async (req) => {
     // Check for explicit setting of user address and recover backend wallet address from signature
@@ -52,18 +49,6 @@ export const withAuth = async (
       Sentry.setUser({ username: req.userAddress });
       return;
     }
-
-    // Fall back to backend wallet from params
-    const backendWallet =
-      req.params &&
-      typeof req.params === "object" &&
-      "backendWallet" in req.params
-        ? req.params.backendWallet
-        : undefined;
-    // TODO: Remove default backend wallet when all partners upgrade to their own
-    req.backendWallet = isHex(backendWallet)
-      ? backendWallet
-      : (env.DEFAULT_BACKEND_WALLET as AddressString);
 
     // All other auth methods require an Authorization header
     if (!req.headers.authorization) {

@@ -71,6 +71,7 @@ export const transactionsRoutes =
             functionName,
             args,
             txOverrides,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
@@ -108,7 +109,7 @@ export const transactionsRoutes =
           const { result } = await engine.contract.write(
             chainId.toString(),
             address,
-            req.backendWallet,
+            req.backendWallet ?? backendWallet,
             {
               abi: transactionAbi,
               functionName,
@@ -160,6 +161,7 @@ export const transactionsRoutes =
             value = "0x00",
             data,
             txOverrides,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
@@ -176,7 +178,7 @@ export const transactionsRoutes =
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
             chainId.toString(),
-            req.backendWallet,
+            req.backendWallet ?? backendWallet,
             {
               toAddress: to,
               value: value,

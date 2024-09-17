@@ -186,6 +186,7 @@ export const magicswapRoutes =
           nftsOut,
           isExactOut,
           slippage,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
@@ -244,7 +245,7 @@ export const magicswapRoutes =
             engine,
             chainId,
             contractAddress: swapArguments.address,
-            backendWallet: req.backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: swapArguments.functionName,
@@ -302,6 +303,7 @@ export const magicswapRoutes =
           amount1Min,
           nfts0,
           nfts1,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
@@ -339,7 +341,7 @@ export const magicswapRoutes =
             engine,
             chainId,
             contractAddress: addLiquidityArgs.address,
-            backendWallet: req.backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: addLiquidityArgs.functionName,
@@ -397,6 +399,7 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           swapLeftover = true,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
@@ -434,7 +437,7 @@ export const magicswapRoutes =
             engine,
             chainId,
             contractAddress: removeLiquidityArgs.address,
-            backendWallet: req.backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: removeLiquidityArgs.functionName,
