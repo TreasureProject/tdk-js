@@ -26,7 +26,14 @@ import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const authRoutes =
-  ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({
+    env,
+    auth,
+    thirdwebAuth,
+    db,
+    engine,
+    wagmiConfig,
+  }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Querystring: ReadLoginPayloadQuerystring;
@@ -44,7 +51,7 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        const payload = await auth.generatePayload({
+        const payload = await thirdwebAuth.generatePayload({
           address: req.query.address,
           chainId: req.chainId,
         });
@@ -65,7 +72,7 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        const verifiedPayload = await auth.verifyPayload(req.body);
+        const verifiedPayload = await thirdwebAuth.verifyPayload(req.body);
         if (!verifiedPayload.valid) {
           return reply
             .code(400)
@@ -134,10 +141,11 @@ export const authRoutes =
           smartAccountAddress: user.address,
         };
 
-        // Add user data to JWT payload's context
         const [authToken, allActiveSigners, profile] = await Promise.all([
-          auth.generateJWT({
-            payload,
+          auth.generateJWT(user.address, {
+            issuer: payload.domain,
+            issuedAt: new Date(payload.issued_at),
+            expiresAt: new Date(payload.expiration_time),
             context: userContext,
           }),
           getAllActiveSigners({

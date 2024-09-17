@@ -16,6 +16,7 @@ COPY . .
 RUN npm install --include=dev
 
 # Build packages
+RUN npm run build:auth
 RUN npm run build:core
 
 # Build application
