@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/auth",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Authentication token utilities for the Treasure ecosystem",
   "keywords": [
     "treasure"
