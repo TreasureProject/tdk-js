@@ -71,9 +71,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build packages
-        run: |
-          npm run build:auth
-          npm run build:core
+        run: npm run build:core
       - name: Build code
         run: npm run build:api
       - name: Create Sentry release
