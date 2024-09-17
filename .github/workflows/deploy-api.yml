@@ -48,6 +48,7 @@ jobs:
             DATABASE_SECRET_NAME=${{ vars.DATABASE_SECRET_NAME }}
             SENTRY_DSN=${{ vars.SENTRY_DSN }}
             SENTRY_ENVIRONMENT=${{ vars.ENVIRONMENT }}
+            TREASURE_AUTH_KMS_KEY=${{ vars.TREASURE_AUTH_KMS_KEY }}
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
