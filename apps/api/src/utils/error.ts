@@ -72,3 +72,12 @@ export const parseEngineErrorMessage = (err: unknown) => {
 
   return message ? normalizeEngineErrorMessage(message) : "Unknown error";
 };
+
+export const throwUnauthorizedError = (message: string) => {
+  throw new TdkError({
+    name: TDK_ERROR_NAMES.AuthError,
+    code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
+    message: "Unauthorized",
+    data: { authError: message },
+  });
+};
