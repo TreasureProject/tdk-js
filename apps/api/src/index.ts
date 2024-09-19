@@ -32,10 +32,9 @@ import { transactionsRoutes } from "./routes/transactions";
 import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { getEnv } from "./utils/env";
+import { log } from "./utils/log";
 
 const main = async () => {
-  const app = Fastify().withTypeProvider<TypeBoxTypeProvider>();
-
   const env = await getEnv();
   const client = createThirdwebClient({ secretKey: env.THIRDWEB_SECRET_KEY });
   const adminAccount = privateKeyToAccount({
@@ -113,6 +112,10 @@ const main = async () => {
     }),
   };
 
+  const app = Fastify({
+    loggerInstance: process.env.NODE_ENV === "development" ? log : undefined,
+  }).withTypeProvider<TypeBoxTypeProvider>();
+
   // Middleware
   Sentry.setupFastifyErrorHandler(app);
   await withSwagger(app);
@@ -154,13 +157,11 @@ const main = async () => {
 
   // Start server
   await app.ready();
-  app.listen({ host: "0.0.0.0", port: Number(env.PORT) }, (err, address) => {
+  app.listen({ host: "0.0.0.0", port: Number(env.PORT) }, (err) => {
     if (err) {
-      console.error("Error starting server:", err);
+      app.log.error("Error starting server:", err);
       process.exit(1);
     }
-
-    console.log(`Server listening at ${address}`);
   });
 };
 

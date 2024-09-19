@@ -5,6 +5,7 @@ import {
 import "dotenv/config";
 
 import type { TdkApiEnv, TdkDbSecret } from "../types";
+import { log } from "./log";
 
 const AWS_REGION = process.env.AWS_REGION ?? "us-east-1";
 const DATABASE_SECRET_NAME =
@@ -16,7 +17,7 @@ const client = new SecretsManagerClient({
 });
 
 const getSecretJson = async (name: string) => {
-  console.log("Fetching secret:", name);
+  log.info(`Fetching secret: ${name}`);
 
   try {
     const response = await client.send(
@@ -29,7 +30,7 @@ const getSecretJson = async (name: string) => {
       return JSON.parse(response.SecretString);
     }
   } catch (err) {
-    console.error(`Error fetching ${name} secret:`, err);
+    log.error(`Error fetching ${name} secret: ${err}`);
   }
 
   return undefined;
@@ -37,7 +38,7 @@ const getSecretJson = async (name: string) => {
 
 const getDatabaseUrl = async () => {
   if (process.env.DATABASE_URL) {
-    console.log("Using database connection string from environment");
+    log.info("Using database connection string from environment");
     return process.env.DATABASE_URL;
   }
 
@@ -45,11 +46,11 @@ const getDatabaseUrl = async () => {
     | TdkDbSecret
     | undefined;
   if (!secret) {
-    console.error("No database connection string found");
+    log.error("No database connection string found");
     return undefined;
   }
 
-  console.log("Using database connection string from secret");
+  log.info("Using database connection string from secret");
   const { engine, username, password, host, port, dbname } = secret;
   return `${engine}://${username}:${password}@${host}:${port}/${dbname}`;
 };

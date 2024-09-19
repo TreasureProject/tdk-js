@@ -1,4 +1,4 @@
 {
   "ignore": ["./packages/*/dist/**/*", "./examples/connect-electron/**/*"],
-  "ignoreDependencies": ["tslib"]
+  "ignoreDependencies": ["pino-pretty", "tslib"]
 }
