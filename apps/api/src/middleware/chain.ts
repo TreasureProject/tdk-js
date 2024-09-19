@@ -9,7 +9,7 @@ declare module "fastify" {
 }
 
 export const withChain = async (app: FastifyInstance) => {
-  app.decorateRequest("chainId", null);
+  app.decorateRequest("chainId");
   app.addHook("onRequest", async (req) => {
     req.chainId =
       typeof req.headers["x-chain-id"] === "string"
