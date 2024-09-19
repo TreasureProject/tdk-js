@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { DEFAULT_TDK_CHAIN_ID } from "@treasure-dev/tdk-core";
-import type { FastifyInstance } from "fastify";
+
+import type { App } from "../utils/app";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -8,7 +9,7 @@ declare module "fastify" {
   }
 }
 
-export const withChain = async (app: FastifyInstance) => {
+export const withChain = (app: App) => {
   app.decorateRequest("chainId");
   app.addHook("onRequest", async (req) => {
     req.chainId =

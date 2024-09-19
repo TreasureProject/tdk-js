@@ -1,9 +1,9 @@
 import * as Sentry from "@sentry/node";
 import type { AddressString, UserContext } from "@treasure-dev/tdk-core";
-import type { FastifyInstance } from "fastify";
 import { hashMessage, isHex, recoverAddress } from "viem";
 
 import type { TdkApiContext } from "../types";
+import type { App } from "../utils/app";
 import { throwUnauthorizedError } from "../utils/error";
 
 declare module "fastify" {
@@ -15,10 +15,7 @@ declare module "fastify" {
   }
 }
 
-export const withAuth = async (
-  app: FastifyInstance,
-  { auth, thirdwebAuth }: TdkApiContext,
-) => {
+export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
   app.decorateRequest("backendWallet", undefined);
