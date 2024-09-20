@@ -208,6 +208,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
       wallet,
       chainId,
       tdk,
+      sessions: user.allActiveSigners,
       options: sessionOptions,
     });
   }
