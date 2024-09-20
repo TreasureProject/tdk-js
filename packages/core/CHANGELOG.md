@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 2.6.1
+
+### Patch Changes
+
+- 291e636: Allow string type for values when sending raw transactions
+
 ## 2.6.0
 
 ### Minor Changes
