@@ -7,6 +7,7 @@ import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
 import "../middleware/swagger";
+import { getUser } from "thirdweb";
 import type {
   LoginBody,
   LoginReply,
@@ -22,12 +23,10 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
-import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const authRoutes =
   ({
-    env,
     auth,
     thirdwebAuth,
     db,
@@ -116,17 +115,17 @@ export const authRoutes =
 
           if (adminAddress) {
             // Look up any associated user details in the embedded wallet
-            const embeddedWalletUser = await fetchEmbeddedWalletUser(
-              adminAddress,
-              env.THIRDWEB_SECRET_KEY,
-            );
-            if (embeddedWalletUser?.email) {
+            const thirdwebUser = await getUser({
+              client,
+              walletAddress: adminAddress,
+            });
+            if (thirdwebUser?.email) {
               user = await db.user.update({
                 where: {
                   id: user.id,
                 },
                 data: {
-                  email: embeddedWalletUser.email,
+                  email: thirdwebUser.email,
                 },
                 select: USER_SELECT_FIELDS,
               });

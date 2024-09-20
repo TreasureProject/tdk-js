@@ -3,7 +3,7 @@ import {
   SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager";
 import { type Static, Type } from "@sinclair/typebox";
-import { Value } from "@sinclair/typebox/value";
+import { AssertError, Value } from "@sinclair/typebox/value";
 import "dotenv/config";
 
 import { log } from "./log";
@@ -107,10 +107,19 @@ export const getEnv = async () => {
   const [databaseUrl, envSecret] = (await Promise.all([
     getDatabaseUrl(),
     getSecretJson(API_ENV_SECRET_NAME),
-  ])) as [string | undefined, TdkApiEnv | undefined];
-  return Value.Parse(envSchema, {
-    ...process.env,
-    ...envSecret,
-    DATABASE_URL: databaseUrl,
-  });
+  ])) as [string | undefined, object | undefined];
+  try {
+    const env = Value.Parse(envSchema, {
+      ...envSecret,
+      ...process.env,
+      DATABASE_URL: databaseUrl,
+    });
+    return env;
+  } catch (err) {
+    if (err instanceof AssertError && err.error) {
+      throw new Error(`${err.error.message}: ${err.error.path}`);
+    }
+
+    throw err;
+  }
 };
