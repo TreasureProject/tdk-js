@@ -47,14 +47,14 @@ export const harvestersRoutes =
       },
       async (req, reply) => {
         const {
-          chainId,
+          chain,
           params: { id },
           userAddress,
         } = req;
 
         const harvesterAddress = id as AddressString;
         const harvesterInfo = await getHarvesterInfo({
-          chainId,
+          chainId: chain.id,
           harvesterAddress,
           wagmiConfig,
         });
@@ -70,7 +70,7 @@ export const harvestersRoutes =
 
         const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
-              chainId,
+              chainId: chain.id,
               harvesterInfo,
               userAddress,
               inventoryApiUrl: env.TROVE_API_URL,
@@ -104,14 +104,14 @@ export const harvestersRoutes =
       },
       async (req, reply) => {
         const {
-          chainId,
+          chain,
           params: { id },
           userAddress,
         } = req;
 
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
-            chainId,
+            chainId: chain.id,
             harvesterAddress: id,
             userAddress,
             inventoryApiUrl: env.TROVE_API_URL,

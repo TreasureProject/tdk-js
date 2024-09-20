@@ -1,15 +1,16 @@
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
-import type { FastifyInstance } from "fastify";
+
 import {
   badRequestReplySchema,
   forbiddenReplySchema,
   internalServerErrorReplySchema,
   unauthorizedReplySchema,
 } from "../schema";
+import type { App } from "../utils/app";
 
-export const withSwagger = async (app: FastifyInstance) => {
-  await app.register(swagger, {
+export const withSwagger = (app: App) => {
+  app.register(swagger, {
     mode: "dynamic",
     openapi: {
       openapi: "3.1.0",
@@ -89,7 +90,7 @@ export const withSwagger = async (app: FastifyInstance) => {
     },
   });
 
-  await app.register(swaggerUi, {
+  app.register(swaggerUi, {
     routePrefix: "/",
     initOAuth: {},
     uiConfig: {

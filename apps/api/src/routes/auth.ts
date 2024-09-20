@@ -1,7 +1,7 @@
 import {
   DEFAULT_TDK_CHAIN_ID,
   type UserContext,
-  getAllActiveSigners,
+  getUserSessions,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
@@ -31,8 +31,8 @@ export const authRoutes =
     auth,
     thirdwebAuth,
     db,
+    client,
     engine,
-    wagmiConfig,
   }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
@@ -53,7 +53,7 @@ export const authRoutes =
       async (req, reply) => {
         const payload = await thirdwebAuth.generatePayload({
           address: req.query.address,
-          chainId: req.chainId,
+          chainId: req.chain.id,
         });
         reply.send(payload);
       },
@@ -141,17 +141,17 @@ export const authRoutes =
           smartAccountAddress: user.address,
         };
 
-        const [authToken, allActiveSigners, profile] = await Promise.all([
+        const [authToken, userSessions, profile] = await Promise.all([
           auth.generateJWT(user.address, {
             issuer: payload.domain,
             issuedAt: new Date(payload.issued_at),
             expiresAt: new Date(payload.expiration_time),
             context: userContext,
           }),
-          getAllActiveSigners({
-            chainId: Number(chainId),
+          getUserSessions({
+            client,
+            chain: req.chain,
             address: user.address,
-            wagmiConfig,
           }),
           db.userProfile.upsert({
             where: { userId: user.id },
@@ -161,6 +161,17 @@ export const authRoutes =
           }),
         ]);
 
+        const sessions = userSessions.map((session) => ({
+          ...session,
+          approvedTargets: session.approvedTargets.map((target) =>
+            target.toLowerCase(),
+          ),
+          nativeTokenLimitPerTransaction:
+            session.nativeTokenLimitPerTransaction.toString(),
+          startTimestamp: session.startTimestamp.toString(),
+          endTimestamp: session.endTimestamp.toString(),
+        }));
+
         reply.send({
           token: authToken,
           user: {
@@ -168,16 +179,9 @@ export const authRoutes =
             ...user,
             ...profile,
             ...transformUserProfileResponseFields(profile),
-            allActiveSigners: allActiveSigners.map((activeSigner) => ({
-              ...activeSigner,
-              approvedTargets: activeSigner.approvedTargets.map((target) =>
-                target.toLowerCase(),
-              ),
-              nativeTokenLimitPerTransaction:
-                activeSigner.nativeTokenLimitPerTransaction.toString(),
-              startTimestamp: activeSigner.startTimestamp.toString(),
-              endTimestamp: activeSigner.endTimestamp.toString(),
-            })),
+            sessions,
+            // Fields for backwards compatibility
+            allActiveSigners: sessions,
           },
         });
       },

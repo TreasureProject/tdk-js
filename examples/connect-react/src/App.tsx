@@ -122,9 +122,9 @@ export const App = () => {
           <>
             <div>
               <h1 className="font-medium text-xl">Active Sessions</h1>
-              {user.allActiveSigners.length > 0 ? (
+              {user.sessions.length > 0 ? (
                 <ul className="space-y-3 text-sm">
-                  {user.allActiveSigners
+                  {user.sessions
                     .sort(
                       (a, b) => Number(b.endTimestamp) - Number(a.endTimestamp),
                     )

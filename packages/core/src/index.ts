@@ -31,7 +31,6 @@ export {
 } from "./utils/date";
 
 // Connect
-export { getAllActiveSigners } from "./connect/accounts";
 export { generateAccountSignature } from "./connect/auth";
 export { decodeAuthToken } from "./connect/jwt";
 export {
@@ -51,8 +50,9 @@ export {
 } from "./connect/login";
 export {
   createSession,
-  validateSession,
+  getUserSessions,
   startUserSession,
+  validateSession,
 } from "./connect/session";
 
 // Bridgeworld

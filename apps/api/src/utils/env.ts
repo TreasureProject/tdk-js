@@ -2,21 +2,56 @@ import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager";
+import { type Static, Type } from "@sinclair/typebox";
+import { Value } from "@sinclair/typebox/value";
 import "dotenv/config";
 
-import type { TdkApiEnv, TdkDbSecret } from "../types";
+import { log } from "./log";
 
-const AWS_REGION = process.env.AWS_REGION ?? "us-east-1";
-const DATABASE_SECRET_NAME =
-  process.env.DATABASE_SECRET_NAME ?? "production-identity-db";
-const API_ENV_SECRET_NAME = process.env.API_ENV_SECRET_NAME ?? "tdkApiEnv";
+// Parse local environment variables
+const { AWS_REGION, DATABASE_SECRET_NAME, API_ENV_SECRET_NAME, DATABASE_URL } =
+  Value.Parse(
+    Type.Object({
+      AWS_REGION: Type.String({ default: "us-east-1" }),
+      DATABASE_SECRET_NAME: Type.String({ default: "production-identity-db" }),
+      API_ENV_SECRET_NAME: Type.String({ default: "tdkApiEnv" }),
+      DATABASE_URL: Type.Optional(Type.String()),
+    }),
+    process.env,
+  );
 
+// Define remote environment variables schema
+const envSchema = Type.Object({
+  PORT: Type.Number({ default: 8080 }),
+  DATABASE_URL: Type.String(),
+  DEFAULT_BACKEND_WALLET: Type.String(),
+  THIRDWEB_AUTH_DOMAIN: Type.String(),
+  THIRDWEB_AUTH_PRIVATE_KEY: Type.String(),
+  THIRDWEB_CLIENT_ID: Type.String(),
+  THIRDWEB_ENGINE_URL: Type.String(),
+  THIRDWEB_ENGINE_ACCESS_TOKEN: Type.String(),
+  THIRDWEB_SECRET_KEY: Type.String(),
+  TREASURE_AUTH_KMS_KEY: Type.String(),
+  TROVE_API_URL: Type.String({ default: "https://trove-api.treasure.lol" }),
+  TROVE_API_KEY: Type.String(),
+  ENGINE_MAINTENANCE_MODE_ENABLED: Type.Boolean({ default: false }),
+  ENGINE_TRANSACTION_SIMULATION_ENABLED: Type.Boolean({ default: false }),
+});
+
+export type TdkApiEnv = Static<typeof envSchema>;
+
+// Create AWS Secrets Manager client
 const client = new SecretsManagerClient({
   region: AWS_REGION,
 });
 
+/**
+ * Fetches a secret from AWS Secrets Manager and parses it as JSON
+ * @param name AWS Secrets Manager secret name
+ * @returns Parsed secret data
+ */
 const getSecretJson = async (name: string) => {
-  console.log("Fetching secret:", name);
+  log.info(`Fetching secret: ${name}`);
 
   try {
     const response = await client.send(
@@ -29,73 +64,53 @@ const getSecretJson = async (name: string) => {
       return JSON.parse(response.SecretString);
     }
   } catch (err) {
-    console.error(`Error fetching ${name} secret:`, err);
+    log.warn(`Could not fetch secret ${name}: ${err}`);
   }
 
   return undefined;
 };
 
+/**
+ * Constructs a database connection string from the local environment variables or the database secret
+ * @returns Database connection string
+ */
 const getDatabaseUrl = async () => {
-  if (process.env.DATABASE_URL) {
-    console.log("Using database connection string from environment");
-    return process.env.DATABASE_URL;
+  if (DATABASE_URL) {
+    log.info("Using database connection string from environment");
+    return DATABASE_URL;
   }
 
   const secret = (await getSecretJson(DATABASE_SECRET_NAME)) as
-    | TdkDbSecret
+    | {
+        dbname: string;
+        engine: string;
+        host: string;
+        password: string;
+        port: number;
+        username: string;
+      }
     | undefined;
   if (!secret) {
-    console.error("No database connection string found");
     return undefined;
   }
 
-  console.log("Using database connection string from secret");
+  log.info("Using database connection string from secret");
   const { engine, username, password, host, port, dbname } = secret;
   return `${engine}://${username}:${password}@${host}:${port}/${dbname}`;
 };
 
-export const getEnv = async (): Promise<TdkApiEnv> => {
+/**
+ * Validates and constructs the environment variables object by combining local environment variables and secrets
+ * @returns Parsed environment variables
+ */
+export const getEnv = async () => {
   const [databaseUrl, envSecret] = (await Promise.all([
     getDatabaseUrl(),
     getSecretJson(API_ENV_SECRET_NAME),
   ])) as [string | undefined, TdkApiEnv | undefined];
-  return {
-    PORT: process.env.PORT ?? envSecret?.PORT ?? "8080",
-    DATABASE_URL: databaseUrl ?? "",
-    DEFAULT_BACKEND_WALLET:
-      process.env.DEFAULT_BACKEND_WALLET ??
-      envSecret?.DEFAULT_BACKEND_WALLET ??
-      "",
-    THIRDWEB_AUTH_DOMAIN:
-      process.env.THIRDWEB_AUTH_DOMAIN ?? envSecret?.THIRDWEB_AUTH_DOMAIN ?? "",
-    THIRDWEB_AUTH_PRIVATE_KEY:
-      process.env.THIRDWEB_AUTH_PRIVATE_KEY ??
-      envSecret?.THIRDWEB_AUTH_PRIVATE_KEY ??
-      "",
-    THIRDWEB_CLIENT_ID:
-      process.env.THIRDWEB_CLIENT_ID ?? envSecret?.THIRDWEB_CLIENT_ID ?? "",
-    THIRDWEB_ENGINE_URL:
-      process.env.THIRDWEB_ENGINE_URL ?? envSecret?.THIRDWEB_ENGINE_URL ?? "",
-    THIRDWEB_ENGINE_ACCESS_TOKEN:
-      process.env.THIRDWEB_ENGINE_ACCESS_TOKEN ??
-      envSecret?.THIRDWEB_ENGINE_ACCESS_TOKEN ??
-      "",
-    THIRDWEB_SECRET_KEY:
-      process.env.THIRDWEB_SECRET_KEY ?? envSecret?.THIRDWEB_SECRET_KEY ?? "",
-    TREASURE_AUTH_KMS_KEY:
-      process.env.TREASURE_AUTH_KMS_KEY ??
-      envSecret?.TREASURE_AUTH_KMS_KEY ??
-      "",
-    TROVE_API_URL:
-      process.env.TROVE_API_URL ??
-      envSecret?.TROVE_API_URL ??
-      "https://trove-api.treasure.lol",
-    TROVE_API_KEY: process.env.TROVE_API_KEY ?? envSecret?.TROVE_API_KEY ?? "",
-    ENGINE_MAINTENANCE_MODE_ENABLED:
-      (process.env.ENGINE_MAINTENANCE_MODE_ENABLED ??
-        envSecret?.ENGINE_MAINTENANCE_MODE_ENABLED) === "true",
-    ENGINE_TRANSACTION_SIMULATION_ENABLED:
-      (process.env.ENGINE_TRANSACTION_SIMULATION_ENABLED ??
-        envSecret?.ENGINE_TRANSACTION_SIMULATION_ENABLED) === "true",
-  };
+  return Value.Parse(envSchema, {
+    ...process.env,
+    ...envSecret,
+    DATABASE_URL: databaseUrl,
+  });
 };
