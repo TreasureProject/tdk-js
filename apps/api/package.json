@@ -31,11 +31,11 @@
     "dotenv": "^16.3.1",
     "fastify": "^5.0.0",
     "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2",
     "thirdweb": "^5.48.1",
     "viem": "^2.5.0"
   },
   "devDependencies": {
-    "pino-pretty": "^11.2.2",
     "prisma": "^5.3.0"
   },
   "engines": {
