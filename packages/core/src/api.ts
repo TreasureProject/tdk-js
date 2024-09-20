@@ -246,7 +246,7 @@ export class TDKAPI {
     },
     sendRaw: async (
       params: Omit<CreateRawTransactionBody, "value"> & {
-        value?: bigint;
+        value?: bigint | string;
       },
       options?: {
         skipWaitForCompletion?: boolean;
@@ -261,7 +261,7 @@ export class TDKAPI {
         "/transactions/raw",
         {
           ...params,
-          value: params.value ? toHex(params.value) : undefined,
+          value: params.value ? toHex(BigInt(params.value)) : undefined,
           backendWallet: params.backendWallet ?? this.backendWallet,
         },
         {
