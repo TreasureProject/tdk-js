@@ -29,7 +29,7 @@ export const projectsRoutes =
           },
         },
       },
-      async ({ chainId, params: { slug } }, reply) => {
+      async ({ chain, params: { slug } }, reply) => {
         const project = await db.project.findUnique({
           where: { slug },
           select: {
@@ -42,7 +42,7 @@ export const projectsRoutes =
             color: true,
             backendWallets: {
               where: {
-                chainId,
+                chainId: chain.id,
               },
               select: {
                 address: true,
@@ -50,7 +50,7 @@ export const projectsRoutes =
             },
             callTargets: {
               where: {
-                chainId,
+                chainId: chain.id,
               },
               select: {
                 address: true,

@@ -1,4 +1,4 @@
-import { getAllActiveSigners } from "@treasure-dev/tdk-core";
+import { getUserSessions } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
@@ -29,7 +29,7 @@ import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply | ErrorReply;
@@ -47,7 +47,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { chainId, userId, userAddress, authError } = req;
+        const { chain, userId, userAddress, authError } = req;
         if (!userId || !userAddress) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.AuthError,
@@ -57,7 +57,7 @@ export const usersRoutes =
           });
         }
 
-        const [profile, allActiveSigners] = await Promise.all([
+        const [profile, userSessions] = await Promise.all([
           db.userProfile.upsert({
             where: { userId },
             update: {},
@@ -69,10 +69,10 @@ export const usersRoutes =
               },
             },
           }),
-          getAllActiveSigners({
-            chainId,
+          getUserSessions({
+            client,
+            chain,
             address: userAddress,
-            wagmiConfig,
           }),
         ]);
 
@@ -86,22 +86,25 @@ export const usersRoutes =
         }
 
         const { user, ...restProfile } = profile;
+        const sessions = userSessions.map((session) => ({
+          ...session,
+          approvedTargets: session.approvedTargets.map((target) =>
+            target.toLowerCase(),
+          ),
+          nativeTokenLimitPerTransaction:
+            session.nativeTokenLimitPerTransaction.toString(),
+          startTimestamp: session.startTimestamp.toString(),
+          endTimestamp: session.endTimestamp.toString(),
+        }));
 
         reply.send({
           ...user,
           ...restProfile,
           ...transformUserProfileResponseFields(restProfile),
+          sessions,
+          // Fields for backwards compatibility
           smartAccountAddress: user.address,
-          allActiveSigners: allActiveSigners.map((activeSigner) => ({
-            ...activeSigner,
-            approvedTargets: activeSigner.approvedTargets.map((target) =>
-              target.toLowerCase(),
-            ),
-            nativeTokenLimitPerTransaction:
-              activeSigner.nativeTokenLimitPerTransaction.toString(),
-            startTimestamp: activeSigner.startTimestamp.toString(),
-            endTimestamp: activeSigner.endTimestamp.toString(),
-          })),
+          allActiveSigners: sessions,
         });
       },
     );
@@ -189,6 +192,7 @@ export const usersRoutes =
           ...user,
           ...restProfile,
           ...transformUserProfileResponseFields(restProfile),
+          // Fields for backwards compatibility
           smartAccountAddress: user.address,
         });
       },
@@ -211,7 +215,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError } = req;
+        const { chain, userAddress, authError } = req;
         if (!userAddress) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.AuthError,
@@ -221,22 +225,22 @@ export const usersRoutes =
           });
         }
 
-        const allActiveSigners = await getAllActiveSigners({
-          chainId: Number(req.query.chainId),
+        const sessions = await getUserSessions({
+          client,
+          chain,
           address: userAddress,
-          wagmiConfig,
         });
 
         reply.send(
-          allActiveSigners.map((activeSigner) => ({
-            ...activeSigner,
-            approvedTargets: activeSigner.approvedTargets.map((target) =>
+          sessions.map((session) => ({
+            ...session,
+            approvedTargets: session.approvedTargets.map((target) =>
               target.toLowerCase(),
             ),
             nativeTokenLimitPerTransaction:
-              activeSigner.nativeTokenLimitPerTransaction.toString(),
-            startTimestamp: activeSigner.startTimestamp.toString(),
-            endTimestamp: activeSigner.endTimestamp.toString(),
+              session.nativeTokenLimitPerTransaction.toString(),
+            startTimestamp: session.startTimestamp.toString(),
+            endTimestamp: session.endTimestamp.toString(),
           })),
         );
       },
