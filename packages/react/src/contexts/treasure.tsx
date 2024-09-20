@@ -168,6 +168,7 @@ const TreasureProviderInner = ({
         wallet,
         chainId: chain.id,
         tdk,
+        sessions: nextUser.allActiveSigners,
         options: sessionOptions,
       });
     }
