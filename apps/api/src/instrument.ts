@@ -9,6 +9,7 @@ Sentry.init({
   environment,
   integrations: [nodeProfilingIntegration(), Sentry.prismaIntegration()],
   sampleRate: isDevelopment ? 1 : 0.8,
-  tracesSampleRate: isDevelopment ? 1 : 0.6,
+  // instrumentation fails when included: https://github.com/getsentry/sentry-javascript/issues/13662
+  // tracesSampleRate: isDevelopment ? 1 : 0.6,
   profilesSampleRate: isDevelopment ? 1 : 0.6,
 });
