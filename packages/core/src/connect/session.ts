@@ -1,21 +1,71 @@
 import {
+  type Chain,
   type ThirdwebClient,
   defineChain,
   getContract,
   sendTransaction,
   toEther,
 } from "thirdweb";
-import { addSessionKey } from "thirdweb/extensions/erc4337";
+import {
+  addSessionKey,
+  getAllActiveSigners,
+  getAllAdmins,
+} from "thirdweb/extensions/erc4337";
 import type { Account, Wallet } from "thirdweb/wallets";
 
+import type { TDKAPI } from "../api";
+import type {
+  AddressString,
+  Session,
+  SessionOptions,
+  TreasureConnectClient,
+} from "../types";
 import {
   getDateHoursFromNow,
   getDateSecondsFromNow,
   getDateYearsFromNow,
 } from "../utils/date";
 
-import type { TDKAPI } from "../api";
-import type { Session, SessionOptions, TreasureConnectClient } from "../types";
+export const getUserSessions = async ({
+  client,
+  chain,
+  address,
+}: {
+  client: ThirdwebClient;
+  chain: Chain;
+  address: string;
+}) => {
+  const contract = getContract({
+    client,
+    chain,
+    address,
+  });
+  const [allActiveSigners, allAdmins] = await Promise.all([
+    getAllActiveSigners({ contract }),
+    getAllAdmins({ contract }),
+  ]);
+  return [
+    ...allActiveSigners.map((activeSigner) => ({
+      ...activeSigner,
+      isAdmin: allAdmins.includes(activeSigner.signer),
+      signer: activeSigner.signer as AddressString,
+      approvedTargets: activeSigner.approvedTargets.map(
+        (target) => target as AddressString,
+      ),
+    })),
+    ...allAdmins.map((adminAddress) => ({
+      isAdmin: true,
+      signer: adminAddress as AddressString,
+      approvedTargets: [],
+      nativeTokenLimitPerTransaction: 0n,
+      startTimestamp: 0n,
+      // Date in the distant future because admins don't expire until they're explicitly removed
+      endTimestamp: BigInt(
+        Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 10,
+      ),
+    })),
+  ];
+};
 
 export const validateSession = ({
   backendWallet,
@@ -129,12 +179,14 @@ export const startUserSession = async ({
   wallet,
   chainId,
   tdk,
+  sessions: userSessions,
   options,
 }: {
   client: TreasureConnectClient;
   wallet: Wallet | undefined;
   chainId: number;
   tdk: TDKAPI;
+  sessions?: Session[];
   options: SessionOptions;
 }) => {
   // Skip session creation if not required by app
@@ -146,7 +198,7 @@ export const startUserSession = async ({
   const walletChainId = wallet?.getChain()?.id;
 
   // Skip session creation if user has an active session already
-  const sessions = await tdk.user.getSessions({ chainId });
+  const sessions = userSessions ?? (await tdk.user.getSessions({ chainId }));
   const hasActiveSession = validateSession({
     ...options,
     sessions,

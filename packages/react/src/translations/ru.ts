@@ -10,12 +10,13 @@ export const ru = {
       header: "Подключиться к <1>{{appName}}</1>",
       footer: "На платформе <ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
-        google: "Google",
-        telegram: "Telegram",
-        discord: "Discord",
         apple: "Apple",
+        discord: "Discord",
+        google: "Google",
         passkey: "Ключ доступа",
+        telegram: "Telegram",
         wallet: "Кошелёк",
+        x: "X",
       },
       verify: {
         header: "Проверить код",

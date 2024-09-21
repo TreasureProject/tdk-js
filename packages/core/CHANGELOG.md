@@ -1,5 +1,22 @@
 # @treasure-dev/tdk-core
 
+## 2.6.1
+
+### Patch Changes
+
+- 291e636: Allow string type for values when sending raw transactions
+
+## 2.6.0
+
+### Minor Changes
+
+- d9afa84: Updated TDK API client wait for transaction completion behavior
+
+### Patch Changes
+
+- 28cfa6b: Added X connect method option
+- 947e37c: Added utility for signing account signature message as backend wallet
+
 ## 2.5.0
 
 ### Minor Changes

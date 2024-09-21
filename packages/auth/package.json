@@ -1,17 +1,14 @@
 {
-  "name": "@treasure-dev/tdk-core",
-  "version": "2.6.1",
-  "description": "Treasure Development Kit for TypeScript/JavaScript-based projects",
+  "name": "@treasure-dev/auth",
+  "version": "1.0.0",
+  "description": "Authentication token utilities for the Treasure ecosystem",
   "keywords": [
-    "treasure",
-    "tdk",
-    "bridgeworld",
-    "arbitrum"
+    "treasure"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TreasureProject/tdk-js.git",
-    "directory": "packages/core"
+    "directory": "packages/auth"
   },
   "bugs": {
     "url": "https://github.com/TreasureProject/tdk-js/issues",
@@ -36,15 +33,11 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "@sushiswap/tines": "^1.0.3",
-    "@wagmi/core": "^2.9.1",
-    "abitype": "^1.0.2",
-    "jwt-decode": "^4.0.0",
-    "thirdweb": "^5.48.1",
-    "viem": "^2.7.6"
+    "@aws-sdk/client-kms": "^3.540.0",
+    "jsonwebtoken": "^9.0.2"
   },
-  "peerDependencies": {
-    "thirdweb": "^5.55.0"
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6"
   },
   "engines": {
     "node": ">=14.0.0"

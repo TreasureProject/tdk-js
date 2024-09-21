@@ -1,5 +1,11 @@
 # @treasure-dev/tailwind-config
 
+## 3.0.2
+
+### Patch Changes
+
+- 28cfa6b: Removed unused CSS properties
+
 ## 3.0.0
 
 ### Major Changes

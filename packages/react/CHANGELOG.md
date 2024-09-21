@@ -1,5 +1,22 @@
 # @treasure-dev/tdk-react
 
+## 2.6.1
+
+### Patch Changes
+
+- Updated dependencies [291e636]
+  - @treasure-dev/tdk-core@2.6.1
+
+## 2.6.0
+
+### Patch Changes
+
+- 28cfa6b: Added X connect method option
+- Updated dependencies [28cfa6b]
+- Updated dependencies [947e37c]
+- Updated dependencies [d9afa84]
+  - @treasure-dev/tdk-core@2.6.0
+
 ## 2.5.0
 
 ### Patch Changes

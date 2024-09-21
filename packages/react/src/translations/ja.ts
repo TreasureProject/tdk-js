@@ -10,12 +10,13 @@ export const ja = {
       header: "<1>{{appName}}</1> に接続する",
       footer: "提供元：<ThirdwebTextIcon>Thirdweb</ThirdwebTextIcon>",
       option: {
-        google: "Google",
-        telegram: "Telegram",
-        discord: "Discord",
         apple: "Apple",
+        discord: "Discord",
+        google: "Google",
         passkey: "パスキー",
+        telegram: "Telegram",
         wallet: "ウォレット",
+        x: "X",
       },
       verify: {
         header: "コードを確認",

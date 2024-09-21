@@ -27,6 +27,7 @@ const SUPPORTED_SOCIAL_OPTIONS = [
   "apple",
   "discord",
   "telegram",
+  "x",
 ] as const;
 
 export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
@@ -227,6 +228,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
       wallet,
       chainId,
       tdk,
+      sessions: user.sessions,
       options: sessionOptions,
     });
   }

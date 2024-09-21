@@ -1,12 +1,13 @@
 import {
   DEFAULT_TDK_CHAIN_ID,
   type UserContext,
-  getAllActiveSigners,
+  getUserSessions,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
 import "../middleware/swagger";
+import { getUser } from "thirdweb";
 import type {
   LoginBody,
   LoginReply,
@@ -22,11 +23,16 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
-import { fetchEmbeddedWalletUser } from "../utils/embeddedWalletApi";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const authRoutes =
-  ({ env, auth, db, engine, wagmiConfig }: TdkApiContext): FastifyPluginAsync =>
+  ({
+    auth,
+    thirdwebAuth,
+    db,
+    client,
+    engine,
+  }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Querystring: ReadLoginPayloadQuerystring;
@@ -44,9 +50,9 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        const payload = await auth.generatePayload({
+        const payload = await thirdwebAuth.generatePayload({
           address: req.query.address,
-          chainId: req.chainId,
+          chainId: req.chain.id,
         });
         reply.send(payload);
       },
@@ -65,7 +71,7 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        const verifiedPayload = await auth.verifyPayload(req.body);
+        const verifiedPayload = await thirdwebAuth.verifyPayload(req.body);
         if (!verifiedPayload.valid) {
           return reply
             .code(400)
@@ -109,17 +115,17 @@ export const authRoutes =
 
           if (adminAddress) {
             // Look up any associated user details in the embedded wallet
-            const embeddedWalletUser = await fetchEmbeddedWalletUser(
-              adminAddress,
-              env.THIRDWEB_SECRET_KEY,
-            );
-            if (embeddedWalletUser?.email) {
+            const thirdwebUser = await getUser({
+              client,
+              walletAddress: adminAddress,
+            });
+            if (thirdwebUser?.email) {
               user = await db.user.update({
                 where: {
                   id: user.id,
                 },
                 data: {
-                  email: embeddedWalletUser.email,
+                  email: thirdwebUser.email,
                 },
                 select: USER_SELECT_FIELDS,
               });
@@ -134,16 +140,17 @@ export const authRoutes =
           smartAccountAddress: user.address,
         };
 
-        // Add user data to JWT payload's context
-        const [authToken, allActiveSigners, profile] = await Promise.all([
-          auth.generateJWT({
-            payload,
+        const [authToken, userSessions, profile] = await Promise.all([
+          auth.generateJWT(user.address, {
+            issuer: payload.domain,
+            issuedAt: new Date(payload.issued_at),
+            expiresAt: new Date(payload.expiration_time),
             context: userContext,
           }),
-          getAllActiveSigners({
-            chainId: Number(chainId),
+          getUserSessions({
+            client,
+            chain: req.chain,
             address: user.address,
-            wagmiConfig,
           }),
           db.userProfile.upsert({
             where: { userId: user.id },
@@ -153,6 +160,17 @@ export const authRoutes =
           }),
         ]);
 
+        const sessions = userSessions.map((session) => ({
+          ...session,
+          approvedTargets: session.approvedTargets.map((target) =>
+            target.toLowerCase(),
+          ),
+          nativeTokenLimitPerTransaction:
+            session.nativeTokenLimitPerTransaction.toString(),
+          startTimestamp: session.startTimestamp.toString(),
+          endTimestamp: session.endTimestamp.toString(),
+        }));
+
         reply.send({
           token: authToken,
           user: {
@@ -160,16 +178,9 @@ export const authRoutes =
             ...user,
             ...profile,
             ...transformUserProfileResponseFields(profile),
-            allActiveSigners: allActiveSigners.map((activeSigner) => ({
-              ...activeSigner,
-              approvedTargets: activeSigner.approvedTargets.map((target) =>
-                target.toLowerCase(),
-              ),
-              nativeTokenLimitPerTransaction:
-                activeSigner.nativeTokenLimitPerTransaction.toString(),
-              startTimestamp: activeSigner.startTimestamp.toString(),
-              endTimestamp: activeSigner.endTimestamp.toString(),
-            })),
+            sessions,
+            // Fields for backwards compatibility
+            allActiveSigners: sessions,
           },
         });
       },

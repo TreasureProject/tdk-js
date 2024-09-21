@@ -62,7 +62,7 @@ export const transactionsRoutes =
         checkMaintenanceMode();
 
         const {
-          chainId,
+          chain,
           userAddress,
           authError,
           body: {
@@ -107,9 +107,9 @@ export const transactionsRoutes =
           );
 
           const { result } = await engine.contract.write(
-            chainId.toString(),
+            chain.id.toString(),
             address,
-            backendWallet,
+            req.backendWallet ?? backendWallet,
             {
               abi: transactionAbi,
               functionName,
@@ -119,7 +119,7 @@ export const transactionsRoutes =
             simulateTransaction,
             undefined,
             userAddress,
-            getContractAddress(chainId, "ManagedAccountFactory"),
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
@@ -153,7 +153,7 @@ export const transactionsRoutes =
         checkMaintenanceMode();
 
         const {
-          chainId,
+          chain,
           userAddress,
           authError,
           body: {
@@ -177,8 +177,8 @@ export const transactionsRoutes =
         try {
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
-            chainId.toString(),
-            backendWallet,
+            chain.id.toString(),
+            req.backendWallet ?? backendWallet,
             {
               toAddress: to,
               value: value,
@@ -188,7 +188,7 @@ export const transactionsRoutes =
             simulateTransaction,
             undefined,
             userAddress,
-            getContractAddress(chainId, "ManagedAccountFactory"),
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {

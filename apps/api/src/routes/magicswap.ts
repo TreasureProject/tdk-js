@@ -63,7 +63,7 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pools = await fetchPools({
-          chainId: req.chainId,
+          chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -92,7 +92,7 @@ export const magicswapRoutes =
       async (req, reply) => {
         const pool = await fetchPool({
           pairId: req.params.id,
-          chainId: req.chainId,
+          chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -127,10 +127,10 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { chainId, body } = req;
+        const { chain, body } = req;
 
         const pools = await fetchPools({
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -165,7 +165,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId } = req;
+        const { userAddress, authError, body, chain } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -191,7 +191,7 @@ export const magicswapRoutes =
         } = body;
 
         const pools = await fetchPools({
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -227,7 +227,7 @@ export const magicswapRoutes =
         }
 
         const swapArguments = getSwapArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           tokenIn,
           tokenOut,
@@ -243,9 +243,9 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: swapArguments.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: swapArguments.functionName,
@@ -285,7 +285,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId, params } = req;
+        const { userAddress, authError, body, chain, params } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -309,7 +309,7 @@ export const magicswapRoutes =
 
         const pool = await fetchPool({
           pairId: params.id,
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -325,7 +325,7 @@ export const magicswapRoutes =
         }
 
         const addLiquidityArgs = getAddLiquidityArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
           amount1: amount1 ? BigInt(amount1) : undefined,
@@ -339,9 +339,9 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: addLiquidityArgs.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: addLiquidityArgs.functionName,
@@ -381,7 +381,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId, params } = req;
+        const { userAddress, authError, body, chain, params } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -405,7 +405,7 @@ export const magicswapRoutes =
 
         const pool = await fetchPool({
           pairId: params.id,
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -421,7 +421,7 @@ export const magicswapRoutes =
         }
 
         const removeLiquidityArgs = getRemoveLiquidityArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           amountLP: BigInt(amountLP),
           amount0Min: BigInt(amount0Min),
@@ -435,9 +435,9 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: removeLiquidityArgs.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName: removeLiquidityArgs.functionName,

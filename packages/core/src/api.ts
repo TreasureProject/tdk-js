@@ -208,19 +208,37 @@ export class TDKAPI {
           "inputs"
         >;
       },
-      options?: { includeAbi?: boolean; skipWaitForCompletion?: boolean },
+      options?: {
+        includeAbi?: boolean;
+        skipWaitForCompletion?: boolean;
+        accountAddress?: string;
+        accountSignature?: string;
+      },
     ) => {
       const result = await this.post<
         CreateTransactionBody,
         CreateTransactionReply
-      >("/transactions", {
-        ...params,
-        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        ...(options?.includeAbi ? { abi: params.abi as any } : {}),
-        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        args: params.args as any,
-        backendWallet: params.backendWallet ?? this.backendWallet,
-      });
+      >(
+        "/transactions",
+        {
+          ...params,
+          // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+          ...(options?.includeAbi ? { abi: params.abi as any } : {}),
+          // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+          args: params.args as any,
+          backendWallet: params.backendWallet ?? this.backendWallet,
+        },
+        {
+          headers: {
+            ...(options?.accountAddress
+              ? { "x-account-address": options.accountAddress }
+              : {}),
+            ...(options?.accountSignature
+              ? { "x-account-signature": options.accountSignature }
+              : {}),
+          },
+        },
+      );
 
       return options?.skipWaitForCompletion
         ? result
@@ -228,18 +246,35 @@ export class TDKAPI {
     },
     sendRaw: async (
       params: Omit<CreateRawTransactionBody, "value"> & {
-        value?: bigint;
+        value?: bigint | string;
       },
-      options?: { skipWaitForCompletion?: boolean },
+      options?: {
+        skipWaitForCompletion?: boolean;
+        accountAddress?: string;
+        accountSignature?: string;
+      },
     ) => {
       const result = await this.post<
         CreateRawTransactionBody,
         CreateRawTransactionReply
-      >("/transactions/raw", {
-        ...params,
-        value: params.value ? toHex(params.value) : undefined,
-        backendWallet: params.backendWallet ?? this.backendWallet,
-      });
+      >(
+        "/transactions/raw",
+        {
+          ...params,
+          value: params.value ? toHex(BigInt(params.value)) : undefined,
+          backendWallet: params.backendWallet ?? this.backendWallet,
+        },
+        {
+          headers: {
+            ...(options?.accountAddress
+              ? { "x-account-address": options.accountAddress }
+              : {}),
+            ...(options?.accountSignature
+              ? { "x-account-signature": options.accountSignature }
+              : {}),
+          },
+        },
+      );
 
       return options?.skipWaitForCompletion
         ? result
