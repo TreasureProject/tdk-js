@@ -1,10 +1,6 @@
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
-import {
-  type InAppWalletAuth,
-  type Wallet,
-  createWallet,
-} from "thirdweb/wallets";
+import { type Wallet, createWallet } from "thirdweb/wallets";
 import {
   hasStoredPasskey,
   inAppWallet,
@@ -13,13 +9,39 @@ import {
 
 import { TDKAPI } from "../api";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "../constants";
-import type {
-  ConnectConfig,
-  SocialConnectMethod,
-  TreasureConnectClient,
-} from "../types";
+import type { ConnectConfig, TreasureConnectClient } from "../types";
 import { getContractAddress } from "../utils/contracts";
 import { startUserSession } from "./session";
+
+const SUPPORTED_SOCIAL_OPTIONS = [
+  "google",
+  "apple",
+  "discord",
+  "telegram",
+  "x",
+] as const;
+
+export const SUPPORTED_IN_APP_WALLET_OPTIONS = [
+  ...SUPPORTED_SOCIAL_OPTIONS,
+  "email",
+  "passkey",
+] as const;
+
+export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
+  createWallet("io.metamask"),
+  createWallet("walletConnect"),
+  createWallet("io.rabby"),
+  createWallet("com.brave.wallet"),
+  createWallet("me.rainbow"),
+  createWallet("global.safe"),
+  createWallet("com.ledger"),
+];
+
+export type SocialConnectMethod = (typeof SUPPORTED_SOCIAL_OPTIONS)[number];
+
+export type ConnectMethod =
+  | (typeof SUPPORTED_IN_APP_WALLET_OPTIONS)[number]
+  | "wallet";
 
 type ConnectWalletConfig = {
   client: TreasureConnectClient;
@@ -39,27 +61,12 @@ type ConnectWalletConfig = {
   | {
       method: "passkey";
       passkeyName?: string;
+      hasStoredPasskey?: boolean;
     }
 );
 
-export const SUPPORTED_IN_APP_WALLET_OPTIONS: InAppWalletAuth[] = [
-  "google",
-  "apple",
-  "discord",
-  "telegram",
-  "email",
-  "passkey",
-];
-
-export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
-  createWallet("io.metamask"),
-  createWallet("walletConnect"),
-  createWallet("io.rabby"),
-  createWallet("com.brave.wallet"),
-  createWallet("me.rainbow"),
-  createWallet("global.safe"),
-  createWallet("com.ledger"),
-];
+export const isSocialConnectMethod = (method: ConnectMethod) =>
+  SUPPORTED_SOCIAL_OPTIONS.includes(method as SocialConnectMethod);
 
 export const connectWallet = async (params: ConnectWalletConfig) => {
   const {
@@ -73,7 +80,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   const wallet = inAppWallet({
     auth: {
-      options: SUPPORTED_IN_APP_WALLET_OPTIONS,
+      options: [...SUPPORTED_IN_APP_WALLET_OPTIONS],
       mode: authMode,
       redirectUrl,
       passkeyDomain,
@@ -100,7 +107,8 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 
   // Connect with passkey
   if (params.method === "passkey") {
-    const hasPasskey = await hasStoredPasskey(client);
+    const hasPasskey =
+      params.hasStoredPasskey ?? (await hasStoredPasskey(client));
     await wallet.connect({
       client,
       chain,
@@ -119,23 +127,6 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
   });
   return wallet;
 };
-
-export const createLoginUrl = ({
-  project,
-  chainId,
-  domain,
-  redirectUri,
-  data,
-}: {
-  project: string;
-  chainId: number;
-  domain: string;
-  redirectUri: string;
-  data?: string;
-}) =>
-  `${domain}/${project}?redirect_uri=${redirectUri}&chain_id=${chainId}${
-    data ? `&data=${data}` : ""
-  }`;
 
 export const createTreasureConnectClient = ({
   clientId,
@@ -217,6 +208,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
       wallet,
       chainId,
       tdk,
+      sessions: user.sessions,
       options: sessionOptions,
     });
   }

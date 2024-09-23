@@ -58,7 +58,7 @@ const txOverridesSchema = Type.Object({
 const txArgsSchema = Type.Array(
   Type.Union([
     Type.String({
-      description: "The arguments to call on the function",
+      description: "Arguments to call on the function",
       examples: [[EXAMPLE_WALLET_ADDRESS, "1000000000000000000"]],
     }),
     Type.Tuple([Type.String(), Type.String()]),
@@ -70,43 +70,51 @@ const txArgsSchema = Type.Array(
 
 export const createTransactionBodySchema = Type.Object({
   address: Type.String({
-    description: "The address of the contract to call",
+    description: "Address of the contract to call",
     examples: [EXAMPLE_CONTRACT_ADDRESS],
   }),
   abi: Type.Optional(
     Type.Union([Type.Array(abiSchema), Type.String(), Type.Null()]),
   ),
   functionName: Type.String({
-    description: "The function to call on the contract",
+    description: "Function to call on the contract",
     examples: ["transfer"],
   }),
   args: txArgsSchema,
   txOverrides: Type.Optional(txOverridesSchema),
   backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 export const createTransactionReplySchema = Type.Object({
   queueId: Type.String({
-    description: "The transaction queue ID",
+    description: "Transaction queue ID",
     examples: [EXAMPLE_QUEUE_ID],
   }),
 });
 
-export const createSendNativeTransactionBodySchema = Type.Object({
+export const createRawTransactionBodySchema = Type.Object({
   to: Type.String({
-    description: "The recipient address",
+    description: "Target address",
     examples: [EXAMPLE_WALLET_ADDRESS],
   }),
-  amount: Type.String({
-    description: "The amount to send, in wei",
-    examples: ["1000000000000000000"],
+  value: Type.Optional(
+    Type.String({
+      description: "Amount of native token to send, in wei",
+      examples: ["1000000000000000000"],
+    }),
+  ),
+  data: Type.String({
+    description: "Raw transaction data",
   }),
+  txOverrides: Type.Optional(Type.Omit(txOverridesSchema, ["value"])),
   backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
-export const createSendNativeTransactionReplySchema = Type.Object({
+export const createRawTransactionReplySchema = Type.Object({
   queueId: Type.String({
-    description: "The transaction queue ID",
+    description: "Transaction queue ID",
     examples: [EXAMPLE_QUEUE_ID],
   }),
 });
@@ -127,11 +135,11 @@ export type CreateTransactionBody = Static<typeof createTransactionBodySchema>;
 export type CreateTransactionReply = Static<
   typeof createTransactionReplySchema
 >;
-export type CreateSendNativeTransactionBody = Static<
-  typeof createSendNativeTransactionBodySchema
+export type CreateRawTransactionBody = Static<
+  typeof createRawTransactionBodySchema
 >;
-export type CreateSendNativeTransactionReply = Static<
-  typeof createSendNativeTransactionReplySchema
+export type CreateRawTransactionReply = Static<
+  typeof createRawTransactionReplySchema
 >;
 export type ReadTransactionParams = Static<typeof readTransactionParamsSchema>;
 export type ReadTransactionReply = Static<typeof readTransactionReplySchema>;

@@ -181,7 +181,6 @@ const nftInputSchema = Type.Object({
 });
 
 export const swapBodySchema = Type.Object({
-  backendWallet: Type.Optional(Type.String()),
   tokenInId: Type.String({
     description: "The unique identifier of the `in` token",
   }),
@@ -201,10 +200,11 @@ export const swapBodySchema = Type.Object({
     Type.Array(nftInputSchema, { description: "Array of NFTs to swap out" }),
   ),
   slippage: Type.Optional(Type.Number({ description: "Slippage tolerance" })),
+  backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 export const addLiquidityBodySchema = Type.Object({
-  backendWallet: Type.Optional(Type.String()),
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -219,10 +219,11 @@ export const addLiquidityBodySchema = Type.Object({
   amount1Min: Type.Optional(
     Type.String({ description: "Minimum amount for token1" }),
   ),
+  backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 export const removeLiquidityBodySchema = Type.Object({
-  backendWallet: Type.Optional(Type.String()),
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -238,6 +239,8 @@ export const removeLiquidityBodySchema = Type.Object({
       description: "Boolean indicating if swap leftover",
     }),
   ),
+  backendWallet: Type.Optional(Type.String()),
+  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
 const poolParamsSchema = Type.Object({

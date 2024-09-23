@@ -3,7 +3,7 @@ import type {
   ExtractAbiFunction,
 } from "abitype";
 
-import type { magicSwapV2RouterABI } from "../abis/magicSwapV2RouterAbi";
+import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
 import type { NFTInput, PoolToken } from "./types";
@@ -56,7 +56,7 @@ export const getSwapArgs = ({
   address: AddressString;
   functionName: SwapFunctionName;
   args: AbiParametersToPrimitiveTypes<
-    ExtractAbiFunction<typeof magicSwapV2RouterABI, SwapFunctionName>["inputs"],
+    ExtractAbiFunction<typeof magicswapV2RouterAbi, SwapFunctionName>["inputs"],
     "inputs"
   >;
   value?: bigint;

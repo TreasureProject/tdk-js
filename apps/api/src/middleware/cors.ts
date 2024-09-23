@@ -1,9 +1,9 @@
 import cors from "@fastify/cors";
-import type { FastifyInstance } from "fastify";
 
-export const withCors = async (app: FastifyInstance) => {
-  await app.register(cors, {
+import type { App } from "../utils/app";
+
+export const withCors = (app: App) =>
+  app.register(cors, {
     origin: true,
     credentials: true,
   });
-};

@@ -6,7 +6,7 @@ import {
   getRemoveLiquidityArgs,
   getSwapArgs,
   getSwapRoute,
-  magicSwapV2RouterABI,
+  magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
@@ -63,7 +63,7 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pools = await fetchPools({
-          chainId: req.chainId,
+          chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -92,7 +92,7 @@ export const magicswapRoutes =
       async (req, reply) => {
         const pool = await fetchPool({
           pairId: req.params.id,
-          chainId: req.chainId,
+          chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -127,10 +127,10 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { chainId, body } = req;
+        const { chain, body } = req;
 
         const pools = await fetchPools({
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -165,7 +165,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId } = req;
+        const { userAddress, authError, body, chain } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -186,14 +186,12 @@ export const magicswapRoutes =
           nftsOut,
           isExactOut,
           slippage,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
-
         const pools = await fetchPools({
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -229,7 +227,7 @@ export const magicswapRoutes =
         }
 
         const swapArguments = getSwapArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           tokenIn,
           tokenOut,
@@ -245,11 +243,11 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: swapArguments.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: swapArguments.functionName,
             args: swapArguments.args,
             txOverrides: swapArguments.value
@@ -257,13 +255,14 @@ export const magicswapRoutes =
                   value: swapArguments.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error performing swap: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -286,7 +285,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId, params } = req;
+        const { userAddress, authError, body, chain, params } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -304,15 +303,13 @@ export const magicswapRoutes =
           amount1Min,
           nfts0,
           nfts1,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
-
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
           pairId: params.id,
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -328,7 +325,7 @@ export const magicswapRoutes =
         }
 
         const addLiquidityArgs = getAddLiquidityArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
           amount1: amount1 ? BigInt(amount1) : undefined,
@@ -342,11 +339,11 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: addLiquidityArgs.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: addLiquidityArgs.functionName,
             args: addLiquidityArgs.args,
             txOverrides: addLiquidityArgs.value
@@ -354,13 +351,14 @@ export const magicswapRoutes =
                   value: addLiquidityArgs.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error adding liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            code: TDK_ERROR_CODES.MAGICSWAP_ADD_LIQUIDITY_FAILED,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -383,7 +381,7 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chainId, params } = req;
+        const { userAddress, authError, body, chain, params } = req;
 
         if (!userAddress) {
           throw new TdkError({
@@ -401,15 +399,13 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           swapLeftover = true,
-          backendWallet: overrideBackendWallet,
+          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
-
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
 
         const pool = await fetchPool({
           pairId: params.id,
-          chainId,
+          chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
           wagmiConfig,
@@ -425,7 +421,7 @@ export const magicswapRoutes =
         }
 
         const removeLiquidityArgs = getRemoveLiquidityArgs({
-          chainId,
+          chainId: chain.id,
           toAddress: userAddress,
           amountLP: BigInt(amountLP),
           amount0Min: BigInt(amount0Min),
@@ -439,11 +435,11 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId,
+            chainId: chain.id,
             contractAddress: removeLiquidityArgs.address,
-            backendWallet,
+            backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
-            abi: magicSwapV2RouterABI,
+            abi: magicswapV2RouterAbi,
             functionName: removeLiquidityArgs.functionName,
             args: removeLiquidityArgs.args,
             txOverrides: removeLiquidityArgs.value
@@ -451,13 +447,14 @@ export const magicswapRoutes =
                   value: removeLiquidityArgs.value.toString(),
                 }
               : undefined,
+            simulateTransaction,
           });
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: `Error removing liquidity: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            code: TDK_ERROR_CODES.MAGICSWAP_REMOVE_LIQUIDITY_FAILED,
+            message: parseEngineErrorMessage(err),
           });
         }
       },

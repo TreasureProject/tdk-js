@@ -1,6 +1,6 @@
-import type { FastifyInstance } from "fastify";
+import type { App } from "../utils/app";
 
-export const withErrorHandler = async (app: FastifyInstance) =>
+export const withErrorHandler = (app: App) =>
   app.setErrorHandler((err, _, reply) => {
     reply.code(err.statusCode ?? 500).send({ ...err, error: err.message });
   });

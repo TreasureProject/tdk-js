@@ -1,19 +1,20 @@
 import * as Sentry from "@sentry/node";
+import { getContractAddress } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import {
-  type CreateSendNativeTransactionBody,
-  type CreateSendNativeTransactionReply,
+  type CreateRawTransactionBody,
+  type CreateRawTransactionReply,
   type CreateTransactionBody,
   type CreateTransactionReply,
   type ErrorReply,
   type ReadTransactionParams,
   type ReadTransactionReply,
-  createSendNativeTransactionBodySchema,
-  createSendNativeTransactionReplySchema,
+  createRawTransactionBodySchema,
+  createRawTransactionReplySchema,
   createTransactionBodySchema,
   createTransactionReplySchema,
   readTransactionReplySchema,
@@ -23,12 +24,24 @@ import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
+  normalizeEngineErrorMessage,
   parseEngineErrorMessage,
 } from "../utils/error";
 
 export const transactionsRoutes =
-  ({ engine, env }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
+    const checkMaintenanceMode = () => {
+      if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
+        throw new TdkError({
+          name: TDK_ERROR_NAMES.TransactionError,
+          code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
+          message:
+            "Sorry, this feature is in planned maintenance mode. Please try again later.",
+        });
+      }
+    };
+
     app.post<{
       Body: CreateTransactionBody;
       Reply: CreateTransactionReply | ErrorReply;
@@ -46,17 +59,10 @@ export const transactionsRoutes =
         },
       },
       async (req, reply) => {
-        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.TransactionError,
-            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
-            message:
-              "Sorry, this feature is in planned maintenance mode. Please try again later.",
-          });
-        }
+        checkMaintenanceMode();
 
         const {
-          chainId,
+          chain,
           userAddress,
           authError,
           body: {
@@ -65,7 +71,8 @@ export const transactionsRoutes =
             functionName,
             args,
             txOverrides,
-            backendWallet: overrideBackendWallet,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
         if (!userAddress) {
@@ -77,8 +84,6 @@ export const transactionsRoutes =
           });
         }
 
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
           const transactionAbi =
             typeof abi === "string" && abi.length > 0
@@ -102,62 +107,63 @@ export const transactionsRoutes =
           );
 
           const { result } = await engine.contract.write(
-            chainId.toString(),
+            chain.id.toString(),
             address,
-            backendWallet,
+            req.backendWallet ?? backendWallet,
             {
               abi: transactionAbi,
               functionName,
               args,
               txOverrides,
             },
-            false,
+            simulateTransaction,
             undefined,
             userAddress,
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
     );
 
     app.post<{
-      Body: CreateSendNativeTransactionBody;
-      Reply: CreateSendNativeTransactionReply | ErrorReply;
+      Body: CreateRawTransactionBody;
+      Reply: CreateRawTransactionReply | ErrorReply;
     }>(
-      "/transactions/send-native",
+      "/transactions/raw",
       {
         schema: {
-          summary: "Send native tokens",
+          summary: "Send raw transaction",
           description:
-            "Send the chain's native (gas) token to the provided recipient",
+            "Send a raw transaction, including native token transfer",
           security: [{ authToken: [] }],
-          body: createSendNativeTransactionBodySchema,
+          body: createRawTransactionBodySchema,
           response: {
-            200: createSendNativeTransactionReplySchema,
+            200: createRawTransactionReplySchema,
           },
         },
       },
       async (req, reply) => {
-        if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.TransactionError,
-            code: TDK_ERROR_CODES.MAINTENANCE_MODE_ENABLED,
-            message:
-              "Sorry, this feature is in planned maintenance mode. Please try again later.",
-          });
-        }
+        checkMaintenanceMode();
 
         const {
-          chainId,
+          chain,
           userAddress,
           authError,
-          body: { to, amount, backendWallet: overrideBackendWallet },
+          body: {
+            to,
+            value = "0x00",
+            data,
+            txOverrides,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
         } = req;
         if (!userAddress) {
           throw new TdkError({
@@ -168,27 +174,28 @@ export const transactionsRoutes =
           });
         }
 
-        const backendWallet =
-          overrideBackendWallet ?? env.DEFAULT_BACKEND_WALLET;
         try {
-          Sentry.setExtra("transaction", { to, amount });
+          Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
-            chainId.toString(),
-            backendWallet,
+            chain.id.toString(),
+            req.backendWallet ?? backendWallet,
             {
               toAddress: to,
-              value: amount,
-              data: "0x",
+              value: value,
+              data,
+              txOverrides,
             },
-            false,
+            simulateTransaction,
+            undefined,
             userAddress,
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_CREATE_FAILED,
-            message: `Error creating native send transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },
@@ -211,13 +218,42 @@ export const transactionsRoutes =
       async (req, reply) => {
         const { queueId } = req.params;
         try {
-          const data = await engine.transaction.status(queueId);
-          reply.send(data.result);
+          const { result } = await engine.transaction.status(queueId);
+          const transaction = {
+            ...result,
+            status:
+              // Normalize status when the AA transaction is mined but the underlying user op failed
+              result.status === "mined" && result.onChainTxStatus === 0
+                ? "errored"
+                : result.status,
+            errorMessage: result.errorMessage
+              ? normalizeEngineErrorMessage(result.errorMessage)
+              : null,
+          };
+
+          if (transaction.status === "errored") {
+            await db.transactionErrorLog.upsert({
+              where: { queueId },
+              create: {
+                queueId,
+                queuedAt: transaction.queuedAt ?? new Date(),
+                chainId: Number(transaction.chainId ?? 0),
+                signerAddress: transaction.signerAddress ?? "",
+                accountAddress: transaction.accountAddress ?? "",
+                target: transaction.target ?? "",
+                functionName: transaction.functionName ?? "",
+                errorMessage: transaction.errorMessage ?? "",
+              },
+              update: {},
+            });
+          }
+
+          reply.send(transaction);
         } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.TransactionError,
             code: TDK_ERROR_CODES.TRANSACTION_READ_FAILED,
-            message: `Error fetching transaction: ${parseEngineErrorMessage(err as Error) ?? "Unknown error"}`,
+            message: parseEngineErrorMessage(err),
           });
         }
       },

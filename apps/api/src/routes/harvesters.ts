@@ -47,15 +47,14 @@ export const harvestersRoutes =
       },
       async (req, reply) => {
         const {
-          chainId,
+          chain,
           params: { id },
-          userAddress: authUserAddress,
-          overrideUserAddress,
+          userAddress,
         } = req;
 
         const harvesterAddress = id as AddressString;
         const harvesterInfo = await getHarvesterInfo({
-          chainId,
+          chainId: chain.id,
           harvesterAddress,
           wagmiConfig,
         });
@@ -69,10 +68,9 @@ export const harvestersRoutes =
           });
         }
 
-        const userAddress = overrideUserAddress ?? authUserAddress;
         const harvesterUserInfo = userAddress
           ? await getHarvesterUserInfo({
-              chainId,
+              chainId: chain.id,
               harvesterInfo,
               userAddress,
               inventoryApiUrl: env.TROVE_API_URL,
@@ -106,17 +104,16 @@ export const harvestersRoutes =
       },
       async (req, reply) => {
         const {
-          chainId,
+          chain,
           params: { id },
-          userAddress: authUserAddress,
-          overrideUserAddress,
+          userAddress,
         } = req;
 
         const harvesterCorruptionRemovalInfo =
           await fetchHarvesterCorruptionRemovalInfo({
-            chainId,
+            chainId: chain.id,
             harvesterAddress: id,
-            userAddress: overrideUserAddress ?? authUserAddress,
+            userAddress,
             inventoryApiUrl: env.TROVE_API_URL,
             inventoryApiKey: env.TROVE_API_KEY,
             wagmiConfig,

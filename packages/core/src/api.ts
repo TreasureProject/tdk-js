@@ -5,27 +5,30 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import { toHex } from "thirdweb";
 import type {
-  CreateSendNativeTransactionBody,
-  CreateSendNativeTransactionReply,
+  CreateRawTransactionBody,
+  CreateRawTransactionReply,
   CreateTransactionBody,
+  CreateTransactionReply,
+  ErrorReply,
   LoginBody,
   LoginReply,
   PoolReply,
   PoolsReply,
+  ReadCurrentUserReply,
   ReadCurrentUserSessionsQuerystring,
   ReadCurrentUserSessionsReply,
-  ReadLoginPayloadReply,
-  RouteReply,
-} from "../../../apps/api/src/schema";
-import type {
-  CreateTransactionReply,
-  ErrorReply,
-  ReadCurrentUserReply,
   ReadHarvesterReply,
   ReadLoginPayloadQuerystring,
+  ReadLoginPayloadReply,
   ReadProjectReply,
   ReadTransactionReply,
+  ReadUserTransactionsQuerystring,
+  ReadUserTransactionsReply,
+  RouteReply,
+  UpdateCurrentUserBody,
+  UpdateCurrentUserReply,
 } from "../../../apps/api/src/schema";
 import type {
   AddLiquidityBody,
@@ -125,6 +128,18 @@ export class TDKAPI {
     });
   }
 
+  async put<T, U>(path: string, body?: T, options?: RequestInit): Promise<U> {
+    return this.fetch<U>(path, {
+      method: "PUT",
+      ...(body ? { body: JSON.stringify(body) } : undefined),
+      ...options,
+      headers: {
+        "content-type": "application/json",
+        ...options?.headers,
+      },
+    });
+  }
+
   setAuthToken(authToken: string) {
     this.authToken = authToken;
   }
@@ -158,8 +173,21 @@ export class TDKAPI {
             }
           : undefined,
       ),
+    update: (params: UpdateCurrentUserBody) =>
+      this.put<UpdateCurrentUserBody, UpdateCurrentUserReply>(
+        "/users/me",
+        params,
+      ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
+    getTransactions: (
+      address: string,
+      query?: ReadUserTransactionsQuerystring,
+    ) =>
+      this.get<ReadUserTransactionsReply>(
+        `/users/${address}/transactions`,
+        query,
+      ),
   };
 
   transaction = {
@@ -170,8 +198,7 @@ export class TDKAPI {
         "nonpayable" | "payable"
       >,
     >(
-      params: {
-        address: string;
+      params: Omit<CreateTransactionBody, "abi" | "functionName" | "args"> & {
         abi: TAbi;
         functionName:
           | TFunctionName
@@ -180,58 +207,93 @@ export class TDKAPI {
           ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
           "inputs"
         >;
-        backendWallet?: string;
       },
-      {
-        includeAbi = false,
-        waitForCompletion = true,
-      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
+      options?: {
+        includeAbi?: boolean;
+        skipWaitForCompletion?: boolean;
+        accountAddress?: string;
+        accountSignature?: string;
+      },
     ) => {
       const result = await this.post<
         CreateTransactionBody,
         CreateTransactionReply
-      >("/transactions", {
-        ...params,
-        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        ...(includeAbi ? { abi: params.abi as any } : {}),
-        // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
-        args: params.args as any,
-        backendWallet: params.backendWallet ?? this.backendWallet,
-      });
+      >(
+        "/transactions",
+        {
+          ...params,
+          // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+          ...(options?.includeAbi ? { abi: params.abi as any } : {}),
+          // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
+          args: params.args as any,
+          backendWallet: params.backendWallet ?? this.backendWallet,
+        },
+        {
+          headers: {
+            ...(options?.accountAddress
+              ? { "x-account-address": options.accountAddress }
+              : {}),
+            ...(options?.accountSignature
+              ? { "x-account-signature": options.accountSignature }
+              : {}),
+          },
+        },
+      );
 
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
-    sendNative: async (
-      params: {
-        to: string;
-        amount: bigint;
-        backendWallet?: string;
+    sendRaw: async (
+      params: Omit<CreateRawTransactionBody, "value"> & {
+        value?: bigint | string;
       },
-      {
-        waitForCompletion = true,
-      }: { includeAbi?: boolean; waitForCompletion?: boolean } = {},
+      options?: {
+        skipWaitForCompletion?: boolean;
+        accountAddress?: string;
+        accountSignature?: string;
+      },
     ) => {
       const result = await this.post<
-        CreateSendNativeTransactionBody,
-        CreateSendNativeTransactionReply
-      >("/transactions/send-native", {
-        ...params,
-        amount: params.amount.toString(),
-        backendWallet: params.backendWallet ?? this.backendWallet,
-      });
+        CreateRawTransactionBody,
+        CreateRawTransactionReply
+      >(
+        "/transactions/raw",
+        {
+          ...params,
+          value: params.value ? toHex(BigInt(params.value)) : undefined,
+          backendWallet: params.backendWallet ?? this.backendWallet,
+        },
+        {
+          headers: {
+            ...(options?.accountAddress
+              ? { "x-account-address": options.accountAddress }
+              : {}),
+            ...(options?.accountSignature
+              ? { "x-account-signature": options.accountSignature }
+              : {}),
+          },
+        },
+      );
 
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
     get: (queueId: string) =>
       this.get<ReadTransactionReply>(`/transactions/${queueId}`),
-    wait: async (queueId: string, maxRetries = 15, retryMs = 2_500) => {
+    wait: async (
+      queueId: string,
+      maxRetries = 15,
+      retryMs = 2_500,
+      initialWaitMs = 4_000,
+    ) => {
       let retries = 0;
       let transaction: ReadTransactionReply;
       do {
-        if (retries > 0) {
-          await new Promise((r) => setTimeout(r, retryMs));
-        }
-
+        await new Promise((r) =>
+          setTimeout(r, retries === 0 ? initialWaitMs : retryMs),
+        );
         transaction = await this.transaction.get(queueId);
         retries += 1;
       } while (

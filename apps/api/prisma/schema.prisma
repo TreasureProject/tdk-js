@@ -131,8 +131,9 @@ model UserProfile {
   showGemsBalance  Boolean @default(true) @map("show_gems_balance")
 
   // Migration
-  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
-  legacyEmail   String? @map("legacy_email")
+  legacyAddress         String?   @unique @map("legacy_address") @db.VarChar(42)
+  legacyEmail           String?   @map("legacy_email")
+  legacyEmailVerifiedAt DateTime? @map("legacy_email_verified_at")
 
   // Other
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
@@ -146,6 +147,7 @@ model UserProfile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([legacyAddress])
+  @@index([tag])
   @@map("user_profile")
   @@schema("public")
 }
@@ -186,6 +188,7 @@ model UserSocialAccount {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([network, legacyAddress])
+  @@index([userId])
   @@map("user_social_account")
   @@schema("public")
 }
@@ -214,7 +217,7 @@ model UserNotificationSettings {
   legacyAddress String? @map("legacy_address") @db.VarChar(42)
 
   // Relations
-  userId String? @unique @map("user_id")
+  userId String? @map("user_id")
   user   User?   @relation(fields: [userId], references: [id])
 
   // Computed
@@ -223,7 +226,30 @@ model UserNotificationSettings {
 
   @@unique([type, userId])
   @@unique([type, legacyAddress])
+  @@index([userId])
   @@map("user_notification_settings")
+  @@schema("public")
+}
+
+model TransactionErrorLog {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  queueId        String   @unique @map("queue_id")
+  queuedAt       DateTime @map("queued_at")
+  chainId        Int      @map("chain_id")
+  signerAddress  String   @map("signer_address")
+  accountAddress String   @map("account_address")
+  target         String
+  functionName   String   @map("function_name")
+  errorMessage   String   @map("error_message")
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("transaction_error_log")
   @@schema("public")
 }
 

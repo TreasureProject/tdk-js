@@ -171,9 +171,8 @@ export const CONTRACT_ADDRESSES: Record<
     HarvesterThundermane: "0x3fbfcdc02f649d5875bc9f97281b7ef5a7a9c491",
     NftHandlerThundermane: "0x0c73a18364850239571afca78dd5d39193f288be",
     // Magicswap
-    MagicswapV2Router: "0xb740d5804ea2061432469119cfa40cbb4586dd17",
+    MagicswapV2Router: "0xf7c8f888720d5af7c54dfc04afe876673d7f5f43",
     // Treasure Misc
-    PaymentsModule: "0xf325ac5c9dc74a3c3b7f2474a709154e9f6bc194",
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x8bf85fa9213647ec3485afd9dd5888b4db017434",
@@ -215,9 +214,8 @@ export const CONTRACT_ADDRESSES: Record<
     HarvesterThundermane: "0x347471fbfc6daceed66a09c38e9596cd1706da46",
     NftHandlerThundermane: "0x00a191804f5bc4942828ae8cde937a4b644d53cf",
     // Magicswap
-    MagicswapV2Router: "0xd0a4fbcc5cde863a2be50c75b564efd942b03154",
+    MagicswapV2Router: "0xa8654a8097b78daf740c1e2ada8a6bf3cd60da50",
     // Treasure Misc
-    PaymentsModule: "0x06e308c2ed6168afd158a4b495b084e9677f4e1d",
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",

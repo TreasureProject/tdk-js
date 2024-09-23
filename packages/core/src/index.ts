@@ -17,7 +17,7 @@ export { erc721Abi } from "./abis/erc721Abi";
 export { erc1155Abi } from "./abis/erc1155Abi";
 export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
-export { magicSwapV2RouterABI } from "./abis/magicSwapV2RouterAbi";
+export { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
 export { TDKAPI } from "./api";
 export { sumArray } from "./utils/array";
 export {
@@ -29,16 +29,17 @@ export {
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
-export { isSocialConnectMethod } from "./utils/connectMethods";
 
 // Connect
-export { getAllActiveSigners } from "./connect/accounts";
+export { generateAccountSignature } from "./connect/auth";
 export { decodeAuthToken } from "./connect/jwt";
 export {
+  type SocialConnectMethod,
+  type ConnectMethod,
   SUPPORTED_IN_APP_WALLET_OPTIONS,
   SUPPORTED_WEB3_WALLETS,
+  isSocialConnectMethod,
   connectWallet,
-  createLoginUrl,
   createTreasureConnectClient,
   sendEmailVerificationCode,
   authenticateWallet,
@@ -49,8 +50,9 @@ export {
 } from "./connect/login";
 export {
   createSession,
-  validateSession,
+  getUserSessions,
   startUserSession,
+  validateSession,
 } from "./connect/session";
 
 // Bridgeworld

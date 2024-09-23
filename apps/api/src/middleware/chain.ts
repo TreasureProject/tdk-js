@@ -1,20 +1,24 @@
 import * as Sentry from "@sentry/node";
 import { DEFAULT_TDK_CHAIN_ID } from "@treasure-dev/tdk-core";
-import type { FastifyInstance } from "fastify";
+import { type Chain, defineChain } from "thirdweb";
+
+import type { App } from "../utils/app";
 
 declare module "fastify" {
   interface FastifyRequest {
-    chainId: number;
+    chain: Chain;
   }
 }
 
-export const withChain = async (app: FastifyInstance) => {
-  app.decorateRequest("chainId", null);
+export const withChain = (app: App) => {
+  app.decorateRequest("chain");
+  app.decorateRequest("chainId");
   app.addHook("onRequest", async (req) => {
-    req.chainId =
+    const chainId =
       typeof req.headers["x-chain-id"] === "string"
         ? Number(req.headers["x-chain-id"])
         : DEFAULT_TDK_CHAIN_ID;
-    Sentry.setContext("chain", { chainId: req.chainId });
+    req.chain = defineChain(chainId);
+    Sentry.setContext("chain", { chainId });
   });
 };

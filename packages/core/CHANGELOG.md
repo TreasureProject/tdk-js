@@ -1,6 +1,63 @@
 # @treasure-dev/tdk-core
 
-## 2.2.1
+## 2.6.1
+
+### Patch Changes
+
+- 291e636: Allow string type for values when sending raw transactions
+
+## 2.6.0
+
+### Minor Changes
+
+- d9afa84: Updated TDK API client wait for transaction completion behavior
+
+### Patch Changes
+
+- 28cfa6b: Added X connect method option
+- 947e37c: Added utility for signing account signature message as backend wallet
+
+## 2.5.0
+
+### Minor Changes
+
+- df6d965: Added update user to TDK API client
+
+### Patch Changes
+
+- 65d384f: Updated Magicswap router ABI and addresses
+
+## 2.4.0
+
+### Minor Changes
+
+- db210bc: Added get user transactions helper to TDK API client
+
+## 2.3.0
+
+### Minor Changes
+
+- 0608a3d: Refactored send native TDK API function to send any raw transaction
+
+## 2.2.4
+
+### Patch Changes
+
+- 83aab09: Added txOverrides option for creating transactions through TDK API client
+
+## 2.2.3
+
+### Patch Changes
+
+- f42c891: Fixes the implementation of isSocialConnectMethod
+- b75e4c8: Added connect with passkey param to override sign in type
+- 0137720: Removed deprecated `createLoginUrl` helper
+
+## 2.2.2
+
+### Patch Changes
+
+- 34cfc5c: Fix passkey when using redirect for social
 
 ## 2.2.0
 
@@ -12,10 +69,6 @@
 ### Patch Changes
 
 - d110c16: Added new redirect support
-
-## 2.1.0
-
-## 2.0.1
 
 ## 2.0.0
 
@@ -39,8 +92,6 @@
 ### Patch Changes
 
 - 9e56447: Added strict typing on Magicswap argument utils
-
-## 1.4.1
 
 ## 1.4.0
 
@@ -78,8 +129,6 @@
 ### Patch Changes
 
 - fea2894: Added Magicswap utils
-
-## 1.0.1
 
 ## 1.0.0
 

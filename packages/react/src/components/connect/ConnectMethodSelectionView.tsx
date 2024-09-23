@@ -12,6 +12,7 @@ import { GoogleIcon } from "../../icons/GoogleIcon";
 import { PasskeyIcon } from "../../icons/PasskeyIcon";
 import { TelegramIcon } from "../../icons/TelegramIcon";
 import { WalletIcon } from "../../icons/WalletIcon";
+import { XIcon } from "../../icons/XIcon";
 import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 import { ConnectFooter } from "./ConnectFooter";
@@ -34,7 +35,7 @@ export const ConnectMethodSelectionView = ({
   appIconUri = DEFAULT_TDK_APP_ICON_URI,
   isLoading = false,
   error,
-  disablePasskey = false,
+  disablePasskey = true,
   disableWallet = false,
   onConnect,
 }: Props) => {
@@ -107,58 +108,66 @@ export const ConnectMethodSelectionView = ({
           {t("common.or")}
         </span>
       </div>
-      <div
-        className={cn(
-          "tdk-grid tdk-gap-2 tdk-grid-cols-2",
-          disablePasskey ? "md:tdk-grid-cols-4" : "md:tdk-grid-cols-5",
-        )}
-      >
+      <div className="tdk-grid tdk-gap-2 tdk-grid-cols-6 md:tdk-grid-cols-5">
         <ConnectMethodButton
-          className="tdk-group"
+          className="tdk-col-span-2 md:tdk-col-span-1"
+          title={t("connect.option.google")}
           onClick={() => onConnect("google")}
+          disabled={isLoading}
         >
-          <GoogleIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">{t("connect.option.google")}</span>
+          <GoogleIcon className="tdk-w-7 tdk-h-7" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group"
+          className="tdk-col-span-2 md:tdk-col-span-1"
+          title={t("connect.option.x")}
+          onClick={() => onConnect("x")}
+          disabled={isLoading}
+        >
+          <XIcon className="tdk-w-5 tdk-h-5" />
+        </ConnectMethodButton>
+        <ConnectMethodButton
+          className="tdk-col-span-2 md:tdk-col-span-1"
+          title={t("connect.option.telegram")}
           onClick={() => onConnect("telegram")}
+          disabled={isLoading}
         >
-          <TelegramIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">{t("connect.option.telegram")}</span>
+          <TelegramIcon className="tdk-w-6 tdk-h-6" />
         </ConnectMethodButton>
+        <span className="md:tdk-hidden" />
         <ConnectMethodButton
-          className="tdk-group"
+          className="tdk-col-span-2 md:tdk-col-span-1"
+          title={t("connect.option.discord")}
           onClick={() => onConnect("discord")}
+          disabled={isLoading}
         >
-          <DiscordIcon className="tdk-w-6 tdk-h-6 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">{t("connect.option.discord")}</span>
+          <DiscordIcon className="tdk-w-6 tdk-h-6" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-group tdk-space-y-0.5"
+          className="tdk-col-span-2 md:tdk-col-span-1"
+          title={t("connect.option.apple")}
           onClick={() => onConnect("apple")}
+          disabled={isLoading}
         >
-          <AppleIcon className="tdk-w-5 tdk-h-5 tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
-          <span className="tdk-block">{t("connect.option.apple")}</span>
+          <AppleIcon className="tdk-w-5 tdk-h-5" />
         </ConnectMethodButton>
+        <span className="md:tdk-hidden" />
         {!disablePasskey ? (
           <ConnectMethodButton
-            className="tdk-group tdk-col-span-2 md:tdk-col-span-1 tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-py-2 md:tdk-block"
+            className="tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-full"
             onClick={() => onConnect("passkey")}
+            disabled={isLoading}
           >
-            <PasskeyIcon className="tdk-w-6 tdk-h-6 md:tdk-mx-auto tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+            <PasskeyIcon className="tdk-w-6 tdk-h-6" />
             <span className="tdk-block">{t("connect.option.passkey")}</span>
           </ConnectMethodButton>
         ) : null}
         {!disableWallet ? (
           <ConnectMethodButton
-            className={cn(
-              "tdk-group tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-2",
-              disablePasskey ? "md:tdk-col-span-4" : "md:tdk-col-span-5",
-            )}
+            className="tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-full"
             onClick={() => onConnect("wallet")}
+            disabled={isLoading}
           >
-            <WalletIcon className="tdk-w-6 tdk-h-6 tdk-text-silver-100 group-hover:tdk-text-night-800 tdk-transition-colors" />
+            <WalletIcon className="tdk-w-6 tdk-h-6" />
             {t("connect.option.wallet")}
           </ConnectMethodButton>
         ) : null}
@@ -176,7 +185,10 @@ const ConnectMethodButton = ({
     <button
       type="button"
       className={cn(
-        "tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream tdk-transition-colors hover:tdk-text-night-800 tdk-rounded-lg",
+        "tdk-flex tdk-items-center tdk-justify-center tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-transition-colors tdk-rounded-lg",
+        props.disabled
+          ? "tdk-opacity-50 tdk-cursor-not-allowed"
+          : "tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream hover:tdk-text-night-800",
         className,
       )}
       {...props}

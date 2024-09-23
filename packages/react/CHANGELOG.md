@@ -1,5 +1,75 @@
 # @treasure-dev/tdk-react
 
+## 2.6.1
+
+### Patch Changes
+
+- Updated dependencies [291e636]
+  - @treasure-dev/tdk-core@2.6.1
+
+## 2.6.0
+
+### Patch Changes
+
+- 28cfa6b: Added X connect method option
+- Updated dependencies [28cfa6b]
+- Updated dependencies [947e37c]
+- Updated dependencies [d9afa84]
+  - @treasure-dev/tdk-core@2.6.0
+
+## 2.5.0
+
+### Patch Changes
+
+- Updated dependencies [df6d965]
+- Updated dependencies [65d384f]
+  - @treasure-dev/tdk-core@2.5.0
+
+## 2.4.0
+
+### Patch Changes
+
+- Updated dependencies [db210bc]
+  - @treasure-dev/tdk-core@2.4.0
+
+## 2.3.0
+
+### Patch Changes
+
+- Updated dependencies [0608a3d]
+  - @treasure-dev/tdk-core@2.3.0
+
+## 2.2.4
+
+### Patch Changes
+
+- 1cfd245: Fixed connect modal colors
+- b9fa738: Disable passkey login option by default
+- 550a319: Streamlined error message in connect flow
+- 83aab09: Added txOverrides option for creating transactions through TDK API client
+- Updated dependencies [83aab09]
+  - @treasure-dev/tdk-core@2.2.4
+
+## 2.2.3
+
+### Patch Changes
+
+- b75e4c8: Added connect success and error callbacks
+- Updated dependencies [f42c891]
+- Updated dependencies [b75e4c8]
+- Updated dependencies [0137720]
+  - @treasure-dev/tdk-core@2.2.3
+
+## 2.2.2
+
+### Patch Changes
+
+- 34cfc5c: Fix passkey when using redirect for social
+- f88258b: Added hideSwitchWallet connected account modal param; set balance token to MAGIC
+- 77e0aa7: Disabled connect methods while modal is loading
+- Updated dependencies [34cfc5c]
+  - @treasure-dev/tdk-core@2.2.2
+
 ## 2.2.1
 
 ### Patch Changes

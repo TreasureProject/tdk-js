@@ -3,4 +3,4 @@
 "@treasure-dev/tdk-core": patch
 ---
 
-Fix passkey when using redirect for social
+Skip extra user session fetch on login

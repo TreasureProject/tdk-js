@@ -10,6 +10,8 @@ export const readCurrentUserReplySchema = Type.Intersect([
   userSchema,
   userProfileSchema,
   Type.Object({
+    sessions: Type.Array(sessionSchema),
+    // Fields for backwards compatibility
     allActiveSigners: Type.Array(sessionSchema),
   }),
 ]);
