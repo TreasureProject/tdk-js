@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-core
 
+## 2.7.0
+
+### Minor Changes
+
+- 01c4c35: Updated user sessions to be fetched through Thirdweb SDK
+
+### Patch Changes
+
+- 750b98e: Fixed file name for CommonJS package exports
+- 3d01c9a: Skip extra user session fetch on login
+
 ## 2.6.1
 
 ### Patch Changes
