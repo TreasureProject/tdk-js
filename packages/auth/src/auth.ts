@@ -28,8 +28,8 @@ const JWT_HEADER = base64url(
 
 export const createAuth = ({
   kmsKey,
-  issuer = "treasure.lol",
-  audience = "treasure.lol",
+  issuer,
+  audience,
   expirationTimeSeconds = 86_400, // 1 day
 }: AuthOptions) => {
   const kms = new KMS();
@@ -45,8 +45,8 @@ export const createAuth = ({
       },
     ) => {
       const payload: Payload = {
-        iss: overrides?.issuer ?? issuer,
-        aud: overrides?.audience ?? audience,
+        iss: overrides?.issuer ?? issuer ?? "treasure.lol",
+        aud: overrides?.audience ?? audience ?? "treasure.lol",
         sub: subject,
         iat: Math.floor((overrides?.issuedAt ?? new Date()).getTime() / 1000),
         exp:
@@ -71,14 +71,14 @@ export const createAuth = ({
       }
 
       // Check audience matches
-      if (decoded.aud !== audience) {
+      if (audience && decoded.aud.toLowerCase() !== audience.toLowerCase()) {
         throw new Error(
           `Expected audience "${audience}", but found "${decoded.aud}"`,
         );
       }
 
       // Check issuer matches
-      if (decoded.iss.toLowerCase() !== issuer.toLowerCase()) {
+      if (issuer && decoded.iss.toLowerCase() !== issuer.toLowerCase()) {
         throw new Error(
           `Expected issuer "${issuer}", but found "${decoded.iss}"`,
         );
