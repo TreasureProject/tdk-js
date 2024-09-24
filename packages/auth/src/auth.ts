@@ -1,4 +1,4 @@
-import { KMS } from "@aws-sdk/client-kms";
+import { KMS, type KMSClientConfig } from "@aws-sdk/client-kms";
 import jwt from "jsonwebtoken";
 import { base64url } from "./base64";
 import { kmsGetPublicKey, kmsSign } from "./kms";
@@ -14,6 +14,7 @@ type Payload<TContext = unknown> = {
 
 type AuthOptions = {
   kmsKey: string;
+  kmsClientConfig?: KMSClientConfig;
   issuer?: string;
   audience?: string;
   expirationTimeSeconds?: number;
@@ -28,11 +29,12 @@ const JWT_HEADER = base64url(
 
 export const createAuth = ({
   kmsKey,
+  kmsClientConfig,
   issuer,
   audience,
   expirationTimeSeconds = 86_400, // 1 day
 }: AuthOptions) => {
-  const kms = new KMS();
+  const kms = kmsClientConfig ? new KMS(kmsClientConfig) : new KMS();
   return {
     generateJWT: async (
       subject: string,
