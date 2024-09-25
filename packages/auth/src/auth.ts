@@ -15,6 +15,7 @@ type Payload<TContext = unknown> = {
 type AuthOptions = {
   kmsKey: string;
   kmsClientConfig?: KMSClientConfig;
+  kmsPublicKeyCacheTtlSeconds?: number;
   issuer?: string;
   audience?: string;
   expirationTimeSeconds?: number;
@@ -30,6 +31,7 @@ const JWT_HEADER = base64url(
 export const createAuth = ({
   kmsKey,
   kmsClientConfig,
+  kmsPublicKeyCacheTtlSeconds = 3_600, // 1 hour
   issuer,
   audience,
   expirationTimeSeconds = 86_400, // 1 day
@@ -87,7 +89,11 @@ export const createAuth = ({
       }
 
       // Initial checks passed, now verify the token
-      const publicKey = await kmsGetPublicKey(kms, kmsKey);
+      const publicKey = await kmsGetPublicKey(
+        kms,
+        kmsKey,
+        kmsPublicKeyCacheTtlSeconds,
+      );
       return jwt.verify(token, publicKey, {
         algorithms: ["RS256"],
       }) as Payload<TContext>;
