@@ -1,7 +1,16 @@
-import { defineChain, getContract, prepareContractCall, toWei } from "thirdweb";
+import {
+  createThirdwebClient,
+  defineChain,
+  getContract,
+  prepareContractCall,
+  toWei,
+} from "thirdweb";
 import { ConnectButton, useSendAndConfirmTransaction } from "thirdweb/react";
-import { client } from "./client";
 import thirdwebIcon from "./thirdweb.svg";
+
+const client = createThirdwebClient({
+  clientId: import.meta.env.VITE_TDK_CLIENT_ID,
+});
 
 const chain = defineChain(978657);
 
@@ -12,28 +21,45 @@ const wrappedMagicContract = getContract({
 });
 
 export function App() {
-  const {
-    mutate: sendAndConfirmTransaction,
-    data: result,
-    error,
-  } = useSendAndConfirmTransaction();
+  const { mutateAsync: sendAndConfirmTransaction, isPending } =
+    useSendAndConfirmTransaction();
 
-  const handleWrap = () => {
+  const handleWrap = async () => {
     const transaction = prepareContractCall({
       contract: wrappedMagicContract,
       method: "function deposit() payable",
       value: toWei("1"),
     });
-    sendAndConfirmTransaction(transaction);
+    try {
+      const result = await sendAndConfirmTransaction(transaction);
+      console.log("Transaction complete:", result.transactionHash);
+    } catch (err) {
+      console.error("Error wrapping MAGIC:", err);
+    }
   };
-
-  console.log({ result, error });
 
   return (
     <main className="container mx-auto flex min-h-[100vh] max-w-screen-lg items-center justify-center p-4 pb-10">
-      <div className="py-20">
-        <Header />
-        <div className="mb-20 flex justify-center">
+      <div className="space-y-10 py-20">
+        <header className="flex flex-col items-center">
+          <img
+            src={thirdwebIcon}
+            alt=""
+            className="size-[150px] md:size-[150px]"
+            style={{
+              filter: "drop-shadow(0px 0px 24px #a726a9a8)",
+            }}
+          />
+          <h1 className="mb-6 font-bold text-2xl text-zinc-100 tracking-tighter md:text-6xl">
+            thirdweb SDK
+            <span className="mx-1 inline-block text-zinc-300"> + </span>
+            <span className="-skew-x-6 inline-block text-violet-500">
+              {" "}
+              vite{" "}
+            </span>
+          </h1>
+        </header>
+        <div className="flex justify-center">
           <ConnectButton
             client={client}
             appMetadata={{
@@ -50,7 +76,8 @@ export function App() {
         <div className="text-center">
           <button
             type="button"
-            className="rounded bg-red-500 px-2 py-1 font-medium hover:bg-red-600 active:bg-red-700"
+            className="rounded bg-red-500 px-2 py-1 font-medium hover:bg-red-600 active:bg-red-700 disabled:pointer-events-none disabled:opacity-50"
+            disabled={isPending}
             onClick={handleWrap}
           >
             Wrap 1 MAGIC
@@ -58,34 +85,5 @@ export function App() {
         </div>
       </div>
     </main>
-  );
-}
-
-function Header() {
-  return (
-    <header className="mb-20 flex flex-col items-center md:mb-20">
-      <img
-        src={thirdwebIcon}
-        alt=""
-        className="size-[150px] md:size-[150px]"
-        style={{
-          filter: "drop-shadow(0px 0px 24px #a726a9a8)",
-        }}
-      />
-
-      <h1 className="mb-6 font-bold text-2xl text-zinc-100 tracking-tighter md:text-6xl">
-        thirdweb SDK
-        <span className="mx-1 inline-block text-zinc-300"> + </span>
-        <span className="-skew-x-6 inline-block text-violet-500"> vite </span>
-      </h1>
-
-      <p className="text-base text-zinc-300">
-        Read the{" "}
-        <code className="mx-1 rounded bg-zinc-800 px-2 py-1 text-sm text-zinc-300">
-          README.md
-        </code>{" "}
-        file to get started.
-      </p>
-    </header>
   );
 }
