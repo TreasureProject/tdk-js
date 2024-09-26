@@ -9,7 +9,6 @@ import {
   getContractAddresses,
 } from "@treasure-dev/tdk-core";
 import { ZERO_ADDRESS, defineChain } from "thirdweb";
-import { arbitrum, arbitrumSepolia } from "thirdweb/chains";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
@@ -93,7 +92,7 @@ export const useConnect = (props?: Props) => {
   const openAccountModal = () =>
     openWalletDetailsModal({
       client,
-      chains: [arbitrum, arbitrumSepolia],
+      chains,
       theme: THEME,
       locale: getLocaleId(),
       displayBalanceToken: chains.reduce(
