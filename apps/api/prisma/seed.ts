@@ -150,6 +150,7 @@ const PROJECT_DATA: Record<
         [arbitrum.id, "BulkTransferHelper"],
         [arbitrum.id, "ZeeverseGame"],
         [arbitrum.id, "MagicswapV2Router"],
+        [arbitrum.id, "0xb740d5804ea2061432469119cfa40cbb4586dd17"],
         [arbitrum.id, "0xb8ba7616d90d2a319211514d499a9e0c0ddb4716"],
         [arbitrum.id, "0x3f72f45130d0e3560e694e67cf32de8d3413e47d"],
         [arbitrum.id, "0x95a13c0cde16a1843faa81d5e7783abcc556050a"],
