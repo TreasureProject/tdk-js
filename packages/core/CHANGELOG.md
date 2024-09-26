@@ -1,5 +1,7 @@
 # @treasure-dev/tdk-core
 
+## 2.7.1
+
 ## 2.7.0
 
 ### Minor Changes

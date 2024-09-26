@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 2.7.1
+
+### Patch Changes
+
+- 941d2e6: Fixed hardcoded chain options in connected account modal
+  - @treasure-dev/tdk-core@2.7.1
+
 ## 2.7.0
 
 ### Minor Changes
