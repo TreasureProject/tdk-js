@@ -51,12 +51,20 @@ export class TdkError extends Error {
   }
 }
 
-export const normalizeEngineErrorMessage = (message: string) => {
+const ENGINE_ERROR_MESSAGE_MAP = {
+  "Invalid UserOperation signature or paymaster signature":
+    "No active session found. Please sign in again.",
+} as const;
+
+export const normalizeEngineErrorMessage = (rawMessage: string) => {
   const groups =
     /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)"|(?:Simulation failed: TransactionError: Error - (.*))|(?:^Simulation failed: (.*))|(?:^Error - (.*)))/gi.exec(
-      message,
+      rawMessage,
     );
-  return groups?.slice(1).find((group) => group) ?? message;
+  const message = groups?.slice(1).find((group) => group) ?? rawMessage;
+  return message in ENGINE_ERROR_MESSAGE_MAP
+    ? ENGINE_ERROR_MESSAGE_MAP[message as keyof typeof ENGINE_ERROR_MESSAGE_MAP]
+    : message;
 };
 
 export const parseEngineErrorMessage = (err: unknown) => {
