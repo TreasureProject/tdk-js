@@ -9,28 +9,34 @@ import type {
 
 import type { TransactionArguments, TransactionOverrides } from "../schema";
 
-export const parseTxOverrides = (txOverrides?: TransactionOverrides): TransactionOverrides | undefined => {
-    const gas = txOverrides?.gas ? txOverrides.gas : undefined;
-    const maxFeePerGas = txOverrides?.maxFeePerGas ? txOverrides.maxFeePerGas : undefined;
-    const maxPriorityFeePerGas = txOverrides?.maxPriorityFeePerGas ? txOverrides.maxPriorityFeePerGas : undefined;
-    const value = txOverrides?.value ? txOverrides.value : undefined;
-    if (gas || maxFeePerGas || maxPriorityFeePerGas || value) {
-        return {
-            gas,
-            maxFeePerGas,
-            maxPriorityFeePerGas,
-            value
-        }
-    }
-    return undefined;
-}
+export const parseTxOverrides = (
+  txOverrides?: TransactionOverrides
+): TransactionOverrides | undefined => {
+  const gas = txOverrides?.gas ? txOverrides.gas : undefined;
+  const maxFeePerGas = txOverrides?.maxFeePerGas
+    ? txOverrides.maxFeePerGas
+    : undefined;
+  const maxPriorityFeePerGas = txOverrides?.maxPriorityFeePerGas
+    ? txOverrides.maxPriorityFeePerGas
+    : undefined;
+  const value = txOverrides?.value ? txOverrides.value : undefined;
+  if (gas || maxFeePerGas || maxPriorityFeePerGas || value) {
+    return {
+      gas,
+      maxFeePerGas,
+      maxPriorityFeePerGas,
+      value,
+    };
+  }
+  return undefined;
+};
 
 export const writeTransaction = async <
   TAbi extends Abi,
   TFunctionName extends ExtractAbiFunctionNames<
     TAbi,
     "nonpayable" | "payable"
-  > = string,
+  > = string
 >({
   engine,
   chainId,
@@ -77,8 +83,8 @@ export const writeTransaction = async <
         args,
       },
       null,
-      2,
-    ),
+      2
+    )
   );
 
   const parsedTxOverrides = parseTxOverrides(txOverrides);
@@ -97,7 +103,7 @@ export const writeTransaction = async <
     },
     simulateTransaction,
     idempotencyKey,
-    smartAccountAddress,
+    smartAccountAddress
   );
   return result;
 };
