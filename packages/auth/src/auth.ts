@@ -1,4 +1,4 @@
-import { KMS } from "@aws-sdk/client-kms";
+import { KMS, type KMSClientConfig } from "@aws-sdk/client-kms";
 import jwt from "jsonwebtoken";
 import { base64url } from "./base64";
 import { kmsGetPublicKey, kmsSign } from "./kms";
@@ -14,6 +14,8 @@ type Payload<TContext = unknown> = {
 
 type AuthOptions = {
   kmsKey: string;
+  kmsClientConfig?: KMSClientConfig;
+  kmsPublicKeyCacheTtlSeconds?: number;
   issuer?: string;
   audience?: string;
   expirationTimeSeconds?: number;
@@ -28,11 +30,13 @@ const JWT_HEADER = base64url(
 
 export const createAuth = ({
   kmsKey,
-  issuer = "treasure.lol",
-  audience = "treasure.lol",
+  kmsClientConfig,
+  kmsPublicKeyCacheTtlSeconds = 3_600, // 1 hour
+  issuer,
+  audience,
   expirationTimeSeconds = 86_400, // 1 day
 }: AuthOptions) => {
-  const kms = new KMS();
+  const kms = kmsClientConfig ? new KMS(kmsClientConfig) : new KMS();
   return {
     generateJWT: async (
       subject: string,
@@ -45,8 +49,8 @@ export const createAuth = ({
       },
     ) => {
       const payload: Payload = {
-        iss: overrides?.issuer ?? issuer,
-        aud: overrides?.audience ?? audience,
+        iss: overrides?.issuer ?? issuer ?? "treasure.lol",
+        aud: overrides?.audience ?? audience ?? "treasure.lol",
         sub: subject,
         iat: Math.floor((overrides?.issuedAt ?? new Date()).getTime() / 1000),
         exp:
@@ -71,21 +75,25 @@ export const createAuth = ({
       }
 
       // Check audience matches
-      if (decoded.aud !== audience) {
+      if (audience && decoded.aud.toLowerCase() !== audience.toLowerCase()) {
         throw new Error(
           `Expected audience "${audience}", but found "${decoded.aud}"`,
         );
       }
 
       // Check issuer matches
-      if (decoded.iss.toLowerCase() !== issuer.toLowerCase()) {
+      if (issuer && decoded.iss.toLowerCase() !== issuer.toLowerCase()) {
         throw new Error(
           `Expected issuer "${issuer}", but found "${decoded.iss}"`,
         );
       }
 
       // Initial checks passed, now verify the token
-      const publicKey = await kmsGetPublicKey(kms, kmsKey);
+      const publicKey = await kmsGetPublicKey(
+        kms,
+        kmsKey,
+        kmsPublicKeyCacheTtlSeconds,
+      );
       return jwt.verify(token, publicKey, {
         algorithms: ["RS256"],
       }) as Payload<TContext>;

@@ -1,7 +1,13 @@
 import type { KMS } from "@aws-sdk/client-kms";
 import { base64, base64url } from "./base64";
 
-const publicKeyCache: Record<string, string> = {};
+const publicKeyCache: Record<
+  string,
+  {
+    publicKey: string;
+    lastUpdatedAt: number;
+  }
+> = {};
 
 export const kmsSign = async (kms: KMS, key: string, message: string) => {
   const result = await kms.sign({
@@ -17,16 +23,25 @@ export const kmsSign = async (kms: KMS, key: string, message: string) => {
   return base64url(result.Signature);
 };
 
-export const kmsGetPublicKey = async (kms: KMS, key: string) => {
-  if (!publicKeyCache[key]) {
+export const kmsGetPublicKey = async (
+  kms: KMS,
+  key: string,
+  cacheTtlSeconds = 3_600, // 1 hour
+) => {
+  if (
+    !publicKeyCache[key] ||
+    Date.now() - publicKeyCache[key].lastUpdatedAt > cacheTtlSeconds * 1_000
+  ) {
     const result = await kms.getPublicKey({ KeyId: key });
     if (!result.PublicKey) {
       throw new Error("Unable to fetch public key");
     }
 
-    publicKeyCache[key] =
-      `-----BEGIN PUBLIC KEY-----\n${base64(result.PublicKey)}\n-----END PUBLIC KEY-----`;
+    publicKeyCache[key] = {
+      publicKey: `-----BEGIN PUBLIC KEY-----\n${base64(result.PublicKey)}\n-----END PUBLIC KEY-----`,
+      lastUpdatedAt: Date.now(),
+    };
   }
 
-  return publicKeyCache[key];
+  return publicKeyCache[key].publicKey;
 };

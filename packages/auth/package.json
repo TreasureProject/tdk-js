@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/auth",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Authentication token utilities for the Treasure ecosystem",
   "keywords": [
     "treasure"
@@ -19,7 +19,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
     }
