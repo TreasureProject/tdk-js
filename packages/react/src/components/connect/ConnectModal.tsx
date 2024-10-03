@@ -10,8 +10,7 @@ import {
 } from "@treasure-dev/tdk-core";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
-import type { Wallet } from "thirdweb/wallets";
-import { authenticate } from "thirdweb/wallets/in-app";
+import { type Wallet, authenticate } from "thirdweb/wallets";
 
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
@@ -201,6 +200,10 @@ export const ConnectModal = ({
       try {
         await authenticate({
           client,
+          ecosystem: {
+            id: ecosystemId,
+            partnerId: ecosystemPartnerId,
+          },
           strategy: method as SocialConnectMethod,
           redirectUrl,
           mode: authMode,
