@@ -9,6 +9,22 @@ import type {
 
 import type { TransactionArguments, TransactionOverrides } from "../schema";
 
+export const parseTxOverrides = (txOverrides?: TransactionOverrides): TransactionOverrides | undefined => {
+    const gas = txOverrides?.gas ? txOverrides.gas : undefined;
+    const maxFeePerGas = txOverrides?.maxFeePerGas ? txOverrides.maxFeePerGas : undefined;
+    const maxPriorityFeePerGas = txOverrides?.maxPriorityFeePerGas ? txOverrides.maxPriorityFeePerGas : undefined;
+    const value = txOverrides?.value ? txOverrides.value : undefined;
+    if (gas || maxFeePerGas || maxPriorityFeePerGas || value) {
+        return {
+            gas,
+            maxFeePerGas,
+            maxPriorityFeePerGas,
+            value
+        }
+    }
+    return undefined;
+}
+
 export const writeTransaction = async <
   TAbi extends Abi,
   TFunctionName extends ExtractAbiFunctionNames<
@@ -64,6 +80,9 @@ export const writeTransaction = async <
       2,
     ),
   );
+
+  const parsedTxOverrides = parseTxOverrides(txOverrides);
+
   const { result } = await engine.contract.write(
     chainId.toString(),
     contractAddress,
@@ -74,7 +93,7 @@ export const writeTransaction = async <
       functionName,
       // @ts-ignore: stronger type-checking than Engine
       args,
-      txOverrides,
+      txOverrides: parsedTxOverrides,
     },
     simulateTransaction,
     idempotencyKey,

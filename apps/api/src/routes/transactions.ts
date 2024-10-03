@@ -27,6 +27,7 @@ import {
   normalizeEngineErrorMessage,
   parseEngineErrorMessage,
 } from "../utils/error";
+import {parseTxOverrides} from "../utils/transaction";
 
 export const transactionsRoutes =
   ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
@@ -106,6 +107,8 @@ export const transactionsRoutes =
             ),
           );
 
+          const parsedTxOverrides = parseTxOverrides(txOverrides);
+
           const { result } = await engine.contract.write(
             chain.id.toString(),
             address,
@@ -114,7 +117,7 @@ export const transactionsRoutes =
               abi: transactionAbi,
               functionName,
               args,
-              txOverrides,
+              txOverrides: parsedTxOverrides,
             },
             simulateTransaction,
             undefined,
@@ -174,6 +177,8 @@ export const transactionsRoutes =
           });
         }
 
+        const parsedTxOverrides = parseTxOverrides(txOverrides);
+
         try {
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
@@ -183,7 +188,7 @@ export const transactionsRoutes =
               toAddress: to,
               value: value,
               data,
-              txOverrides,
+              txOverrides: parsedTxOverrides,
             },
             simulateTransaction,
             undefined,
