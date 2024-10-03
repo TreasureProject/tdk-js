@@ -151,7 +151,12 @@ export const ConnectModal = ({
       // Send verification code and update state to show verification view
       setIsLoading();
       try {
-        await sendEmailVerificationCode({ client, email: nextEmail });
+        await sendEmailVerificationCode({
+          client,
+          ecosystemId,
+          ecosystemPartnerId,
+          email: nextEmail,
+        });
         setState({ email: nextEmail, isLoading: false, error: undefined });
       } catch (err) {
         console.error("Error sending email verification code:", err);
@@ -249,7 +254,12 @@ export const ConnectModal = ({
 
   const handleResendEmailVerificationCode = async () => {
     try {
-      await sendEmailVerificationCode({ client, email });
+      await sendEmailVerificationCode({
+        client,
+        ecosystemId,
+        ecosystemPartnerId,
+        email,
+      });
     } catch (err) {
       console.error("Error resending email verification code:", err);
       setError(err);

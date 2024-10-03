@@ -5,8 +5,9 @@ import {
   ecosystemWallet as createEcosystemWallet,
   smartWallet as createSmartWallet,
   createWallet,
+  preAuthenticate,
 } from "thirdweb/wallets";
-import { hasStoredPasskey, preAuthenticate } from "thirdweb/wallets/in-app";
+import { hasStoredPasskey } from "thirdweb/wallets/in-app";
 
 import { TDKAPI } from "../api";
 import {
@@ -185,13 +186,21 @@ export const authenticateWallet = async ({
 
 export const sendEmailVerificationCode = async ({
   client,
+  ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
+  ecosystemPartnerId,
   email,
 }: {
   client: TreasureConnectClient;
+  ecosystemId?: EcosystemIdString;
+  ecosystemPartnerId: string;
   email: string;
 }) =>
   preAuthenticate({
     client,
+    ecosystem: {
+      id: ecosystemId,
+      partnerId: ecosystemPartnerId,
+    },
     strategy: "email",
     email: email.toLowerCase(),
   });

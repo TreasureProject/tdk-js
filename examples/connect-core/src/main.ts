@@ -14,6 +14,8 @@ import "./style.css";
 const client = createTreasureConnectClient({
   clientId: import.meta.env.VITE_TDK_CLIENT_ID,
 });
+const ecosystemId = import.meta.env.VITE_TDK_ECOSYSTEM_ID;
+const ecosystemPartnerId = import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID;
 const chainId = 421614;
 const apiUri = import.meta.env.VITE_TDK_API_URL;
 const sessionOptions: SessionOptions = {
@@ -100,8 +102,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     try {
       const result = await logIn({
         client,
-        ecosystemId: import.meta.env.VITE_TDK_ECOSYSTEM_ID,
-        ecosystemPartnerId: import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID,
+        ecosystemId,
+        ecosystemPartnerId,
         method: "google",
         apiUri,
         chainId,
@@ -125,6 +127,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     try {
       await sendEmailVerificationCode({
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         email: emailInput.value,
       });
       emailContainer.hidden = true;
