@@ -10,7 +10,7 @@ import {
 } from "@treasure-dev/tdk-core";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
-import { type Wallet, authenticate } from "thirdweb/wallets";
+import { type Wallet, authenticateWithRedirect } from "thirdweb/wallets";
 
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
@@ -198,7 +198,7 @@ export const ConnectModal = ({
       // can use the headless `authenticate` function instead of connect
       // and it will redirect out of the app here
       try {
-        await authenticate({
+        await authenticateWithRedirect({
           client,
           ecosystem: {
             id: ecosystemId,
