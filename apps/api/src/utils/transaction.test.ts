@@ -22,7 +22,7 @@ describe("transaction utils", () => {
     });
 
     expect(
-      parseTxOverrides({ maxPriorityFeePerGas: "10000000000" })
+      parseTxOverrides({ maxPriorityFeePerGas: "10000000000" }),
     ).toStrictEqual({
       gas: undefined,
       maxFeePerGas: undefined,
@@ -43,7 +43,7 @@ describe("transaction utils", () => {
         maxFeePerGas: "10000000000",
         maxPriorityFeePerGas: "10000000000",
         value: "10000000000",
-      })
+      }),
     ).toStrictEqual({
       gas: "10000000000",
       maxFeePerGas: "10000000000",
@@ -57,7 +57,7 @@ describe("transaction utils", () => {
         maxFeePerGas: "10000000000",
         maxPriorityFeePerGas: "10000000000",
         value: "10000000000",
-      })
+      }),
     ).toStrictEqual({
       gas: undefined,
       maxFeePerGas: "10000000000",
@@ -71,7 +71,7 @@ describe("transaction utils", () => {
         maxFeePerGas: "10000000000",
         maxPriorityFeePerGas: null as unknown as string,
         value: "10000000000",
-      })
+      }),
     ).toStrictEqual({
       gas: undefined,
       maxFeePerGas: "10000000000",

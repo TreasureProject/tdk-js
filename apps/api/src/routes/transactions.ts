@@ -90,8 +90,8 @@ export const transactionsRoutes =
             typeof abi === "string" && abi.length > 0
               ? JSON.parse(abi)
               : Array.isArray(abi) && abi.length > 0
-              ? abi
-              : undefined;
+                ? abi
+                : undefined;
 
           Sentry.setExtra(
             "transaction",
@@ -103,8 +103,8 @@ export const transactionsRoutes =
                 args,
               },
               null,
-              2
-            )
+              2,
+            ),
           );
 
           const parsedTxOverrides = parseTxOverrides(txOverrides);
@@ -122,7 +122,7 @@ export const transactionsRoutes =
             simulateTransaction,
             undefined,
             userAddress,
-            getContractAddress(chain.id, "ManagedAccountFactory")
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
@@ -132,7 +132,7 @@ export const transactionsRoutes =
             message: parseEngineErrorMessage(err),
           });
         }
-      }
+      },
     );
 
     app.post<{
@@ -193,7 +193,7 @@ export const transactionsRoutes =
             simulateTransaction,
             undefined,
             userAddress,
-            getContractAddress(chain.id, "ManagedAccountFactory")
+            getContractAddress(chain.id, "ManagedAccountFactory"),
           );
           reply.send(result);
         } catch (err) {
@@ -203,7 +203,7 @@ export const transactionsRoutes =
             message: parseEngineErrorMessage(err),
           });
         }
-      }
+      },
     );
 
     app.get<{
@@ -261,6 +261,6 @@ export const transactionsRoutes =
             message: parseEngineErrorMessage(err),
           });
         }
-      }
+      },
     );
   };
