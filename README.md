@@ -27,7 +27,7 @@ SDK for the Treasure ecosystem
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Open the `README.md` files for the apps and examples you are contributing to and follow the instructions to finish configuring the packages.

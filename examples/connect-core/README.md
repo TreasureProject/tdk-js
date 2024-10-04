@@ -12,7 +12,7 @@ Example showing how vanilla JS/TS front-ends can interact with the Treasure Deve
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Create `.env` file based on example and fill in with relevant environment variables:

@@ -12,7 +12,7 @@ Example showing how Electron-based apps can interact with the Treasure Developme
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 In the workspace root folder, run the Electron install script:

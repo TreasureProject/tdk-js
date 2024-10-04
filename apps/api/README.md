@@ -13,7 +13,7 @@ Backend server powering the Treasure Development Kit
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Create `.env` file based on example and fill in with relevant environment variables:

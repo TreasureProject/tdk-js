@@ -10,7 +10,7 @@ Treasure Development Kit for React-based projects
 ## Installation
 
 ```bash
-npm install @treasure-dev/tdk-react
+pnpm add @treasure-dev/tdk-react
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ npm install @treasure-dev/tdk-react
 In the root directory of the `tdk-js` project, install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Start the package in development mode to listen for changes:

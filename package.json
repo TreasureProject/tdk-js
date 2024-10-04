@@ -13,7 +13,7 @@
     "dev:core": "pnpm --filter ./packages/core dev",
     "dev:api": "pnpm --filter ./apps/api dev",
     "dev:react": "pnpm --filter ./packages/react dev",
-    "start:api": "npm --filter ./apps/api start",
+    "start:api": "pnpm --filter ./apps/api start",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "fix": "biome check --write --unsafe .",
