@@ -12,7 +12,7 @@
     "@treasure-dev/tdk-core": "*"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.3.4"
+    "typescript": "catalog:",
+    "vite": "catalog:"
   }
 }

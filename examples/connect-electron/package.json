@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "main": "./out/main/index.js",
   "scripts": {
+    "install:electron": "node ./node_modules/electron/install.js",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "pnpm typecheck:node && pnpm typecheck:web",
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "start": "pnpm install:electron && electron-vite preview",
+    "dev": "pnpm install:electron && electron-vite dev",
     "build": "pnpm typecheck && electron-vite build",
     "build:unpack": "pnpm build && electron-builder --dir",
     "build:win": "pnpm build && electron-builder --win",
@@ -32,6 +33,7 @@
     "electron-vite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "vite": "^5.3.1"
+    "vite": "catalog:",
+    "typescript": "catalog:"
   }
 }

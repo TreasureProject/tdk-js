@@ -4,6 +4,15 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    typescript:
+      specifier: 5.6.2
+      version: 5.6.2
+    vite:
+      specifier: 5.4.8
+      version: 5.4.8
+
 importers:
 
   .:
@@ -46,7 +55,7 @@ importers:
         specifier: ^4.7.1
         version: 4.19.1
       typescript:
-        specifier: ^5.4.5
+        specifier: 'catalog:'
         version: 5.6.2
       vitest:
         specifier: ^2.0.3
@@ -123,10 +132,10 @@ importers:
         version: 2.7.1(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       typescript:
-        specifier: ^5.2.2
+        specifier: 'catalog:'
         version: 5.6.2
       vite:
-        specifier: ^5.3.4
+        specifier: 'catalog:'
         version: 5.4.8(@types/node@22.7.4)
 
   examples/connect-electron:
@@ -174,8 +183,11 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.2
       vite:
-        specifier: ^5.3.1
+        specifier: 'catalog:'
         version: 5.4.8(@types/node@22.7.4)
 
   examples/connect-react:
@@ -215,7 +227,7 @@ importers:
         specifier: ^3.3.3
         version: 3.4.13
       vite:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.4.8(@types/node@22.7.4)
 
   examples/magicswap:
@@ -261,7 +273,7 @@ importers:
         specifier: ^3.3.3
         version: 3.4.13
       vite:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.4.8(@types/node@22.7.4)
 
   packages/auth:
@@ -365,7 +377,7 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.13)
       vite:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.4.8(@types/node@22.7.4)
 
   packages/tailwind-config:

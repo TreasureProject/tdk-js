@@ -13,7 +13,8 @@
     "dev:core": "pnpm --filter ./packages/core dev",
     "dev:api": "pnpm --filter ./apps/api dev",
     "dev:react": "pnpm --filter ./packages/react dev",
-    "dev:electron": "pnpm --filter ./examples/connect-electron dev",
+    "dev:connect-electron": "pnpm --filter ./examples/connect-electron dev",
+    "dev:connect-react": "pnpm --filter ./examples/connect-react dev",
     "start:api": "pnpm --filter ./apps/api start",
     "format": "biome format --write .",
     "lint": "biome lint .",
@@ -35,7 +36,7 @@
     "lint-staged": "^15.0.0",
     "tsup": "^8.0.1",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.5",
+    "typescript": "catalog:",
     "vitest": "^2.0.3"
   },
   "optionalDependencies": {
