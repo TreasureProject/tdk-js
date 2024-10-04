@@ -8,18 +8,18 @@
   },
   "dependencies": {
     "@treasure-dev/tdk-react": "*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "thirdweb": "^5.48.0"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "thirdweb": "catalog:"
   },
   "devDependencies": {
     "@treasure-dev/tailwind-config": "*",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.0.3",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "autoprefixer": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
     "vite": "catalog:"
   }
 }
