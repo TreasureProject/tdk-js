@@ -139,7 +139,10 @@ importers:
         version: 3.0.0(electron@31.6.0)
       '@treasure-dev/tdk-react':
         specifier: '*'
-        version: 2.7.1(@tanstack/query-core@5.56.2)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
+        version: 2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
+      express:
+        specifier: ^4.21.0
+        version: 4.21.0
       thirdweb:
         specifier: ^5.48.0
         version: 5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8)
@@ -179,7 +182,7 @@ importers:
     dependencies:
       '@treasure-dev/tdk-react':
         specifier: '*'
-        version: 2.7.1(@tanstack/query-core@5.56.2)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
+        version: 2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -219,7 +222,7 @@ importers:
     dependencies:
       '@treasure-dev/tdk-react':
         specifier: '*'
-        version: 2.7.1(@tanstack/query-core@5.56.2)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
+        version: 2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
       decimal.js-light:
         specifier: ^2.5.1
         version: 2.5.1
@@ -9085,7 +9088,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@treasure-dev/tdk-react@2.7.1(@tanstack/query-core@5.56.2)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)':
+  '@treasure-dev/tdk-react@2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-visually-hidden': 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

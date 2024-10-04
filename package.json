@@ -13,6 +13,7 @@
     "dev:core": "pnpm --filter ./packages/core dev",
     "dev:api": "pnpm --filter ./apps/api dev",
     "dev:react": "pnpm --filter ./packages/react dev",
+    "dev:electron": "pnpm --filter ./examples/connect-electron dev",
     "start:api": "pnpm --filter ./apps/api start",
     "format": "biome format --write .",
     "lint": "biome lint .",
