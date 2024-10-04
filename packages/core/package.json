@@ -32,8 +32,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && tsup",
-    "dev": "npm run build -- --watch"
+    "build": "pnpm typecheck && tsup",
+    "dev": "pnpm build -- --watch"
   },
   "dependencies": {
     "@sushiswap/tines": "^1.0.3",

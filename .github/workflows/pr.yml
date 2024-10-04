@@ -11,14 +11,14 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Generate code
-        run: npm run generate
+        run: pnpm generate
       - name: Lint code
-        run: npm run lint
+        run: pnpm lint
       - name: Analyze code
-        run: npm run knip
+        run: pnpm knip
       - name: Test code
-        run: npm test
+        run: pnpm test
       - name: Build code
-        run: npm run build
+        run: pnpm build

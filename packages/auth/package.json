@@ -29,8 +29,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && tsup",
-    "dev": "npm run build -- --watch"
+    "build": "pnpm typecheck && tsup",
+    "dev": "pnpm build -- --watch"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "^3.540.0",

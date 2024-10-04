@@ -30,5 +30,5 @@ cp .env.example .env
 Start application:
 
 ```bash
-npm run dev
+pnpm dev
 ```

@@ -25,25 +25,25 @@ cp .env.example .env
 Generate database client:
 
 ```bash
-npm run generate
+pnpm generate
 ```
 
 Create initial tables in database:
 
 ```bash
-npm run db:migrate
+pnpm db:migrate
 ```
 
 Seed database with development values:
 
 ```bash
-npm run db:seed
+pnpm db:seed
 ```
 
 Start server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## Deployment

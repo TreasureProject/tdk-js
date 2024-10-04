@@ -70,13 +70,13 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Build packages
         run: |
-          npm run build:auth
-          npm run build:core
+          pnpm build:auth
+          pnpm build:core
       - name: Build code
-        run: npm run build:api
+        run: pnpm build:api
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:

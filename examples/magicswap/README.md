@@ -24,5 +24,5 @@ cp .env.example .env
 Start server:
 
 ```bash
-npm run dev
+pnpm dev
 ```

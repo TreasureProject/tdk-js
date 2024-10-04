@@ -2,18 +2,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run build:auth && npm run build:core && npm run build:react && npm run build:api",
-    "build:auth": "npm run build --prefix ./packages/auth",
-    "build:core": "npm run build --prefix ./packages/core",
-    "build:react": "npm run build --prefix ./packages/react",
-    "build:api": "npm run build --prefix ./apps/api",
-    "generate": "npm run generate --workspaces --if-present",
-    "dev": "concurrently \"npm run dev:auth\" \"npm run dev:core\" \"npm run dev:api\" \"npm run dev:react\"",
-    "dev:auth": "npm run dev --prefix ./packages/auth",
-    "dev:core": "npm run dev --prefix ./packages/core",
-    "dev:api": "npm run dev --prefix ./apps/api",
-    "dev:react": "npm run dev --prefix ./packages/react",
-    "start:api": "npm start --prefix ./apps/api",
+    "build": "pnpm build:auth && pnpm build:core && pnpm build:react && pnpm build:api",
+    "build:auth": "pnpm --filter ./packages/auth build",
+    "build:core": "pnpm --filter ./packages/core build",
+    "build:react": "pnpm --filter ./packages/react build",
+    "build:api": "pnpm --filter ./apps/api build",
+    "generate": "pnpm generate --workspaces --if-present",
+    "dev": "concurrently \"pnpm dev:auth\" \"pnpm dev:core\" \"pnpm dev:api\" \"pnpm dev:react\"",
+    "dev:auth": "pnpm --filter ./packages/auth dev",
+    "dev:core": "pnpm --filter ./packages/core dev",
+    "dev:api": "pnpm --filter ./apps/api dev",
+    "dev:react": "pnpm --filter ./packages/react dev",
+    "start:api": "npm --filter ./apps/api start",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "fix": "biome check --write --unsafe .",
@@ -21,7 +21,7 @@
     "test": "TZ=UTC vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
-    "package:publish": "npm run build:auth && npm run build:core && npm run build:react && changeset publish",
+    "package:publish": "pnpm build:auth && pnpm build:core && pnpm build:react && changeset publish",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -41,10 +41,5 @@
     "@biomejs/cli-linux-x64": "^0.1.2",
     "@esbuild/linux-x64": "^0.21.4",
     "@rollup/rollup-linux-x64-gnu": "^4.18.0"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "examples/*"
-  ]
+  }
 }
