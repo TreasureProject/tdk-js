@@ -20,8 +20,8 @@
     "analyze": "tailwind-config-viewer -o"
   },
   "devDependencies": {
-    "tailwind-config-viewer": "^2.0.4",
-    "tailwindcss": "^3.4.10"
+    "tailwind-config-viewer": "catalog:",
+    "tailwindcss": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"
