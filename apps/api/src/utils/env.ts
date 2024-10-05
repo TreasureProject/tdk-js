@@ -6,6 +6,7 @@ import { type Static, Type } from "@sinclair/typebox";
 import { AssertError, Value } from "@sinclair/typebox/value";
 import "dotenv/config";
 
+import { DEFAULT_TDK_ECOSYSTEM_ID } from "@treasure-dev/tdk-core";
 import { log } from "./log";
 
 // Parse local environment variables
@@ -31,6 +32,11 @@ const envSchema = Type.Object({
   THIRDWEB_ENGINE_URL: Type.String(),
   THIRDWEB_ENGINE_ACCESS_TOKEN: Type.String(),
   THIRDWEB_SECRET_KEY: Type.String(),
+  THIRDWEB_ECOSYSTEM_ID: Type.TemplateLiteral(
+    [Type.Literal("ecosystem."), Type.String()],
+    { default: DEFAULT_TDK_ECOSYSTEM_ID },
+  ),
+  THIRDWEB_ECOSYSTEM_PARTNER_ID: Type.String(),
   TREASURE_AUTH_KMS_KEY: Type.String(),
   TROVE_API_URL: Type.String({ default: "https://trove-api.treasure.lol" }),
   TROVE_API_KEY: Type.String(),
