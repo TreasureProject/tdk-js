@@ -7,7 +7,7 @@
     "build:core": "pnpm --filter ./packages/core build",
     "build:react": "pnpm --filter ./packages/react build",
     "build:api": "pnpm --filter ./apps/api build",
-    "generate": "pnpm generate --workspaces --if-present",
+    "generate": "pnpm -r generate",
     "dev": "concurrently \"pnpm dev:auth\" \"pnpm dev:core\" \"pnpm dev:api\" \"pnpm dev:react\"",
     "dev:auth": "pnpm --filter ./packages/auth dev",
     "dev:core": "pnpm --filter ./packages/core dev",
