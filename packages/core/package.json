@@ -33,12 +33,12 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "pnpm typecheck && tsup",
-    "dev": "pnpm build -- --watch"
+    "dev": "pnpm build --watch"
   },
   "dependencies": {
     "@sushiswap/tines": "catalog:",
     "@wagmi/core": "catalog:",
-    "abitype":"catalog:",
+    "abitype": "catalog:",
     "jwt-decode": "catalog:",
     "thirdweb": "catalog:",
     "viem": "catalog:"

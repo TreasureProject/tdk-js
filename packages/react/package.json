@@ -37,7 +37,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "pnpm typecheck && tsup",
-    "dev": "pnpm build -- --watch",
+    "dev": "pnpm build --watch",
     "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
