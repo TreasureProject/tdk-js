@@ -6,6 +6,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThirdwebProvider } from "thirdweb/react";
 
+import { toWei } from "thirdweb";
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -20,6 +21,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         ecosystemPartnerId={import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID}
         language="en"
         autoConnectTimeout={30000}
+        sessionOptions={{
+          backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,
+          approvedTargets: [
+            "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
+            "0xE647b2c46365741e85268ceD243113d08F7E00B8",
+          ],
+          nativeTokenLimitPerTransaction: toWei("1"),
+        }}
       >
         <App />
       </TreasureProvider>
