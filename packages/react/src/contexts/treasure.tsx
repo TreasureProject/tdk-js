@@ -1,6 +1,5 @@
 import {
   getTreasureLauncherAuthToken,
-  isUsingTreasureLauncher,
   startUserSessionViaLauncher,
 } from "@treasure-dev/launcher";
 import {
@@ -57,6 +56,7 @@ type Config = {
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
+  getAuthToken?: () => string | undefined;
 };
 
 type ContextValues = {
@@ -73,6 +73,7 @@ type ContextValues = {
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
+  isUsingTreasureLauncher: () => boolean;
 };
 
 const Context = createContext({} as ContextValues);
@@ -101,6 +102,7 @@ const TreasureProviderInner = ({
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
+  getAuthToken,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -186,9 +188,25 @@ const TreasureProviderInner = ({
     onConnect?.(nextUser);
   };
 
+  const isUsingTreasureLauncher = (): boolean => {
+    let launcherAuthToken: string | undefined;
+    if (getAuthToken) {
+      launcherAuthToken = getAuthToken();
+    } else {
+      launcherAuthToken = getTreasureLauncherAuthToken();
+    }
+    return launcherAuthToken !== undefined;
+  };
+
   useEffect(() => {
-    const launcherAuthToken = getTreasureLauncherAuthToken();
+    let launcherAuthToken: string | undefined;
+    if (getAuthToken) {
+      launcherAuthToken = getAuthToken();
+    } else {
+      launcherAuthToken = getTreasureLauncherAuthToken();
+    }
     if (launcherAuthToken) {
+      console.debug("[TreasureProvider] Using launcher auth token");
       tdk.setAuthToken(launcherAuthToken);
 
       tdk.user
@@ -205,7 +223,7 @@ const TreasureProviderInner = ({
           );
         });
     }
-  }, [tdk, onConnect]);
+  }, [tdk, getAuthToken, onConnect]);
 
   // Attempt an automatic background connection
   useAutoConnect({
@@ -286,6 +304,7 @@ const TreasureProviderInner = ({
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
+        isUsingTreasureLauncher,
       }}
     >
       {children}

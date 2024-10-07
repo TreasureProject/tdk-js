@@ -4,7 +4,6 @@ import {
   useWalletDetailsModal,
 } from "thirdweb/react";
 
-import { isUsingTreasureLauncher } from "@treasure-dev/launcher";
 import {
   getContractAddress,
   getContractAddresses,
@@ -65,7 +64,8 @@ const SUPPORTED_TOKENS = [
 ] as const;
 
 export const useConnect = (props?: Props) => {
-  const { chain, client, logOut, setRootElement } = useTreasure();
+  const { chain, client, logOut, setRootElement, isUsingTreasureLauncher } =
+    useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
   const {
     supportedChainIds,

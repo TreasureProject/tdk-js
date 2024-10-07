@@ -8,7 +8,8 @@
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "dev:vite": "electron-vite dev -- --tdk-auth-token=$VITE_TDK_AUTH_TOKEN",
+    "dev": "dotenv -e .env -- npm run dev:vite",
     "build": "npm run typecheck && electron-vite build",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
@@ -19,6 +20,7 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "@treasure-dev/tdk-react": "*",
+    "@treasure-dev/launcher": "*",
     "thirdweb": "^5.48.0"
   },
   "devDependencies": {
@@ -26,6 +28,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "dotenv-cli": "^7.4.2",
     "electron": "^31.0.2",
     "electron-builder": "^24.13.3",
     "electron-vite": "^2.3.0",
