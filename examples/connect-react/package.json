@@ -7,13 +7,13 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@treasure-dev/tdk-react": "*",
+    "@treasure-dev/tdk-react": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
     "thirdweb": "catalog:"
   },
   "devDependencies": {
-    "@treasure-dev/tailwind-config": "*",
+    "@treasure-dev/tailwind-config": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",

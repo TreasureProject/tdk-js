@@ -20,7 +20,7 @@
     "express": "catalog:",
     "@electron-toolkit/preload": "catalog:",
     "@electron-toolkit/utils": "catalog:",
-    "@treasure-dev/tdk-react": "*",
+    "@treasure-dev/tdk-react": "workspace:*",
     "thirdweb": "catalog:"
   },
   "devDependencies": {

@@ -43,7 +43,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-visually-hidden": "catalog:",
-    "@treasure-dev/tdk-core": "*",
+    "@treasure-dev/tdk-core": "workspace:*",
     "clsx": "catalog:",
     "i18next": "catalog:",
     "i18next-browser-languagedetector": "catalog:",
@@ -55,7 +55,7 @@
     "@storybook/addon-essentials": "catalog:",
     "@storybook/react": "catalog:",
     "@storybook/react-vite": "catalog:",
-    "@treasure-dev/tailwind-config": "*",
+    "@treasure-dev/tailwind-config": "workspace:*",
     "@types/react": "catalog:",
     "autoprefixer": "catalog:",
     "postcss": "catalog:",

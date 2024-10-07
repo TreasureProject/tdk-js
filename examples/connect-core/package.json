@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@treasure-dev/tdk-core": "*"
+    "@treasure-dev/tdk-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",
