@@ -2,9 +2,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run build:auth && npm run build:core && npm run build:react && npm run build:api",
+    "build": "npm run build:auth && npm run build:core && npm run build:launcher && npm run build:react && npm run build:api",
     "build:auth": "npm run build --prefix ./packages/auth",
     "build:core": "npm run build --prefix ./packages/core",
+    "build:launcher": "npm run build --prefix ./packages/launcher",
     "build:react": "npm run build --prefix ./packages/react",
     "build:api": "npm run build --prefix ./apps/api",
     "generate": "npm run generate --workspaces --if-present",
