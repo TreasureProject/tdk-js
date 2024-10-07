@@ -18,6 +18,15 @@ catalogs:
     '@changesets/cli':
       specifier: ^2.27.9
       version: 2.27.9
+    '@electron-toolkit/preload':
+      specifier: ^3.0.1
+      version: 3.0.1
+    '@electron-toolkit/tsconfig':
+      specifier: ^1.0.1
+      version: 1.0.1
+    '@electron-toolkit/utils':
+      specifier: ^3.0.0
+      version: 3.0.0
     '@esbuild/linux-x64':
       specifier: ^0.24.0
       version: 0.24.0
@@ -72,6 +81,18 @@ catalogs:
     concurrently:
       specifier: ^9.0.1
       version: 9.0.1
+    electron:
+      specifier: ^31.0.2
+      version: 31.6.0
+    electron-builder:
+      specifier: ^24.13.3
+      version: 24.13.3
+    electron-vite:
+      specifier: ^2.3.0
+      version: 2.3.0
+    express:
+      specifier: ^4.21.0
+      version: 4.21.0
     husky:
       specifier: ^9.1.6
       version: 9.1.6
@@ -273,47 +294,47 @@ importers:
   examples/connect-electron:
     dependencies:
       '@electron-toolkit/preload':
-        specifier: ^3.0.1
+        specifier: 'catalog:'
         version: 3.0.1(electron@31.6.0)
       '@electron-toolkit/utils':
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0(electron@31.6.0)
       '@treasure-dev/tdk-react':
         specifier: '*'
         version: 2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
       express:
-        specifier: ^4.21.0
+        specifier: 'catalog:'
         version: 4.21.0
       thirdweb:
-        specifier: ^5.48.0
+        specifier: 'catalog:'
         version: 5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       '@electron-toolkit/tsconfig':
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1(@types/node@22.7.4)
       '@types/react':
-        specifier: ^18.3.3
+        specifier: 'catalog:'
         version: 18.3.11
       '@types/react-dom':
-        specifier: ^18.3.0
+        specifier: 'catalog:'
         version: 18.3.0
       '@vitejs/plugin-react':
-        specifier: ^4.3.1
+        specifier: 'catalog:'
         version: 4.3.2(vite@5.4.8(@types/node@22.7.4))
       electron:
-        specifier: ^31.0.2
+        specifier: 'catalog:'
         version: 31.6.0
       electron-builder:
-        specifier: ^24.13.3
+        specifier: 'catalog:'
         version: 24.13.3(electron-builder-squirrel-windows@24.13.3(dmg-builder@24.13.3))
       electron-vite:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.0(vite@5.4.8(@types/node@22.7.4))
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       typescript:
         specifier: 'catalog:'

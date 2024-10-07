@@ -17,22 +17,22 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "@electron-toolkit/preload": "^3.0.1",
-    "@electron-toolkit/utils": "^3.0.0",
+    "express": "catalog:",
+    "@electron-toolkit/preload": "catalog:",
+    "@electron-toolkit/utils": "catalog:",
     "@treasure-dev/tdk-react": "*",
-    "thirdweb": "^5.48.0"
+    "thirdweb": "catalog:"
   },
   "devDependencies": {
-    "@electron-toolkit/tsconfig": "^1.0.1",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "electron": "^31.0.2",
-    "electron-builder": "^24.13.3",
-    "electron-vite": "^2.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@electron-toolkit/tsconfig": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "electron": "catalog:",
+    "electron-builder": "catalog:",
+    "electron-vite": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "vite": "catalog:",
     "typescript": "catalog:"
   }
