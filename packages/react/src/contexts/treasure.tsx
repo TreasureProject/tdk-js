@@ -1,4 +1,8 @@
 import {
+  isUsingTreasureLauncher,
+  startUserSessionViaLauncher,
+} from "@treasure-dev/launcher";
+import {
   type AddressString,
   type Contract,
   DEFAULT_TDK_API_BASE_URI,
@@ -194,6 +198,12 @@ const TreasureProviderInner = ({
     },
     timeout: autoConnectTimeout,
     onConnect: async (wallet) => {
+      if (isUsingTreasureLauncher()) {
+        console.debug(
+          "[TreasureProvider] Skipping auto-connect because launcher is being used",
+        );
+        return;
+      }
       setIsAuthenticating(true);
       try {
         await logIn(wallet);
@@ -223,6 +233,12 @@ const TreasureProviderInner = ({
           activeWalletStatus === "connecting" ||
           isAuthenticating,
         logIn: async (wallet: Wallet) => {
+          if (isUsingTreasureLauncher()) {
+            console.debug(
+              "[TreasureProvider] Skipping auto-connect because launcher is being used",
+            );
+            return;
+          }
           setIsAuthenticating(true);
           try {
             await logIn(wallet);
@@ -233,14 +249,18 @@ const TreasureProviderInner = ({
           }
         },
         logOut,
-        startUserSession: (options: SessionOptions) =>
-          startUserSession({
+        startUserSession: (options: SessionOptions) => {
+          if (isUsingTreasureLauncher()) {
+            return startUserSessionViaLauncher(options);
+          }
+          return startUserSession({
             client,
             wallet: activeWallet,
             chainId: chain.id,
             tdk,
             options,
-          }),
+          });
+        },
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
