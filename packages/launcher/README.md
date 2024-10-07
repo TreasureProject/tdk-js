@@ -44,6 +44,24 @@ await startUserSessionViaLauncher({
 });
 ```
 
+### Using Electron + React
+
+```ts Main.ts
+ipcMain.on("get-auth-token", (event, _arg) => {
+    event.returnValue = getTreasureLauncherAuthToken();
+});
+```
+
+```ts Main.tsx
+const getAuthToken = () =>
+  window.electron.ipcRenderer.sendSync("get-auth-token");
+
+<TreasureProvider
+ ...
+ getAuthToken={getAuthToken}
+>
+```
+
 ## Deployment
 
 Merge [changeset-bot](https://github.com/apps/changeset-bot)'s versioning PR to the `main` branch to push a new package version to npm.
