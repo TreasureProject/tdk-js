@@ -108,6 +108,9 @@ catalogs:
     concurrently:
       specifier: ^9.0.1
       version: 9.0.1
+    decimal.js-light:
+      specifier: ^2.5.1
+      version: 2.5.1
     dotenv:
       specifier: ^16.3.1
       version: 16.4.5
@@ -431,41 +434,41 @@ importers:
         specifier: '*'
         version: 2.7.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(thirdweb@5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
       decimal.js-light:
-        specifier: ^2.5.1
+        specifier: 'catalog:'
         version: 2.5.1
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       thirdweb:
-        specifier: ^5.48.0
+        specifier: 'catalog:'
         version: 5.60.1(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8)
       viem:
-        specifier: ^2.15.1
+        specifier: 'catalog:'
         version: 2.21.18(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: '*'
         version: 3.0.2
       '@types/react':
-        specifier: ^18.2.15
+        specifier: 'catalog:'
         version: 18.3.11
       '@types/react-dom':
-        specifier: ^18.2.7
+        specifier: 'catalog:'
         version: 18.3.0
       '@vitejs/plugin-react':
-        specifier: ^4.0.3
+        specifier: 'catalog:'
         version: 4.3.2(vite@5.4.8(@types/node@22.7.4))
       autoprefixer:
-        specifier: ^10.4.16
+        specifier: 'catalog:'
         version: 10.4.20(postcss@8.4.47)
       postcss:
-        specifier: ^8.4.31
+        specifier: 'catalog:'
         version: 8.4.47
       tailwindcss:
-        specifier: ^3.3.3
+        specifier: 'catalog:'
         version: 3.4.13
       vite:
         specifier: 'catalog:'

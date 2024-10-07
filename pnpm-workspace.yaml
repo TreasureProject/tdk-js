@@ -38,6 +38,7 @@ catalog:
   autoprefixer: ^10.4.20
   clsx: ^2.1.1
   concurrently: ^9.0.1
+  'decimal.js-light': ^2.5.1
   dotenv: ^16.3.1
   electron: ^31.0.2
   'electron-builder': ^24.13.3
