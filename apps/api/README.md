@@ -13,7 +13,7 @@ Backend server powering the Treasure Development Kit
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Create `.env` file based on example and fill in with relevant environment variables:
@@ -25,25 +25,25 @@ cp .env.example .env
 Generate database client:
 
 ```bash
-npm run generate
+pnpm generate
 ```
 
 Create initial tables in database:
 
 ```bash
-npm run db:migrate
+pnpm db:migrate
 ```
 
 Seed database with development values:
 
 ```bash
-npm run db:seed
+pnpm db:seed
 ```
 
 Start server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## Deployment

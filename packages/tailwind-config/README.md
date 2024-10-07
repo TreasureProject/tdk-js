@@ -5,7 +5,7 @@ Reusable [Tailwind CSS](https://tailwindcss.com) configuration preset for the Tr
 ## Installation
 
 ```bash
-npm install -D @treasure-dev/tailwind-config
+pnpm add -D @treasure-dev/tailwind-config
 ```
 
 In `tailwind.config.js`, add the config as a preset:
