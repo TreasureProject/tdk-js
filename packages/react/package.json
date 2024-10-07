@@ -56,7 +56,7 @@
     "@storybook/react": "catalog:",
     "@storybook/react-vite": "catalog:",
     "@treasure-dev/tailwind-config": "*",
-    "@types/react": "^18.2.64",
+    "@types/react": "catalog:",
     "autoprefixer": "catalog:",
     "postcss": "catalog:",
     "storybook": "catalog:",

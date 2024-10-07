@@ -554,7 +554,7 @@ importers:
         specifier: '*'
         version: 3.0.2
       '@types/react':
-        specifier: ^18.2.64
+        specifier: 'catalog:'
         version: 18.3.11
       autoprefixer:
         specifier: 'catalog:'
