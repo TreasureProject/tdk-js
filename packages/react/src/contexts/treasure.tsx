@@ -1,4 +1,5 @@
 import {
+  getTreasureLauncherAuthToken,
   isUsingTreasureLauncher,
   startUserSessionViaLauncher,
 } from "@treasure-dev/launcher";
@@ -184,6 +185,27 @@ const TreasureProviderInner = ({
     // Trigger completion callback
     onConnect?.(nextUser);
   };
+
+  useEffect(() => {
+    const launcherAuthToken = getTreasureLauncherAuthToken();
+    if (launcherAuthToken) {
+      tdk.setAuthToken(launcherAuthToken);
+
+      tdk.user
+        .me({ overrideAuthToken: launcherAuthToken })
+        .then((nextUser) => {
+          setUser(nextUser);
+          setStoredAuthToken(launcherAuthToken);
+          onConnect?.(nextUser);
+        })
+        .catch((error) => {
+          console.debug(
+            "[TreasureProvider] Error fetching launcher user:",
+            error,
+          );
+        });
+    }
+  }, [tdk, onConnect]);
 
   // Attempt an automatic background connection
   useAutoConnect({
