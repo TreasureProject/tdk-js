@@ -7,6 +7,7 @@ export {
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_APP_NAME,
   DEFAULT_TDK_APP_ICON_URI,
+  DEFAULT_TDK_ECOSYSTEM_ID,
   TOKEN_IDS,
   TREASURE_CONDUIT_KEYS,
   TREASURE_RUBY_CHAIN_DEFINITION,
@@ -36,17 +37,14 @@ export { decodeAuthToken } from "./connect/jwt";
 export {
   type SocialConnectMethod,
   type ConnectMethod,
-  SUPPORTED_IN_APP_WALLET_OPTIONS,
   SUPPORTED_WEB3_WALLETS,
   isSocialConnectMethod,
+  connectEcosystemWallet,
   connectWallet,
   createTreasureConnectClient,
   sendEmailVerificationCode,
   authenticateWallet,
   logIn,
-  logInWithEmail,
-  logInWithPasskey,
-  logInWithSocial,
 } from "./connect/login";
 export {
   createSession,

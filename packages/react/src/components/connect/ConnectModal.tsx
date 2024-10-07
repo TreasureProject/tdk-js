@@ -4,15 +4,13 @@ import {
   DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_WEB3_WALLETS,
   type SocialConnectMethod,
-  connectWallet,
-  getContractAddress,
+  connectEcosystemWallet,
   isSocialConnectMethod,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
-import type { Wallet } from "thirdweb/wallets";
-import { authenticate } from "thirdweb/wallets/in-app";
+import { type Wallet, authenticateWithRedirect } from "thirdweb/wallets";
 
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
@@ -66,16 +64,27 @@ export const ConnectModal = ({
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
     client,
+    ecosystemId,
+    ecosystemPartnerId,
     chain,
+    contractAddresses,
     logIn,
     logOut,
   } = useTreasure();
+  const accountAbstraction = {
+    chain,
+    factoryAddress: contractAddresses.ManagedAccountFactory,
+    sponsorGas: true,
+  };
   const [{ email, isLoading, error }, setState] = useState<{
     email: string;
     isLoading: boolean;
     error: string | undefined;
   }>(DEFAULT_STATE);
-  const { connect } = useConnect();
+  const { connect } = useConnect({
+    client,
+    accountAbstraction,
+  });
   const { connect: connectWeb3Wallet } = useConnectModal();
 
   const setIsLoading = (isLoading = true) =>
@@ -98,14 +107,16 @@ export const ConnectModal = ({
 
     let wallet: Wallet | undefined | null;
     try {
-      const inAppWallet = await connectWallet({
+      const ecosystemWallet = await connectEcosystemWallet({
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         chainId: chain.id,
         method: "email",
         email,
         verificationCode,
       });
-      wallet = await connect(inAppWallet);
+      wallet = await connect(ecosystemWallet);
     } catch (err) {
       console.error("Error connecting wallet with email:", err);
       setError(err);
@@ -139,7 +150,12 @@ export const ConnectModal = ({
       // Send verification code and update state to show verification view
       setIsLoading();
       try {
-        await sendEmailVerificationCode({ client, email: nextEmail });
+        await sendEmailVerificationCode({
+          client,
+          ecosystemId,
+          ecosystemPartnerId,
+          email: nextEmail,
+        });
         setState({ email: nextEmail, isLoading: false, error: undefined });
       } catch (err) {
         console.error("Error sending email verification code:", err);
@@ -164,14 +180,7 @@ export const ConnectModal = ({
             name: appName,
             logoUrl: appIconUri,
           },
-          accountAbstraction: {
-            chain,
-            factoryAddress: getContractAddress(
-              chain.id,
-              "ManagedAccountFactory",
-            ),
-            sponsorGas: true,
-          },
+          accountAbstraction,
         });
       } catch (err) {
         // Error can be undefined if user closed the connect modal
@@ -186,25 +195,31 @@ export const ConnectModal = ({
       isSocialConnectMethod(method)
     ) {
       // When redirectUrl is set or authMode is set to redirect
-      // can use the headless `authenticate` function instead of connect
+      // can use the headless `authenticateWithRedirect` function instead of connect
       // and it will redirect out of the app here
       try {
-        await authenticate({
+        await authenticateWithRedirect({
           client,
+          ecosystem: {
+            id: ecosystemId,
+            partnerId: ecosystemPartnerId,
+          },
           strategy: method as SocialConnectMethod,
           redirectUrl,
           mode: authMode,
         });
       } catch (err) {
-        console.error("Error connecting in-app wallet with redirect:", err);
+        console.error("Error connecting ecosystem wallet with redirect:", err);
         setError(err);
         onConnectError?.(method, err);
       }
     } else {
       // Handle connecting with social / passkey
       try {
-        const inAppWallet = await connectWallet({
+        const ecosystemWallet = await connectEcosystemWallet({
           client,
+          ecosystemId,
+          ecosystemPartnerId,
           chainId: chain.id,
           method,
           authMode: "popup",
@@ -215,9 +230,9 @@ export const ConnectModal = ({
             hasStoredPasskey,
           }),
         });
-        wallet = await connect(inAppWallet);
+        wallet = await connect(ecosystemWallet);
       } catch (err) {
-        console.error("Error connecting in-app wallet:", err);
+        console.error("Error connecting ecosystem wallet:", err);
         setError(err);
         onConnectError?.(method, err);
       }
@@ -242,7 +257,12 @@ export const ConnectModal = ({
 
   const handleResendEmailVerificationCode = async () => {
     try {
-      await sendEmailVerificationCode({ client, email });
+      await sendEmailVerificationCode({
+        client,
+        ecosystemId,
+        ecosystemPartnerId,
+        email,
+      });
     } catch (err) {
       console.error("Error resending email verification code:", err);
       setError(err);

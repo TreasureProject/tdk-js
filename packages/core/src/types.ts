@@ -3,6 +3,7 @@ import type { ThirdwebClient } from "thirdweb";
 import type { TDKAPI } from "./api";
 
 // Treasure Connect
+export type EcosystemIdString = `ecosystem.${string}`;
 export type TreasureConnectClient = ThirdwebClient;
 
 export type SessionOptions = {
