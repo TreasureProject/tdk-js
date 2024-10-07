@@ -4,6 +4,7 @@ import {
   useWalletDetailsModal,
 } from "thirdweb/react";
 
+import { isUsingTreasureLauncher } from "@treasure-dev/launcher";
 import {
   getContractAddress,
   getContractAddresses,
@@ -79,7 +80,13 @@ export const useConnect = (props?: Props) => {
       ? supportedChainIds.map((chainId) => defineChain(chainId))
       : [chain];
 
-  const openConnectModal = () =>
+  const openConnectModal = () => {
+    if (isUsingTreasureLauncher()) {
+      console.debug(
+        "[useConnect] openConnectModal cannot be used when Treasure Launcher is being used",
+      );
+      return;
+    }
     setRootElement(
       <ConnectModal
         open
@@ -88,8 +95,15 @@ export const useConnect = (props?: Props) => {
         {...connectModalProps}
       />,
     );
+  };
 
-  const openAccountModal = () =>
+  const openAccountModal = () => {
+    if (isUsingTreasureLauncher()) {
+      console.debug(
+        "[useConnect] openAccountModal cannot be used when Treasure Launcher is being used",
+      );
+      return;
+    }
     openWalletDetailsModal({
       client,
       chains,
@@ -121,6 +135,7 @@ export const useConnect = (props?: Props) => {
         logOut();
       },
     });
+  };
 
   return { openConnectModal, openAccountModal };
 };
