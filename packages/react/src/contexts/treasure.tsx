@@ -1,8 +1,4 @@
 import {
-  getTreasureLauncherAuthToken,
-  startUserSessionViaLauncher,
-} from "@treasure-dev/launcher";
-import {
   type AddressString,
   type Contract,
   DEFAULT_TDK_API_BASE_URI,
@@ -22,7 +18,6 @@ import {
   type PropsWithChildren,
   type ReactNode,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -40,6 +35,7 @@ import {
 } from "thirdweb/react";
 import { type Wallet, inAppWallet } from "thirdweb/wallets";
 
+import { useLauncher } from "../hooks/useLauncher";
 import { type SupportedLanguage, i18n } from "../i18n";
 import {
   clearStoredAuthToken,
@@ -105,6 +101,13 @@ const TreasureProviderInner = ({
   onConnect,
   getAuthTokenOverride,
 }: Props) => {
+  const {
+    getAuthToken,
+    isUsingTreasureLauncher,
+    startUserSessionViaLauncherIfNeeded,
+  } = useLauncher({
+    getAuthTokenOverride,
+  });
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
   const [el, setEl] = useState<ReactNode>(null);
@@ -188,14 +191,6 @@ const TreasureProviderInner = ({
     // Trigger completion callback
     onConnect?.(nextUser);
   };
-
-  const getAuthToken = useCallback(() => {
-    return getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
-  }, [getAuthTokenOverride]);
-
-  const isUsingTreasureLauncher = useCallback((): boolean => {
-    return getAuthToken() !== undefined;
-  }, [getAuthToken]);
 
   useEffect(() => {
     const launcherAuthToken: string | undefined = getAuthToken();
@@ -283,18 +278,15 @@ const TreasureProviderInner = ({
           }
         },
         logOut,
-        startUserSession: (options: SessionOptions) => {
-          if (isUsingTreasureLauncher()) {
-            return startUserSessionViaLauncher(options);
-          }
-          return startUserSession({
+        startUserSession: (options: SessionOptions) =>
+          startUserSessionViaLauncherIfNeeded(options) ??
+          startUserSession({
             client,
             wallet: activeWallet,
             chainId: chain.id,
             tdk,
             options,
-          });
-        },
+          }),
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
