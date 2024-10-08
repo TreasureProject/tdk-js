@@ -22,6 +22,7 @@ import {
   type PropsWithChildren,
   type ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -56,7 +57,7 @@ type Config = {
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
-  getAuthToken?: () => string | undefined;
+  getAuthTokenOverride?: () => string | undefined;
 };
 
 type ContextValues = {
@@ -102,7 +103,7 @@ const TreasureProviderInner = ({
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
-  getAuthToken,
+  getAuthTokenOverride,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -188,23 +189,16 @@ const TreasureProviderInner = ({
     onConnect?.(nextUser);
   };
 
-  const isUsingTreasureLauncher = (): boolean => {
-    let launcherAuthToken: string | undefined;
-    if (getAuthToken) {
-      launcherAuthToken = getAuthToken();
-    } else {
-      launcherAuthToken = getTreasureLauncherAuthToken();
-    }
-    return launcherAuthToken !== undefined;
-  };
+  const getAuthToken = useCallback(() => {
+    return getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
+  }, [getAuthTokenOverride]);
+
+  const isUsingTreasureLauncher = useCallback((): boolean => {
+    return getAuthToken() !== undefined;
+  }, [getAuthToken]);
 
   useEffect(() => {
-    let launcherAuthToken: string | undefined;
-    if (getAuthToken) {
-      launcherAuthToken = getAuthToken();
-    } else {
-      launcherAuthToken = getTreasureLauncherAuthToken();
-    }
+    const launcherAuthToken: string | undefined = getAuthToken();
     if (launcherAuthToken) {
       console.debug("[TreasureProvider] Using launcher auth token");
       tdk.setAuthToken(launcherAuthToken);

@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         clientId={import.meta.env.VITE_TDK_CLIENT_ID}
         language="en"
         autoConnectTimeout={30000}
-        getAuthToken={getAuthToken}
+        getAuthTokenOverride={getAuthToken}
       >
         <App />
       </TreasureProvider>
