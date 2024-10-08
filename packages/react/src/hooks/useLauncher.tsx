@@ -47,9 +47,6 @@ export const useLauncher = ({
       );
       return;
     }
-    console.debug(
-      "[useLauncher] openLauncherAccountModal is not yet supported",
-    );
 
     setRootElement(
       <AccountModal

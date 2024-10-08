@@ -66,10 +66,10 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
                 <MediaRenderer
                   client={client}
                   src={userWalletImage}
-                  className="tdk-w-16 tdk-h-16 tdk-rounded-full"
+                  className="tdk-w-12 tdk-h-12 tdk-rounded-full"
                 />
               ) : (
-                <div className="tdk-w-16 tdk-h-16 tdk-rounded-full tdk-bg-gray-500" />
+                <div className="tdk-w-12 tdk-h-12 tdk-rounded-full tdk-bg-gray-500" />
               )}
               <div>
                 <h2 className="tdk-text-lg tdk-font-semibold">
