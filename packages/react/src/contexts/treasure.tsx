@@ -19,6 +19,7 @@ import {
   type PropsWithChildren,
   type ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -141,14 +142,17 @@ const TreasureProviderInner = ({
     [chain.id],
   );
 
-  const onAuthTokenUpdated = (authToken: string) => {
-    tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
-      setUser(user);
-      setStoredAuthToken(authToken);
-      tdk.setAuthToken(authToken);
-      onConnect?.(user);
-    });
-  };
+  const onAuthTokenUpdated = useCallback(
+    (authToken: string) => {
+      tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
+        setUser(user);
+        setStoredAuthToken(authToken);
+        tdk.setAuthToken(authToken);
+        onConnect?.(user);
+      });
+    },
+    [tdk.user.me, tdk.setAuthToken, onConnect],
+  );
 
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
     getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
