@@ -3,12 +3,13 @@ import {
   startUserSessionViaLauncher,
 } from "@treasure-dev/launcher";
 import type { SessionOptions, TDKAPI, User } from "@treasure-dev/tdk-core";
-import { useCallback, useEffect } from "react";
+import { type ReactNode, useCallback, useEffect } from "react";
 import { setStoredAuthToken } from "../utils/store";
 
 type Props = {
   getAuthTokenOverride?: () => string | undefined;
   tdk: TDKAPI;
+  setRootElement: (el: ReactNode) => void;
   setUser: (user: User) => void;
   onConnect?: (user: User) => void;
 };
@@ -17,6 +18,7 @@ export const useLauncher = ({
   getAuthTokenOverride,
   tdk,
   setUser,
+  setRootElement,
   onConnect,
 }: Props) => {
   const getAuthToken = useCallback(() => {
@@ -36,6 +38,20 @@ export const useLauncher = ({
     },
     [isUsingTreasureLauncher],
   );
+
+  const openLauncherAccountModal = () => {
+    if (!isUsingTreasureLauncher()) {
+      console.debug(
+        "[useLauncher] openLauncherAccountModal cannot be used when not using Treasure Launcher",
+      );
+      return;
+    }
+    console.debug(
+      "[useLauncher] openLauncherAccountModal is not yet supported",
+    );
+
+    setRootElement(null);
+  };
 
   useEffect(() => {
     const launcherAuthToken: string | undefined = getAuthToken();
@@ -59,5 +75,6 @@ export const useLauncher = ({
   return {
     isUsingTreasureLauncher,
     startUserSessionViaLauncherIfNeeded,
+    openLauncherAccountModal,
   };
 };

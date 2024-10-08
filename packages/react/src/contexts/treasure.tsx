@@ -71,6 +71,7 @@ type ContextValues = {
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
   isUsingTreasureLauncher: () => boolean;
+  openLauncherAccountModal: () => void;
 };
 
 const Context = createContext({} as ContextValues);
@@ -127,13 +128,17 @@ const TreasureProviderInner = ({
     () => getContractAddresses(chain.id),
     [chain.id],
   );
-  const { isUsingTreasureLauncher, startUserSessionViaLauncherIfNeeded } =
-    useLauncher({
-      getAuthTokenOverride,
-      setUser,
-      tdk,
-      onConnect,
-    });
+  const {
+    isUsingTreasureLauncher,
+    startUserSessionViaLauncherIfNeeded,
+    openLauncherAccountModal,
+  } = useLauncher({
+    getAuthTokenOverride,
+    setUser,
+    setRootElement: setEl,
+    tdk,
+    onConnect,
+  });
 
   const logOut = () => {
     setUser(undefined);
@@ -269,6 +274,7 @@ const TreasureProviderInner = ({
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
         isUsingTreasureLauncher,
+        openLauncherAccountModal,
       }}
     >
       {children}
