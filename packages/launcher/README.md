@@ -14,7 +14,9 @@ npm i @treasure-dev/launcher
 
 ## Usage
 
-### Get auth token
+### Using vanilla JavaScript
+
+#### Get auth token
 
 ```ts
 import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
@@ -22,7 +24,7 @@ import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
 const authToken = getTreasureLauncherAuthToken();
 ```
 
-### Check if using Treasure Launcher
+#### Check if using Treasure Launcher
 
 ```ts
 import { isUsingTreasureLauncher } from "@treasure-dev/launcher";
@@ -30,7 +32,7 @@ import { isUsingTreasureLauncher } from "@treasure-dev/launcher";
 const usingLauncher = isUsingTreasureLauncher();
 ```
 
-### Start user session
+#### Start user session
 
 ```ts
 import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
@@ -42,6 +44,26 @@ await startUserSessionViaLauncher({
     sessionDurationSec: 60 * 60 * 24 * 7,
     sessionMinDurationLeftSec: 60 * 60 * 24 * 3,
 });
+```
+
+### Using React
+
+#### Check if using Treasure Launcher
+
+```ts
+import { useTreasure } from "@treasure-dev/react";
+
+const { isUsingTreasureLauncher } = useTreasure();
+```
+
+#### Start user session via Treasure Launcher
+
+Use `startUserSession` as usual:
+
+```ts
+import { useTreasure } from "@treasure-dev/react";
+
+const { startUserSession } = useTreasure();
 ```
 
 ### Using Electron + React
@@ -58,7 +80,7 @@ const getAuthToken = () =>
 
 <TreasureProvider
  ...
- getAuthToken={getAuthToken}
+ getAuthTokenOverride={getAuthToken}
 >
 ```
 
