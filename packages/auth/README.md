@@ -9,7 +9,7 @@ Authentication token utilities for the Treasure ecosystem
 ## Installation
 
 ```bash
-npm i @treasure-dev/auth
+pnpm add @treasure-dev/auth
 ```
 
 ## Usage

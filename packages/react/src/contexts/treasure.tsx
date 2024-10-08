@@ -3,7 +3,8 @@ import {
   type Contract,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
-  SUPPORTED_IN_APP_WALLET_OPTIONS,
+  DEFAULT_TDK_ECOSYSTEM_ID,
+  type EcosystemIdString,
   type SessionOptions,
   TDKAPI,
   type TreasureConnectClient,
@@ -33,7 +34,7 @@ import {
   useIsAutoConnecting,
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
-import { type Wallet, inAppWallet } from "thirdweb/wallets";
+import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
 import { type SupportedLanguage, i18n } from "../i18n";
 import {
@@ -49,6 +50,8 @@ type Config = {
   apiUri?: string;
   defaultChainId?: number;
   clientId: string;
+  ecosystemId?: EcosystemIdString;
+  ecosystemPartnerId: string;
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
@@ -61,6 +64,8 @@ type ContextValues = {
   contractAddresses: Record<Contract, AddressString>;
   tdk: TDKAPI;
   client: TreasureConnectClient;
+  ecosystemId: EcosystemIdString;
+  ecosystemPartnerId: string;
   user?: User;
   isConnecting: boolean;
   logIn: (wallet: Wallet) => void;
@@ -93,6 +98,8 @@ const TreasureProviderInner = ({
   apiUri = DEFAULT_TDK_API_BASE_URI,
   defaultChainId = DEFAULT_TDK_CHAIN_ID,
   clientId,
+  ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
+  ecosystemPartnerId,
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
@@ -185,7 +192,9 @@ const TreasureProviderInner = ({
   useAutoConnect({
     client,
     wallets: [
-      inAppWallet({ auth: { options: [...SUPPORTED_IN_APP_WALLET_OPTIONS] } }),
+      ecosystemWallet(ecosystemId, {
+        partnerId: ecosystemPartnerId,
+      }),
     ],
     accountAbstraction: {
       chain,
@@ -217,6 +226,8 @@ const TreasureProviderInner = ({
         contractAddresses,
         tdk,
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         user,
         isConnecting:
           isAutoConnecting ||

@@ -9,7 +9,7 @@ Treasure Development Kit for TypeScript/JavaScript-based projects
 ## Installation
 
 ```bash
-npm i @treasure-dev/tdk-core
+pnpm add @treasure-dev/tdk-core
 ```
 
 ## Usage

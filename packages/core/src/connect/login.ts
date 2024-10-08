@@ -1,15 +1,25 @@
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
-import { type Wallet, createWallet } from "thirdweb/wallets";
 import {
-  hasStoredPasskey,
-  inAppWallet,
+  type Wallet,
+  ecosystemWallet as createEcosystemWallet,
+  smartWallet as createSmartWallet,
+  createWallet,
   preAuthenticate,
-} from "thirdweb/wallets/in-app";
+} from "thirdweb/wallets";
+import { hasStoredPasskey } from "thirdweb/wallets/in-app";
 
 import { TDKAPI } from "../api";
-import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "../constants";
-import type { ConnectConfig, TreasureConnectClient } from "../types";
+import {
+  DEFAULT_TDK_API_BASE_URI,
+  DEFAULT_TDK_CHAIN_ID,
+  DEFAULT_TDK_ECOSYSTEM_ID,
+} from "../constants";
+import type {
+  ConnectConfig,
+  EcosystemIdString,
+  TreasureConnectClient,
+} from "../types";
 import { getContractAddress } from "../utils/contracts";
 import { startUserSession } from "./session";
 
@@ -19,12 +29,6 @@ const SUPPORTED_SOCIAL_OPTIONS = [
   "discord",
   "telegram",
   "x",
-] as const;
-
-export const SUPPORTED_IN_APP_WALLET_OPTIONS = [
-  ...SUPPORTED_SOCIAL_OPTIONS,
-  "email",
-  "passkey",
 ] as const;
 
 export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
@@ -40,15 +44,18 @@ export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
 export type SocialConnectMethod = (typeof SUPPORTED_SOCIAL_OPTIONS)[number];
 
 export type ConnectMethod =
-  | (typeof SUPPORTED_IN_APP_WALLET_OPTIONS)[number]
+  | (typeof SUPPORTED_SOCIAL_OPTIONS)[number]
+  | "email"
+  | "passkey"
   | "wallet";
 
 type ConnectWalletConfig = {
   client: TreasureConnectClient;
+  ecosystemId?: EcosystemIdString;
+  ecosystemPartnerId: string;
   chainId?: number;
   authMode?: "popup" | "redirect" | "window";
   redirectUrl?: string;
-  passkeyDomain?: string;
 } & (
   | {
       method: SocialConnectMethod;
@@ -68,32 +75,27 @@ type ConnectWalletConfig = {
 export const isSocialConnectMethod = (method: ConnectMethod) =>
   SUPPORTED_SOCIAL_OPTIONS.includes(method as SocialConnectMethod);
 
-export const connectWallet = async (params: ConnectWalletConfig) => {
+export const connectEcosystemWallet = async (params: ConnectWalletConfig) => {
   const {
     client,
+    ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
+    ecosystemPartnerId,
     chainId = DEFAULT_TDK_CHAIN_ID,
     authMode,
     redirectUrl,
-    passkeyDomain,
   } = params;
   const chain = defineChain(chainId);
 
-  const wallet = inAppWallet({
+  const wallet = createEcosystemWallet(ecosystemId, {
+    partnerId: ecosystemPartnerId,
     auth: {
-      options: [...SUPPORTED_IN_APP_WALLET_OPTIONS],
       mode: authMode,
       redirectUrl,
-      passkeyDomain,
-    },
-    smartAccount: {
-      chain,
-      factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
-      sponsorGas: true,
     },
   });
 
-  // Connect with email
   if (params.method === "email") {
+    // Connect with email
     const { email, verificationCode } = params;
     await wallet.connect({
       client,
@@ -102,11 +104,8 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       email: email.toLowerCase(),
       verificationCode,
     });
-    return wallet;
-  }
-
-  // Connect with passkey
-  if (params.method === "passkey") {
+  } else if (params.method === "passkey") {
+    // Connect with passkey
     const hasPasskey =
       params.hasStoredPasskey ?? (await hasStoredPasskey(client));
     await wallet.connect({
@@ -116,16 +115,38 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
       type: hasPasskey ? "sign-in" : "sign-up",
       passkeyName: params.passkeyName,
     });
-    return wallet;
+  } else {
+    // Connect with social
+    await wallet.connect({
+      client,
+      chain,
+      strategy: params.method,
+    });
   }
 
-  // Connect with social
-  await wallet.connect({
-    client,
-    chain,
-    strategy: params.method,
-  });
   return wallet;
+};
+
+export const connectWallet = async (params: ConnectWalletConfig) => {
+  const ecosystemWallet = await connectEcosystemWallet(params);
+  const account = await ecosystemWallet.getAccount();
+  if (!account) {
+    throw new Error("Ecosystem wallet account not found");
+  }
+
+  const chain = defineChain(params.chainId ?? DEFAULT_TDK_CHAIN_ID);
+  const smartWallet = createSmartWallet({
+    chain,
+    factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
+    sponsorGas: true,
+  });
+
+  await smartWallet.connect({
+    client: params.client,
+    personalAccount: account,
+  });
+
+  return smartWallet;
 };
 
 export const createTreasureConnectClient = ({
@@ -165,13 +186,21 @@ export const authenticateWallet = async ({
 
 export const sendEmailVerificationCode = async ({
   client,
+  ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
+  ecosystemPartnerId,
   email,
 }: {
   client: TreasureConnectClient;
+  ecosystemId?: EcosystemIdString;
+  ecosystemPartnerId: string;
   email: string;
 }) =>
   preAuthenticate({
     client,
+    ecosystem: {
+      id: ecosystemId,
+      partnerId: ecosystemPartnerId,
+    },
     strategy: "email",
     email: email.toLowerCase(),
   });
@@ -215,43 +244,3 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
 
   return { token, user, tdk };
 };
-
-export const logInWithEmail = async ({
-  email,
-  verificationCode,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  email: string;
-  verificationCode: string;
-} & ConnectConfig) =>
-  logIn({
-    method: "email",
-    email,
-    verificationCode,
-    ...rest,
-  });
-
-export const logInWithPasskey = async ({
-  passkeyName,
-  passkeyDomain,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  passkeyName?: string;
-  passkeyDomain?: string;
-} & ConnectConfig) =>
-  logIn({
-    method: "passkey",
-    passkeyName,
-    passkeyDomain,
-    ...rest,
-  });
-
-export const logInWithSocial = async ({
-  method,
-  ...rest
-}: {
-  client: TreasureConnectClient;
-  method: SocialConnectMethod;
-} & ConnectConfig) => logIn({ method, ...rest });

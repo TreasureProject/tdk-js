@@ -29,15 +29,15 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && tsup",
-    "dev": "npm run build -- --watch"
+    "build": "pnpm typecheck && tsup",
+    "dev": "pnpm build --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-kms": "^3.540.0",
-    "jsonwebtoken": "^9.0.2"
+    "@aws-sdk/client-kms": "catalog:",
+    "jsonwebtoken": "catalog:"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.6"
+    "@types/jsonwebtoken": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"

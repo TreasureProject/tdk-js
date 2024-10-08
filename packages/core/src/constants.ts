@@ -10,6 +10,7 @@ export const DEFAULT_TDK_CHAIN_ID = arbitrum.id;
 export const DEFAULT_TDK_APP_NAME = "App";
 export const DEFAULT_TDK_APP_ICON_URI =
   "https://images.treasure.lol/tdk/login/treasure_icon.png";
+export const DEFAULT_TDK_ECOSYSTEM_ID = "ecosystem.treasure";
 
 // APIs
 export const BRIDGEWORLD_API_URL = {

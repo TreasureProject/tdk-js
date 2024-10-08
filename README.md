@@ -27,7 +27,7 @@ SDK for the Treasure ecosystem
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Open the `README.md` files for the apps and examples you are contributing to and follow the instructions to finish configuring the packages.
@@ -35,14 +35,14 @@ Open the `README.md` files for the apps and examples you are contributing to and
 Start watch mode for base workspaces:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Start any example apps:
 
 ```bash
 $ cd examples/connect-react
-$ npm run dev
+$ pnpm dev
 ```
 
 ### Contributing
@@ -50,5 +50,5 @@ $ npm run dev
 Before creating a PR, add a [changeset](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md) to your commit:
 
 ```bash
-npm run package:changeset
+pnpm package:changeset
 ```

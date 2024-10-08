@@ -5,8 +5,7 @@ import {
   type User,
   createTreasureConnectClient,
   getContractAddress,
-  logInWithEmail,
-  logInWithSocial,
+  logIn,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
 
@@ -15,6 +14,8 @@ import "./style.css";
 const client = createTreasureConnectClient({
   clientId: import.meta.env.VITE_TDK_CLIENT_ID,
 });
+const ecosystemId = import.meta.env.VITE_TDK_ECOSYSTEM_ID;
+const ecosystemPartnerId = import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID;
 const chainId = 421614;
 const apiUri = import.meta.env.VITE_TDK_API_URL;
 const sessionOptions: SessionOptions = {
@@ -99,8 +100,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   connectWithGoogleButton?.addEventListener("click", async () => {
     connectWithGoogleButton.disabled = true;
     try {
-      const result = await logInWithSocial({
+      const result = await logIn({
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         method: "google",
         apiUri,
         chainId,
@@ -124,6 +127,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     try {
       await sendEmailVerificationCode({
         client,
+        ecosystemId,
+        ecosystemPartnerId,
         email: emailInput.value,
       });
       emailContainer.hidden = true;
@@ -138,8 +143,11 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   codeButton?.addEventListener("click", async () => {
     codeButton.disabled = true;
     try {
-      const result = await logInWithEmail({
+      const result = await logIn({
         client,
+        ecosystemId: import.meta.env.VITE_TDK_ECOSYSTEM_ID,
+        ecosystemPartnerId: import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID,
+        method: "email",
         email: emailInput.value,
         verificationCode: codeInput.value,
         apiUri,

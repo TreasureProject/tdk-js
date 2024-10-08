@@ -23,13 +23,17 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
-import { transformUserProfileResponseFields } from "../utils/user";
+import {
+  parseThirdwebUserEmail,
+  transformUserProfileResponseFields,
+} from "../utils/user";
 
 export const authRoutes =
   ({
     auth,
     thirdwebAuth,
     db,
+    env,
     client,
     engine,
   }: TdkApiContext): FastifyPluginAsync =>
@@ -117,18 +121,23 @@ export const authRoutes =
             // Look up any associated user details in the embedded wallet
             const thirdwebUser = await getUser({
               client,
+              ecosystem: {
+                id: env.THIRDWEB_ECOSYSTEM_ID,
+                partnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
+              },
               walletAddress: adminAddress,
             });
-            if (thirdwebUser?.email) {
-              user = await db.user.update({
-                where: {
-                  id: user.id,
-                },
-                data: {
-                  email: thirdwebUser.email,
-                },
-                select: USER_SELECT_FIELDS,
-              });
+            if (thirdwebUser) {
+              const email = parseThirdwebUserEmail(thirdwebUser);
+              if (email) {
+                user = await db.user.update({
+                  where: {
+                    id: user.id,
+                  },
+                  data: { email },
+                  select: USER_SELECT_FIELDS,
+                });
+              }
             }
           }
         }

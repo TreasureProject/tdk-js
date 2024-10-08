@@ -14,7 +14,7 @@ Example showing how React-based front-ends can interact with the Treasure Develo
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Create `.env` file based on example and fill in with relevant environment variables:
@@ -26,5 +26,5 @@ cp .env.example .env
 Start server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
