@@ -69,6 +69,8 @@ const { startUserSession } = useTreasure();
 ### Using Electron + React
 
 ```ts Main.ts
+import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
+
 ipcMain.on("get-auth-token", (event, _arg) => {
     event.returnValue = getTreasureLauncherAuthToken();
 });
