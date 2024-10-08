@@ -1,39 +1,20 @@
-import {
-  getTreasureLauncherAuthToken,
-  startUserSessionViaLauncher,
-} from "@treasure-dev/launcher";
-import type { SessionOptions, TDKAPI, User } from "@treasure-dev/tdk-core";
-import { type ReactNode, useCallback, useEffect } from "react";
+import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
+import { type ReactNode, useEffect } from "react";
 import { AccountModal } from "../components/launcher/AccountModal";
-import { setStoredAuthToken } from "../utils/store";
 
 type Props = {
   getAuthTokenOverride?: () => string | undefined;
-  tdk: TDKAPI;
   setRootElement: (el: ReactNode) => void;
-  setUser: (user: User) => void;
-  onConnect?: (user: User) => void;
+  onAuthTokenUpdated: (authToken: string) => void;
 };
 
 export const useLauncher = ({
   getAuthTokenOverride,
-  tdk,
-  setUser,
   setRootElement,
-  onConnect,
+  onAuthTokenUpdated,
 }: Props) => {
   const authToken = getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
   const isUsingTreasureLauncher = authToken !== undefined;
-
-  const startUserSessionViaLauncherIfNeeded = useCallback(
-    (options: SessionOptions) => {
-      if (isUsingTreasureLauncher) {
-        return startUserSessionViaLauncher(options);
-      }
-      return undefined;
-    },
-    [isUsingTreasureLauncher],
-  );
 
   const openLauncherAccountModal = (size?: "lg" | "xl" | "2xl" | "3xl") => {
     if (!isUsingTreasureLauncher) {
@@ -55,24 +36,12 @@ export const useLauncher = ({
   useEffect(() => {
     if (authToken) {
       console.debug("[useLauncher] Using launcher auth token");
-      tdk.setAuthToken(authToken);
-
-      tdk.user
-        .me({ overrideAuthToken: authToken })
-        .then((nextUser) => {
-          setUser(nextUser);
-          setStoredAuthToken(authToken);
-          onConnect?.(nextUser);
-        })
-        .catch((error) => {
-          console.debug("[useLauncher] Error fetching launcher user:", error);
-        });
+      onAuthTokenUpdated(authToken);
     }
-  }, [authToken, tdk, setUser, onConnect]);
+  }, [authToken, onAuthTokenUpdated]);
 
   return {
     isUsingTreasureLauncher,
-    startUserSessionViaLauncherIfNeeded,
     openLauncherAccountModal,
   };
 };

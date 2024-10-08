@@ -36,6 +36,7 @@ import {
 } from "thirdweb/react";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
+import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import { useLauncher } from "../hooks/useLauncher";
 import { type SupportedLanguage, i18n } from "../i18n";
 import {
@@ -43,6 +44,10 @@ import {
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
+
+type LauncherOptions = {
+  getAuthTokenOverride?: () => string | undefined;
+};
 
 type Config = {
   language?: SupportedLanguage;
@@ -56,7 +61,7 @@ type Config = {
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
-  getAuthTokenOverride?: () => string | undefined;
+  launcherOptions?: LauncherOptions;
 };
 
 type ContextValues = {
@@ -107,7 +112,7 @@ const TreasureProviderInner = ({
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
-  getAuthTokenOverride,
+  launcherOptions,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -135,16 +140,20 @@ const TreasureProviderInner = ({
     () => getContractAddresses(chain.id),
     [chain.id],
   );
-  const {
-    isUsingTreasureLauncher,
-    startUserSessionViaLauncherIfNeeded,
-    openLauncherAccountModal,
-  } = useLauncher({
-    getAuthTokenOverride,
-    setUser,
+
+  const onAuthTokenUpdated = (authToken: string) => {
+    tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
+      setUser(user);
+      setStoredAuthToken(authToken);
+      tdk.setAuthToken(authToken);
+      onConnect?.(user);
+    });
+  };
+
+  const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
+    getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
     setRootElement: setEl,
-    tdk,
-    onConnect,
+    onAuthTokenUpdated,
   });
 
   const logOut = () => {
@@ -273,14 +282,15 @@ const TreasureProviderInner = ({
         },
         logOut,
         startUserSession: (options: SessionOptions) =>
-          startUserSessionViaLauncherIfNeeded(options) ??
-          startUserSession({
-            client,
-            wallet: activeWallet,
-            chainId: chain.id,
-            tdk,
-            options,
-          }),
+          isUsingTreasureLauncher
+            ? startUserSessionViaLauncher(options)
+            : startUserSession({
+                client,
+                wallet: activeWallet,
+                chainId: chain.id,
+                tdk,
+                options,
+              }),
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,

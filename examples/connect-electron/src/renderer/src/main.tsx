@@ -34,7 +34,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           ],
           nativeTokenLimitPerTransaction: toWei("1"),
         }}
-        getAuthTokenOverride={getAuthToken}
+        launcherOptions={{
+          getAuthTokenOverride: getAuthToken,
+        }}
       >
         <App />
       </TreasureProvider>
