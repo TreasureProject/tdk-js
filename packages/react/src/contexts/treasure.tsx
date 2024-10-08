@@ -131,8 +131,7 @@ const TreasureProviderInner = ({
     useLauncher({
       getAuthTokenOverride,
       setUser,
-      setAuthToken: tdk.setAuthToken,
-      getUser: tdk.user.me,
+      tdk,
       onConnect,
     });
 

@@ -2,25 +2,21 @@ import {
   getTreasureLauncherAuthToken,
   startUserSessionViaLauncher,
 } from "@treasure-dev/launcher";
-import type { SessionOptions, User } from "@treasure-dev/tdk-core";
+import type { SessionOptions, TDKAPI, User } from "@treasure-dev/tdk-core";
 import { useCallback, useEffect } from "react";
 import { setStoredAuthToken } from "../utils/store";
 
 type Props = {
   getAuthTokenOverride?: () => string | undefined;
-  setAuthToken: (token: string) => void;
+  tdk: TDKAPI;
   setUser: (user: User) => void;
-  getUser: ({
-    overrideAuthToken,
-  }: { overrideAuthToken?: string }) => Promise<User>;
   onConnect?: (user: User) => void;
 };
 
 export const useLauncher = ({
   getAuthTokenOverride,
-  setAuthToken,
+  tdk,
   setUser,
-  getUser,
   onConnect,
 }: Props) => {
   const getAuthToken = useCallback(() => {
@@ -45,9 +41,10 @@ export const useLauncher = ({
     const launcherAuthToken: string | undefined = getAuthToken();
     if (launcherAuthToken) {
       console.debug("[useLauncher] Using launcher auth token");
-      setAuthToken(launcherAuthToken);
+      tdk.setAuthToken(launcherAuthToken);
 
-      getUser({ overrideAuthToken: launcherAuthToken })
+      tdk.user
+        .me({ overrideAuthToken: launcherAuthToken })
         .then((nextUser) => {
           setUser(nextUser);
           setStoredAuthToken(launcherAuthToken);
@@ -57,7 +54,7 @@ export const useLauncher = ({
           console.debug("[useLauncher] Error fetching launcher user:", error);
         });
     }
-  }, [getAuthToken, setAuthToken, getUser, setUser, onConnect]);
+  }, [getAuthToken, tdk, setUser, onConnect]);
 
   return {
     isUsingTreasureLauncher,
