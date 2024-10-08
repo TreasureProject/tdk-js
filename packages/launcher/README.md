@@ -80,7 +80,9 @@ const getAuthToken = () =>
 
 <TreasureProvider
  ...
- getAuthTokenOverride={getAuthToken}
+    launcherOptions={{
+        getAuthTokenOverride: getAuthToken,
+    }}
 >
 ```
 
