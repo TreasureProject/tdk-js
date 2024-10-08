@@ -105,7 +105,7 @@ export const useConnect = (props?: Props) => {
 
   const openAccountModal = () => {
     if (isUsingTreasureLauncher()) {
-      openLauncherAccountModal();
+      openLauncherAccountModal(connectModalSize);
       return;
     }
     openWalletDetailsModal({

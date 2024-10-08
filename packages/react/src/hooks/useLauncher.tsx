@@ -4,6 +4,7 @@ import {
 } from "@treasure-dev/launcher";
 import type { SessionOptions, TDKAPI, User } from "@treasure-dev/tdk-core";
 import { type ReactNode, useCallback, useEffect } from "react";
+import { AccountModal } from "../components/launcher/AccountModal";
 import { setStoredAuthToken } from "../utils/store";
 
 type Props = {
@@ -39,7 +40,7 @@ export const useLauncher = ({
     [isUsingTreasureLauncher],
   );
 
-  const openLauncherAccountModal = () => {
+  const openLauncherAccountModal = (size?: "lg" | "xl" | "2xl" | "3xl") => {
     if (!isUsingTreasureLauncher()) {
       console.debug(
         "[useLauncher] openLauncherAccountModal cannot be used when not using Treasure Launcher",
@@ -50,7 +51,13 @@ export const useLauncher = ({
       "[useLauncher] openLauncherAccountModal is not yet supported",
     );
 
-    setRootElement(null);
+    setRootElement(
+      <AccountModal
+        open
+        size={size}
+        onOpenChange={() => setRootElement(null)}
+      />,
+    );
   };
 
   useEffect(() => {

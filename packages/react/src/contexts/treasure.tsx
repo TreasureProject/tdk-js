@@ -71,7 +71,7 @@ type ContextValues = {
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
   isUsingTreasureLauncher: () => boolean;
-  openLauncherAccountModal: () => void;
+  openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
 };
 
 const Context = createContext({} as ContextValues);
