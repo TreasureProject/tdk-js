@@ -64,7 +64,14 @@ const SUPPORTED_TOKENS = [
 ] as const;
 
 export const useConnect = (props?: Props) => {
-  const { chain, client, logOut, setRootElement } = useTreasure();
+  const {
+    chain,
+    client,
+    logOut,
+    setRootElement,
+    isUsingTreasureLauncher,
+    openLauncherAccountModal,
+  } = useTreasure();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
   const {
     supportedChainIds,
@@ -79,7 +86,13 @@ export const useConnect = (props?: Props) => {
       ? supportedChainIds.map((chainId) => defineChain(chainId))
       : [chain];
 
-  const openConnectModal = () =>
+  const openConnectModal = () => {
+    if (isUsingTreasureLauncher) {
+      console.debug(
+        "[useConnect] openConnectModal cannot be used when Treasure Launcher is being used",
+      );
+      return;
+    }
     setRootElement(
       <ConnectModal
         open
@@ -88,8 +101,13 @@ export const useConnect = (props?: Props) => {
         {...connectModalProps}
       />,
     );
+  };
 
-  const openAccountModal = () =>
+  const openAccountModal = () => {
+    if (isUsingTreasureLauncher) {
+      openLauncherAccountModal(connectModalSize);
+      return;
+    }
     openWalletDetailsModal({
       client,
       chains,
@@ -121,6 +139,7 @@ export const useConnect = (props?: Props) => {
         logOut();
       },
     });
+  };
 
   return { openConnectModal, openAccountModal };
 };

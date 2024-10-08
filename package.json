@@ -2,15 +2,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm build:auth && pnpm build:core && pnpm build:react && pnpm build:api",
+    "build": "pnpm build:auth && pnpm build:core && pnpm build:launcher && pnpm build:react && pnpm build:api",
     "build:auth": "pnpm --filter ./packages/auth build",
     "build:core": "pnpm --filter ./packages/core build",
+    "build:launcher": "pnpm --filter ./packages/launcher build",
     "build:react": "pnpm --filter ./packages/react build",
     "build:api": "pnpm --filter ./apps/api build",
     "generate": "pnpm -r generate",
-    "dev": "concurrently \"pnpm dev:auth\" \"pnpm dev:core\" \"pnpm dev:api\" \"pnpm dev:react\"",
+    "dev": "concurrently \"pnpm dev:auth\" \"pnpm dev:core\" \"pnpm dev:launcher\" \"pnpm dev:api\" \"pnpm dev:react\"",
     "dev:auth": "pnpm --filter ./packages/auth dev",
     "dev:core": "pnpm --filter ./packages/core dev",
+    "dev:launcher": "pnpm --filter ./packages/launcher dev",
     "dev:api": "pnpm --filter ./apps/api dev",
     "dev:react": "pnpm --filter ./packages/react dev",
     "dev:connect-electron": "pnpm --filter ./examples/connect-electron dev",
@@ -23,7 +25,7 @@
     "test": "TZ=UTC vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
-    "package:publish": "pnpm build:auth && pnpm build:core && pnpm build:react && changeset publish",
+    "package:publish": "pnpm build:auth && pnpm build:core && pnpm build:launcher && pnpm build:react && changeset publish",
     "prepare": "husky"
   },
   "devDependencies": {

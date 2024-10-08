@@ -40,6 +40,7 @@ catalog:
   concurrently: ^9.0.1
   'decimal.js-light': ^2.5.1
   dotenv: ^16.3.1
+  "dotenv-cli": ^7.4.1
   electron: ^31.1.2
   'electron-builder': ^25.1.7
   'electron-vite': ^2.3.0

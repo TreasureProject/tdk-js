@@ -19,6 +19,7 @@ import {
   type PropsWithChildren,
   type ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -36,12 +37,18 @@ import {
 } from "thirdweb/react";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
+import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
+import { useLauncher } from "../hooks/useLauncher";
 import { type SupportedLanguage, i18n } from "../i18n";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
+
+type LauncherOptions = {
+  getAuthTokenOverride?: () => string | undefined;
+};
 
 type Config = {
   language?: SupportedLanguage;
@@ -55,6 +62,7 @@ type Config = {
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
+  launcherOptions?: LauncherOptions;
 };
 
 type ContextValues = {
@@ -73,6 +81,8 @@ type ContextValues = {
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
+  isUsingTreasureLauncher: boolean;
+  openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
 };
 
 const Context = createContext({} as ContextValues);
@@ -103,6 +113,7 @@ const TreasureProviderInner = ({
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
+  launcherOptions,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -130,6 +141,24 @@ const TreasureProviderInner = ({
     () => getContractAddresses(chain.id),
     [chain.id],
   );
+
+  const onAuthTokenUpdated = useCallback(
+    (authToken: string) => {
+      tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
+        setUser(user);
+        setStoredAuthToken(authToken);
+        tdk.setAuthToken(authToken);
+        onConnect?.(user);
+      });
+    },
+    [tdk.user.me, tdk.setAuthToken, onConnect],
+  );
+
+  const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
+    getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
+    setRootElement: setEl,
+    onAuthTokenUpdated,
+  });
 
   const logOut = () => {
     setUser(undefined);
@@ -203,6 +232,12 @@ const TreasureProviderInner = ({
     },
     timeout: autoConnectTimeout,
     onConnect: async (wallet) => {
+      if (isUsingTreasureLauncher) {
+        console.debug(
+          "[TreasureProvider] Skipping auto-connect because launcher is being used",
+        );
+        return;
+      }
       setIsAuthenticating(true);
       try {
         await logIn(wallet);
@@ -234,6 +269,12 @@ const TreasureProviderInner = ({
           activeWalletStatus === "connecting" ||
           isAuthenticating,
         logIn: async (wallet: Wallet) => {
+          if (isUsingTreasureLauncher) {
+            console.debug(
+              "[TreasureProvider] Skipping auto-connect because launcher is being used",
+            );
+            return;
+          }
           setIsAuthenticating(true);
           try {
             await logIn(wallet);
@@ -245,16 +286,20 @@ const TreasureProviderInner = ({
         },
         logOut,
         startUserSession: (options: SessionOptions) =>
-          startUserSession({
-            client,
-            wallet: activeWallet,
-            chainId: chain.id,
-            tdk,
-            options,
-          }),
+          isUsingTreasureLauncher
+            ? startUserSessionViaLauncher(options)
+            : startUserSession({
+                client,
+                wallet: activeWallet,
+                chainId: chain.id,
+                tdk,
+                options,
+              }),
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
+        isUsingTreasureLauncher,
+        openLauncherAccountModal,
       }}
     >
       {children}

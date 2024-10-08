@@ -8,12 +8,17 @@ import { ThirdwebProvider } from "thirdweb/react";
 
 import { toWei } from "thirdweb";
 import App from "./App";
+import icon from "./assets/electron.svg";
+
+const getAuthToken = () =>
+  window.electron.ipcRenderer.sendSync("get-auth-token");
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThirdwebProvider>
       <TreasureProvider
         appName="Electron App"
+        appIconUri={icon}
         apiUri={import.meta.env.VITE_TDK_API_URL}
         defaultChainId={421614}
         clientId={import.meta.env.VITE_TDK_CLIENT_ID}
@@ -28,6 +33,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             "0xE647b2c46365741e85268ceD243113d08F7E00B8",
           ],
           nativeTokenLimitPerTransaction: toWei("1"),
+        }}
+        launcherOptions={{
+          getAuthTokenOverride: getAuthToken,
         }}
       >
         <App />

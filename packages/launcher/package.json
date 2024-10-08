@@ -1,0 +1,41 @@
+{
+  "name": "@treasure-dev/launcher",
+  "version": "1.0.0",
+  "description": "Treasure Launcher utilities for the Treasure ecosystem",
+  "keywords": [
+    "treasure"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TreasureProject/tdk-js.git",
+    "directory": "packages/launcher"
+  },
+  "bugs": {
+    "url": "https://github.com/TreasureProject/tdk-js/issues",
+    "email": "engineering@treasure.lol"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "pnpm typecheck && tsup",
+    "dev": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@treasure-dev/tdk-core": "*"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
