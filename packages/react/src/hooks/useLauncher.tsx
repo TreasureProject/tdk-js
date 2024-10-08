@@ -22,17 +22,12 @@ export const useLauncher = ({
   setRootElement,
   onConnect,
 }: Props) => {
-  const getAuthToken = useCallback(() => {
-    return getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
-  }, [getAuthTokenOverride]);
-
-  const isUsingTreasureLauncher = useCallback((): boolean => {
-    return getAuthToken() !== undefined;
-  }, [getAuthToken]);
+  const authToken = getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
+  const isUsingTreasureLauncher = authToken !== undefined;
 
   const startUserSessionViaLauncherIfNeeded = useCallback(
     (options: SessionOptions) => {
-      if (isUsingTreasureLauncher()) {
+      if (isUsingTreasureLauncher) {
         return startUserSessionViaLauncher(options);
       }
       return undefined;
@@ -41,7 +36,7 @@ export const useLauncher = ({
   );
 
   const openLauncherAccountModal = (size?: "lg" | "xl" | "2xl" | "3xl") => {
-    if (!isUsingTreasureLauncher()) {
+    if (!isUsingTreasureLauncher) {
       console.debug(
         "[useLauncher] openLauncherAccountModal cannot be used when not using Treasure Launcher",
       );
@@ -58,23 +53,22 @@ export const useLauncher = ({
   };
 
   useEffect(() => {
-    const launcherAuthToken: string | undefined = getAuthToken();
-    if (launcherAuthToken) {
+    if (authToken) {
       console.debug("[useLauncher] Using launcher auth token");
-      tdk.setAuthToken(launcherAuthToken);
+      tdk.setAuthToken(authToken);
 
       tdk.user
-        .me({ overrideAuthToken: launcherAuthToken })
+        .me({ overrideAuthToken: authToken })
         .then((nextUser) => {
           setUser(nextUser);
-          setStoredAuthToken(launcherAuthToken);
+          setStoredAuthToken(authToken);
           onConnect?.(nextUser);
         })
         .catch((error) => {
           console.debug("[useLauncher] Error fetching launcher user:", error);
         });
     }
-  }, [getAuthToken, tdk, setUser, onConnect]);
+  }, [authToken, tdk, setUser, onConnect]);
 
   return {
     isUsingTreasureLauncher,

@@ -33,8 +33,7 @@
     "dev": "pnpm build --watch"
   },
   "dependencies": {
-    "@treasure-dev/tdk-core": "*",
-    "axios": "^1.7.7"
+    "@treasure-dev/tdk-core": "*"
   },
   "engines": {
     "node": ">=14.0.0"

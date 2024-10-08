@@ -87,7 +87,7 @@ export const useConnect = (props?: Props) => {
       : [chain];
 
   const openConnectModal = () => {
-    if (isUsingTreasureLauncher()) {
+    if (isUsingTreasureLauncher) {
       console.debug(
         "[useConnect] openConnectModal cannot be used when Treasure Launcher is being used",
       );
@@ -104,7 +104,7 @@ export const useConnect = (props?: Props) => {
   };
 
   const openAccountModal = () => {
-    if (isUsingTreasureLauncher()) {
+    if (isUsingTreasureLauncher) {
       openLauncherAccountModal(connectModalSize);
       return;
     }

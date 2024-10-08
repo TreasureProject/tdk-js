@@ -75,7 +75,7 @@ type ContextValues = {
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
-  isUsingTreasureLauncher: () => boolean;
+  isUsingTreasureLauncher: boolean;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
 };
 
@@ -219,7 +219,7 @@ const TreasureProviderInner = ({
     },
     timeout: autoConnectTimeout,
     onConnect: async (wallet) => {
-      if (isUsingTreasureLauncher()) {
+      if (isUsingTreasureLauncher) {
         console.debug(
           "[TreasureProvider] Skipping auto-connect because launcher is being used",
         );
@@ -256,7 +256,7 @@ const TreasureProviderInner = ({
           activeWalletStatus === "connecting" ||
           isAuthenticating,
         logIn: async (wallet: Wallet) => {
-          if (isUsingTreasureLauncher()) {
+          if (isUsingTreasureLauncher) {
             console.debug(
               "[TreasureProvider] Skipping auto-connect because launcher is being used",
             );

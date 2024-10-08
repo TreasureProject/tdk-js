@@ -1,5 +1,4 @@
 import type { SessionOptions } from "@treasure-dev/tdk-core";
-import axios from "axios";
 import { isUsingTreasureLauncher } from "./utils";
 
 export function startUserSessionViaLauncher({
@@ -16,11 +15,22 @@ export function startUserSessionViaLauncher({
       ),
     );
   }
-  return axios.post("http://localhost:16001/tdk-start-session", {
-    backendWallet,
-    approvedTargets,
-    nativeTokenLimitPerTransaction,
-    sessionDurationSec,
-    sessionMinDurationLeftSec,
+
+  return fetch("http://localhost:16001/tdk-start-session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      backendWallet,
+      approvedTargets,
+      nativeTokenLimitPerTransaction,
+      sessionDurationSec,
+      sessionMinDurationLeftSec,
+    }),
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Failed to start session");
+    }
   });
 }

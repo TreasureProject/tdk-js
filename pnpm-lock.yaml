@@ -519,9 +519,6 @@ importers:
       '@treasure-dev/tdk-core':
         specifier: '*'
         version: 2.7.1(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(thirdweb@5.61.0(@types/react-dom@18.3.0)(@types/react@18.3.11)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8))(typescript@5.6.2)(zod@3.23.8)
-      axios:
-        specifier: ^1.7.7
-        version: 1.7.7
 
   packages/react:
     dependencies:
@@ -3225,9 +3222,6 @@ packages:
   avvio@9.0.0:
     resolution: {integrity: sha512-UbYrOXgE/I+knFG+3kJr9AgC7uNo8DG+FGGODpH9Bj1O1kL/QDjBXnTem9leD3VdQKtaHjV3O85DQ7hHh4IIHw==}
 
-  axios@1.7.7:
-    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
-
   babel-plugin-macros@3.1.0:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
@@ -4107,15 +4101,6 @@ packages:
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
-
-  follow-redirects@1.15.9:
-    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -5591,9 +5576,6 @@ packages:
 
   proxy-compare@2.5.1:
     resolution: {integrity: sha512-oyfc0Tx87Cpwva5ZXezSp5V9vht1c7dZBhvuV/y3ctkgMVUmiAGDVeeB0dKhGSyT0v1ZTEQYpe/RXlBVBNuCLA==}
-
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   pseudomap@1.0.2:
     resolution: {integrity: sha512-b/YwNhb8lk1Zz2+bXXpS/LK9OisiZZ1SNsSLxN1x2OXVEhW2Ckr/7mWE5vrC1ZTiJlD9g19jWszTmJsB+oEpFQ==}
@@ -10506,14 +10488,6 @@ snapshots:
       '@fastify/error': 4.0.0
       fastq: 1.17.1
 
-  axios@1.7.7:
-    dependencies:
-      follow-redirects: 1.15.9
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
   babel-plugin-macros@3.1.0:
     dependencies:
       '@babel/runtime': 7.25.7
@@ -11582,8 +11556,6 @@ snapshots:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
-
-  follow-redirects@1.15.9: {}
 
   for-each@0.3.3:
     dependencies:
@@ -13098,8 +13070,6 @@ snapshots:
       ipaddr.js: 1.9.1
 
   proxy-compare@2.5.1: {}
-
-  proxy-from-env@1.1.0: {}
 
   pseudomap@1.0.2: {}
 
