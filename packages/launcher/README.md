@@ -9,7 +9,7 @@ Treasure Launcher utilities for the Treasure ecosystem
 ## Installation
 
 ```bash
-npm i @treasure-dev/launcher
+pnpm add @treasure-dev/launcher
 ```
 
 ## Usage

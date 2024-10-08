@@ -12,19 +12,22 @@ RUN apk update && \
 # Copy application code
 COPY . .
 
-# Install dependencies
-RUN npm install --include=dev
+# Install pnpm
+RUN npm install -g pnpm
+
+# Install dependencies including dev dependencies
+RUN pnpm install --prod=false
 
 # Build packages
-RUN npm run build:auth
-RUN npm run build:core
+RUN pnpm build:auth
+RUN pnpm build:core
 
 # Build application
-RUN npm run build:api
+RUN pnpm build:api
 
 # Remove development dependencies
-RUN npm prune --omit=dev
+RUN pnpm prune --prod
 
 # Start the server
 EXPOSE 8080
-CMD [ "npm", "run", "start:api" ]
+CMD [ "pnpm", "start:api" ]

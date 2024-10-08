@@ -36,38 +36,38 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && tsup",
-    "dev": "npm run build -- --watch",
+    "build": "pnpm typecheck && tsup",
+    "dev": "pnpm build --watch",
     "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.0.5",
-    "@radix-ui/react-visually-hidden": "^1.1.0",
-    "@treasure-dev/tdk-core": "*",
-    "@treasure-dev/launcher": "*",
-    "clsx": "^2.1.1",
-    "i18next": "^23.12.3",
-    "i18next-browser-languagedetector": "^8.0.0",
-    "input-otp": "^1.2.4",
-    "react-i18next": "^15.0.1",
-    "tailwind-merge": "^2.5.2"
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-visually-hidden": "catalog:",
+    "@treasure-dev/tdk-core": "workspace:*",
+    "@treasure-dev/launcher": "workspace:*",
+    "clsx": "catalog:",
+    "i18next": "catalog:",
+    "i18next-browser-languagedetector": "catalog:",
+    "input-otp": "catalog:",
+    "react-i18next": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.2.8",
-    "@storybook/react": "^8.2.8",
-    "@storybook/react-vite": "^8.2.8",
-    "@treasure-dev/tailwind-config": "*",
-    "@types/react": "^18.2.24",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "storybook": "^8.2.8",
-    "tailwindcss": "^3.3.3",
-    "tailwindcss-animate": "^1.0.7",
-    "vite": "^5.0.0"
+    "@storybook/addon-essentials": "catalog:",
+    "@storybook/react": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@treasure-dev/tailwind-config": "workspace:*",
+    "@types/react": "catalog:",
+    "autoprefixer": "catalog:",
+    "postcss": "catalog:",
+    "storybook": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-animate": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "thirdweb": "^5.55.0"
+    "react": "catalog:",
+    "thirdweb": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"

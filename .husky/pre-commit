@@ -1,1 +1,1 @@
-npx lint-staged && npm run knip
+npx lint-staged && pnpm knip
