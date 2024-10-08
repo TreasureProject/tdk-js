@@ -101,13 +101,6 @@ const TreasureProviderInner = ({
   onConnect,
   getAuthTokenOverride,
 }: Props) => {
-  const {
-    getAuthToken,
-    isUsingTreasureLauncher,
-    startUserSessionViaLauncherIfNeeded,
-  } = useLauncher({
-    getAuthTokenOverride,
-  });
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
   const [el, setEl] = useState<ReactNode>(null);
@@ -134,6 +127,14 @@ const TreasureProviderInner = ({
     () => getContractAddresses(chain.id),
     [chain.id],
   );
+  const { isUsingTreasureLauncher, startUserSessionViaLauncherIfNeeded } =
+    useLauncher({
+      getAuthTokenOverride,
+      setUser,
+      setAuthToken: tdk.setAuthToken,
+      getUser: tdk.user.me,
+      onConnect,
+    });
 
   const logOut = () => {
     setUser(undefined);
@@ -191,28 +192,6 @@ const TreasureProviderInner = ({
     // Trigger completion callback
     onConnect?.(nextUser);
   };
-
-  useEffect(() => {
-    const launcherAuthToken: string | undefined = getAuthToken();
-    if (launcherAuthToken) {
-      console.debug("[TreasureProvider] Using launcher auth token");
-      tdk.setAuthToken(launcherAuthToken);
-
-      tdk.user
-        .me({ overrideAuthToken: launcherAuthToken })
-        .then((nextUser) => {
-          setUser(nextUser);
-          setStoredAuthToken(launcherAuthToken);
-          onConnect?.(nextUser);
-        })
-        .catch((error) => {
-          console.debug(
-            "[TreasureProvider] Error fetching launcher user:",
-            error,
-          );
-        });
-    }
-  }, [tdk, getAuthToken, onConnect]);
 
   // Attempt an automatic background connection
   useAutoConnect({
