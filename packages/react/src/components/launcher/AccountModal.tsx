@@ -19,10 +19,10 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
     user,
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
-    // ecosystemId, TODO: uncomment when ecosystem id is available
+    ecosystemId,
   } = useTreasure();
 
-  const { data: walletImage } = useWalletImage("ecosystem.treasure");
+  const { data: walletImage } = useWalletImage(ecosystemId);
 
   if (!user) {
     return null;
