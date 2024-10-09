@@ -18,7 +18,7 @@ export type PropertyValue =
   | null
   | { [key: string]: PropertyValue | PropertyValue[] };
 
-export type PlayerIdPayload =
+type PlayerIdPayload =
   | {
       smart_account: string; // Ethereum wallet address for player. Lowercase.
       user_id: undefined; // Omitted if smart_account is defined.
