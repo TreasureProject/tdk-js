@@ -6,3 +6,7 @@ export async function getServerTime(apiUri: string): Promise<number> {
 
   return Number(await result.text());
 }
+
+export function getEventId(): string {
+  return "123";
+}

@@ -21,11 +21,11 @@ export type PropertyValue =
 type PlayerIdPayload =
   | {
       smart_account: string; // Ethereum wallet address for player. Lowercase.
-      user_id: undefined; // Omitted if smart_account is defined.
+      user_id?: undefined; // Optional if smart_account is defined.
     }
   | {
       user_id: string; // Required if smart_account is undefined. Can be player ID or email, etc.
-      smart_account: undefined; // Omitted if user_id is defined.
+      smart_account?: string; // Optional if user_id is defined.
     };
 
 export type AnalyticsPayload = PlayerIdPayload & {
@@ -55,4 +55,10 @@ export type AnalyticsPayload = PlayerIdPayload & {
   device?: Device;
   // App telemetry.
   app: AppInfo;
+};
+
+export type TrackableEvent = PlayerIdPayload & {
+  cartridge_tag: string;
+  name: string;
+  properties: { [key: string]: PropertyValue | PropertyValue[] };
 };

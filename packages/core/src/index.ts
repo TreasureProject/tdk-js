@@ -71,7 +71,7 @@ export {
 } from "./magicswap";
 
 // Analytics
-export { trackCustomEvent } from "./analytics/track";
+export { AnalyticsManager } from "./analytics/AnalyticsManager";
 export type {
   AnalyticsPayload,
   AppInfo,
