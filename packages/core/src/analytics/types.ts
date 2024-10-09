@@ -15,25 +15,44 @@ export type PropertyValue =
   | string
   | number
   | boolean
-  | { [key: string]: PropertyValue };
+  | null
+  | { [key: string]: PropertyValue | PropertyValue[] };
 
-export type AnalyticsPayload = {
-  cartridge_tag: string;
-  name: string;
+export type PlayerIdPayload =
+  | {
+      smart_account: string; // Ethereum wallet address for player. Lowercase.
+      user_id: undefined; // Omitted if smart_account is defined.
+    }
+  | {
+      user_id: string; // Required if smart_account is undefined. Can be player ID or email, etc.
+      smart_account: undefined; // Omitted if user_id is defined.
+    };
 
-  time_server: number;
-  time_local: number;
+export type AnalyticsPayload = PlayerIdPayload & {
+  cartridge_tag: string; // Value is assigned to you by Treasure.
+  name: string; // Name of this type of event. You decide this value.
 
-  smart_account: string;
-  user_id?: string;
+  time_server: number; // Server UNIX milliseconds.
+  time_local?: number; // UNIX milliseconds of event at originating device.
 
-  id: string;
+  id: string; // Required. Unique identifier for this event.
+  // Used as a database upsert key to filter out duplicate updates.
 
-  session_id?: string;
-  chain_id: number;
+  op?: "upsert" | "u" | "delete" | "d"; // Optional. A field indicating whether to upsert/delete the
+  // database entry specified in id. Valid values:
+  //   "upsert" / "u"
+  //   "delete" / "d"
+  // In the absence of an 'op', default behavior is to upsert.
 
-  device?: Device;
-  app: AppInfo;
-
+  // Event-specific properties. Up to 500 KB.
   properties: { [key: string]: PropertyValue | PropertyValue[] };
+
+  // Other metadata. Device and app telemetry.
+  session_id?: string; // Optional. Unique Session ID. Helps w/ analytics.
+  chain_id?: number; // Optional. Chain ID.
+
+  // Device telemetry.
+  device?: Device;
+  // App telemetry.
+  app: AppInfo;
 };
