@@ -22,7 +22,7 @@ export class AnalyticsManager {
    */
   async trackCustomEvent(event: TrackableEvent): Promise<string> {
     const serverTime = await getServerTime(this.apiUri);
-    const localTime = Date.now();
+    const localTime = `${Date.now()}`;
     const eventId = getEventId();
     const payload: AnalyticsPayload = {
       ...event,

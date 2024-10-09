@@ -32,8 +32,8 @@ export type AnalyticsPayload = PlayerIdPayload & {
   cartridge_tag: string; // Value is assigned to you by Treasure.
   name: string; // Name of this type of event. You decide this value.
 
-  time_server: number; // Server UNIX milliseconds.
-  time_local?: number; // UNIX milliseconds of event at originating device.
+  time_server: string; // Server UNIX milliseconds.
+  time_local?: string; // UNIX milliseconds of event at originating device.
 
   id: string; // Required. Unique identifier for this event.
   // Used as a database upsert key to filter out duplicate updates.
