@@ -4,6 +4,7 @@ import {
   DEFAULT_TDK_APP_ICON_URI,
   SUPPORTED_WEB3_WALLETS,
   type SocialConnectMethod,
+  type User,
   connectEcosystemWallet,
   isSocialConnectMethod,
   sendEmailVerificationCode,
@@ -30,7 +31,7 @@ export type Options = ConnectMethodSelectionOptions & {
   passkeyDomain?: string;
   passkeyName?: string;
   hasStoredPasskey?: boolean;
-  onConnected?: (method: ConnectMethod, wallet: Wallet) => void;
+  onConnected?: (method: ConnectMethod, wallet: Wallet, user?: User) => void;
   onConnectError?: (method: ConnectMethod, err: unknown) => void;
 };
 
@@ -125,9 +126,9 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        await logIn(wallet);
+        const nextUser = await logIn(wallet);
         // Login was successful, close the connect modal
-        onConnected?.("email", wallet);
+        onConnected?.("email", wallet, nextUser);
         onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet with email:", err);
@@ -240,9 +241,9 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        await logIn(wallet);
+        const nextUser = await logIn(wallet);
         // Login was successful, close the connect modal
-        onConnected?.(method, wallet);
+        onConnected?.(method, wallet, nextUser);
         onOpenChange(false);
       } catch (err) {
         console.error("Error logging in wallet:", err);

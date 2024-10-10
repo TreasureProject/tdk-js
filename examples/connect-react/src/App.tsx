@@ -33,6 +33,8 @@ const ERC20_MINTABLE_ABI = [
   },
 ] as const;
 
+const cartridgeTag = "tdk-examples-connect-react";
+
 export const App = () => {
   const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
     useTreasure();
@@ -110,10 +112,11 @@ export const App = () => {
         </h1>
         <ConnectButton
           supportedChainIds={[421614, 42161]}
-          onConnected={(method, wallet) => {
-            console.log("Connect successful:", { method, wallet });
+          onConnected={(method, wallet, nextUser) => {
+            console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({
-              cartridgeTag: "tdk-examples-connect-react",
+              smartAccountAddress: nextUser?.smartAccountAddress,
+              cartridgeTag,
               name: "wallet-connect",
               properties: {
                 method,
@@ -209,6 +212,22 @@ export const App = () => {
                 </Button>
                 <Button onClick={() => handleSendEth(0.0001)}>
                   Send 0.0001 ETH
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h1 className="font-medium text-xl">Test Analytics</h1>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() =>
+                    trackCustomEvent({
+                      cartridgeTag,
+                      name: "test-click",
+                      properties: { test: "test-value" },
+                    })
+                  }
+                >
+                  Track Custom Event
                 </Button>
               </div>
             </div>

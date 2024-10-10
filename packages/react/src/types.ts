@@ -18,6 +18,7 @@ export type AnalyticsEvent = {
   cartridgeTag: string;
   name: string;
   userId?: string;
+  smartAccountAddress?: string;
   properties: { [key: string]: PropertyValue | PropertyValue[] };
 };
 
@@ -58,7 +59,7 @@ export type ContextValues = {
   ecosystemPartnerId: string;
   user?: User;
   isConnecting: boolean;
-  logIn: (wallet: Wallet) => Promise<void>;
+  logIn: (wallet: Wallet) => Promise<User | undefined>;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;

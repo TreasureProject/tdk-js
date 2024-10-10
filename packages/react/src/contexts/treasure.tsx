@@ -108,7 +108,7 @@ const TreasureProviderInner = ({
       return undefined;
     }
     return new AnalyticsManager({
-      apiUri: analyticsOptions.apiUri ?? "",
+      apiUri: analyticsOptions.apiUri,
       xApiKey: analyticsOptions.xApiKey,
       app: analyticsOptions.appInfo,
     });
@@ -122,10 +122,10 @@ const TreasureProviderInner = ({
         );
       }
 
-      if (
-        user?.smartAccountAddress === undefined &&
-        event.userId === undefined
-      ) {
+      const smartAccountAddress =
+        event.smartAccountAddress ?? user?.smartAccountAddress;
+
+      if (smartAccountAddress === undefined && event.userId === undefined) {
         throw new Error(
           "Cannot track event without userId or smartAccountAddress",
         );
@@ -133,7 +133,7 @@ const TreasureProviderInner = ({
 
       // After the previous check one must be non-null so this works
       const playerId = {
-        smart_account: user?.smartAccountAddress,
+        smart_account: smartAccountAddress,
         user_id: event.userId,
       } as
         | {
@@ -181,7 +181,7 @@ const TreasureProviderInner = ({
     activeWallet?.disconnect();
   };
 
-  const logIn = async (wallet: Wallet): Promise<void> => {
+  const logIn = async (wallet: Wallet): Promise<User | undefined> => {
     let nextUser: User | undefined;
 
     // Check for existing stored auth token
@@ -229,6 +229,7 @@ const TreasureProviderInner = ({
 
     // Trigger completion callback
     onConnect?.(nextUser);
+    return nextUser;
   };
 
   // Attempt an automatic background connection
@@ -291,8 +292,9 @@ const TreasureProviderInner = ({
           }
           setIsAuthenticating(true);
           try {
-            await logIn(wallet);
+            const nextUser = await logIn(wallet);
             setIsAuthenticating(false);
+            return nextUser;
           } catch (err) {
             setIsAuthenticating(false);
             throw err;

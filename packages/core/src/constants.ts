@@ -12,7 +12,7 @@ export const DEFAULT_TDK_APP_ICON_URI =
   "https://images.treasure.lol/tdk/login/treasure_icon.png";
 export const DEFAULT_TDK_ECOSYSTEM_ID = "ecosystem.treasure";
 export const DEFAULT_TDK_DARKMATTER_BASE_URI =
-  "https://darkmatter.spellcaster.lol/ingress";
+  "https://darkmatter.spellcaster.lol";
 
 // APIs
 export const BRIDGEWORLD_API_URL = {
