@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.0.0
+
+### Major Changes
+
+- d468a1b: Migrated from in-app wallets to ecosystem wallets
+
 ## 2.7.1
 
 ## 2.7.0
