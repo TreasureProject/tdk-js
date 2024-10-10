@@ -17,6 +17,26 @@ export class AnalyticsManager {
   }
 
   /**
+   * Submits an array of payloads to the Analytics API.
+   *
+   * @param {AnalyticsPayload[]} payload - The payloads to submit.
+   * @returns {Promise<void>} - A promise that resolves when the payloads have been submitted.
+   */
+  async submitPayload(payload: AnalyticsPayload[]): Promise<void> {
+    const response = await fetch(`${this.apiUri}/ingress/events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": this.xApiKey,
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to track custom event: ${response.status}`);
+    }
+  }
+
+  /**
    * Tracks a custom event.
    *
    * @param {TrackableEvent} event - The event to track.
@@ -41,17 +61,7 @@ export class AnalyticsManager {
     };
 
     try {
-      const response = await fetch(`${this.apiUri}/ingress/events`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": this.xApiKey,
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to track custom event");
-      }
+      await this.submitPayload([payload]);
       return eventId;
     } catch (err) {
       console.error("Error tracking custom event:", err);
@@ -63,8 +73,12 @@ export class AnalyticsManager {
   }
 
   async retryAllCachedEvents() {
-    const _cachedEvents = getCachedEvents();
-    // TODO: retry all events
-    clearCachedEvents();
+    const cachedEvents = getCachedEvents();
+    try {
+      await this.submitPayload(cachedEvents);
+      clearCachedEvents();
+    } catch (err) {
+      console.error("Error retrying cached events:", err);
+    }
   }
 }
