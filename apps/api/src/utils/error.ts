@@ -57,8 +57,17 @@ const ENGINE_ERROR_MESSAGE_MAP = {
 } as const;
 
 export const normalizeEngineErrorMessage = (rawMessage: string) => {
+  try {
+    const error: object = JSON.parse(rawMessage);
+    if ("message" in error && typeof error.message === "string") {
+      return error.message;
+    }
+  } catch {
+    // Ignore error if message wasn't valid JSON and try regular expression matches instead
+  }
+
   const groups =
-    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)"|(?:Simulation failed: TransactionError: Error - (.*))|(?:^Simulation failed: (.*))|(?:^Error - (.*)))/gi.exec(
+    /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)")|(?:Simulation failed: TransactionError: Error - (.*))|(?:^Simulation failed: (.*))|(?:^Error - (.*))/gi.exec(
       rawMessage,
     );
   const message = groups?.slice(1).find((group) => group) ?? rawMessage;

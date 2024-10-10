@@ -42,5 +42,12 @@ describe("error utils", () => {
     expect(normalizeEngineErrorMessage("Unknown Error - test error")).toBe(
       "Unknown Error - test error",
     );
+    expect(
+      normalizeEngineErrorMessage(
+        '{"code":3,"message":"failed with 50004597 gas: insufficient funds for gas * price + value: address 0xafCB379C0B76265bCb8432ab776A2641F0355Eb3 have 0 want 100000000000000"}',
+      ),
+    ).toBe(
+      "failed with 50004597 gas: insufficient funds for gas * price + value: address 0xafCB379C0B76265bCb8432ab776A2641F0355Eb3 have 0 want 100000000000000",
+    );
   });
 });
