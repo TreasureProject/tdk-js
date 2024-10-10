@@ -14,6 +14,13 @@ export class AnalyticsManager {
     this.apiUri = apiUri;
     this.xApiKey = xApiKey;
     this.app = app;
+
+    setInterval(
+      () => {
+        this.retryAllCachedEvents();
+      },
+      1000 * 60 * 5,
+    );
   }
 
   /**
@@ -74,6 +81,9 @@ export class AnalyticsManager {
 
   async retryAllCachedEvents() {
     const cachedEvents = getCachedEvents();
+    if (cachedEvents.length === 0) {
+      return;
+    }
     try {
       await this.submitPayload(cachedEvents);
       clearCachedEvents();
