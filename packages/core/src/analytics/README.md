@@ -25,7 +25,7 @@ const analyticsManager = new AnalyticsManager({
 
 // Track a custom event
 await analyticsManager.trackCustomEvent({
-    smart_account: "YOUR_SMART_ACCOUNT_ADDRESS", // Or `user_id`
+    smart_account: "YOUR_SMART_ACCOUNT_ADDRESS", // And/or `user_id`
     cartridge_tag: "YOUR_CARTRIDGE_TAG",
     name: "YOUR_EVENT_NAME",
     properties: {
