@@ -1,17 +1,11 @@
 import {
-  type AddressString,
   AnalyticsManager,
-  type AppInfo,
-  type Contract,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
-  type EcosystemIdString,
-  type PropertyValue,
   type SessionOptions,
   TDKAPI,
   type TrackableEvent,
-  type TreasureConnectClient,
   type User,
   authenticateWallet,
   createTreasureConnectClient,
@@ -30,7 +24,7 @@ import {
   useState,
 } from "react";
 import { I18nextProvider } from "react-i18next";
-import { type Chain, defineChain } from "thirdweb";
+import { defineChain } from "thirdweb";
 import {
   useActiveWallet,
   useActiveWalletChain,
@@ -43,66 +37,13 @@ import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
 import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import { useLauncher } from "../hooks/useLauncher";
-import { type SupportedLanguage, i18n } from "../i18n";
+import { i18n } from "../i18n";
+import type { AnalyticsEvent, Config, ContextValues } from "../types";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
-
-type CustomEvent = {
-  cartridgeTag: string;
-  name: string;
-  userId?: string;
-  properties: { [key: string]: PropertyValue | PropertyValue[] };
-};
-
-type LauncherOptions = {
-  getAuthTokenOverride?: () => string | undefined;
-};
-
-type AnalyticsOptions = {
-  apiUri?: string;
-  xApiKey: string;
-  appInfo: AppInfo;
-};
-
-type Config = {
-  language?: SupportedLanguage;
-  appName: string;
-  appIconUri?: string;
-  apiUri?: string;
-  defaultChainId?: number;
-  clientId: string;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  sessionOptions?: SessionOptions;
-  autoConnectTimeout?: number;
-  onConnect?: (user: User) => void;
-  launcherOptions?: LauncherOptions;
-  analyticsOptions?: AnalyticsOptions;
-};
-
-type ContextValues = {
-  appName: string;
-  appIconUri?: string;
-  chain: Chain;
-  contractAddresses: Record<Contract, AddressString>;
-  tdk: TDKAPI;
-  client: TreasureConnectClient;
-  ecosystemId: EcosystemIdString;
-  ecosystemPartnerId: string;
-  user?: User;
-  isConnecting: boolean;
-  logIn: (wallet: Wallet) => void;
-  logOut: () => void;
-  startUserSession: (options: SessionOptions) => void;
-  switchChain: (chainId: number) => void;
-  setRootElement: (el: ReactNode) => void;
-  isUsingTreasureLauncher: boolean;
-  openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
-  trackCustomEvent: (event: CustomEvent) => Promise<string>;
-};
 
 const Context = createContext({} as ContextValues);
 
@@ -174,7 +115,7 @@ const TreasureProviderInner = ({
   }, [analyticsOptions]);
 
   const trackCustomEvent = useCallback(
-    async (event: CustomEvent) => {
+    async (event: AnalyticsEvent) => {
       if (!analyticsManager) {
         throw new Error(
           "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
