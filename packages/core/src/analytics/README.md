@@ -25,10 +25,11 @@ const analyticsManager = new AnalyticsManager({
 
 // Track a custom event
 await analyticsManager.trackCustomEvent({
-  cartridge_tag: "YOUR_CARTRIDGE_TAG",
-  name: "YOUR_EVENT_NAME",
-  properties: {
-    // Add any additional properties here
-  },
+    smart_account: "YOUR_SMART_ACCOUNT_ADDRESS", // Or `user_id`
+    cartridge_tag: "YOUR_CARTRIDGE_TAG",
+    name: "YOUR_EVENT_NAME",
+    properties: {
+        // Add any additional properties here
+    },
 });
 ```
