@@ -69,3 +69,13 @@ export {
   getAddLiquidityArgs,
   getRemoveLiquidityArgs,
 } from "./magicswap";
+
+// Analytics
+export { AnalyticsManager } from "./analytics/AnalyticsManager";
+export type {
+  AnalyticsPayload,
+  AppInfo,
+  Device,
+  PropertyValue,
+  TrackableEvent,
+} from "./analytics/types";

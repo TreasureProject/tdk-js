@@ -37,10 +37,12 @@
   },
   "dependencies": {
     "@sushiswap/tines": "catalog:",
+    "@types/uuid": "catalog:",
     "@wagmi/core": "catalog:",
     "abitype": "catalog:",
     "jwt-decode": "catalog:",
     "thirdweb": "catalog:",
+    "uuid": "catalog:",
     "viem": "catalog:"
   },
   "peerDependencies": {
