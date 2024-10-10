@@ -7,7 +7,7 @@ import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
 import "../middleware/swagger";
-import { getUser } from "thirdweb";
+import { type GetUserResult, getUser } from "thirdweb";
 import type {
   LoginBody,
   LoginReply,
@@ -119,14 +119,20 @@ export const authRoutes =
 
           if (adminAddress) {
             // Look up any associated user details in the embedded wallet
-            const thirdwebUser = await getUser({
-              client,
-              ecosystem: {
-                id: env.THIRDWEB_ECOSYSTEM_ID,
-                partnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
-              },
-              walletAddress: adminAddress,
-            });
+            let thirdwebUser: GetUserResult | null | undefined;
+            try {
+              thirdwebUser = await getUser({
+                client,
+                ecosystem: {
+                  id: env.THIRDWEB_ECOSYSTEM_ID,
+                  partnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
+                },
+                walletAddress: adminAddress,
+              });
+            } catch {
+              // Ignore failures from the Thirdweb SDK, this info is "nice-to-have"
+            }
+
             if (thirdwebUser) {
               const email = parseThirdwebUserEmail(thirdwebUser);
               if (email) {
