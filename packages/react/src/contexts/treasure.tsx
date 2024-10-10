@@ -1,5 +1,7 @@
 import {
   type AddressString,
+  AnalyticsManager,
+  type AppInfo,
   type Contract,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
@@ -7,6 +9,7 @@ import {
   type EcosystemIdString,
   type SessionOptions,
   TDKAPI,
+  type TrackableEvent,
   type TreasureConnectClient,
   type User,
   authenticateWallet,
@@ -50,6 +53,12 @@ type LauncherOptions = {
   getAuthTokenOverride?: () => string | undefined;
 };
 
+type AnalyticsOptions = {
+  apiUri?: string;
+  xApiKey: string;
+  appInfo: AppInfo;
+};
+
 type Config = {
   language?: SupportedLanguage;
   appName: string;
@@ -63,6 +72,7 @@ type Config = {
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
   launcherOptions?: LauncherOptions;
+  analyticsOptions?: AnalyticsOptions;
 };
 
 type ContextValues = {
@@ -83,6 +93,7 @@ type ContextValues = {
   setRootElement: (el: ReactNode) => void;
   isUsingTreasureLauncher: boolean;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
+  trackCustomEvent: (event: TrackableEvent) => Promise<string>;
 };
 
 const Context = createContext({} as ContextValues);
@@ -114,6 +125,7 @@ const TreasureProviderInner = ({
   autoConnectTimeout = 5_000,
   onConnect,
   launcherOptions,
+  analyticsOptions,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -140,6 +152,29 @@ const TreasureProviderInner = ({
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
     [chain.id],
+  );
+
+  const _analyticsManager = useMemo(() => {
+    if (!analyticsOptions) {
+      return undefined;
+    }
+    return new AnalyticsManager({
+      apiUri: analyticsOptions.apiUri ?? "",
+      xApiKey: analyticsOptions.xApiKey,
+      app: analyticsOptions.appInfo,
+    });
+  }, [analyticsOptions]);
+
+  const trackCustomEvent = useCallback(
+    async (event: TrackableEvent) => {
+      if (!_analyticsManager) {
+        throw new Error(
+          "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
+        );
+      }
+      return _analyticsManager.trackCustomEvent(event);
+    },
+    [_analyticsManager],
   );
 
   const onAuthTokenUpdated = useCallback(
@@ -300,6 +335,7 @@ const TreasureProviderInner = ({
         setRootElement: setEl,
         isUsingTreasureLauncher,
         openLauncherAccountModal,
+        trackCustomEvent,
       }}
     >
       {children}

@@ -77,4 +77,5 @@ export type {
   AppInfo,
   Device,
   PropertyValue,
+  TrackableEvent,
 } from "./analytics/types";

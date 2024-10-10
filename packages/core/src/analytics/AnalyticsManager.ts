@@ -1,4 +1,5 @@
 import pjson from "../../package.json";
+import { DEFAULT_TDK_DARKMATTER_BASE_URI } from "../constants";
 import { addCachedEvent, clearCachedEvents, getCachedEvents } from "./storage";
 import type { AnalyticsPayload, AppInfo, TrackableEvent } from "./types";
 import { getEventId, getServerTime } from "./utils";
@@ -10,7 +11,11 @@ export class AnalyticsManager {
 
   app: AppInfo;
 
-  constructor(apiUri: string, xApiKey: string, app: AppInfo) {
+  constructor({
+    apiUri = DEFAULT_TDK_DARKMATTER_BASE_URI,
+    xApiKey,
+    app,
+  }: { apiUri?: string; xApiKey: string; app: AppInfo }) {
     this.apiUri = apiUri;
     this.xApiKey = xApiKey;
     this.app = app;
