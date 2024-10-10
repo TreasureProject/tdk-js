@@ -181,7 +181,7 @@ const TreasureProviderInner = ({
     activeWallet?.disconnect();
   };
 
-  const logIn = async (wallet: Wallet) => {
+  const logIn = async (wallet: Wallet): Promise<void> => {
     let nextUser: User | undefined;
 
     // Check for existing stored auth token

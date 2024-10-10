@@ -58,7 +58,7 @@ export type ContextValues = {
   ecosystemPartnerId: string;
   user?: User;
   isConnecting: boolean;
-  logIn: (wallet: Wallet) => void;
+  logIn: (wallet: Wallet) => Promise<void>;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
