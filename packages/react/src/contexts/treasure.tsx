@@ -154,7 +154,7 @@ const TreasureProviderInner = ({
     [chain.id],
   );
 
-  const _analyticsManager = useMemo(() => {
+  const analyticsManager = useMemo(() => {
     if (!analyticsOptions) {
       return undefined;
     }
@@ -167,14 +167,14 @@ const TreasureProviderInner = ({
 
   const trackCustomEvent = useCallback(
     async (event: TrackableEvent) => {
-      if (!_analyticsManager) {
+      if (!analyticsManager) {
         throw new Error(
           "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
         );
       }
-      return _analyticsManager.trackCustomEvent(event);
+      return analyticsManager.trackCustomEvent(event);
     },
-    [_analyticsManager],
+    [analyticsManager],
   );
 
   const onAuthTokenUpdated = useCallback(
