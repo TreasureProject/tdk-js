@@ -4,6 +4,7 @@ import {
   ConnectButton,
   useTreasure,
 } from "@treasure-dev/tdk-react";
+import { useCallback, useState } from "react";
 import {
   encode,
   getContract,
@@ -38,6 +39,8 @@ const cartridgeTag = "tdk-examples-connect-react";
 export const App = () => {
   const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
     useTreasure();
+
+  const [tracking, setTracking] = useState(false);
 
   const handleMintMagic = async (amount: number) => {
     if (!user?.address) {
@@ -103,6 +106,21 @@ export const App = () => {
       console.error("Error sending ETH:", err);
     }
   };
+
+  const trackClick = useCallback(async () => {
+    setTracking(true);
+    try {
+      const result = await trackCustomEvent({
+        cartridgeTag,
+        name: "test-click",
+        properties: { test: "test-value" },
+      });
+      console.log(`Successfully tracked custom event: ${result}`);
+    } catch (err) {
+      console.error("Error tracking custom event:", err);
+    }
+    setTracking(false);
+  }, [trackCustomEvent]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
@@ -218,16 +236,8 @@ export const App = () => {
             <div className="space-y-1">
               <h1 className="font-medium text-xl">Test Analytics</h1>
               <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={() =>
-                    trackCustomEvent({
-                      cartridgeTag,
-                      name: "test-click",
-                      properties: { test: "test-value" },
-                    })
-                  }
-                >
-                  Track Custom Event
+                <Button onClick={trackClick} disabled={tracking}>
+                  {tracking ? "Sending..." : "Track Custom Event"}
                 </Button>
               </div>
             </div>
