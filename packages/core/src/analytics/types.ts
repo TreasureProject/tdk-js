@@ -1,13 +1,13 @@
 export type Device = {
-  device_name?: string;
-  device_model?: string;
-  device_unique_id?: string;
-  device_os?: string;
+  device_name?: string; // device name if known>
+  device_model?: string; // device model if known
+  device_unique_id?: string; // unique identifier for device
+  device_os?: string; // device os if known
 };
 
 export type AppInfo = {
-  app_identifier: string;
-  app_version: string;
+  app_identifier: string; // bundle/package name of ap e.g. lol.treasure.tdkjs
+  app_version: string; // version of app e.g. 0.1,
   app_environment: 0 | 1; // 0 for dev, 1 for prod
 };
 
@@ -56,8 +56,8 @@ export type AnalyticsPayload = PlayerIdPayload & {
   // App telemetry.
   app: AppInfo;
 
-  tdk_flavour: string;
-  tdk_version: string;
+  tdk_flavour: string; // tdk-js
+  tdk_version: string; // version from package.json
 };
 
 export type TrackableEvent = PlayerIdPayload & {

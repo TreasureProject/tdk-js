@@ -172,9 +172,10 @@ const TreasureProviderInner = ({
           "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
         );
       }
+      event.smart_account = user?.smartAccountAddress;
       return analyticsManager.trackCustomEvent(event);
     },
-    [analyticsManager],
+    [analyticsManager, user?.smartAccountAddress],
   );
 
   const onAuthTokenUpdated = useCallback(
