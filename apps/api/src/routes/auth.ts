@@ -7,7 +7,6 @@ import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/chain";
 import "../middleware/swagger";
-import { type GetUserResult, getUser } from "thirdweb";
 import type {
   LoginBody,
   LoginReply,
@@ -23,7 +22,9 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
+import { log } from "../utils/log";
 import {
+  getThirdwebUser,
   parseThirdwebUserEmail,
   transformUserProfileResponseFields,
 } from "../utils/user";
@@ -115,24 +116,16 @@ export const authRoutes =
             adminAddress = result[0];
           } catch {
             // Ignore lookup if this fails, address may not be a smart account if user connected with Web3 wallet
+            log.warn("Error fetching admin wallet for smart account:", address);
           }
 
           if (adminAddress) {
-            // Look up any associated user details in the embedded wallet
-            let thirdwebUser: GetUserResult | null | undefined;
-            try {
-              thirdwebUser = await getUser({
-                client,
-                ecosystem: {
-                  id: env.THIRDWEB_ECOSYSTEM_ID,
-                  partnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
-                },
-                walletAddress: adminAddress,
-              });
-            } catch {
-              // Ignore failures from the Thirdweb SDK, this info is "nice-to-have"
-            }
-
+            const thirdwebUser = await getThirdwebUser({
+              client,
+              ecosystemId: env.THIRDWEB_ECOSYSTEM_ID,
+              ecosystemPartnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
+              walletAddress: adminAddress,
+            });
             if (thirdwebUser) {
               const email = parseThirdwebUserEmail(thirdwebUser);
               if (email) {
