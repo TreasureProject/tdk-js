@@ -30,6 +30,9 @@
     // Skip type checking for node modules
     "skipLibCheck": true,
 
+    // Allow json imports
+    "resolveJsonModule": true,
+
     // Language and environment
     "moduleResolution": "node",
     "module": "esnext",

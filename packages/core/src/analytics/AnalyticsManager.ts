@@ -1,3 +1,4 @@
+import pjson from "../../package.json";
 import { addCachedEvent, clearCachedEvents, getCachedEvents } from "./storage";
 import type { AnalyticsPayload, AppInfo, TrackableEvent } from "./types";
 import { getEventId, getServerTime } from "./utils";
@@ -35,6 +36,8 @@ export class AnalyticsManager {
       time_server: serverTime,
       time_local: localTime,
       app: this.app,
+      tdk_flavour: "tdk-js",
+      tdk_version: pjson.version,
     };
 
     try {

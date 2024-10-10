@@ -55,6 +55,9 @@ export type AnalyticsPayload = PlayerIdPayload & {
   device?: Device;
   // App telemetry.
   app: AppInfo;
+
+  tdk_flavour: string;
+  tdk_version: string;
 };
 
 export type TrackableEvent = PlayerIdPayload & {
