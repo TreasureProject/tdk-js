@@ -7,6 +7,7 @@ import {
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
   type EcosystemIdString,
+  type PropertyValue,
   type SessionOptions,
   TDKAPI,
   type TrackableEvent,
@@ -48,6 +49,13 @@ import {
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
+
+type CustomEvent = {
+  cartridgeTag: string;
+  name: string;
+  userId?: string;
+  properties: { [key: string]: PropertyValue | PropertyValue[] };
+};
 
 type LauncherOptions = {
   getAuthTokenOverride?: () => string | undefined;
@@ -93,7 +101,7 @@ type ContextValues = {
   setRootElement: (el: ReactNode) => void;
   isUsingTreasureLauncher: boolean;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
-  trackCustomEvent: (event: TrackableEvent) => Promise<string>;
+  trackCustomEvent: (event: CustomEvent) => Promise<string>;
 };
 
 const Context = createContext({} as ContextValues);
@@ -166,14 +174,43 @@ const TreasureProviderInner = ({
   }, [analyticsOptions]);
 
   const trackCustomEvent = useCallback(
-    async (event: TrackableEvent) => {
+    async (event: CustomEvent) => {
       if (!analyticsManager) {
         throw new Error(
           "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
         );
       }
-      event.smart_account = user?.smartAccountAddress;
-      return analyticsManager.trackCustomEvent(event);
+
+      if (
+        user?.smartAccountAddress === undefined &&
+        event.userId === undefined
+      ) {
+        throw new Error(
+          "Cannot track event without userId or smartAccountAddress",
+        );
+      }
+
+      // After the previous check one must be non-null so this works
+      const playerId = {
+        smart_account: user?.smartAccountAddress,
+        user_id: event.userId,
+      } as
+        | {
+            smart_account?: string;
+            user_id: string;
+          }
+        | {
+            smart_account: string;
+            user_id?: string;
+          };
+
+      const trackableEvent: TrackableEvent = {
+        ...playerId,
+        cartridge_tag: event.cartridgeTag,
+        name: event.name,
+        properties: event.properties,
+      };
+      return analyticsManager.trackCustomEvent(trackableEvent);
     },
     [analyticsManager, user?.smartAccountAddress],
   );
