@@ -1,5 +1,19 @@
 # @treasure-dev/tdk-react
 
+## 3.0.0
+
+### Major Changes
+
+- d468a1b: Migrated from in-app wallets to ecosystem wallets
+
+### Patch Changes
+
+- 7ef9a60: Added @treasure-dev/launcher package for usage with the launcher
+- Updated dependencies [7ef9a60]
+- Updated dependencies [d468a1b]
+  - @treasure-dev/launcher@1.0.1
+  - @treasure-dev/tdk-core@3.0.0
+
 ## 2.7.1
 
 ### Patch Changes
