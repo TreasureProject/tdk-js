@@ -34,7 +34,8 @@ const ERC20_MINTABLE_ABI = [
 ] as const;
 
 export const App = () => {
-  const { client, chain, tdk, user, contractAddresses } = useTreasure();
+  const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
+    useTreasure();
 
   const handleMintMagic = async (amount: number) => {
     if (!user?.address) {
@@ -111,6 +112,20 @@ export const App = () => {
           supportedChainIds={[421614, 42161]}
           onConnected={(method, wallet) => {
             console.log("Connect successful:", { method, wallet });
+            trackCustomEvent({
+              cartridgeTag: "tdk-examples-connect-react",
+              name: "wallet-connect",
+              properties: {
+                method,
+                walletId: wallet.id,
+              },
+            })
+              .then((result) => {
+                console.log(`Successfully tracked custom event: ${result}`);
+              })
+              .catch((err) => {
+                console.error("Error tracking custom event:", err);
+              });
           }}
           onConnectError={(method, err) => {
             console.log("Connect failed:", { method, err });

@@ -28,6 +28,14 @@ if (root) {
           ],
           nativeTokenLimitPerTransaction: toWei("1"),
         }}
+        analyticsOptions={{
+          xApiKey: import.meta.env.VITE_TDK_ANALYTICS_API_KEY,
+          appInfo: {
+            app_identifier: "lol.treasure.examples-react",
+            app_version: "1.0.0",
+            app_environment: 0,
+          },
+        }}
       >
         <App />
       </TreasureProvider>
