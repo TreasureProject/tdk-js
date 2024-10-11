@@ -1,6 +1,11 @@
 import pjson from "../../package.json";
 import { DEFAULT_TDK_DARKMATTER_BASE_URI } from "../constants";
-import { addCachedEvent, clearCachedEvents, getCachedEvents } from "./storage";
+import {
+  addCachedEvent,
+  clearCachedEvents,
+  getCachedEvents,
+  removeOldEvents,
+} from "./storage";
 import type { AnalyticsPayload, AppInfo, TrackableEvent } from "./types";
 import { getEventId, getServerTime } from "./utils";
 
@@ -112,6 +117,7 @@ export class AnalyticsManager {
       clearCachedEvents();
     } catch (err) {
       console.error("Error retrying cached events:", err);
+      removeOldEvents();
     }
   }
 }

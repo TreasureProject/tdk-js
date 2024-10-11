@@ -50,3 +50,22 @@ export function clearCachedEvents(): void {
   }
   localStorage.removeItem("tdk-analytics-event-ids");
 }
+
+export function removeOldEvents(): void {
+  const cachedEvents = getCachedEvents();
+  const now = Date.now();
+  const eventIds: string[] = [];
+  for (let i = 0; i < cachedEvents.length; i += 1) {
+    const event = cachedEvents[i];
+    if (!event) {
+      continue;
+    }
+    const eventTime = new Date(Number(event.time_server)).getTime();
+    if (Number.isNaN(eventTime) || now - eventTime > 1000 * 60 * 60 * 24 * 7) {
+      localStorage.removeItem(`tdk-analytic-${event.id}`);
+    } else {
+      eventIds.push(event.id);
+    }
+  }
+  localStorage.setItem("tdk-analytics-event-ids", JSON.stringify(eventIds));
+}
