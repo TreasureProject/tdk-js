@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.1.0
+
+### Minor Changes
+
+- 399d230: Added support for analytics
+
 ## 3.0.0
 
 ### Major Changes
