@@ -5,13 +5,27 @@ import type { AnalyticsPayload, AppInfo, TrackableEvent } from "./types";
 import { getEventId, getServerTime } from "./utils";
 
 export class AnalyticsManager {
-  apiUri: string;
+  static _instance: AnalyticsManager;
 
-  apiKey: string;
+  initialized = false;
 
-  app: AppInfo;
+  apiUri!: string;
 
-  constructor({
+  apiKey!: string;
+
+  app!: AppInfo;
+
+  private constructor() {}
+
+  public static get instance(): AnalyticsManager {
+    if (!AnalyticsManager._instance) {
+      AnalyticsManager._instance = new AnalyticsManager();
+    }
+
+    return AnalyticsManager._instance;
+  }
+
+  public init({
     apiUri = DEFAULT_TDK_DARKMATTER_BASE_URI,
     apiKey,
     app,
@@ -19,6 +33,7 @@ export class AnalyticsManager {
     this.apiUri = apiUri;
     this.apiKey = apiKey;
     this.app = app;
+    this.initialized = true;
 
     setInterval(
       () => {
@@ -35,6 +50,9 @@ export class AnalyticsManager {
    * @returns {Promise<void>} - A promise that resolves when the payloads have been submitted.
    */
   async submitPayload(payload: AnalyticsPayload[]): Promise<void> {
+    if (!this.initialized) {
+      throw new Error("AnalyticsManager is not initialized");
+    }
     const response = await fetch(`${this.apiUri}/ingress/events`, {
       method: "POST",
       headers: {

@@ -13,7 +13,7 @@ pnpm add @treasure-dev/tdk-core
 ```typescript
 import { AnalyticsManager } from "@treasure-dev/tdk-core";
 
-const analyticsManager = new AnalyticsManager({
+AnalyticsManager.instance.init({
     apiUri: "{DARKMATTER_API_BASE_URI}",
     xApiKey: "YOUR_X_API_KEY",
     app: {
@@ -24,7 +24,7 @@ const analyticsManager = new AnalyticsManager({
 });
 
 // Track a custom event
-await analyticsManager.trackCustomEvent({
+await AnalyticsManager.instance.trackCustomEvent({
     smart_account: "YOUR_SMART_ACCOUNT_ADDRESS", // And/or `user_id`
     cartridge_tag: "YOUR_CARTRIDGE_TAG",
     name: "YOUR_EVENT_NAME",
