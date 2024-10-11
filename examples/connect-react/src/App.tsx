@@ -133,7 +133,7 @@ export const App = () => {
           onConnected={(method, wallet, nextUser) => {
             console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({
-              smartAccountAddress: nextUser?.smartAccountAddress,
+              address: nextUser?.address,
               cartridgeTag,
               name: "wallet-connect",
               properties: {

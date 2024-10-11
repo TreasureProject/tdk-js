@@ -18,7 +18,7 @@ export type AnalyticsEvent = {
   cartridgeTag: string;
   name: string;
   userId?: string;
-  smartAccountAddress?: string;
+  address?: string;
   properties: { [key: string]: PropertyValue | PropertyValue[] };
 };
 

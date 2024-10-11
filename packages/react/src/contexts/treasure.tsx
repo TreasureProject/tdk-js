@@ -107,11 +107,14 @@ const TreasureProviderInner = ({
     if (!analyticsOptions) {
       return undefined;
     }
-    return new AnalyticsManager({
+
+    AnalyticsManager.instance.init({
       apiUri: analyticsOptions.apiUri,
       apiKey: analyticsOptions.apiKey,
       app: analyticsOptions.appInfo,
     });
+
+    return AnalyticsManager.instance;
   }, [analyticsOptions]);
 
   const trackCustomEvent = useCallback(
@@ -122,10 +125,9 @@ const TreasureProviderInner = ({
         );
       }
 
-      const smartAccountAddress =
-        event.smartAccountAddress ?? user?.smartAccountAddress;
+      const address = event.address ?? user?.address;
 
-      if (smartAccountAddress === undefined && event.userId === undefined) {
+      if (address === undefined && event.userId === undefined) {
         throw new Error(
           "Cannot track event without userId or smartAccountAddress",
         );
@@ -133,7 +135,7 @@ const TreasureProviderInner = ({
 
       // After the previous check one must be non-null so this works
       const playerId = {
-        smart_account: smartAccountAddress,
+        smart_account: address,
         user_id: event.userId,
       } as
         | {
@@ -153,7 +155,7 @@ const TreasureProviderInner = ({
       };
       return analyticsManager.trackCustomEvent(trackableEvent);
     },
-    [analyticsManager, user?.smartAccountAddress],
+    [analyticsManager, user?.address],
   );
 
   const onAuthTokenUpdated = useCallback(
