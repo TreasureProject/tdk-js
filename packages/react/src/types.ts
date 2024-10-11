@@ -28,7 +28,7 @@ type LauncherOptions = {
 
 type AnalyticsOptions = {
   apiUri?: string;
-  xApiKey: string;
+  apiKey: string;
   appInfo: AppInfo;
 };
 

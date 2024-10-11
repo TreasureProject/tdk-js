@@ -7,17 +7,17 @@ import { getEventId, getServerTime } from "./utils";
 export class AnalyticsManager {
   apiUri: string;
 
-  xApiKey: string;
+  apiKey: string;
 
   app: AppInfo;
 
   constructor({
     apiUri = DEFAULT_TDK_DARKMATTER_BASE_URI,
-    xApiKey,
+    apiKey,
     app,
-  }: { apiUri?: string; xApiKey: string; app: AppInfo }) {
+  }: { apiUri?: string; apiKey: string; app: AppInfo }) {
     this.apiUri = apiUri;
-    this.xApiKey = xApiKey;
+    this.apiKey = apiKey;
     this.app = app;
 
     setInterval(
@@ -39,7 +39,7 @@ export class AnalyticsManager {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-API-Key": this.xApiKey,
+        "X-API-Key": this.apiKey,
       },
       body: JSON.stringify(payload),
     });

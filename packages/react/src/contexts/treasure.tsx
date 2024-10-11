@@ -109,7 +109,7 @@ const TreasureProviderInner = ({
     }
     return new AnalyticsManager({
       apiUri: analyticsOptions.apiUri,
-      xApiKey: analyticsOptions.xApiKey,
+      apiKey: analyticsOptions.apiKey,
       app: analyticsOptions.appInfo,
     });
   }, [analyticsOptions]);
