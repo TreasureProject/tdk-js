@@ -1,7 +1,7 @@
 {
   "name": "@treasure-dev/tdk-examples-connect-electron",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.0",
   "main": "./out/main/index.js",
   "scripts": {
     "install:electron": "node ./node_modules/electron/install.js",
