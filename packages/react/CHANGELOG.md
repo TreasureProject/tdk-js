@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-react
 
+## 3.1.0
+
+### Minor Changes
+
+- 399d230: Added support for analytics
+
+### Patch Changes
+
+- Updated dependencies [399d230]
+  - @treasure-dev/tdk-core@3.1.0
+
 ## 3.0.0
 
 ### Major Changes
