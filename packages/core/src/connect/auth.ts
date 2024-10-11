@@ -1,7 +1,7 @@
 import type { KMSClientConfig } from "@aws-sdk/client-kms";
+import type { Hex } from "thirdweb";
 import { hashMessage, isHex, recoverAddress } from "viem";
 
-import type { Hex } from "thirdweb";
 import { getAwsKmsAccount } from "./kms";
 
 export const generateAccountSignature = async ({
