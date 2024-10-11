@@ -1,13 +1,11 @@
 import {
-  type AddressString,
-  type Contract,
+  AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
-  type EcosystemIdString,
   type SessionOptions,
   TDKAPI,
-  type TreasureConnectClient,
+  type TrackableEvent,
   type User,
   authenticateWallet,
   createTreasureConnectClient,
@@ -26,7 +24,7 @@ import {
   useState,
 } from "react";
 import { I18nextProvider } from "react-i18next";
-import { type Chain, defineChain } from "thirdweb";
+import { defineChain } from "thirdweb";
 import {
   useActiveWallet,
   useActiveWalletChain,
@@ -39,51 +37,13 @@ import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
 import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import { useLauncher } from "../hooks/useLauncher";
-import { type SupportedLanguage, i18n } from "../i18n";
+import { i18n } from "../i18n";
+import type { AnalyticsEvent, Config, ContextValues } from "../types";
 import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
 } from "../utils/store";
-
-type LauncherOptions = {
-  getAuthTokenOverride?: () => string | undefined;
-};
-
-type Config = {
-  language?: SupportedLanguage;
-  appName: string;
-  appIconUri?: string;
-  apiUri?: string;
-  defaultChainId?: number;
-  clientId: string;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  sessionOptions?: SessionOptions;
-  autoConnectTimeout?: number;
-  onConnect?: (user: User) => void;
-  launcherOptions?: LauncherOptions;
-};
-
-type ContextValues = {
-  appName: string;
-  appIconUri?: string;
-  chain: Chain;
-  contractAddresses: Record<Contract, AddressString>;
-  tdk: TDKAPI;
-  client: TreasureConnectClient;
-  ecosystemId: EcosystemIdString;
-  ecosystemPartnerId: string;
-  user?: User;
-  isConnecting: boolean;
-  logIn: (wallet: Wallet) => void;
-  logOut: () => void;
-  startUserSession: (options: SessionOptions) => void;
-  switchChain: (chainId: number) => void;
-  setRootElement: (el: ReactNode) => void;
-  isUsingTreasureLauncher: boolean;
-  openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
-};
 
 const Context = createContext({} as ContextValues);
 
@@ -114,6 +74,7 @@ const TreasureProviderInner = ({
   autoConnectTimeout = 5_000,
   onConnect,
   launcherOptions,
+  analyticsOptions,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -142,6 +103,59 @@ const TreasureProviderInner = ({
     [chain.id],
   );
 
+  const analyticsManager = useMemo(() => {
+    if (!analyticsOptions) {
+      return undefined;
+    }
+
+    AnalyticsManager.instance.init({
+      apiUri: analyticsOptions.apiUri,
+      apiKey: analyticsOptions.apiKey,
+      app: analyticsOptions.appInfo,
+    });
+
+    return AnalyticsManager.instance;
+  }, [analyticsOptions]);
+
+  const trackCustomEvent = useCallback(
+    async (event: AnalyticsEvent) => {
+      if (!analyticsManager) {
+        throw new Error(
+          "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
+        );
+      }
+
+      const address = event.address ?? user?.address;
+
+      if (address === undefined && event.userId === undefined) {
+        throw new Error("Cannot track event without userId or address");
+      }
+
+      // After the previous check one must be non-null so this works
+      const playerId = {
+        smart_account: address,
+        user_id: event.userId,
+      } as
+        | {
+            smart_account?: string;
+            user_id: string;
+          }
+        | {
+            smart_account: string;
+            user_id?: string;
+          };
+
+      const trackableEvent: TrackableEvent = {
+        ...playerId,
+        cartridge_tag: event.cartridgeTag,
+        name: event.name,
+        properties: event.properties,
+      };
+      return analyticsManager.trackCustomEvent(trackableEvent);
+    },
+    [analyticsManager, user?.address],
+  );
+
   const onAuthTokenUpdated = useCallback(
     (authToken: string) => {
       tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
@@ -167,7 +181,7 @@ const TreasureProviderInner = ({
     activeWallet?.disconnect();
   };
 
-  const logIn = async (wallet: Wallet) => {
+  const logIn = async (wallet: Wallet): Promise<User | undefined> => {
     let nextUser: User | undefined;
 
     // Check for existing stored auth token
@@ -215,6 +229,7 @@ const TreasureProviderInner = ({
 
     // Trigger completion callback
     onConnect?.(nextUser);
+    return nextUser;
   };
 
   // Attempt an automatic background connection
@@ -277,8 +292,9 @@ const TreasureProviderInner = ({
           }
           setIsAuthenticating(true);
           try {
-            await logIn(wallet);
+            const nextUser = await logIn(wallet);
             setIsAuthenticating(false);
+            return nextUser;
           } catch (err) {
             setIsAuthenticating(false);
             throw err;
@@ -300,6 +316,7 @@ const TreasureProviderInner = ({
         setRootElement: setEl,
         isUsingTreasureLauncher,
         openLauncherAccountModal,
+        trackCustomEvent,
       }}
     >
       {children}

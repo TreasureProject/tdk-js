@@ -41,7 +41,11 @@
     "abitype": "catalog:",
     "jwt-decode": "catalog:",
     "thirdweb": "catalog:",
+    "uuid": "catalog:",
     "viem": "catalog:"
+  },
+  "devDependencies": {
+    "@types/uuid": "catalog:"
   },
   "peerDependencies": {
     "thirdweb": "catalog:"

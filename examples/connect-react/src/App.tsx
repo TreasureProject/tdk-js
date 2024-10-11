@@ -4,6 +4,7 @@ import {
   ConnectButton,
   useTreasure,
 } from "@treasure-dev/tdk-react";
+import { useCallback, useState } from "react";
 import {
   encode,
   getContract,
@@ -33,8 +34,13 @@ const ERC20_MINTABLE_ABI = [
   },
 ] as const;
 
+const cartridgeTag = "tdk-examples-connect-react";
+
 export const App = () => {
-  const { client, chain, tdk, user, contractAddresses } = useTreasure();
+  const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
+    useTreasure();
+
+  const [tracking, setTracking] = useState(false);
 
   const handleMintMagic = async (amount: number) => {
     if (!user?.address) {
@@ -101,6 +107,21 @@ export const App = () => {
     }
   };
 
+  const trackClick = useCallback(async () => {
+    setTracking(true);
+    try {
+      const result = await trackCustomEvent({
+        cartridgeTag,
+        name: "test-click",
+        properties: { test: "test-value" },
+      });
+      console.log(`Successfully tracked custom event: ${result}`);
+    } catch (err) {
+      console.error("Error tracking custom event:", err);
+    }
+    setTracking(false);
+  }, [trackCustomEvent]);
+
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
       <header className="flex items-center justify-between gap-3">
@@ -109,8 +130,23 @@ export const App = () => {
         </h1>
         <ConnectButton
           supportedChainIds={[421614, 42161]}
-          onConnected={(method, wallet) => {
-            console.log("Connect successful:", { method, wallet });
+          onConnected={(method, wallet, nextUser) => {
+            console.log("Connect successful:", { method, wallet, nextUser });
+            trackCustomEvent({
+              address: nextUser?.address,
+              cartridgeTag,
+              name: "wallet-connect",
+              properties: {
+                method,
+                walletId: wallet.id,
+              },
+            })
+              .then((result) => {
+                console.log(`Successfully tracked custom event: ${result}`);
+              })
+              .catch((err) => {
+                console.error("Error tracking custom event:", err);
+              });
           }}
           onConnectError={(method, err) => {
             console.log("Connect failed:", { method, err });
@@ -194,6 +230,14 @@ export const App = () => {
                 </Button>
                 <Button onClick={() => handleSendEth(0.0001)}>
                   Send 0.0001 ETH
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h1 className="font-medium text-xl">Test Analytics</h1>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={trackClick} disabled={tracking}>
+                  {tracking ? "Sending..." : "Track Custom Event"}
                 </Button>
               </div>
             </div>
