@@ -1,7 +1,11 @@
 import * as Sentry from "@sentry/node";
-import type { AddressString, UserContext } from "@treasure-dev/tdk-core";
-import { hashMessage, isHex, recoverAddress } from "viem";
+import {
+  type AddressString,
+  type UserContext,
+  verifyAccountSignature,
+} from "@treasure-dev/tdk-core";
 
+import { type Hex, isHex } from "thirdweb";
 import type { TdkApiContext } from "../types";
 import type { App } from "../utils/app";
 import { throwUnauthorizedError } from "../utils/error";
@@ -29,15 +33,11 @@ export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
         throwUnauthorizedError("Invalid account address or signature");
       }
 
-      const backendWallet = await recoverAddress({
-        hash: hashMessage(
-          JSON.stringify({
-            accountAddress,
-          }),
-        ),
-        signature: signature as AddressString,
+      const backendWallet = await verifyAccountSignature({
+        accountAddress,
+        signature: signature as Hex,
       });
-      if (!isHex(backendWallet)) {
+      if (!backendWallet) {
         throwUnauthorizedError("Invalid backend wallet address");
       }
 

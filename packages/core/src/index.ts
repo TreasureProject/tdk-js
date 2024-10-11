@@ -32,7 +32,10 @@ export {
 } from "./utils/date";
 
 // Connect
-export { generateAccountSignature } from "./connect/auth";
+export {
+  generateAccountSignature,
+  verifyAccountSignature,
+} from "./connect/auth";
 export { decodeAuthToken } from "./connect/jwt";
 export {
   type SocialConnectMethod,

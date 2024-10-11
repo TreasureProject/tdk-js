@@ -105,6 +105,9 @@ catalogs:
     autoprefixer:
       specifier: ^10.4.20
       version: 10.4.20
+    aws-kms-signer:
+      specifier: ^0.5.3
+      version: 0.5.3
     clsx:
       specifier: ^2.1.1
       version: 2.1.1
@@ -214,8 +217,8 @@ catalogs:
       specifier: ^10.0.0
       version: 10.0.0
     viem:
-      specifier: ^2.21.18
-      version: 2.21.18
+      specifier: 2.21.16
+      version: 2.21.16
     vite:
       specifier: 5.4.8
       version: 5.4.8
@@ -314,7 +317,7 @@ importers:
         version: link:../../packages/core
       '@wagmi/core':
         specifier: 'catalog:'
-        version: 2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))
+        version: 2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))
       abitype:
         specifier: 'catalog:'
         version: 1.0.6(typescript@5.6.2)(zod@3.23.8)
@@ -335,7 +338,7 @@ importers:
         version: 5.61.0(@types/react-dom@18.3.0)(@types/react@18.3.11)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8)
       viem:
         specifier: 'catalog:'
-        version: 2.21.18(typescript@5.6.2)(zod@3.23.8)
+        version: 2.21.16(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       prisma:
         specifier: 'catalog:'
@@ -468,7 +471,7 @@ importers:
         version: 5.61.0(@types/react-dom@18.3.0)(@types/react@18.3.11)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)(zod@3.23.8)
       viem:
         specifier: 'catalog:'
-        version: 2.21.18(typescript@5.6.2)(zod@3.23.8)
+        version: 2.21.16(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -510,15 +513,21 @@ importers:
 
   packages/core:
     dependencies:
+      '@aws-sdk/client-kms':
+        specifier: 'catalog:'
+        version: 3.665.0
       '@sushiswap/tines':
         specifier: 'catalog:'
-        version: 1.0.11(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)
+        version: 1.0.11(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)
       '@wagmi/core':
         specifier: 'catalog:'
-        version: 2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))
+        version: 2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))
       abitype:
         specifier: 'catalog:'
         version: 1.0.6(typescript@5.6.2)(zod@3.23.8)
+      aws-kms-signer:
+        specifier: 'catalog:'
+        version: 0.5.3
       jwt-decode:
         specifier: 'catalog:'
         version: 4.0.0
@@ -530,7 +539,7 @@ importers:
         version: 10.0.0
       viem:
         specifier: 'catalog:'
-        version: 2.21.18(typescript@5.6.2)(zod@3.23.8)
+        version: 2.21.16(typescript@5.6.2)(zod@3.23.8)
     devDependencies:
       '@types/uuid':
         specifier: 'catalog:'
@@ -3196,6 +3205,10 @@ packages:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
 
+  asn1js@3.0.5:
+    resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
+    engines: {node: '>=12.0.0'}
+
   assert-plus@1.0.0:
     resolution: {integrity: sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==}
     engines: {node: '>=0.8'}
@@ -3247,6 +3260,9 @@ packages:
   avvio@9.0.0:
     resolution: {integrity: sha512-UbYrOXgE/I+knFG+3kJr9AgC7uNo8DG+FGGODpH9Bj1O1kL/QDjBXnTem9leD3VdQKtaHjV3O85DQ7hHh4IIHw==}
 
+  aws-kms-signer@0.5.3:
+    resolution: {integrity: sha512-NUtftorrEcO+ODBfL4S/IIxNJMljaM/l233TRCFK0L0sOY/nOjbm2BLqLQOK/EUZ5i0pP1HK/32Lp6APdY9nCg==}
+
   babel-plugin-macros@3.1.0:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
@@ -3283,6 +3299,9 @@ packages:
 
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
+
+  bn.js@5.2.1:
+    resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
 
   body-parser@1.20.3:
     resolution: {integrity: sha512-7rAxByjUMqQ3/bHJy7D6OGXvx/MMc4IqBn/X0fcM1QUcAItpZrBEYhWGem+tzXH90c+G01ypMcYJBO9Y30203g==}
@@ -4766,6 +4785,10 @@ packages:
     resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
     engines: {node: '>=18'}
 
+  keccak@3.0.4:
+    resolution: {integrity: sha512-3vKuW0jV8J3XNTzvfyicFR5qvxrSAGl7KIhvgOu5cmWwM7tZRj3fMbj/pfIf4be7aznbc+prBWGjywox/g2Y6Q==}
+    engines: {node: '>=10.0.0'}
+
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
@@ -5164,6 +5187,9 @@ packages:
   node-addon-api@1.7.2:
     resolution: {integrity: sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==}
 
+  node-addon-api@2.0.2:
+    resolution: {integrity: sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==}
+
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
@@ -5185,6 +5211,10 @@ packages:
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
     engines: {node: '>= 6.13.0'}
+
+  node-gyp-build@4.8.2:
+    resolution: {integrity: sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==}
+    hasBin: true
 
   node-gyp@9.4.1:
     resolution: {integrity: sha512-OQkWKbjQKbGkMf/xqI1jjy3oCTgMKJac58G2+bjZb3fza6gW2YrCSdMQYaoTb70crvE//Gngr4f0AgVHmqHvBQ==}
@@ -5649,6 +5679,13 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pvtsutils@1.3.5:
+    resolution: {integrity: sha512-ARvb14YB9Nm2Xi6nBq1ZX6dAM0FsJnuk+31aUp4TrcZEdKUlSqOqsxJHUPJDNE3qiIp+iUPEIeR6Je/tgV7zsA==}
+
+  pvutils@1.1.3:
+    resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
+    engines: {node: '>=6.0.0'}
+
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
     engines: {node: '>=10.13.0'}
@@ -5953,6 +5990,10 @@ packages:
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
+
+  secp256k1@4.0.3:
+    resolution: {integrity: sha512-NLZVf+ROMxwtEj3Xa562qgv2BK5e2WNmXPiOdVIPLgs6lyTzMvBq0aWTYMI5XCP9jZMVKOcqZLw/Wc4vDkuxhA==}
+    engines: {node: '>=10.0.0'}
 
   secure-json-parse@2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}
@@ -9713,6 +9754,14 @@ snapshots:
     dependencies:
       storybook: 8.3.5
 
+  '@sushiswap/tines@1.0.11(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)':
+    dependencies:
+      seedrandom: 3.0.5
+      sushi: 3.0.0(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)
+    transitivePeerDependencies:
+      - viem
+      - zod
+
   '@sushiswap/tines@1.0.11(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       seedrandom: 3.0.5
@@ -9992,6 +10041,20 @@ snapshots:
       '@vitest/pretty-format': 2.1.2
       loupe: 3.1.1
       tinyrainbow: 1.2.0
+
+  '@wagmi/core@2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))':
+    dependencies:
+      eventemitter3: 5.0.1
+      mipd: 0.0.7(typescript@5.6.2)
+      viem: 2.21.16(typescript@5.6.2)(zod@3.23.8)
+      zustand: 4.4.1(@types/react@18.3.11)(react@18.3.1)
+    optionalDependencies:
+      '@tanstack/query-core': 5.56.2
+      typescript: 5.6.2
+    transitivePeerDependencies:
+      - '@types/react'
+      - immer
+      - react
 
   '@wagmi/core@2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))':
     dependencies:
@@ -10563,6 +10626,12 @@ snapshots:
 
   array-union@2.1.0: {}
 
+  asn1js@3.0.5:
+    dependencies:
+      pvtsutils: 1.3.5
+      pvutils: 1.1.3
+      tslib: 2.7.0
+
   assert-plus@1.0.0:
     optional: true
 
@@ -10608,6 +10677,16 @@ snapshots:
       '@fastify/error': 4.0.0
       fastq: 1.17.1
 
+  aws-kms-signer@0.5.3:
+    dependencies:
+      '@aws-sdk/client-kms': 3.665.0
+      asn1js: 3.0.5
+      bn.js: 5.2.1
+      keccak: 3.0.4
+      secp256k1: 4.0.3
+    transitivePeerDependencies:
+      - aws-crt
+
   babel-plugin-macros@3.1.0:
     dependencies:
       '@babel/runtime': 7.25.7
@@ -10643,6 +10722,8 @@ snapshots:
   bluebird@3.7.2: {}
 
   bn.js@4.12.0: {}
+
+  bn.js@5.2.1: {}
 
   body-parser@1.20.3:
     dependencies:
@@ -12356,6 +12437,12 @@ snapshots:
 
   jwt-decode@4.0.0: {}
 
+  keccak@3.0.4:
+    dependencies:
+      node-addon-api: 2.0.2
+      node-gyp-build: 4.8.2
+      readable-stream: 3.6.2
+
   keygrip@1.1.0:
     dependencies:
       tsscmp: 1.0.6
@@ -12802,6 +12889,8 @@ snapshots:
   node-addon-api@1.7.2:
     optional: true
 
+  node-addon-api@2.0.2: {}
+
   node-addon-api@7.1.1: {}
 
   node-api-version@0.2.0:
@@ -12817,6 +12906,8 @@ snapshots:
       encoding: 0.1.13
 
   node-forge@1.3.1: {}
+
+  node-gyp-build@4.8.2: {}
 
   node-gyp@9.4.1:
     dependencies:
@@ -13253,6 +13344,12 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pvtsutils@1.3.5:
+    dependencies:
+      tslib: 2.7.0
+
+  pvutils@1.1.3: {}
+
   qrcode@1.5.3:
     dependencies:
       dijkstrajs: 1.0.3
@@ -13610,6 +13707,12 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
+  secp256k1@4.0.3:
+    dependencies:
+      elliptic: 6.5.7
+      node-addon-api: 2.0.2
+      node-gyp-build: 4.8.2
+
   secure-json-parse@2.7.0: {}
 
   seedrandom@3.0.5: {}
@@ -13888,6 +13991,17 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  sushi@3.0.0(viem@2.21.16(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8):
+    dependencies:
+      big.js: 6.1.1
+      decimal.js-light: 2.5.1
+      numeral: 2.0.6
+      tiny-invariant: 1.3.1
+      toformat: 2.0.0
+    optionalDependencies:
+      viem: 2.21.16(typescript@5.6.2)(zod@3.23.8)
+      zod: 3.23.8
 
   sushi@3.0.0(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8):
     dependencies:
