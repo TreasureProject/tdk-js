@@ -15,7 +15,7 @@ import { AnalyticsManager } from "@treasure-dev/tdk-core";
 
 AnalyticsManager.instance.init({
     apiUri: "{DARKMATTER_API_BASE_URI}",
-    xApiKey: "YOUR_X_API_KEY",
+    apiKey: "YOUR_X_API_KEY",
     app: {
         app_identifier: "YOUR_APP_IDENTIFIER",
         app_version: "YOUR_APP_VERSION",
