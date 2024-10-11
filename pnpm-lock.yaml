@@ -513,9 +513,6 @@ importers:
       '@sushiswap/tines':
         specifier: 'catalog:'
         version: 1.0.11(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))(zod@3.23.8)
-      '@types/uuid':
-        specifier: 'catalog:'
-        version: 10.0.0
       '@wagmi/core':
         specifier: 'catalog:'
         version: 2.13.8(@tanstack/query-core@5.56.2)(@types/react@18.3.11)(react@18.3.1)(typescript@5.6.2)(viem@2.21.18(typescript@5.6.2)(zod@3.23.8))
@@ -534,6 +531,10 @@ importers:
       viem:
         specifier: 'catalog:'
         version: 2.21.18(typescript@5.6.2)(zod@3.23.8)
+    devDependencies:
+      '@types/uuid':
+        specifier: 'catalog:'
+        version: 10.0.0
 
   packages/launcher:
     dependencies:

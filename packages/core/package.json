@@ -44,8 +44,10 @@
     "uuid": "catalog:",
     "viem": "catalog:"
   },
+  "devDependencies": {
+    "@types/uuid": "catalog:"
+  },
   "peerDependencies": {
-    "@types/uuid": "catalog:",
     "thirdweb": "catalog:"
   },
   "engines": {
