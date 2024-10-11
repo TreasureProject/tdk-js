@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@sushiswap/tines": "catalog:",
-    "@types/uuid": "catalog:",
     "@wagmi/core": "catalog:",
     "abitype": "catalog:",
     "jwt-decode": "catalog:",
@@ -46,6 +45,7 @@
     "viem": "catalog:"
   },
   "peerDependencies": {
+    "@types/uuid": "catalog:",
     "thirdweb": "catalog:"
   },
   "engines": {
