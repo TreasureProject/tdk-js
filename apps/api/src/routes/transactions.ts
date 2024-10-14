@@ -64,7 +64,6 @@ export const transactionsRoutes =
 
         const {
           chain,
-          userAddress,
           authError,
           body: {
             address,
@@ -76,6 +75,7 @@ export const transactionsRoutes =
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
+        const userAddress = req.backendUserAddress ?? req.userAddress;
         if (!userAddress) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.AuthError,
@@ -157,7 +157,6 @@ export const transactionsRoutes =
 
         const {
           chain,
-          userAddress,
           authError,
           body: {
             to,
@@ -168,6 +167,7 @@ export const transactionsRoutes =
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
+        const userAddress = req.backendUserAddress ?? req.userAddress;
         if (!userAddress) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.AuthError,

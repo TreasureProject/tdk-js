@@ -4,6 +4,9 @@ import { hashMessage, isHex, recoverAddress } from "viem";
 
 import { getAwsKmsAccount } from "./kms";
 
+const createMessage = ({ accountAddress }: { accountAddress: string }) =>
+  JSON.stringify({ accountAddress: accountAddress.toLowerCase() });
+
 export const generateAccountSignature = async ({
   accountAddress,
   kmsKey,
@@ -14,7 +17,7 @@ export const generateAccountSignature = async ({
   kmsClientConfig?: KMSClientConfig;
 }) => {
   const account = await getAwsKmsAccount({ kmsKey, kmsClientConfig });
-  return account.signMessage({ message: JSON.stringify({ accountAddress }) });
+  return account.signMessage({ message: createMessage({ accountAddress }) });
 };
 
 export const verifyAccountSignature = async ({
@@ -22,11 +25,7 @@ export const verifyAccountSignature = async ({
   signature,
 }: { accountAddress: string; signature: Hex }) => {
   const address = await recoverAddress({
-    hash: hashMessage(
-      JSON.stringify({
-        accountAddress,
-      }),
-    ),
+    hash: hashMessage(createMessage({ accountAddress })),
     signature,
   });
   return isHex(address) ? address : undefined;

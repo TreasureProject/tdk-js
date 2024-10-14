@@ -14,6 +14,7 @@ declare module "fastify" {
   interface FastifyRequest {
     userId: string | undefined;
     userAddress: AddressString | undefined;
+    backendUserAddress: AddressString | undefined;
     backendWallet: AddressString | undefined;
     authError: string | undefined;
   }
@@ -22,6 +23,7 @@ declare module "fastify" {
 export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
+  app.decorateRequest("backendUserAddress", undefined);
   app.decorateRequest("backendWallet", undefined);
   app.decorateRequest("authError", undefined);
   app.addHook("onRequest", async (req) => {
@@ -41,9 +43,9 @@ export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
         throwUnauthorizedError("Invalid backend wallet address");
       }
 
-      req.userAddress = accountAddress as AddressString;
+      req.backendUserAddress = accountAddress as AddressString;
       req.backendWallet = backendWallet as AddressString;
-      Sentry.setUser({ username: req.userAddress });
+      Sentry.setUser({ username: req.backendUserAddress });
       return;
     }
 

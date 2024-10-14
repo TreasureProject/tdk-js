@@ -165,7 +165,8 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chain } = req;
+        const { authError, body, chain } = req;
+        const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throw new TdkError({
@@ -285,7 +286,8 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chain, params } = req;
+        const { authError, body, chain, params } = req;
+        const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throw new TdkError({
@@ -381,7 +383,8 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { userAddress, authError, body, chain, params } = req;
+        const { authError, body, chain, params } = req;
+        const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throw new TdkError({
