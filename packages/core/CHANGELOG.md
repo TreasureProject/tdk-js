@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.2.0
+
+### Minor Changes
+
+- b58ec0b: Migrated account signature generation to use AWS KMS
+
 ## 3.1.0
 
 ### Minor Changes

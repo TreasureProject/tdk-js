@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 3.2.0
+
+### Patch Changes
+
+- Updated dependencies [b58ec0b]
+  - @treasure-dev/tdk-core@3.2.0
+
 ## 3.1.0
 
 ### Minor Changes
