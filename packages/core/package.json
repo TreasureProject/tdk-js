@@ -36,9 +36,11 @@
     "dev": "pnpm build --watch"
   },
   "dependencies": {
+    "@aws-sdk/client-kms": "catalog:",
     "@sushiswap/tines": "catalog:",
     "@wagmi/core": "catalog:",
     "abitype": "catalog:",
+    "aws-kms-signer": "catalog:",
     "jwt-decode": "catalog:",
     "thirdweb": "catalog:",
     "uuid": "catalog:",

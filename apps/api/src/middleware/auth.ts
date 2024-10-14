@@ -1,7 +1,11 @@
 import * as Sentry from "@sentry/node";
-import type { AddressString, UserContext } from "@treasure-dev/tdk-core";
-import { hashMessage, isHex, recoverAddress } from "viem";
+import {
+  type AddressString,
+  type UserContext,
+  verifyAccountSignature,
+} from "@treasure-dev/tdk-core";
 
+import { type Hex, isHex } from "thirdweb";
 import type { TdkApiContext } from "../types";
 import type { App } from "../utils/app";
 import { throwUnauthorizedError } from "../utils/error";
@@ -10,6 +14,7 @@ declare module "fastify" {
   interface FastifyRequest {
     userId: string | undefined;
     userAddress: AddressString | undefined;
+    backendUserAddress: AddressString | undefined;
     backendWallet: AddressString | undefined;
     authError: string | undefined;
   }
@@ -18,6 +23,7 @@ declare module "fastify" {
 export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
+  app.decorateRequest("backendUserAddress", undefined);
   app.decorateRequest("backendWallet", undefined);
   app.decorateRequest("authError", undefined);
   app.addHook("onRequest", async (req) => {
@@ -29,21 +35,17 @@ export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
         throwUnauthorizedError("Invalid account address or signature");
       }
 
-      const backendWallet = await recoverAddress({
-        hash: hashMessage(
-          JSON.stringify({
-            accountAddress,
-          }),
-        ),
-        signature: signature as AddressString,
+      const backendWallet = await verifyAccountSignature({
+        accountAddress,
+        signature: signature as Hex,
       });
-      if (!isHex(backendWallet)) {
+      if (!backendWallet) {
         throwUnauthorizedError("Invalid backend wallet address");
       }
 
-      req.userAddress = accountAddress as AddressString;
+      req.backendUserAddress = accountAddress as AddressString;
       req.backendWallet = backendWallet as AddressString;
-      Sentry.setUser({ username: req.userAddress });
+      Sentry.setUser({ username: req.backendUserAddress });
       return;
     }
 
