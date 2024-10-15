@@ -61,7 +61,6 @@ export type AnalyticsPayload = PlayerIdPayload & {
 };
 
 export type TrackableEvent = PlayerIdPayload & {
-  cartridge_tag: string;
   name: string;
   properties: { [key: string]: PropertyValue | PropertyValue[] };
 };
