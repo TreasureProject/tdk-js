@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.2.1
+
+### Patch Changes
+
+- 074405b: Moved cartridgeTag to analyticsOptions
+
 ## 3.2.0
 
 ### Minor Changes
