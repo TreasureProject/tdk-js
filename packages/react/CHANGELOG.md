@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.2.1
+
+### Patch Changes
+
+- 074405b: Moved cartridgeTag to analyticsOptions
+- Updated dependencies [074405b]
+  - @treasure-dev/tdk-core@3.2.1
+
 ## 3.2.0
 
 ### Patch Changes
