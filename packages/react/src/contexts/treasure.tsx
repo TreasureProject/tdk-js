@@ -112,6 +112,7 @@ const TreasureProviderInner = ({
       apiUri: analyticsOptions.apiUri,
       apiKey: analyticsOptions.apiKey,
       app: analyticsOptions.appInfo,
+      cartridgeTag: analyticsOptions.cartridgeTag,
     });
 
     return AnalyticsManager.instance;
@@ -147,7 +148,6 @@ const TreasureProviderInner = ({
 
       const trackableEvent: TrackableEvent = {
         ...playerId,
-        cartridge_tag: event.cartridgeTag,
         name: event.name,
         properties: event.properties,
       };

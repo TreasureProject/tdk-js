@@ -34,8 +34,6 @@ const ERC20_MINTABLE_ABI = [
   },
 ] as const;
 
-const cartridgeTag = "tdk-examples-connect-react";
-
 export const App = () => {
   const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
     useTreasure();
@@ -111,7 +109,6 @@ export const App = () => {
     setTracking(true);
     try {
       const result = await trackCustomEvent({
-        cartridgeTag,
         name: "test-click",
         properties: { test: "test-value" },
       });
@@ -134,7 +131,6 @@ export const App = () => {
             console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({
               address: nextUser?.address,
-              cartridgeTag,
               name: "wallet-connect",
               properties: {
                 method,

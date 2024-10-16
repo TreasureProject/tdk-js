@@ -15,7 +15,6 @@ import type { Wallet } from "thirdweb/dist/types/exports/wallets";
 import type { SupportedLanguage } from "./i18n";
 
 export type AnalyticsEvent = {
-  cartridgeTag: string;
   name: string;
   userId?: string;
   address?: string;
@@ -30,6 +29,7 @@ type AnalyticsOptions = {
   apiUri?: string;
   apiKey: string;
   appInfo: AppInfo;
+  cartridgeTag: string;
 };
 
 export type Config = {

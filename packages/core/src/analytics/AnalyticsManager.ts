@@ -20,6 +20,8 @@ export class AnalyticsManager {
 
   app!: AppInfo;
 
+  cartridgeTag!: string;
+
   private constructor() {}
 
   public static get instance(): AnalyticsManager {
@@ -34,10 +36,12 @@ export class AnalyticsManager {
     apiUri = DEFAULT_TDK_DARKMATTER_BASE_URI,
     apiKey,
     app,
-  }: { apiUri?: string; apiKey: string; app: AppInfo }) {
+    cartridgeTag,
+  }: { apiUri?: string; apiKey: string; app: AppInfo; cartridgeTag: string }) {
     this.apiUri = apiUri;
     this.apiKey = apiKey;
     this.app = app;
+    this.cartridgeTag = cartridgeTag;
     this.initialized = true;
 
     setInterval(
@@ -88,6 +92,7 @@ export class AnalyticsManager {
     const payload: AnalyticsPayload = {
       ...event,
       id: eventId,
+      cartridge_tag: this.cartridgeTag,
       time_server: serverTime,
       time_local: localTime,
       app: this.app,

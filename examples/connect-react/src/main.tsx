@@ -35,6 +35,7 @@ if (root) {
             app_version: "1.0.0",
             app_environment: 0,
           },
+          cartridgeTag: "tdk-examples-connect-react",
         }}
       >
         <App />
