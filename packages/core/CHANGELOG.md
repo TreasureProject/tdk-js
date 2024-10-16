@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.2.2
+
+### Patch Changes
+
+- b82e78b: Updated AWS KMS transaction signing fields
+
 ## 3.2.1
 
 ### Patch Changes
