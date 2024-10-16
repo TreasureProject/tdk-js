@@ -37,15 +37,16 @@ export const getAwsKmsAccount = async ({
 
     const r = `0x${signature.r.toString("hex")}` as Hex;
     const s = `0x${signature.s.toString("hex")}` as Hex;
-    const v = signature.v;
+    const v = BigInt(signature.v);
 
-    const yParity = v % 2 === 0 ? 1 : (0 as 0 | 1);
+    const yParity: 0 | 1 = signature.v % 2 === 0 ? 1 : 0;
 
     const signedTx = serializeTransaction({
       transaction: tx,
       signature: {
         r,
         s,
+        v,
         yParity,
       },
     });
