@@ -148,26 +148,39 @@ export const authRoutes =
           smartAccountAddress: user.address,
         };
 
-        const [authToken, userSessions, profile] = await Promise.all([
-          auth.generateJWT(user.address, {
-            issuer: payload.domain,
-            issuedAt: new Date(payload.issued_at),
-            expiresAt: new Date(payload.expiration_time),
-            context: userContext,
-          }),
-          getUserSessions({
-            client,
-            chain: req.chain,
-            address: user.address,
-          }),
-          db.userProfile.upsert({
-            where: { userId: user.id },
-            update: {},
-            create: { userId: user.id },
-            select: USER_PROFILE_SELECT_FIELDS,
-          }),
-        ]);
+        const [authTokenResult, userSessionsResult, profileResult] =
+          await Promise.allSettled([
+            auth.generateJWT(user.address, {
+              issuer: payload.domain,
+              issuedAt: new Date(payload.issued_at),
+              expiresAt: new Date(payload.expiration_time),
+              context: userContext,
+            }),
+            getUserSessions({
+              client,
+              chain: req.chain,
+              address: user.address,
+            }),
+            db.userProfile.upsert({
+              where: { userId: user.id },
+              update: {},
+              create: { userId: user.id },
+              select: USER_PROFILE_SELECT_FIELDS,
+            }),
+          ]);
 
+        if (authTokenResult.status === "rejected") {
+          throw authTokenResult.reason;
+        }
+
+        if (profileResult.status === "rejected") {
+          throw profileResult.reason;
+        }
+
+        const userSessions =
+          userSessionsResult.status === "fulfilled"
+            ? userSessionsResult.value
+            : [];
         const sessions = userSessions.map((session) => ({
           ...session,
           approvedTargets: session.approvedTargets.map((target) =>
@@ -180,12 +193,12 @@ export const authRoutes =
         }));
 
         reply.send({
-          token: authToken,
+          token: authTokenResult.value,
           user: {
             ...userContext,
             ...user,
-            ...profile,
-            ...transformUserProfileResponseFields(profile),
+            ...profileResult.value,
+            ...transformUserProfileResponseFields(profileResult.value),
             sessions,
             // Fields for backwards compatibility
             allActiveSigners: sessions,

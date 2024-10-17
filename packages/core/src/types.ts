@@ -76,6 +76,7 @@ export type Contract =
   | "BulkTransferHelper"
   | "TreasureConduit"
   | "RubyNFT"
+  | "TopazNFT"
   | TokenContract
   | BridgeworldContract
   | MagicswapContract

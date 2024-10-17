@@ -57,7 +57,7 @@ export const usersRoutes =
           });
         }
 
-        const [profile, userSessions] = await Promise.all([
+        const [profileResult, userSessionsResult] = await Promise.allSettled([
           db.userProfile.upsert({
             where: { userId },
             update: {},
@@ -76,7 +76,16 @@ export const usersRoutes =
           }),
         ]);
 
-        if (!profile.user) {
+        const profile =
+          profileResult.status === "fulfilled"
+            ? profileResult.value
+            : undefined;
+        const userSessions =
+          userSessionsResult.status === "fulfilled"
+            ? userSessionsResult.value
+            : [];
+
+        if (!profile?.user) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
