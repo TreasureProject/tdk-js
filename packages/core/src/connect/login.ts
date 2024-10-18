@@ -47,7 +47,8 @@ export type ConnectMethod =
   | (typeof SUPPORTED_SOCIAL_OPTIONS)[number]
   | "email"
   | "passkey"
-  | "wallet";
+  | "wallet"
+  | "auth_endpoint";
 
 type ConnectWalletConfig = {
   client: TreasureConnectClient;
@@ -69,6 +70,10 @@ type ConnectWalletConfig = {
       method: "passkey";
       passkeyName?: string;
       hasStoredPasskey?: boolean;
+    }
+  | {
+      method: "auth_endpoint";
+      payload: string;
     }
 );
 
@@ -114,6 +119,15 @@ export const connectEcosystemWallet = async (params: ConnectWalletConfig) => {
       strategy: "passkey",
       type: hasPasskey ? "sign-in" : "sign-up",
       passkeyName: params.passkeyName,
+    });
+  } else if (params.method === "auth_endpoint") {
+    // Connect with auth endpoint
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "auth_endpoint",
+      payload: params.payload,
+      encryptionKey: "any", // Unused with enclave ecosystem wallets
     });
   } else {
     // Connect with social
@@ -214,7 +228,11 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
     ...connectWalletParams
   } = params;
 
-  const wallet = await connectWallet({ client, ...connectWalletParams });
+  const wallet = await connectWallet({
+    client,
+    chainId,
+    ...connectWalletParams,
+  });
 
   const tdk = new TDKAPI({
     baseUri: apiUri,

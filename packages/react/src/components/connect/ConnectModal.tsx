@@ -214,6 +214,10 @@ export const ConnectModal = ({
         setError(err);
         onConnectError?.(method, err);
       }
+    } else if (method === "auth_endpoint") {
+      throw new Error(
+        "Auth endpoint not supported in Treasure Connect modal. Use TDK Core package to connect.",
+      );
     } else {
       // Handle connecting with social / passkey
       try {

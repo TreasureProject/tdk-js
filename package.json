@@ -15,6 +15,7 @@
     "dev:launcher": "pnpm --filter ./packages/launcher dev",
     "dev:api": "pnpm --filter ./apps/api dev",
     "dev:react": "pnpm --filter ./packages/react dev",
+    "dev:connect-core": "pnpm --filter ./examples/connect-core dev",
     "dev:connect-electron": "pnpm --filter ./examples/connect-electron dev",
     "dev:connect-react": "pnpm --filter ./examples/connect-react dev",
     "start:api": "pnpm --filter ./apps/api start",

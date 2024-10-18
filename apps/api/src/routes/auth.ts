@@ -9,6 +9,8 @@ import "../middleware/chain";
 import "../middleware/swagger";
 import type {
   LoginBody,
+  LoginCustomBody,
+  LoginCustomReply,
   LoginReply,
   ReadLoginPayloadQuerystring,
   ReadLoginPayloadReply,
@@ -16,18 +18,27 @@ import type {
 import {
   type ErrorReply,
   loginBodySchema,
+  loginCustomBodySchema,
+  loginCustomReplySchema,
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
   readLoginPayloadReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
+import { throwUnauthorizedError } from "../utils/error";
 import { log } from "../utils/log";
 import {
   getThirdwebUser,
   parseThirdwebUserEmail,
   transformUserProfileResponseFields,
 } from "../utils/user";
+import { validateWanderersUser } from "../utils/wanderers";
+
+type LoginCustomPayload = {
+  wanderersCookie?: string;
+  wanderersToken?: string;
+};
 
 export const authRoutes =
   ({
@@ -191,6 +202,39 @@ export const authRoutes =
             allActiveSigners: sessions,
           },
         });
+      },
+    );
+
+    app.post<{ Body: LoginCustomBody; Reply: LoginCustomReply | ErrorReply }>(
+      "/login/custom",
+      {
+        schema: {
+          summary: "Log in with custom auth",
+          description: "Log in with a custom auth payload",
+          body: loginCustomBodySchema,
+          response: {
+            200: loginCustomReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        let payload: LoginCustomPayload | undefined;
+
+        try {
+          payload = JSON.parse(req.body.payload);
+        } catch (err) {
+          log.error("Error parsing custom login payload:", err);
+        }
+
+        if (payload?.wanderersCookie || payload?.wanderersToken) {
+          const user = await validateWanderersUser(
+            payload.wanderersCookie,
+            payload.wanderersToken,
+          );
+          return reply.send(user);
+        }
+
+        throwUnauthorizedError("Invalid request");
       },
     );
   };
