@@ -33,6 +33,12 @@ import {
   parseThirdwebUserEmail,
   transformUserProfileResponseFields,
 } from "../utils/user";
+import { validateWanderersUser } from "../utils/wanderers";
+
+type LoginCustomPayload = {
+  wanderersCookie?: string;
+  wanderersToken?: string;
+};
 
 export const authRoutes =
   ({
@@ -203,7 +209,7 @@ export const authRoutes =
       "/login/custom",
       {
         schema: {
-          summary: "Log in",
+          summary: "Log in with custom auth",
           description: "Log in with a custom auth payload",
           body: loginCustomBodySchema,
           response: {
@@ -212,12 +218,7 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        let payload:
-          | {
-              wanderersCookie?: string;
-              wanderersToken?: string;
-            }
-          | undefined;
+        let payload: LoginCustomPayload | undefined;
 
         try {
           payload = JSON.parse(req.body.payload);
@@ -225,34 +226,15 @@ export const authRoutes =
           log.error("Error parsing custom login payload:", err);
         }
 
-        if (!payload?.wanderersCookie && !payload?.wanderersToken) {
-          throwUnauthorizedError("Invalid request");
+        if (payload?.wanderersCookie || payload?.wanderersToken) {
+          const user = await validateWanderersUser(
+            payload.wanderersCookie,
+            payload.wanderersToken,
+          );
+          return reply.send(user);
         }
 
-        const response = await fetch(
-          "https://id.wanderers.ai/sessions/whoami",
-          {
-            headers: payload?.wanderersCookie
-              ? { Cookie: payload.wanderersCookie }
-              : { "X-Session-Token": payload?.wanderersToken ?? "" },
-          },
-        );
-        const result = (await response.json()) as {
-          active: boolean;
-          expires_at: string;
-          identity: {
-            id: string;
-            traits: {
-              email: string;
-            };
-          };
-        };
-
-        reply.send({
-          userId: result.identity.id,
-          email: result.identity.traits.email,
-          exp: new Date(result.expires_at).getTime(),
-        });
+        throwUnauthorizedError("Invalid request");
       },
     );
   };
