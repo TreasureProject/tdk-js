@@ -1,5 +1,14 @@
 # @treasure-dev/tdk-react
 
+## 3.2.2
+
+### Patch Changes
+
+- 4f2c50f: Updated to handle attempts to log in with custom auth endpoint
+- Updated dependencies [b82e78b]
+- Updated dependencies [4f2c50f]
+  - @treasure-dev/tdk-core@3.2.2
+
 ## 3.2.1
 
 ### Patch Changes
