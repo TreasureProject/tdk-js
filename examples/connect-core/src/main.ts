@@ -57,6 +57,27 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           </button>
         </div>
       </div>
+      <p>
+        or
+      </p>
+      <div id="custom-auth-container">
+        <h2>Connect with Custom Auth</h2>
+        <div>
+          <input
+            id="custom-auth-key"
+            type="text"
+            placeholder="Auth key name"
+          />
+          <input
+            id="custom-auth-value"
+            type="text"
+            placeholder="Auth value"
+          />
+          <button type="button">
+            Connect
+          </button>
+        </div>
+      </div>
     </div>
     <div id="user-container">
       <h2>Logged in as <span id="user-email" /></h2>
@@ -86,6 +107,13 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   const emailButton = emailContainer.querySelector<HTMLButtonElement>("button");
   const codeInput = codeContainer.querySelector<HTMLInputElement>("input")!;
   const codeButton = codeContainer.querySelector<HTMLButtonElement>("button");
+  const customAuthKeyInput =
+    document.querySelector<HTMLInputElement>("#custom-auth-key")!;
+  const customAuthValueInput =
+    document.querySelector<HTMLInputElement>("#custom-auth-value")!;
+  const customAuthButton = document.querySelector<HTMLButtonElement>(
+    "#custom-auth-container button",
+  );
   const mintButton = userContainer.querySelector<HTMLButtonElement>("#mint");
   const logOutButton =
     userContainer.querySelector<HTMLButtonElement>("#log-out");
@@ -167,6 +195,34 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     }
 
     codeButton.disabled = false;
+  });
+
+  // Set up Connect with Custom Auth flow
+  customAuthButton?.addEventListener("click", async () => {
+    customAuthButton.disabled = true;
+    try {
+      const result = await logIn({
+        client,
+        ecosystemId: import.meta.env.VITE_TDK_ECOSYSTEM_ID,
+        ecosystemPartnerId: import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID,
+        method: "auth_endpoint",
+        payload: JSON.stringify({
+          [customAuthKeyInput.value]: customAuthValueInput.value,
+        }),
+        apiUri,
+        chainId,
+        sessionOptions,
+      });
+      tdk = result.tdk;
+      user = result.user;
+      userEmail.innerHTML = user.email || user.id;
+      connectContainer.hidden = true;
+      userContainer.hidden = false;
+    } catch (err) {
+      console.error("Error logging in with email:", err);
+    }
+
+    customAuthButton.disabled = false;
   });
 
   // Set up Mint button

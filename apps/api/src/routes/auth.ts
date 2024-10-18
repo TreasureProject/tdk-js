@@ -9,6 +9,8 @@ import "../middleware/chain";
 import "../middleware/swagger";
 import type {
   LoginBody,
+  LoginCustomBody,
+  LoginCustomReply,
   LoginReply,
   ReadLoginPayloadQuerystring,
   ReadLoginPayloadReply,
@@ -16,12 +18,15 @@ import type {
 import {
   type ErrorReply,
   loginBodySchema,
+  loginCustomBodySchema,
+  loginCustomReplySchema,
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
   readLoginPayloadReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
+import { throwUnauthorizedError } from "../utils/error";
 import { log } from "../utils/log";
 import {
   getThirdwebUser,
@@ -190,6 +195,63 @@ export const authRoutes =
             // Fields for backwards compatibility
             allActiveSigners: sessions,
           },
+        });
+      },
+    );
+
+    app.post<{ Body: LoginCustomBody; Reply: LoginCustomReply | ErrorReply }>(
+      "/login/custom",
+      {
+        schema: {
+          summary: "Log in",
+          description: "Log in with a custom auth payload",
+          body: loginCustomBodySchema,
+          response: {
+            200: loginCustomReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        let payload:
+          | {
+              wanderersCookie?: string;
+              wanderersToken?: string;
+            }
+          | undefined;
+
+        try {
+          payload = JSON.parse(req.body.payload);
+        } catch (err) {
+          log.error("Error parsing custom login payload:", err);
+        }
+
+        if (!payload?.wanderersCookie && !payload?.wanderersToken) {
+          throwUnauthorizedError("Invalid request");
+        }
+
+        const response = await fetch(
+          "https://id.wanderers.ai/sessions/whoami",
+          {
+            headers: payload?.wanderersCookie
+              ? { Cookie: payload.wanderersCookie }
+              : { "X-Session-Token": payload?.wanderersToken ?? "" },
+          },
+        );
+        const result = (await response.json()) as {
+          active: boolean;
+          expires_at: string;
+          identity: {
+            id: string;
+            traits: {
+              email: string;
+            };
+          };
+        };
+
+        reply.send({
+          userId: result.identity.id,
+          email: result.identity.traits.email,
+          exp: new Date(result.expires_at).getTime(),
         });
       },
     );
