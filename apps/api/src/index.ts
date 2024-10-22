@@ -23,6 +23,7 @@ import { withCors } from "./middleware/cors";
 import { withErrorHandler } from "./middleware/error";
 import { withSwagger } from "./middleware/swagger";
 import { authRoutes } from "./routes/auth";
+import { gasSponsorshipRoutes } from "./routes/gas-sponsorship";
 import { harvestersRoutes } from "./routes/harvesters";
 import { magicswapRoutes } from "./routes/magicswap";
 import { projectsRoutes } from "./routes/projects";
@@ -125,6 +126,7 @@ const main = async () => {
   app.register(transactionsRoutes(ctx));
   app.register(harvestersRoutes(ctx));
   app.register(magicswapRoutes(ctx));
+  app.register(gasSponsorshipRoutes(ctx));
 
   app.get("/healthcheck", async (_, reply) => {
     try {
