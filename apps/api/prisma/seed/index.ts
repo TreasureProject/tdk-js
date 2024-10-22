@@ -6,6 +6,7 @@ import {
   treasureRuby,
 } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
+import upsertTransactionsViewSql from "./transactions-view";
 
 type RemoteEnvironment = "dev" | "prod";
 type Environment = "local" | RemoteEnvironment;
@@ -240,6 +241,8 @@ const createProject = async ({
         callTargets: callTargets[environment === "local" ? "dev" : environment],
       });
     }
+
+    await upsertTransactionsViewSql(prisma);
 
     await prisma.$disconnect();
   } catch (err) {
