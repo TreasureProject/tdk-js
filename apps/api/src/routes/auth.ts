@@ -4,6 +4,8 @@ import {
   getUserSessions,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
+import { defineChain } from "thirdweb";
+import { isZkSyncChain } from "thirdweb/utils";
 
 import "../middleware/chain";
 import "../middleware/swagger";
@@ -21,8 +23,11 @@ import {
   readLoginPayloadReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
-import { log } from "../utils/log";
+import {
+  USER_PROFILE_SELECT_FIELDS,
+  USER_SMART_ACCOUNT_INCLUDE_FIELDS,
+} from "../utils/db";
+import { throwUnauthorizedError } from "../utils/error";
 import {
   getThirdwebUser,
   parseThirdwebUserEmail,
@@ -84,97 +89,115 @@ export const authRoutes =
         }
 
         const { payload } = verifiedPayload;
-        const {
-          chain_id: chainId = DEFAULT_TDK_CHAIN_ID.toString(),
-          address: payloadAddress,
-        } = payload;
-        const address = payloadAddress.toLowerCase();
+        const chainId = Number(payload.chain_id ?? DEFAULT_TDK_CHAIN_ID);
+        const address = payload.address.toLowerCase();
+        const chain = defineChain(chainId);
 
-        let user = await db.user.upsert({
+        // Find user's smart account
+        let userSmartAccount = await db.userSmartAccount.findUnique({
           where: {
-            address,
-          },
-          update: {
-            lastLoginAt: new Date(),
-          },
-          create: {
-            address,
-          },
-          select: USER_SELECT_FIELDS,
-        });
-
-        // User is missing details we could fill in from the embedded wallet
-        if (!user.email) {
-          let adminAddress: string | undefined;
-
-          // Get admin wallet associated with this smart account address
-          try {
-            const { result } = await engine.account.getAllAdmins(
+            chainId_address: {
               chainId,
               address,
+            },
+          },
+          include: USER_SMART_ACCOUNT_INCLUDE_FIELDS,
+        });
+
+        // If no smart account exists, fetch user details and create it
+        if (!userSmartAccount) {
+          let initialWalletAddress: string | undefined;
+
+          // On ZKsync chains, the smart account address is the same as the admin wallet address
+          if (await isZkSyncChain(chain)) {
+            initialWalletAddress = address;
+          } else {
+            // Fetch admin wallets associated with this smart account address
+            const { result } = await engine.account.getAllAdmins(
+              chainId.toString(),
+              address,
             );
-            adminAddress = result[0];
-          } catch {
-            // Ignore lookup if this fails, address may not be a smart account if user connected with Web3 wallet
-            log.warn("Error fetching admin wallet for smart account:", address);
+            initialWalletAddress = result[0];
           }
 
-          if (adminAddress) {
-            const thirdwebUser = await getThirdwebUser({
-              client,
-              ecosystemId: env.THIRDWEB_ECOSYSTEM_ID,
-              ecosystemPartnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
-              walletAddress: adminAddress,
-            });
-            if (thirdwebUser) {
-              const email = parseThirdwebUserEmail(thirdwebUser);
-              if (email) {
-                user = await db.user.update({
-                  where: {
-                    id: user.id,
-                  },
-                  data: { email },
-                  select: USER_SELECT_FIELDS,
-                });
-              }
-            }
+          // Smart accounts should never be orphaned, but checking anyway
+          if (!initialWalletAddress) {
+            throwUnauthorizedError("No admin wallet found for smart account");
+            return;
           }
+
+          // Fetch Thirdweb user details in case the initial wallet address is an ecosystem wallet
+          const thirdwebUser = await getThirdwebUser({
+            client,
+            ecosystemId: env.THIRDWEB_ECOSYSTEM_ID,
+            ecosystemPartnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
+            walletAddress: initialWalletAddress,
+          });
+          const initialEmail = thirdwebUser
+            ? parseThirdwebUserEmail(thirdwebUser)
+            : undefined;
+
+          const userData = thirdwebUser?.userId
+            ? {
+                thirdwebUserId: thirdwebUser.userId,
+              }
+            : {
+                primaryWalletAddress: initialWalletAddress,
+              };
+
+          userSmartAccount = await db.userSmartAccount.create({
+            data: {
+              chainId,
+              address,
+              initialEmail,
+              initialWalletAddress,
+              user: {
+                connectOrCreate: {
+                  where: userData,
+                  create: userData,
+                },
+              },
+            },
+            include: USER_SMART_ACCOUNT_INCLUDE_FIELDS,
+          });
         }
 
-        const userContext: UserContext = {
-          id: user.id,
-          address: user.address,
-          email: user.email,
-          smartAccountAddress: user.address,
-        };
+        const { user } = userSmartAccount;
+        const profile = await db.userProfile.upsert({
+          where: { userId: user.id },
+          update: {},
+          create: {
+            userId: user.id,
+            email: userSmartAccount.initialEmail,
+          },
+          select: USER_PROFILE_SELECT_FIELDS,
+        });
 
-        const [authTokenResult, userSessionsResult, profileResult] =
-          await Promise.allSettled([
-            auth.generateJWT(user.address, {
-              issuer: payload.domain,
-              issuedAt: new Date(payload.issued_at),
-              expiresAt: new Date(payload.expiration_time),
-              context: userContext,
-            }),
-            getUserSessions({
-              client,
-              chain: req.chain,
-              address: user.address,
-            }),
-            db.userProfile.upsert({
-              where: { userId: user.id },
-              update: {},
-              create: { userId: user.id },
-              select: USER_PROFILE_SELECT_FIELDS,
-            }),
-          ]);
+        const [authTokenResult, userSessionsResult] = await Promise.allSettled([
+          auth.generateJWT<UserContext>(address, {
+            issuer: payload.domain,
+            issuedAt: new Date(payload.issued_at),
+            expiresAt: new Date(payload.expiration_time),
+            context: {
+              id: user.id,
+              email: profile.email,
+              primaryWalletAddress: user.primaryWalletAddress,
+              tag: profile.tag,
+              discriminant: profile.discriminant,
+              smartAccounts: user.smartAccounts,
+              // Keep previous field name for backwards compatibility
+              address,
+            },
+          }),
+          getUserSessions({
+            client,
+            chain: req.chain,
+            address,
+          }),
+        ]);
 
         if (authTokenResult.status === "rejected") {
           throw authTokenResult.reason;
-        }
-
-        if (profileResult.status === "rejected") {
-          throw profileResult.reason;
         }
 
         const userSessions =
@@ -195,13 +218,12 @@ export const authRoutes =
         reply.send({
           token: authTokenResult.value,
           user: {
-            ...userContext,
             ...user,
-            ...profileResult.value,
-            ...transformUserProfileResponseFields(profileResult.value),
+            ...profile,
+            ...transformUserProfileResponseFields(profile),
             sessions,
-            // Fields for backwards compatibility
-            allActiveSigners: sessions,
+            // Keep previous field name for backwards compatibility
+            address,
           },
         });
       },

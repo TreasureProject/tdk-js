@@ -4,6 +4,7 @@ import type { createAuth } from "@treasure-dev/auth";
 import type { Config as WagmiConfig } from "@wagmi/core";
 import type { ThirdwebClient } from "thirdweb";
 import type { createAuth as createThirdwebAuth } from "thirdweb/auth";
+
 import type { TdkApiEnv } from "./utils/env";
 
 export type TdkApiContext = {

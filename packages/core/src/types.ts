@@ -22,10 +22,16 @@ export type ConnectConfig = {
 
 export type UserContext = {
   id: string;
-  address: string;
   email: string | null;
+  primaryWalletAddress: string | null;
+  tag: string | null;
+  discriminant: number | null;
+  smartAccounts: {
+    chainId: number;
+    address: string;
+  }[];
   // Keep previous field name for backwards compatibility
-  smartAccountAddress: string;
+  address: string;
 };
 
 // General transactions
