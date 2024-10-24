@@ -38,14 +38,14 @@ export const createAuth = ({
 }: AuthOptions) => {
   const kms = kmsClientConfig ? new KMS(kmsClientConfig) : new KMS();
   return {
-    generateJWT: async (
+    generateJWT: async <TContext = unknown>(
       subject: string,
       overrides?: {
         issuer?: string;
         audience?: string;
         expiresAt?: Date;
         issuedAt?: Date;
-        context?: unknown;
+        context?: TContext;
       },
     ) => {
       const payload: Payload = {

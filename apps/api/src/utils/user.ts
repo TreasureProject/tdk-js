@@ -5,11 +5,13 @@ import {
 } from "@treasure-dev/tdk-core";
 import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
 
+import { checksumAddress } from "thirdweb/utils";
 import { log } from "./log";
 
 export const transformUserProfileResponseFields = (
   profile: Partial<UserProfile>,
 ) => ({
+  email: profile.email ?? null,
   tagModifiedAt: profile.tagModifiedAt?.toISOString() ?? null,
   tagLastCheckedAt: profile.tagLastCheckedAt?.toISOString() ?? null,
   emailSecurityPhraseUpdatedAt:
@@ -29,6 +31,7 @@ export const getThirdwebUser = async ({
   ecosystemPartnerId: string;
   walletAddress: string;
 }) => {
+  const checksumWalletAddress = checksumAddress(walletAddress);
   try {
     const ecosystemWalletUser = await getUser({
       client,
@@ -36,7 +39,7 @@ export const getThirdwebUser = async ({
         id: ecosystemId,
         partnerId: ecosystemPartnerId,
       },
-      walletAddress,
+      walletAddress: checksumWalletAddress,
     });
     if (ecosystemWalletUser) {
       return ecosystemWalletUser;
@@ -50,7 +53,7 @@ export const getThirdwebUser = async ({
   try {
     const inAppWalletUser = await getUser({
       client,
-      walletAddress,
+      walletAddress: checksumWalletAddress,
     });
     if (inAppWalletUser) {
       return inAppWalletUser;
