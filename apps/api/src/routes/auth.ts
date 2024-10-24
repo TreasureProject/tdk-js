@@ -110,14 +110,14 @@ export const authRoutes =
 
           // On ZKsync chains, the smart account address is the same as the admin wallet address
           if (await isZkSyncChain(chain)) {
-            initialWalletAddress = address;
+            initialWalletAddress = address.toLowerCase();
           } else {
             // Fetch admin wallets associated with this smart account address
             const { result } = await engine.account.getAllAdmins(
               chainId.toString(),
               address,
             );
-            initialWalletAddress = result[0];
+            initialWalletAddress = result[0]?.toLowerCase();
           }
 
           // Smart accounts should never be orphaned, but checking anyway
