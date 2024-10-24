@@ -47,9 +47,21 @@ export const loginReplySchema = Type.Object({
   ]),
 });
 
+export const loginCustomBodySchema = Type.Object({
+  payload: Type.String(),
+});
+
+export const loginCustomReplySchema = Type.Object({
+  userId: Type.String(),
+  email: Type.String(),
+  exp: Type.Number(),
+});
+
 export type ReadLoginPayloadQuerystring = Static<
   typeof readLoginPayloadQuerystringSchema
 >;
 export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
 export type LoginBody = Static<typeof loginBodySchema>;
 export type LoginReply = Static<typeof loginReplySchema>;
+export type LoginCustomBody = Static<typeof loginCustomBodySchema>;
+export type LoginCustomReply = Static<typeof loginCustomReplySchema>;

@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-core
 
+## 3.2.2
+
+### Patch Changes
+
+- b82e78b: Updated AWS KMS transaction signing fields
+- 4f2c50f: Added support for login with custom auth endpoint
+
 ## 3.2.1
 
 ### Patch Changes

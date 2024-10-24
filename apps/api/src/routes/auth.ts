@@ -9,15 +9,17 @@ import { isZkSyncChain } from "thirdweb/utils";
 
 import "../middleware/chain";
 import "../middleware/swagger";
-import type {
-  LoginBody,
-  LoginReply,
-  ReadLoginPayloadQuerystring,
-  ReadLoginPayloadReply,
-} from "../schema";
 import {
   type ErrorReply,
+  type LoginBody,
+  type LoginCustomBody,
+  type LoginCustomReply,
+  type LoginReply,
+  type ReadLoginPayloadQuerystring,
+  type ReadLoginPayloadReply,
   loginBodySchema,
+  loginCustomBodySchema,
+  loginCustomReplySchema,
   loginReplySchema,
   readLoginPayloadQuerystringSchema,
   readLoginPayloadReplySchema,
@@ -28,11 +30,18 @@ import {
   USER_SMART_ACCOUNT_INCLUDE_FIELDS,
 } from "../utils/db";
 import { throwUnauthorizedError } from "../utils/error";
+import { log } from "../utils/log";
 import {
   getThirdwebUser,
   parseThirdwebUserEmail,
   transformUserProfileResponseFields,
 } from "../utils/user";
+import { validateWanderersUser } from "../utils/wanderers";
+
+type LoginCustomPayload = {
+  wanderersCookie?: string;
+  wanderersToken?: string;
+};
 
 export const authRoutes =
   ({
@@ -226,6 +235,39 @@ export const authRoutes =
             address,
           },
         });
+      },
+    );
+
+    app.post<{ Body: LoginCustomBody; Reply: LoginCustomReply | ErrorReply }>(
+      "/login/custom",
+      {
+        schema: {
+          summary: "Log in with custom auth",
+          description: "Log in with a custom auth payload",
+          body: loginCustomBodySchema,
+          response: {
+            200: loginCustomReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        let payload: LoginCustomPayload | undefined;
+
+        try {
+          payload = JSON.parse(req.body.payload);
+        } catch (err) {
+          log.error("Error parsing custom login payload:", err);
+        }
+
+        if (payload?.wanderersCookie || payload?.wanderersToken) {
+          const user = await validateWanderersUser(
+            payload.wanderersCookie,
+            payload.wanderersToken,
+          );
+          return reply.send(user);
+        }
+
+        throwUnauthorizedError("Invalid request");
       },
     );
   };
