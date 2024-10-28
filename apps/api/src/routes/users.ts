@@ -24,8 +24,17 @@ import {
   updateCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
-import { USER_PROFILE_SELECT_FIELDS, USER_SELECT_FIELDS } from "../utils/db";
-import { TDK_ERROR_CODES, TDK_ERROR_NAMES, TdkError } from "../utils/error";
+import {
+  USER_PROFILE_SELECT_FIELDS,
+  USER_SELECT_FIELDS,
+  USER_SMART_ACCOUNT_SELECT_FIELDS,
+} from "../utils/db";
+import {
+  TDK_ERROR_CODES,
+  TDK_ERROR_NAMES,
+  TdkError,
+  throwUnauthorizedError,
+} from "../utils/error";
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
@@ -49,23 +58,22 @@ export const usersRoutes =
       async (req, reply) => {
         const { chain, userId, userAddress, authError } = req;
         if (!userId || !userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError ?? "Unauthorized");
+          return;
         }
 
-        const [profile, userSessions] = await Promise.all([
-          db.userProfile.upsert({
-            where: { userId },
-            update: {},
-            create: { userId },
+        const [userResult, userSessionsResult] = await Promise.allSettled([
+          db.user.findUnique({
+            where: {
+              id: userId,
+            },
             select: {
-              ...USER_PROFILE_SELECT_FIELDS,
-              user: {
-                select: USER_SELECT_FIELDS,
+              ...USER_SELECT_FIELDS,
+              smartAccounts: {
+                select: USER_SMART_ACCOUNT_SELECT_FIELDS,
+              },
+              profile: {
+                select: USER_PROFILE_SELECT_FIELDS,
               },
             },
           }),
@@ -76,7 +84,14 @@ export const usersRoutes =
           }),
         ]);
 
-        if (!profile.user) {
+        const user =
+          userResult.status === "fulfilled" ? userResult.value : undefined;
+        const userSessions =
+          userSessionsResult.status === "fulfilled"
+            ? userSessionsResult.value
+            : [];
+
+        if (!user || !user.profile) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
@@ -85,7 +100,6 @@ export const usersRoutes =
           });
         }
 
-        const { user, ...restProfile } = profile;
         const sessions = userSessions.map((session) => ({
           ...session,
           approvedTargets: session.approvedTargets.map((target) =>
@@ -96,15 +110,14 @@ export const usersRoutes =
           startTimestamp: session.startTimestamp.toString(),
           endTimestamp: session.endTimestamp.toString(),
         }));
-
+        const { profile, ...restUser } = user;
         reply.send({
-          ...user,
-          ...restProfile,
-          ...transformUserProfileResponseFields(restProfile),
+          ...restUser,
+          ...profile,
+          ...transformUserProfileResponseFields(profile),
           sessions,
-          // Fields for backwards compatibility
-          smartAccountAddress: user.address,
-          allActiveSigners: sessions,
+          // Keep previous field name for backwards compatibility
+          address: restUser.smartAccounts[0]?.address ?? "",
         });
       },
     );
@@ -129,12 +142,8 @@ export const usersRoutes =
       async (req, reply) => {
         const { userId, authError } = req;
         if (!userId) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError ?? "Unauthorized");
+          return;
         }
 
         const {
@@ -153,9 +162,9 @@ export const usersRoutes =
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
-        const profile = await db.userProfile.upsert({
+        const profile = await db.userProfile.update({
           where: { userId },
-          update: {
+          data: {
             emailSecurityPhrase,
             emailSecurityPhraseUpdatedAt,
             featuredNftIds,
@@ -168,11 +177,15 @@ export const usersRoutes =
             showEthBalance,
             showGemsBalance,
           },
-          create: { userId },
           select: {
             ...USER_PROFILE_SELECT_FIELDS,
             user: {
               select: USER_SELECT_FIELDS,
+              include: {
+                smartAccounts: {
+                  select: USER_SMART_ACCOUNT_SELECT_FIELDS,
+                },
+              },
             },
           },
         });
@@ -192,8 +205,8 @@ export const usersRoutes =
           ...user,
           ...restProfile,
           ...transformUserProfileResponseFields(restProfile),
-          // Fields for backwards compatibility
-          smartAccountAddress: user.address,
+          // Keep previous field name for backwards compatibility
+          address: user.smartAccounts[0]?.address ?? "",
         });
       },
     );

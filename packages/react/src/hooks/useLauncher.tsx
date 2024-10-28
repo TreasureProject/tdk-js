@@ -14,7 +14,8 @@ export const useLauncher = ({
   onAuthTokenUpdated,
 }: Props) => {
   const authToken = getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
-  const isUsingTreasureLauncher = authToken !== undefined;
+  const isUsingTreasureLauncher =
+    authToken !== undefined && authToken.length > 0;
 
   const openLauncherAccountModal = (size?: "lg" | "xl" | "2xl" | "3xl") => {
     if (!isUsingTreasureLauncher) {

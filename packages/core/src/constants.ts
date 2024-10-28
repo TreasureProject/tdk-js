@@ -61,6 +61,30 @@ export const TREASURE_RUBY_CHAIN_DEFINITION = {
 };
 export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
 
+export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
+  id: 978_658,
+  name: "Treasure Topaz",
+  nativeCurrency: {
+    name: "MAGIC",
+    symbol: "MAGIC",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc.topaz.treasure.lol"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Treasurescan",
+      url: "https://topaz.treasurescan.io",
+      apiUrl: "https://block-explorer.topaz.treasurescan.io/api",
+    },
+  },
+  testnet: true,
+};
+export const treasureTopaz = defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION);
+
 // Tokens
 export const TOKEN_IDS = {
   Consumables: {
@@ -252,6 +276,12 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     RubyNFT: "0x76c3b527b711a3b6aa01e4f76ec34b41a671ca29",
+  },
+  [treasureTopaz.id]: {
+    // Magicswap
+    MagicswapV2Router: "0xad781ed13b5966e7c620b896b6340abb4dd2ca86",
+    // Treasure Misc
+    TopazNFT: "0x0df42db01ff1992fbd2acff3b7a9010cf59b6f80",
   },
 };
 

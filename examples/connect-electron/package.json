@@ -22,6 +22,7 @@
     "@electron-toolkit/preload": "catalog:",
     "@electron-toolkit/utils": "catalog:",
     "@treasure-dev/tdk-react": "workspace:*",
+    "@treasure-dev/launcher": "workspace:*",
     "thirdweb": "catalog:"
   },
   "devDependencies": {

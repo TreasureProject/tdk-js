@@ -67,6 +67,7 @@ export const useConnect = (props?: Props) => {
   const {
     chain,
     client,
+    ecosystemId,
     logOut,
     setRootElement,
     isUsingTreasureLauncher,
@@ -108,11 +109,15 @@ export const useConnect = (props?: Props) => {
       openLauncherAccountModal(connectModalSize);
       return;
     }
+
     openWalletDetailsModal({
       client,
       chains,
       theme: THEME,
       locale: getLocaleId(),
+      connectOptions: {
+        hiddenWallets: ["inApp", ecosystemId],
+      },
       displayBalanceToken: chains.reduce(
         (acc, chain) => {
           const magicAddress = getContractAddress(chain.id, "MAGIC");

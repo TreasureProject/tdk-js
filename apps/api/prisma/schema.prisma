@@ -82,14 +82,20 @@ model User {
   id String @id @default(cuid())
 
   // Fields
-  address     String    @unique @map("address") @db.VarChar(42)
-  email       String?   @unique
-  banned      Boolean   @default(false)
-  comment     String?
+  // Identifiers
+  externalUserId        String? @unique @map("external_user_id")
+  externalWalletAddress String? @unique @map("external_wallet_address") @db.VarChar(42)
+
+  // Status
   lastLoginAt DateTime? @map("last_login_at")
+
+  // Notes
+  banned  Boolean @default(false)
+  comment String?
 
   // Relations
   profile              UserProfile?
+  smartAccounts        UserSmartAccount[]
   socialAccounts       UserSocialAccount[]
   notificationSettings UserNotificationSettings[]
 
@@ -101,11 +107,38 @@ model User {
   @@schema("public")
 }
 
+model UserSmartAccount {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  chainId              Int     @map("chain_id")
+  address              String  @db.VarChar(42)
+  initialEmail         String? @map("initial_email") // Email address used to create the smart account, if applicable
+  initialWalletAddress String  @map("initial_wallet_address") @db.VarChar(42) // Wallet address used to create the smart account (either EOA or ecosystem wallet)
+
+  // Relations
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([chainId, address])
+  @@index([userId])
+  @@map("user_smart_account")
+  @@schema("public")
+}
+
 model UserProfile {
   // Primary key
   id String @id @default(cuid())
 
   // Fields
+  // Contact
+  email String? @unique
+
   // TreasureTag
   tag              String?
   discriminant     Int?      @db.SmallInt
@@ -135,7 +168,7 @@ model UserProfile {
   legacyEmail           String?   @map("legacy_email")
   legacyEmailVerifiedAt DateTime? @map("legacy_email_verified_at")
 
-  // Other
+  // Status
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
 
   // Relations

@@ -107,15 +107,6 @@ export const userSchema = Type.Object({
     description: "User unique identifier",
     examples: [EXAMPLE_USER_ID],
   }),
-  address: Type.String({
-    description: "Treasure Account address",
-    examples: [EXAMPLE_WALLET_ADDRESS],
-  }),
-  // Keep previous field name for backwards compatibility
-  smartAccountAddress: Type.String({
-    description: "Treasure Account address",
-    examples: [EXAMPLE_WALLET_ADDRESS],
-  }),
   email: Type.Union([
     Type.String({
       description: "User email address",
@@ -123,6 +114,27 @@ export const userSchema = Type.Object({
     }),
     Type.Null(),
   ]),
+  externalWalletAddress: Type.Union([
+    Type.String({
+      description: "User wallet address",
+      examples: [EXAMPLE_WALLET_ADDRESS],
+    }),
+    Type.Null(),
+  ]),
+  smartAccounts: Type.Array(
+    Type.Object({
+      chainId: Type.Number(),
+      address: Type.String({
+        description: "Treasure Account address",
+        examples: [EXAMPLE_WALLET_ADDRESS],
+      }),
+    }),
+  ),
+  // Keep previous field name for backwards compatibility
+  address: Type.String({
+    description: "Treasure Account address",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
 });
 
 export const userProfileSchema = Type.Object({
