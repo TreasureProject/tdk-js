@@ -83,8 +83,8 @@ model User {
 
   // Fields
   // Identifiers
-  thirdwebUserId       String? @unique @map("thirdweb_user_id")
-  primaryWalletAddress String? @unique @map("primary_wallet_address") @db.VarChar(42)
+  externalUserId        String? @unique @map("external_user_id")
+  externalWalletAddress String? @unique @map("external_wallet_address") @db.VarChar(42)
 
   // Status
   lastLoginAt DateTime? @map("last_login_at")

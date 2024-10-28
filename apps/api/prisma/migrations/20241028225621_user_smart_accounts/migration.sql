@@ -7,8 +7,8 @@ DROP INDEX "public"."user_email_key";
 -- AlterTable
 ALTER TABLE "public"."user" DROP COLUMN "address",
 DROP COLUMN "email",
-ADD COLUMN     "primary_wallet_address" VARCHAR(42),
-ADD COLUMN     "thirdweb_user_id" TEXT;
+ADD COLUMN     "external_user_id" TEXT,
+ADD COLUMN     "external_wallet_address" VARCHAR(42);
 
 -- AlterTable
 ALTER TABLE "public"."user_profile" ADD COLUMN     "email" TEXT;
@@ -34,10 +34,10 @@ CREATE INDEX "user_smart_account_user_id_idx" ON "public"."user_smart_account"("
 CREATE UNIQUE INDEX "user_smart_account_chain_id_address_key" ON "public"."user_smart_account"("chain_id", "address");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_thirdweb_user_id_key" ON "public"."user"("thirdweb_user_id");
+CREATE UNIQUE INDEX "user_external_user_id_key" ON "public"."user"("external_user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_primary_wallet_address_key" ON "public"."user"("primary_wallet_address");
+CREATE UNIQUE INDEX "user_external_wallet_address_key" ON "public"."user"("external_wallet_address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_profile_email_key" ON "public"."user_profile"("email");

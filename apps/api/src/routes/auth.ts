@@ -148,10 +148,10 @@ export const authRoutes =
 
           const userData = thirdwebUser?.userId
             ? {
-                thirdwebUserId: thirdwebUser.userId,
+                externalUserId: thirdwebUser.userId,
               }
             : {
-                primaryWalletAddress: initialWalletAddress,
+                externalWalletAddress: initialWalletAddress,
               };
 
           userSmartAccount = await db.userSmartAccount.create({
@@ -190,7 +190,7 @@ export const authRoutes =
             context: {
               id: user.id,
               email: profile.email,
-              primaryWalletAddress: user.primaryWalletAddress,
+              externalWalletAddress: user.externalWalletAddress,
               tag: profile.tag,
               discriminant: profile.discriminant,
               smartAccounts: user.smartAccounts,

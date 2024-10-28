@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 
 export const USER_SELECT_FIELDS = {
   id: true,
-  primaryWalletAddress: true,
+  externalWalletAddress: true,
 } as const satisfies Prisma.UserSelect;
 
 export const USER_PROFILE_SELECT_FIELDS = {

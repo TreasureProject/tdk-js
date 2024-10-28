@@ -114,7 +114,7 @@ export const userSchema = Type.Object({
     }),
     Type.Null(),
   ]),
-  primaryWalletAddress: Type.Union([
+  externalWalletAddress: Type.Union([
     Type.String({
       description: "User wallet address",
       examples: [EXAMPLE_WALLET_ADDRESS],

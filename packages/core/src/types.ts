@@ -23,7 +23,7 @@ export type ConnectConfig = {
 export type UserContext = {
   id: string;
   email: string | null;
-  primaryWalletAddress: string | null;
+  externalWalletAddress: string | null;
   tag: string | null;
   discriminant: number | null;
   smartAccounts: {
