@@ -55,7 +55,7 @@ catalog:
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.34.0
+  knip: ^5.34.1
   lint-staged: ^15.2.10
   pino: ^9.5.0
   pino-pretty: ^11.3.0
@@ -69,11 +69,11 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.3
-  thirdweb: ^5.63.2
-  tsup: ^8.3.0
-  tsx: ^4.19.1
+  thirdweb: ^5.64.2
+  tsup: ^8.3.5
+  tsx: ^4.19.2
   typescript: ^5.6.3
-  uuid: ^10.0.0
-  viem: 2.21.25 # matches Thirdweb version to satisfy getAwsKmsAccount types
+  uuid: ^11.0.2
+  viem: 2.21.34 # matches Thirdweb version to satisfy getAwsKmsAccount types
   vite: 5.4.8
-  vitest: ^2.1.3
+  vitest: ^2.1.4
