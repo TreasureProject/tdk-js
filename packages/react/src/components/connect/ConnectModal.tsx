@@ -182,6 +182,7 @@ export const ConnectModal = ({
             logoUrl: appIconUri,
           },
           accountAbstraction,
+          size: "compact",
         });
       } catch (err) {
         // Error can be undefined if user closed the connect modal
