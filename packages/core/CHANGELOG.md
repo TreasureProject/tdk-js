@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-core
 
+## 3.3.0
+
+### Minor Changes
+
+- 8ad8dbf: Updated format of JWT user context payload
+- 8ad8dbf: Added Treasure Topaz testnet details
+
 ## 3.2.2
 
 ### Patch Changes

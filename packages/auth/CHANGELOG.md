@@ -1,5 +1,11 @@
 # @treasure-dev/auth
 
+## 1.0.3
+
+### Patch Changes
+
+- 8ad8dbf: Added ability to specify context type when generating JWT
+
 ## 1.0.2
 
 ### Patch Changes
