@@ -4,8 +4,8 @@ packages:
   - "examples/*"
 
 catalog:
-  "@aws-sdk/client-kms": ^3.675.0
-  "@aws-sdk/client-secrets-manager": ^3.675.0
+  "@aws-sdk/client-kms": ^3.679.0
+  "@aws-sdk/client-secrets-manager": ^3.679.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
   "@changesets/cli": ^2.27.9
@@ -23,17 +23,17 @@ catalog:
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.35.0
   "@sinclair/typebox": ^0.33.17
-  "@storybook/addon-essentials": ^8.3.5
-  "@storybook/react": ^8.3.5
-  "@storybook/react-vite": ^8.3.5
+  "@storybook/addon-essentials": ^8.3.6
+  "@storybook/react": ^8.3.6
+  "@storybook/react-vite": ^8.3.6
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.16
   "@types/jsonwebtoken": ^9.0.7
   "@types/node": ^22.7.8
-  "@types/react": ^18.2.64
-  "@types/react-dom": ^18.2.21
+  "@types/react": ^18.3.12
+  "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
-  "@vitejs/plugin-react": ^4.3.2
+  "@vitejs/plugin-react": ^4.3.3
   "@wagmi/core": ^2.14.1
   abitype: ^1.0.6
   autoprefixer: ^10.4.20
@@ -49,13 +49,13 @@ catalog:
   express: ^4.21.0
   fastify: ^5.0.0
   husky: ^9.1.6
-  i18next: ^23.15.1
+  i18next: ^23.16.4
   "i18next-browser-languagedetector": ^8.0.0
   "input-otp": ^1.2.4
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.34.1
+  knip: ^5.34.2
   lint-staged: ^15.2.10
   pino: ^9.5.0
   pino-pretty: ^11.3.0
@@ -63,17 +63,17 @@ catalog:
   prisma: ^5.21.1
   react: ^18.2.0
   "react-dom": ^18.2.0
-  "react-i18next": ^15.0.2
-  storybook: ^8.3.5
-  tailwindcss: ^3.4.13
+  "react-i18next": ^15.1.0
+  storybook: ^8.3.6
+  tailwindcss: ^3.4.14
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
-  "tailwind-merge": ^2.5.3
+  "tailwind-merge": ^2.5.4
   thirdweb: ^5.64.2
   tsup: ^8.3.5
   tsx: ^4.19.2
   typescript: ^5.6.3
   uuid: ^11.0.2
   viem: 2.21.34 # matches Thirdweb version to satisfy getAwsKmsAccount types
-  vite: 5.4.8
+  vite: ^5.4.10
   vitest: ^2.1.4
