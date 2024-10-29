@@ -36,6 +36,16 @@ const ERC20_MINTABLE_ABI = [
   },
 ] as const;
 
+const TOPAZ_NFT_API = [
+  {
+    inputs: [],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
+
 export const App = () => {
   const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
     useTreasure();
@@ -91,11 +101,7 @@ export const App = () => {
     }
   };
 
-  const handleSendEth = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
+  const handleSendNative = async (amount: number) => {
     try {
       await tdk.transaction.sendRaw({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
@@ -104,6 +110,22 @@ export const App = () => {
       });
     } catch (err) {
       console.error("Error sending ETH:", err);
+    }
+  };
+
+  const handleMintTopazNft = async () => {
+    try {
+      await tdk.transaction.create(
+        {
+          address: contractAddresses.TopazNFT,
+          abi: TOPAZ_NFT_API,
+          functionName: "mint",
+          args: [],
+        },
+        { includeAbi: true },
+      );
+    } catch (err) {
+      console.error("Error minting TOPAZ NFT:", err);
     }
   };
 
@@ -217,20 +239,32 @@ export const App = () => {
                 <p>No active sessions</p>
               )}
             </div>
-            <div className="space-y-1">
-              <h1 className="font-medium text-xl">Test Transactions</h1>
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => handleMintMagic(1000)}>
-                  Mint 1,000 MAGIC
-                </Button>
-                <Button onClick={() => handleRawMintMagic(1000)}>
-                  Mint 1,000 MAGIC (Raw)
-                </Button>
-                <Button onClick={() => handleSendEth(0.0001)}>
-                  Send 0.0001 ETH
-                </Button>
+            {chain.id === arbitrumSepolia.id ? (
+              <div className="space-y-1">
+                <h1 className="font-medium text-xl">Test Transactions</h1>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={() => handleMintMagic(1000)}>
+                    Mint 1,000 MAGIC
+                  </Button>
+                  <Button onClick={() => handleRawMintMagic(1000)}>
+                    Mint 1,000 MAGIC (Raw)
+                  </Button>
+                  <Button onClick={() => handleSendNative(0.0001)}>
+                    Send 0.0001 ETH
+                  </Button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-1">
+                <h1 className="font-medium text-xl">Test Transactions</h1>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={handleMintTopazNft}>Mint Topaz NFT</Button>
+                  <Button onClick={() => handleSendNative(0.0001)}>
+                    Send 0.0001 MAGIC
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="space-y-1">
               <h1 className="font-medium text-xl">Test Analytics</h1>
               <div className="flex flex-wrap gap-2">
