@@ -1,3 +1,4 @@
+import { treasureTopaz } from "@treasure-dev/tdk-core";
 import {
   type AddressString,
   Button,
@@ -12,6 +13,7 @@ import {
   toEther,
   toWei,
 } from "thirdweb";
+import { arbitrumSepolia } from "thirdweb/chains";
 
 const ERC20_MINTABLE_ABI = [
   {
@@ -126,7 +128,7 @@ export const App = () => {
           TDK React - Connect Example
         </h1>
         <ConnectButton
-          supportedChainIds={[421614, 42161]}
+          supportedChainIds={[treasureTopaz.id, arbitrumSepolia.id]}
           onConnected={(method, wallet, nextUser) => {
             console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({

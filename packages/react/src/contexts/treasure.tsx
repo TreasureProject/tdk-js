@@ -1,3 +1,4 @@
+import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import {
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
@@ -11,6 +12,7 @@ import {
   createTreasureConnectClient,
   decodeAuthToken,
   getContractAddresses,
+  getUserAddress,
   startUserSession,
 } from "@treasure-dev/tdk-core";
 import {
@@ -24,7 +26,7 @@ import {
   useState,
 } from "react";
 import { I18nextProvider } from "react-i18next";
-import { defineChain } from "thirdweb";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   useActiveWallet,
   useActiveWalletChain,
@@ -35,7 +37,6 @@ import {
 } from "thirdweb/react";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
-import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
@@ -278,11 +279,24 @@ const TreasureProviderInner = ({
         client,
         ecosystemId,
         ecosystemPartnerId,
-        user,
         isConnecting:
           isAutoConnecting ||
           activeWalletStatus === "connecting" ||
           isAuthenticating,
+        ...(user
+          ? {
+              isConnected: true,
+              user,
+              userAddress:
+                getUserAddress(user, chain.id) ??
+                user.smartAccounts[0]?.address ??
+                ZERO_ADDRESS, // should not reach here
+            }
+          : {
+              isConnected: false,
+              user: undefined,
+              userAddress: undefined,
+            }),
         logIn: async (wallet: Wallet) => {
           if (isUsingTreasureLauncher) {
             console.debug(

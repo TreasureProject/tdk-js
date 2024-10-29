@@ -57,6 +57,7 @@ export {
   startUserSession,
   validateSession,
 } from "./connect/session";
+export { getUserAddress } from "./connect/user";
 
 // Bridgeworld
 export {
