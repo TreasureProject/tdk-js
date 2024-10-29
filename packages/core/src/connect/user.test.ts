@@ -5,8 +5,7 @@ import { treasureTopaz } from "../constants";
 import type { User } from "../types";
 import { getUserAddress } from "./user";
 
-// @ts-ignore
-const user: User = {
+const user = {
   smartAccounts: [
     {
       chainId: arbitrumSepolia.id,
@@ -17,7 +16,7 @@ const user: User = {
       address: "0xf9e197aa9fa7c3b27a1a1313cad5851b55f2fd71",
     },
   ],
-};
+} as User;
 
 describe("user utils", () => {
   it("should get user address by chain", () => {

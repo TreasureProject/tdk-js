@@ -96,8 +96,9 @@ const TreasureProviderInner = ({
         baseUri: apiUri,
         chainId: chain.id,
         backendWallet: sessionOptions?.backendWallet,
+        client,
       }),
-    [apiUri, chain.id, sessionOptions?.backendWallet],
+    [apiUri, chain.id, sessionOptions?.backendWallet, client],
   );
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
@@ -178,6 +179,7 @@ const TreasureProviderInner = ({
   const logOut = () => {
     setUser(undefined);
     tdk.clearAuthToken();
+    tdk.clearActiveWallet();
     clearStoredAuthToken();
     activeWallet?.disconnect();
   };
@@ -209,8 +211,9 @@ const TreasureProviderInner = ({
       nextUser = user;
     }
 
-    // Set auth token on TDK so it's used in future requests
+    // Set auth token and wallet on TDK so they can be used in future requests
     tdk.setAuthToken(nextAuthToken as string);
+    tdk.setActiveWallet(wallet);
 
     // Start user session if configured
     if (sessionOptions) {

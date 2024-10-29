@@ -238,6 +238,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
     baseUri: apiUri,
     chainId,
     backendWallet: sessionOptions?.backendWallet,
+    client,
   });
 
   const { token, user } = await authenticateWallet({
@@ -245,8 +246,9 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
     tdk,
   });
 
-  // Set auth token on TDK so it's used in future requests
+  // Set auth token and wallet on TDK so they can be used in future requests
   tdk.setAuthToken(token as string);
+  tdk.setActiveWallet(wallet);
 
   // Start user session if configured
   if (sessionOptions) {
