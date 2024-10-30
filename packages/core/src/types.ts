@@ -23,6 +23,7 @@ export type ConnectConfig = {
 export type UserContext = {
   id: string;
   email: string | null;
+  address: string;
   externalWalletAddress: string | null;
   tag: string | null;
   discriminant: number | null;
@@ -30,8 +31,6 @@ export type UserContext = {
     chainId: number;
     address: string;
   }[];
-  // Keep previous field name for backwards compatibility
-  address: string;
 };
 
 // General transactions

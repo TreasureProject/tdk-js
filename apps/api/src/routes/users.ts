@@ -1,5 +1,6 @@
 import { getUserSessions } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
+import { ZERO_ADDRESS } from "thirdweb";
 
 import "../middleware/auth";
 import "../middleware/chain";
@@ -115,9 +116,13 @@ export const usersRoutes =
           ...restUser,
           ...profile,
           ...transformUserProfileResponseFields(profile),
+          address:
+            restUser.smartAccounts.find(
+              (smartAccount) => smartAccount.chainId === chain.id,
+            )?.address ??
+            restUser.smartAccounts[0]?.address ??
+            ZERO_ADDRESS, // added for TypeScript, should not reach
           sessions,
-          // Keep previous field name for backwards compatibility
-          address: restUser.smartAccounts[0]?.address ?? "",
         });
       },
     );
@@ -140,7 +145,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, authError } = req;
+        const { chain, userId, authError } = req;
         if (!userId) {
           throwUnauthorizedError(authError ?? "Unauthorized");
           return;
@@ -200,13 +205,16 @@ export const usersRoutes =
         }
 
         const { user, ...restProfile } = profile;
-
         reply.send({
           ...user,
           ...restProfile,
           ...transformUserProfileResponseFields(restProfile),
-          // Keep previous field name for backwards compatibility
-          address: user.smartAccounts[0]?.address ?? "",
+          address:
+            user.smartAccounts.find(
+              (smartAccount) => smartAccount.chainId === chain.id,
+            )?.address ??
+            user.smartAccounts[0]?.address ??
+            ZERO_ADDRESS, // added for TypeScript, should not reach
         });
       },
     );
