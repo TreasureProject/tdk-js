@@ -13,13 +13,13 @@ type Props = UseConnectOptions;
 
 export const ConnectButton = (props?: Props) => {
   const { t } = useTranslation();
-  const { user, isConnecting } = useTreasure();
+  const { userAddress, isConnecting, isConnected } = useTreasure();
   const { openConnectModal, openAccountModal } = useConnect(props);
   return (
     <>
-      {user ? (
+      {isConnected ? (
         <ConnectButtonAuthenticatedView
-          user={user}
+          userAddress={userAddress}
           onClick={openAccountModal}
         />
       ) : (

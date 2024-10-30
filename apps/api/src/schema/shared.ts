@@ -1,5 +1,6 @@
 import { type Static, Type } from "@sinclair/typebox";
 
+const EXAMPLE_CHAIN_ID = 978658;
 const EXAMPLE_USER_ID = "clxtvrt7p00012e6m8yurr83z";
 const EXAMPLE_EMAIL = "example@treasure.lol";
 export const EXAMPLE_CONTRACT_ADDRESS =
@@ -114,6 +115,10 @@ export const userSchema = Type.Object({
     }),
     Type.Null(),
   ]),
+  address: Type.String({
+    description: "Treasure Account address for the requested chain",
+    examples: [EXAMPLE_WALLET_ADDRESS],
+  }),
   externalWalletAddress: Type.Union([
     Type.String({
       description: "User wallet address",
@@ -123,18 +128,16 @@ export const userSchema = Type.Object({
   ]),
   smartAccounts: Type.Array(
     Type.Object({
-      chainId: Type.Number(),
+      chainId: Type.Number({
+        description: "Chain ID",
+        examples: [EXAMPLE_CHAIN_ID],
+      }),
       address: Type.String({
-        description: "Treasure Account address",
+        description: "Treasure Account address for the given chain",
         examples: [EXAMPLE_WALLET_ADDRESS],
       }),
     }),
   ),
-  // Keep previous field name for backwards compatibility
-  address: Type.String({
-    description: "Treasure Account address",
-    examples: [EXAMPLE_WALLET_ADDRESS],
-  }),
 });
 
 export const userProfileSchema = Type.Object({

@@ -190,12 +190,11 @@ export const authRoutes =
             context: {
               id: user.id,
               email: profile.email,
+              address,
               externalWalletAddress: user.externalWalletAddress,
               tag: profile.tag,
               discriminant: profile.discriminant,
               smartAccounts: user.smartAccounts,
-              // Keep previous field name for backwards compatibility
-              address,
             },
           }),
           getUserSessions({
@@ -230,9 +229,8 @@ export const authRoutes =
             ...user,
             ...profile,
             ...transformUserProfileResponseFields(profile),
-            sessions,
-            // Keep previous field name for backwards compatibility
             address,
+            sessions,
           },
         });
       },

@@ -59,14 +59,24 @@ export type ContextValues = {
   client: TreasureConnectClient;
   ecosystemId: EcosystemIdString;
   ecosystemPartnerId: string;
-  user?: User;
   isConnecting: boolean;
-  logIn: (wallet: Wallet) => Promise<User | undefined>;
+  isUsingTreasureLauncher: boolean;
+  logIn: (wallet: Wallet, chainId?: number) => Promise<User | undefined>;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
-  isUsingTreasureLauncher: boolean;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
   trackCustomEvent: (event: AnalyticsEvent) => Promise<string>;
-};
+} & (
+  | {
+      isConnected: false;
+      user: undefined;
+      userAddress: undefined;
+    }
+  | {
+      isConnected: true;
+      user: User;
+      userAddress: string;
+    }
+);

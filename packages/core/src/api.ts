@@ -5,7 +5,17 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
-import { toHex } from "thirdweb";
+import {
+  type Hex,
+  defineChain,
+  getContract,
+  prepareContractCall,
+  prepareTransaction,
+  sendAndConfirmTransaction,
+  toHex,
+} from "thirdweb";
+import { isZkSyncChain } from "thirdweb/utils";
+import type { Wallet } from "thirdweb/wallets";
 import type {
   CreateRawTransactionBody,
   CreateRawTransactionReply,
@@ -37,6 +47,7 @@ import type {
   SwapBody,
 } from "../../../apps/api/src/schema/magicswap";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
+import type { TreasureConnectClient } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -52,22 +63,30 @@ export class TDKAPI {
   chainId: number;
   backendWallet?: string;
   authToken?: string;
+  client?: TreasureConnectClient;
+  activeWallet?: Wallet;
 
   constructor({
     baseUri = DEFAULT_TDK_API_BASE_URI,
     chainId = DEFAULT_TDK_CHAIN_ID,
     backendWallet,
     authToken,
+    client,
+    activeWallet,
   }: {
     baseUri?: string;
     chainId?: number;
     backendWallet?: string;
     authToken?: string;
+    client?: TreasureConnectClient;
+    activeWallet?: Wallet;
   }) {
     this.baseUri = baseUri;
     this.chainId = chainId;
     this.backendWallet = backendWallet;
     this.authToken = authToken;
+    this.client = client;
+    this.activeWallet = activeWallet;
   }
 
   async fetch<T>(path: string, options?: RequestInit): Promise<T> {
@@ -148,6 +167,14 @@ export class TDKAPI {
     this.authToken = undefined;
   }
 
+  setActiveWallet(wallet: Wallet) {
+    this.activeWallet = wallet;
+  }
+
+  clearActiveWallet() {
+    this.activeWallet = undefined;
+  }
+
   auth = {
     getLoginPayload: (params: ReadLoginPayloadQuerystring) =>
       this.get<ReadLoginPayloadReply>("/login/payload", params),
@@ -213,8 +240,55 @@ export class TDKAPI {
         skipWaitForCompletion?: boolean;
         accountAddress?: string;
         accountSignature?: string;
+        useActiveWallet?: boolean;
       },
     ) => {
+      const chain = defineChain(this.chainId);
+      // TODO: remove ZK check when sessions are supported
+      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+        if (!this.client) {
+          throw new Error("No Treasure Connect client set");
+        }
+
+        const account = this.activeWallet?.getAccount();
+        if (!account) {
+          throw new Error("No active wallet set");
+        }
+
+        const { address, abi, functionName, args, txOverrides } = params;
+        const contract = getContract({
+          client: this.client,
+          chain,
+          address,
+          abi,
+        });
+
+        // @ts-ignore: abitype and the Thirdweb SDK don't play well
+        const transaction = prepareContractCall({
+          contract,
+          method: functionName,
+          params: args,
+          value: txOverrides?.value ? BigInt(txOverrides.value) : undefined,
+          gas: txOverrides?.gas ? BigInt(txOverrides.gas) : undefined,
+          maxFeePerGas: txOverrides?.maxFeePerGas
+            ? BigInt(txOverrides.maxFeePerGas)
+            : undefined,
+          maxPriorityFeePerGas: txOverrides?.maxPriorityFeePerGas
+            ? BigInt(txOverrides.maxPriorityFeePerGas)
+            : undefined,
+        });
+        const receipt = await sendAndConfirmTransaction({
+          account,
+          transaction,
+        });
+        return {
+          status: receipt.status === "success" ? "success" : "errored",
+          transactionHash: receipt.transactionHash,
+          errorMessage:
+            receipt.status === "reverted" ? "Transaction reverted" : null,
+        };
+      }
+
       const result = await this.post<
         CreateTransactionBody,
         CreateTransactionReply
@@ -252,8 +326,48 @@ export class TDKAPI {
         skipWaitForCompletion?: boolean;
         accountAddress?: string;
         accountSignature?: string;
+        useActiveWallet?: boolean;
       },
     ) => {
+      const chain = defineChain(this.chainId);
+      // TODO: remove ZK check when sessions are supported
+      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+        if (!this.client) {
+          throw new Error("No Treasure Connect client set");
+        }
+
+        const account = this.activeWallet?.getAccount();
+        if (!account) {
+          throw new Error("No active wallet set");
+        }
+
+        const { to, data, value, txOverrides } = params;
+        const transaction = prepareTransaction({
+          client: this.client,
+          chain,
+          to,
+          data: data as Hex,
+          value: value ? BigInt(value) : undefined,
+          gas: txOverrides?.gas ? BigInt(txOverrides.gas) : undefined,
+          maxFeePerGas: txOverrides?.maxFeePerGas
+            ? BigInt(txOverrides.maxFeePerGas)
+            : undefined,
+          maxPriorityFeePerGas: txOverrides?.maxPriorityFeePerGas
+            ? BigInt(txOverrides.maxPriorityFeePerGas)
+            : undefined,
+        });
+        const receipt = await sendAndConfirmTransaction({
+          account,
+          transaction,
+        });
+        return {
+          status: receipt.status === "success" ? "success" : "errored",
+          transactionHash: receipt.transactionHash,
+          errorMessage:
+            receipt.status === "reverted" ? "Transaction reverted" : null,
+        };
+      }
+
       const result = await this.post<
         CreateRawTransactionBody,
         CreateRawTransactionReply

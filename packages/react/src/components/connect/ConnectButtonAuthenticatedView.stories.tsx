@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { User } from "@treasure-dev/tdk-core";
 
 import { ConnectButtonAuthenticatedView } from "./ConnectButtonAuthenticatedView";
 
@@ -12,8 +11,6 @@ type Story = StoryObj<typeof ConnectButtonAuthenticatedView>;
 
 export const Default: Story = {
   args: {
-    user: {
-      address: "0x0000000000000000000000000000000000000000",
-    } as User,
+    userAddress: "0x1234000000000000000000000000000000005678",
   },
 };

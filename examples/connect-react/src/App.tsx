@@ -1,3 +1,4 @@
+import { getUserAddress, treasureTopaz } from "@treasure-dev/tdk-core";
 import {
   type AddressString,
   Button,
@@ -12,6 +13,7 @@ import {
   toEther,
   toWei,
 } from "thirdweb";
+import { arbitrumSepolia } from "thirdweb/chains";
 
 const ERC20_MINTABLE_ABI = [
   {
@@ -34,24 +36,37 @@ const ERC20_MINTABLE_ABI = [
   },
 ] as const;
 
+const TOPAZ_NFT_API = [
+  {
+    inputs: [],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
+
 export const App = () => {
-  const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
-    useTreasure();
+  const {
+    client,
+    chain,
+    tdk,
+    user,
+    userAddress,
+    contractAddresses,
+    trackCustomEvent,
+  } = useTreasure();
 
   const [tracking, setTracking] = useState(false);
 
   const handleMintMagic = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
     try {
       await tdk.transaction.create(
         {
           address: contractAddresses.MAGIC,
           abi: ERC20_MINTABLE_ABI,
           functionName: "mint",
-          args: [user.address as AddressString, toWei(amount.toString())],
+          args: [userAddress as AddressString, toWei(amount.toString())],
         },
         { includeAbi: true },
       );
@@ -61,10 +76,6 @@ export const App = () => {
   };
 
   const handleRawMintMagic = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
     const contract = getContract({
       client,
       chain,
@@ -75,7 +86,7 @@ export const App = () => {
     const transaction = prepareContractCall({
       contract,
       method: "mint",
-      params: [user.address, toWei(amount.toString())],
+      params: [userAddress as AddressString, toWei(amount.toString())],
     });
 
     try {
@@ -89,11 +100,7 @@ export const App = () => {
     }
   };
 
-  const handleSendEth = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
+  const handleSendNative = async (amount: number) => {
     try {
       await tdk.transaction.sendRaw({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
@@ -102,6 +109,22 @@ export const App = () => {
       });
     } catch (err) {
       console.error("Error sending ETH:", err);
+    }
+  };
+
+  const handleMintTopazNft = async () => {
+    try {
+      await tdk.transaction.create(
+        {
+          address: contractAddresses.TopazNFT,
+          abi: TOPAZ_NFT_API,
+          functionName: "mint",
+          args: [],
+        },
+        { includeAbi: true },
+      );
+    } catch (err) {
+      console.error("Error minting TOPAZ NFT:", err);
     }
   };
 
@@ -126,11 +149,13 @@ export const App = () => {
           TDK React - Connect Example
         </h1>
         <ConnectButton
-          supportedChainIds={[421614, 42161]}
+          supportedChainIds={[treasureTopaz.id, arbitrumSepolia.id]}
           onConnected={(method, wallet, nextUser) => {
             console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({
-              address: nextUser?.address,
+              address: nextUser
+                ? getUserAddress(nextUser, chain.id)
+                : undefined,
               name: "wallet-connect",
               properties: {
                 method,
@@ -215,20 +240,32 @@ export const App = () => {
                 <p>No active sessions</p>
               )}
             </div>
-            <div className="space-y-1">
-              <h1 className="font-medium text-xl">Test Transactions</h1>
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => handleMintMagic(1000)}>
-                  Mint 1,000 MAGIC
-                </Button>
-                <Button onClick={() => handleRawMintMagic(1000)}>
-                  Mint 1,000 MAGIC (Raw)
-                </Button>
-                <Button onClick={() => handleSendEth(0.0001)}>
-                  Send 0.0001 ETH
-                </Button>
+            {chain.id === arbitrumSepolia.id ? (
+              <div className="space-y-1">
+                <h1 className="font-medium text-xl">Test Transactions</h1>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={() => handleMintMagic(1000)}>
+                    Mint 1,000 MAGIC
+                  </Button>
+                  <Button onClick={() => handleRawMintMagic(1000)}>
+                    Mint 1,000 MAGIC (Raw)
+                  </Button>
+                  <Button onClick={() => handleSendNative(0.0001)}>
+                    Send 0.0001 ETH
+                  </Button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-1">
+                <h1 className="font-medium text-xl">Test Transactions</h1>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={handleMintTopazNft}>Mint Topaz NFT</Button>
+                  <Button onClick={() => handleSendNative(0.0001)}>
+                    Send 0.0001 MAGIC
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="space-y-1">
               <h1 className="font-medium text-xl">Test Analytics</h1>
               <div className="flex flex-wrap gap-2">

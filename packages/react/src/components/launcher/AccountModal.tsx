@@ -17,6 +17,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
   const {
     client,
     user,
+    userAddress,
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
     ecosystemId,
@@ -73,7 +74,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
               )}
               <div>
                 <h2 className="tdk-text-lg tdk-font-semibold">
-                  {user.tag || shortenAddress(user.address)}
+                  {user.tag || shortenAddress(userAddress)}
                 </h2>
                 {user.email && (
                   <p className="tdk-text-sm tdk-text-gray-400">{user.email}</p>

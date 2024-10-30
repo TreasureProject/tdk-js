@@ -1,3 +1,4 @@
+import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import {
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
@@ -11,6 +12,7 @@ import {
   createTreasureConnectClient,
   decodeAuthToken,
   getContractAddresses,
+  getUserAddress,
   startUserSession,
 } from "@treasure-dev/tdk-core";
 import {
@@ -24,7 +26,7 @@ import {
   useState,
 } from "react";
 import { I18nextProvider } from "react-i18next";
-import { defineChain } from "thirdweb";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   useActiveWallet,
   useActiveWalletChain,
@@ -35,7 +37,6 @@ import {
 } from "thirdweb/react";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
-import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
@@ -99,13 +100,19 @@ const TreasureProviderInner = ({
         baseUri: apiUri,
         chainId: chain.id,
         backendWallet: sessionOptions?.backendWallet,
+        client,
       }),
-    [apiUri, chain.id, sessionOptions?.backendWallet],
+    [apiUri, chain.id, sessionOptions?.backendWallet, client],
   );
+
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
     [chain.id],
   );
+
+  const userAddress = user
+    ? (getUserAddress(user, chain.id) ?? user.smartAccounts[0]?.address)
+    : undefined;
 
   const analyticsManager = useMemo(() => {
     if (!analyticsOptions) {
@@ -131,7 +138,7 @@ const TreasureProviderInner = ({
         );
       }
 
-      let address = event.address ?? user?.address;
+      let address = event.address ?? userAddress;
 
       if (address === undefined && event.userId === undefined) {
         address = "";
@@ -159,7 +166,7 @@ const TreasureProviderInner = ({
       };
       return analyticsManager.trackCustomEvent(trackableEvent);
     },
-    [analyticsManager, user?.address],
+    [analyticsManager, userAddress],
   );
 
   const onAuthTokenUpdated = useCallback(
@@ -189,11 +196,22 @@ const TreasureProviderInner = ({
     });
     setUser(undefined);
     tdk.clearAuthToken();
+    tdk.clearActiveWallet();
     clearStoredAuthToken();
     activeWallet?.disconnect();
   };
 
-  const logIn = async (wallet: Wallet): Promise<User | undefined> => {
+  const logIn = async (
+    wallet: Wallet,
+    chainId?: number,
+  ): Promise<User | undefined> => {
+    if (isUsingTreasureLauncher) {
+      console.debug(
+        "[TreasureProvider] Skipping login because launcher is being used",
+      );
+      return;
+    }
+
     let nextUser: User | undefined;
 
     // Check for existing stored auth token
@@ -203,6 +221,7 @@ const TreasureProviderInner = ({
       try {
         const { exp: authTokenExpirationDate } = decodeAuthToken(nextAuthToken);
         if (authTokenExpirationDate > Date.now() / 1000) {
+          setIsAuthenticating(true);
           nextUser = await tdk.user.me({ overrideAuthToken: nextAuthToken });
         }
       } catch (err) {
@@ -215,20 +234,23 @@ const TreasureProviderInner = ({
     }
 
     if (!nextUser) {
+      setIsAuthenticating(true);
       const { token, user } = await authenticateWallet({ wallet, tdk });
       nextAuthToken = token;
       nextUser = user;
     }
 
-    // Set auth token on TDK so it's used in future requests
+    // Set auth token and wallet on TDK so they can be used in future requests
     tdk.setAuthToken(nextAuthToken as string);
+    tdk.setActiveWallet(wallet);
 
     // Start user session if configured
     if (sessionOptions) {
+      setIsAuthenticating(true);
       await startUserSession({
         client,
         wallet,
-        chainId: chain.id,
+        chainId: chainId ?? chain.id,
         tdk,
         sessions: nextUser.sessions,
         options: sessionOptions,
@@ -248,6 +270,8 @@ const TreasureProviderInner = ({
 
     // Trigger completion callback
     onConnect?.(nextUser);
+
+    setIsAuthenticating(false);
     return nextUser;
   };
 
@@ -265,25 +289,7 @@ const TreasureProviderInner = ({
       sponsorGas: true,
     },
     timeout: autoConnectTimeout,
-    onConnect: async (wallet) => {
-      if (isUsingTreasureLauncher) {
-        console.debug(
-          "[TreasureProvider] Skipping auto-connect because launcher is being used",
-        );
-        return;
-      }
-      setIsAuthenticating(true);
-      try {
-        await logIn(wallet);
-      } catch (err) {
-        console.debug(
-          "[TreasureProvider] Error logging in with auto-connect:",
-          err,
-        );
-      }
-
-      setIsAuthenticating(false);
-    },
+    onConnect: logIn,
   });
 
   return (
@@ -297,28 +303,23 @@ const TreasureProviderInner = ({
         client,
         ecosystemId,
         ecosystemPartnerId,
-        user,
         isConnecting:
           isAutoConnecting ||
           activeWalletStatus === "connecting" ||
           isAuthenticating,
-        logIn: async (wallet: Wallet) => {
-          if (isUsingTreasureLauncher) {
-            console.debug(
-              "[TreasureProvider] Skipping auto-connect because launcher is being used",
-            );
-            return;
-          }
-          setIsAuthenticating(true);
-          try {
-            const nextUser = await logIn(wallet);
-            setIsAuthenticating(false);
-            return nextUser;
-          } catch (err) {
-            setIsAuthenticating(false);
-            throw err;
-          }
-        },
+        ...(user
+          ? {
+              isConnected: true,
+              user,
+              userAddress: userAddress ?? ZERO_ADDRESS, // should not reach here
+            }
+          : {
+              isConnected: false,
+              user: undefined,
+              userAddress: undefined,
+            }),
+        isUsingTreasureLauncher,
+        logIn,
         logOut,
         startUserSession: (options: SessionOptions) =>
           isUsingTreasureLauncher
@@ -333,7 +334,6 @@ const TreasureProviderInner = ({
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
-        isUsingTreasureLauncher,
         openLauncherAccountModal,
         trackCustomEvent,
       }}

@@ -1,4 +1,3 @@
-import type { User } from "@treasure-dev/tdk-core";
 import type { ButtonHTMLAttributes } from "react";
 import { shortenAddress } from "thirdweb/utils";
 
@@ -7,11 +6,11 @@ import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  user: User;
+  userAddress: string;
 };
 
 export const ConnectButtonAuthenticatedView = ({
-  user,
+  userAddress,
   className,
   ...buttonProps
 }: Props) => {
@@ -24,10 +23,9 @@ export const ConnectButtonAuthenticatedView = ({
       )}
       {...buttonProps}
     >
-      {/* <span className="tdk-w-6 tdk-h-6 tdk-bg-ruby tdk-rounded-md" /> */}
       <span className="tdk-flex tdk-items-center tdk-gap-1">
         <TreasureSparklesIcon className="tdk-w-3.5 tdk-h-3.5 tdk-text-ruby" />
-        {shortenAddress(user.address)}
+        {shortenAddress(userAddress)}
       </span>
     </Button>
   );

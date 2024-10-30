@@ -69,11 +69,11 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.4
-  thirdweb: ^5.64.2
+  thirdweb: ^5.64.3
   tsup: ^8.3.5
   tsx: ^4.19.2
   typescript: ^5.6.3
   uuid: ^11.0.2
-  viem: 2.21.34 # matches Thirdweb version to satisfy getAwsKmsAccount types
+  viem: 2.21.35 # matches Thirdweb version to satisfy getAwsKmsAccount types
   vite: ^5.4.10
   vitest: ^2.1.4
