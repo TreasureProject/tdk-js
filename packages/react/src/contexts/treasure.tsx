@@ -113,6 +113,7 @@ const TreasureProviderInner = ({
       apiKey: analyticsOptions.apiKey,
       app: analyticsOptions.appInfo,
       cartridgeTag: analyticsOptions.cartridgeTag,
+      device: analyticsOptions.device,
     });
 
     return AnalyticsManager.instance;

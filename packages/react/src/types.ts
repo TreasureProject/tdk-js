@@ -2,6 +2,7 @@ import type {
   AddressString,
   AppInfo,
   Contract,
+  Device,
   EcosystemIdString,
   PropertyValue,
   SessionOptions,
@@ -30,6 +31,7 @@ type AnalyticsOptions = {
   apiKey: string;
   appInfo: AppInfo;
   cartridgeTag: string;
+  device?: Device;
 };
 
 export type Config = {
