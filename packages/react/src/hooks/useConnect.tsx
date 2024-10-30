@@ -17,6 +17,10 @@ import {
 } from "../components/connect/ConnectModal";
 import { useTreasure } from "../contexts/treasure";
 import { getLocaleId } from "../i18n";
+import {
+  EVT_TREASURECONNECT_UI_ACCOUNT,
+  EVT_TREASURECONNECT_UI_LOGIN,
+} from "../utils/defaultAnalytics";
 
 export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
@@ -74,6 +78,7 @@ export const useConnect = (props?: Props) => {
     setRootElement,
     isUsingTreasureLauncher,
     openLauncherAccountModal,
+    trackCustomEvent,
   } = useTreasure();
   const activeWallet = useActiveWallet();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
@@ -97,6 +102,11 @@ export const useConnect = (props?: Props) => {
       );
       return;
     }
+
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_UI_LOGIN,
+    });
+
     setRootElement(
       <ConnectModal
         open
@@ -108,6 +118,13 @@ export const useConnect = (props?: Props) => {
   };
 
   const openAccountModal = () => {
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_UI_ACCOUNT,
+      properties: {
+        isUsingTreasureLauncher,
+      },
+    });
+
     if (isUsingTreasureLauncher) {
       openLauncherAccountModal(connectModalSize);
       return;

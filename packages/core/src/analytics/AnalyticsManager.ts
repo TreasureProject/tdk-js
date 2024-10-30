@@ -6,8 +6,13 @@ import {
   getCachedEvents,
   removeOldEvents,
 } from "./storage";
-import type { AnalyticsPayload, AppInfo, TrackableEvent } from "./types";
-import { getEventId, getServerTime } from "./utils";
+import type {
+  AnalyticsPayload,
+  AppInfo,
+  Device,
+  TrackableEvent,
+} from "./types";
+import { getDevice, getEventId, getServerTime } from "./utils";
 
 export class AnalyticsManager {
   static _instance: AnalyticsManager;
@@ -21,6 +26,8 @@ export class AnalyticsManager {
   app!: AppInfo;
 
   cartridgeTag!: string;
+
+  device?: Device;
 
   private constructor() {}
 
@@ -37,11 +44,23 @@ export class AnalyticsManager {
     apiKey,
     app,
     cartridgeTag,
-  }: { apiUri?: string; apiKey: string; app: AppInfo; cartridgeTag: string }) {
+    device,
+  }: {
+    apiUri?: string;
+    apiKey: string;
+    app: AppInfo;
+    cartridgeTag: string;
+    device?: Device;
+  }) {
     this.apiUri = apiUri;
     this.apiKey = apiKey;
     this.app = app;
     this.cartridgeTag = cartridgeTag;
+    const defaultDevice = getDevice();
+    this.device = {
+      ...defaultDevice,
+      ...device,
+    };
     this.initialized = true;
 
     setInterval(
@@ -96,6 +115,7 @@ export class AnalyticsManager {
       time_server: serverTime,
       time_local: localTime,
       app: this.app,
+      device: this.device,
       tdk_flavour: "tdk-js",
       tdk_version: pjson.version,
     };

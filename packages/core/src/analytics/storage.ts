@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import type { AnalyticsPayload } from "./types";
 
 function getCachedEventIds(): string[] {
@@ -68,4 +69,15 @@ export function removeOldEvents(): void {
     }
   }
   localStorage.setItem("tdk-analytics-event-ids", JSON.stringify(eventIds));
+}
+
+export function getDeviceUniqueId(): string {
+  const deviceUIDKey = "tdk-analytics-device-unique-id";
+  const stored = localStorage.getItem(deviceUIDKey);
+  if (stored) {
+    return stored;
+  }
+  const newUID = `device-${uuidv4()}`;
+  localStorage.setItem(deviceUIDKey, newUID);
+  return newUID;
 }
