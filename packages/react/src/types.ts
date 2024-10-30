@@ -2,6 +2,7 @@ import type {
   AddressString,
   AppInfo,
   Contract,
+  Device,
   EcosystemIdString,
   PropertyValue,
   SessionOptions,
@@ -18,7 +19,7 @@ export type AnalyticsEvent = {
   name: string;
   userId?: string;
   address?: string;
-  properties: { [key: string]: PropertyValue | PropertyValue[] };
+  properties?: { [key: string]: PropertyValue | PropertyValue[] };
 };
 
 type LauncherOptions = {
@@ -30,6 +31,7 @@ type AnalyticsOptions = {
   apiKey: string;
   appInfo: AppInfo;
   cartridgeTag: string;
+  device?: Device;
 };
 
 export type Config = {

@@ -40,6 +40,10 @@ import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
 import {
+  EVT_TREASURECONNECT_CONNECTED,
+  EVT_TREASURECONNECT_DISCONNECTED,
+} from "../utils/defaultAnalytics";
+import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
@@ -113,6 +117,7 @@ const TreasureProviderInner = ({
       apiKey: analyticsOptions.apiKey,
       app: analyticsOptions.appInfo,
       cartridgeTag: analyticsOptions.cartridgeTag,
+      device: analyticsOptions.device,
     });
 
     return AnalyticsManager.instance;
@@ -126,10 +131,11 @@ const TreasureProviderInner = ({
         );
       }
 
-      const address = event.address ?? user?.address;
+      let address = event.address ?? user?.address;
 
       if (address === undefined && event.userId === undefined) {
-        throw new Error("Cannot track event without userId or address");
+        address = "";
+        event.userId = "";
       }
 
       // After the previous check one must be non-null so this works
@@ -149,7 +155,7 @@ const TreasureProviderInner = ({
       const trackableEvent: TrackableEvent = {
         ...playerId,
         name: event.name,
-        properties: event.properties,
+        properties: event.properties ?? {},
       };
       return analyticsManager.trackCustomEvent(trackableEvent);
     },
@@ -175,6 +181,12 @@ const TreasureProviderInner = ({
   });
 
   const logOut = () => {
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_DISCONNECTED,
+      properties: {
+        isUsingTreasureLauncher,
+      },
+    });
     setUser(undefined);
     tdk.clearAuthToken();
     clearStoredAuthToken();
@@ -226,6 +238,13 @@ const TreasureProviderInner = ({
     // Update user state
     setUser(nextUser);
     setStoredAuthToken(nextAuthToken as string);
+
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_CONNECTED,
+      properties: {
+        isUsingTreasureLauncher,
+      },
+    });
 
     // Trigger completion callback
     onConnect?.(nextUser);
