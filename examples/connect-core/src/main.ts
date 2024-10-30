@@ -1,10 +1,10 @@
 import {
-  type AddressString,
   type SessionOptions,
   type TDKAPI,
   type User,
   createTreasureConnectClient,
   getContractAddress,
+  getUserAddress,
   logIn,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
@@ -254,7 +254,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           ] as const,
           functionName: "mint",
           args: [
-            user.address as AddressString,
+            getUserAddress(user, chainId) ?? "",
             1000000000000000000000n, // 1,000
           ],
         },

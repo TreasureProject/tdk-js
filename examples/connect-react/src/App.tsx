@@ -1,4 +1,4 @@
-import { treasureTopaz } from "@treasure-dev/tdk-core";
+import { getUserAddress, treasureTopaz } from "@treasure-dev/tdk-core";
 import {
   type AddressString,
   Button,
@@ -47,23 +47,26 @@ const TOPAZ_NFT_API = [
 ] as const;
 
 export const App = () => {
-  const { client, chain, tdk, user, contractAddresses, trackCustomEvent } =
-    useTreasure();
+  const {
+    client,
+    chain,
+    tdk,
+    user,
+    userAddress,
+    contractAddresses,
+    trackCustomEvent,
+  } = useTreasure();
 
   const [tracking, setTracking] = useState(false);
 
   const handleMintMagic = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
     try {
       await tdk.transaction.create(
         {
           address: contractAddresses.MAGIC,
           abi: ERC20_MINTABLE_ABI,
           functionName: "mint",
-          args: [user.address as AddressString, toWei(amount.toString())],
+          args: [userAddress as AddressString, toWei(amount.toString())],
         },
         { includeAbi: true },
       );
@@ -73,10 +76,6 @@ export const App = () => {
   };
 
   const handleRawMintMagic = async (amount: number) => {
-    if (!user?.address) {
-      return;
-    }
-
     const contract = getContract({
       client,
       chain,
@@ -87,7 +86,7 @@ export const App = () => {
     const transaction = prepareContractCall({
       contract,
       method: "mint",
-      params: [user.address, toWei(amount.toString())],
+      params: [userAddress as AddressString, toWei(amount.toString())],
     });
 
     try {
@@ -154,7 +153,9 @@ export const App = () => {
           onConnected={(method, wallet, nextUser) => {
             console.log("Connect successful:", { method, wallet, nextUser });
             trackCustomEvent({
-              address: nextUser?.address,
+              address: nextUser
+                ? getUserAddress(nextUser, chain.id)
+                : undefined,
               name: "wallet-connect",
               properties: {
                 method,

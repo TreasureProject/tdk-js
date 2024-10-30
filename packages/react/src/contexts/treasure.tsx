@@ -100,10 +100,15 @@ const TreasureProviderInner = ({
       }),
     [apiUri, chain.id, sessionOptions?.backendWallet, client],
   );
+
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
     [chain.id],
   );
+
+  const userAddress = user
+    ? (getUserAddress(user, chain.id) ?? user.smartAccounts[0]?.address)
+    : undefined;
 
   const analyticsManager = useMemo(() => {
     if (!analyticsOptions) {
@@ -128,7 +133,7 @@ const TreasureProviderInner = ({
         );
       }
 
-      const address = event.address ?? user?.address;
+      const address = event.address ?? userAddress;
 
       if (address === undefined && event.userId === undefined) {
         throw new Error("Cannot track event without userId or address");
@@ -155,7 +160,7 @@ const TreasureProviderInner = ({
       };
       return analyticsManager.trackCustomEvent(trackableEvent);
     },
-    [analyticsManager, user?.address],
+    [analyticsManager, userAddress],
   );
 
   const onAuthTokenUpdated = useCallback(
@@ -290,10 +295,7 @@ const TreasureProviderInner = ({
           ? {
               isConnected: true,
               user,
-              userAddress:
-                getUserAddress(user, chain.id) ??
-                user.smartAccounts[0]?.address ??
-                ZERO_ADDRESS, // should not reach here
+              userAddress: userAddress ?? ZERO_ADDRESS, // should not reach here
             }
           : {
               isConnected: false,
