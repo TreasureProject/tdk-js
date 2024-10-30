@@ -102,9 +102,6 @@ export const useConnect = (props?: Props) => {
 
     trackCustomEvent({
       name: EVT_TREASURECONNECT_UI_LOGIN,
-      properties: {
-        isUsingTreasureLauncher,
-      },
     });
 
     setRootElement(

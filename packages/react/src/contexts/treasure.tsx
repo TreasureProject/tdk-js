@@ -155,7 +155,7 @@ const TreasureProviderInner = ({
       const trackableEvent: TrackableEvent = {
         ...playerId,
         name: event.name,
-        properties: event.properties,
+        properties: event.properties ?? {},
       };
       return analyticsManager.trackCustomEvent(trackableEvent);
     },

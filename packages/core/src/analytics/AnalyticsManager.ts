@@ -12,7 +12,7 @@ import type {
   Device,
   TrackableEvent,
 } from "./types";
-import { getEventId, getServerTime } from "./utils";
+import { getDevice, getEventId, getServerTime } from "./utils";
 
 export class AnalyticsManager {
   static _instance: AnalyticsManager;
@@ -56,7 +56,11 @@ export class AnalyticsManager {
     this.apiKey = apiKey;
     this.app = app;
     this.cartridgeTag = cartridgeTag;
-    this.device = device;
+    const defaultDevice = getDevice();
+    this.device = {
+      ...defaultDevice,
+      ...device,
+    };
     this.initialized = true;
 
     setInterval(

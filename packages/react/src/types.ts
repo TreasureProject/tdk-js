@@ -19,7 +19,7 @@ export type AnalyticsEvent = {
   name: string;
   userId?: string;
   address?: string;
-  properties: { [key: string]: PropertyValue | PropertyValue[] };
+  properties?: { [key: string]: PropertyValue | PropertyValue[] };
 };
 
 type LauncherOptions = {
