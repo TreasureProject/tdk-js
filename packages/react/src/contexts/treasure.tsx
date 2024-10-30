@@ -127,10 +127,11 @@ const TreasureProviderInner = ({
         );
       }
 
-      const address = event.address ?? user?.address;
+      let address = event.address ?? user?.address;
 
       if (address === undefined && event.userId === undefined) {
-        throw new Error("Cannot track event without userId or address");
+        address = "";
+        event.userId = "";
       }
 
       // After the previous check one must be non-null so this works
