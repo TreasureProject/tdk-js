@@ -40,6 +40,10 @@ import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
 import {
+  EVT_TREASURECONNECT_CONNECTED,
+  EVT_TREASURECONNECT_DISCONNECTED,
+} from "../utils/defaultAnalytics";
+import {
   clearStoredAuthToken,
   getStoredAuthToken,
   setStoredAuthToken,
@@ -177,6 +181,12 @@ const TreasureProviderInner = ({
   });
 
   const logOut = () => {
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_DISCONNECTED,
+      properties: {
+        isUsingTreasureLauncher,
+      },
+    });
     setUser(undefined);
     tdk.clearAuthToken();
     clearStoredAuthToken();
@@ -228,6 +238,13 @@ const TreasureProviderInner = ({
     // Update user state
     setUser(nextUser);
     setStoredAuthToken(nextAuthToken as string);
+
+    trackCustomEvent({
+      name: EVT_TREASURECONNECT_CONNECTED,
+      properties: {
+        isUsingTreasureLauncher,
+      },
+    });
 
     // Trigger completion callback
     onConnect?.(nextUser);
