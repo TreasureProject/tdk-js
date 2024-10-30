@@ -59,7 +59,7 @@ export type ContextValues = {
   ecosystemPartnerId: string;
   isConnecting: boolean;
   isUsingTreasureLauncher: boolean;
-  logIn: (wallet: Wallet) => Promise<User | undefined>;
+  logIn: (wallet: Wallet, chainId?: number) => Promise<User | undefined>;
   logOut: () => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;

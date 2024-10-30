@@ -189,7 +189,17 @@ const TreasureProviderInner = ({
     activeWallet?.disconnect();
   };
 
-  const logIn = async (wallet: Wallet): Promise<User | undefined> => {
+  const logIn = async (
+    wallet: Wallet,
+    chainId?: number,
+  ): Promise<User | undefined> => {
+    if (isUsingTreasureLauncher) {
+      console.debug(
+        "[TreasureProvider] Skipping login because launcher is being used",
+      );
+      return;
+    }
+
     let nextUser: User | undefined;
 
     // Check for existing stored auth token
@@ -199,6 +209,7 @@ const TreasureProviderInner = ({
       try {
         const { exp: authTokenExpirationDate } = decodeAuthToken(nextAuthToken);
         if (authTokenExpirationDate > Date.now() / 1000) {
+          setIsAuthenticating(true);
           nextUser = await tdk.user.me({ overrideAuthToken: nextAuthToken });
         }
       } catch (err) {
@@ -211,6 +222,7 @@ const TreasureProviderInner = ({
     }
 
     if (!nextUser) {
+      setIsAuthenticating(true);
       const { token, user } = await authenticateWallet({ wallet, tdk });
       nextAuthToken = token;
       nextUser = user;
@@ -222,10 +234,11 @@ const TreasureProviderInner = ({
 
     // Start user session if configured
     if (sessionOptions) {
+      setIsAuthenticating(true);
       await startUserSession({
         client,
         wallet,
-        chainId: chain.id,
+        chainId: chainId ?? chain.id,
         tdk,
         sessions: nextUser.sessions,
         options: sessionOptions,
@@ -238,6 +251,8 @@ const TreasureProviderInner = ({
 
     // Trigger completion callback
     onConnect?.(nextUser);
+
+    setIsAuthenticating(false);
     return nextUser;
   };
 
@@ -255,25 +270,7 @@ const TreasureProviderInner = ({
       sponsorGas: true,
     },
     timeout: autoConnectTimeout,
-    onConnect: async (wallet) => {
-      if (isUsingTreasureLauncher) {
-        console.debug(
-          "[TreasureProvider] Skipping auto-connect because launcher is being used",
-        );
-        return;
-      }
-      setIsAuthenticating(true);
-      try {
-        await logIn(wallet);
-      } catch (err) {
-        console.debug(
-          "[TreasureProvider] Error logging in with auto-connect:",
-          err,
-        );
-      }
-
-      setIsAuthenticating(false);
-    },
+    onConnect: logIn,
   });
 
   return (
@@ -302,23 +299,8 @@ const TreasureProviderInner = ({
               user: undefined,
               userAddress: undefined,
             }),
-        logIn: async (wallet: Wallet) => {
-          if (isUsingTreasureLauncher) {
-            console.debug(
-              "[TreasureProvider] Skipping auto-connect because launcher is being used",
-            );
-            return;
-          }
-          setIsAuthenticating(true);
-          try {
-            const nextUser = await logIn(wallet);
-            setIsAuthenticating(false);
-            return nextUser;
-          } catch (err) {
-            setIsAuthenticating(false);
-            throw err;
-          }
-        },
+        isUsingTreasureLauncher,
+        logIn,
         logOut,
         startUserSession: (options: SessionOptions) =>
           isUsingTreasureLauncher
@@ -333,7 +315,6 @@ const TreasureProviderInner = ({
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
-        isUsingTreasureLauncher,
         openLauncherAccountModal,
         trackCustomEvent,
       }}

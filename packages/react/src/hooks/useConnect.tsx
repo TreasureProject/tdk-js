@@ -1,6 +1,7 @@
 import {
   type SupportedTokens,
   darkTheme,
+  useActiveWallet,
   useWalletDetailsModal,
 } from "thirdweb/react";
 
@@ -68,11 +69,13 @@ export const useConnect = (props?: Props) => {
     chain,
     client,
     ecosystemId,
+    logIn,
     logOut,
     setRootElement,
     isUsingTreasureLauncher,
     openLauncherAccountModal,
   } = useTreasure();
+  const activeWallet = useActiveWallet();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
   const {
     supportedChainIds,
@@ -117,6 +120,13 @@ export const useConnect = (props?: Props) => {
       locale: getLocaleId(),
       connectOptions: {
         hiddenWallets: ["inApp", ecosystemId],
+      },
+      networkSelector: {
+        onSwitch: (nextChain) => {
+          if (activeWallet) {
+            logIn(activeWallet, nextChain.id);
+          }
+        },
       },
       displayBalanceToken: chains.reduce(
         (acc, chain) => {

@@ -251,7 +251,6 @@ export class TDKAPI {
         }
 
         const account = this.activeWallet?.getAccount();
-
         if (!account) {
           throw new Error("No active wallet set");
         }
@@ -338,7 +337,6 @@ export class TDKAPI {
         }
 
         const account = this.activeWallet?.getAccount();
-
         if (!account) {
           throw new Error("No active wallet set");
         }
