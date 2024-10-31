@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-core
 
+## 3.3.1
+
+### Patch Changes
+
+- b3d65f6: Updated analytics, device tracking + auto default analytics tracking
+- 347d4aa: Added `getUserAddress` utility for looking up user smart account address by chain ID
+- 347d4aa: Updated send transaction functions to use active wallet on ZKsync chains
+
 ## 3.3.0
 
 ### Minor Changes
