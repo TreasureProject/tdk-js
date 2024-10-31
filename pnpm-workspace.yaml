@@ -69,7 +69,7 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.4
-  thirdweb: ^5.64.3
+  thirdweb: ^5.64.4
   tsup: ^8.3.5
   tsx: ^4.19.2
   typescript: ^5.6.3
