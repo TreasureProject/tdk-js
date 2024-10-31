@@ -1,5 +1,17 @@
 # @treasure-dev/tdk-react
 
+## 3.3.1
+
+### Patch Changes
+
+- b3d65f6: Updated analytics, device tracking + auto default analytics tracking
+- 347d4aa: Set active wallet on TDK API instance to send transactions on ZKsync chains
+- 347d4aa: Updated `ConnectButton` connected view to show smart account per selected chain
+- Updated dependencies [b3d65f6]
+- Updated dependencies [347d4aa]
+- Updated dependencies [347d4aa]
+  - @treasure-dev/tdk-core@3.3.1
+
 ## 3.3.0
 
 ### Patch Changes
