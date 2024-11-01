@@ -23,8 +23,7 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -32,8 +31,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "pnpm typecheck && tsup",
-    "dev": "pnpm build --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "catalog:",
@@ -47,7 +46,9 @@
     "viem": "catalog:"
   },
   "devDependencies": {
-    "@types/uuid": "catalog:"
+    "@types/uuid": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "thirdweb": "catalog:"

@@ -5,11 +5,8 @@ export const useSetApprovalForAll = (
   tokenAddress: string,
   spenderAddress: string,
 ) => {
-  const { tdk, user } = useTreasure();
+  const { tdk } = useTreasure();
   return useCallback(async () => {
-    if (!user?.smartAccountAddress) {
-      return;
-    }
     try {
       await tdk.transaction.create(
         {
@@ -38,5 +35,5 @@ export const useSetApprovalForAll = (
     } catch (err) {
       console.error("Error approving MAGIC:", err);
     }
-  }, [tdk, user, tokenAddress, spenderAddress]);
+  }, [tdk, tokenAddress, spenderAddress]);
 };

@@ -20,8 +20,7 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -29,11 +28,15 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "pnpm typecheck && tsup",
-    "dev": "pnpm build --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@treasure-dev/tdk-core": "*"
+  },
+  "devDependencies": {
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"

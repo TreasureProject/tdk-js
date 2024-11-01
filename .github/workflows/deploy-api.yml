@@ -75,10 +75,6 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build packages
-        run: |
-          pnpm build:auth
-          pnpm build:core
       - name: Build code
         run: pnpm build:api
       - name: Create Sentry release

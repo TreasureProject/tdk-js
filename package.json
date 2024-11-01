@@ -1,23 +1,13 @@
 {
+  "name": "tdk-js",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm build:auth && pnpm build:core && pnpm build:launcher && pnpm build:react && pnpm build:api",
-    "build:auth": "pnpm --filter ./packages/auth build",
-    "build:core": "pnpm --filter ./packages/core build",
-    "build:launcher": "pnpm --filter ./packages/launcher build",
-    "build:react": "pnpm --filter ./packages/react build",
-    "build:api": "pnpm --filter ./apps/api build",
-    "generate": "pnpm -r generate",
-    "dev": "concurrently \"pnpm dev:auth\" \"pnpm dev:core\" \"pnpm dev:launcher\" \"pnpm dev:api\" \"pnpm dev:react\"",
-    "dev:auth": "pnpm --filter ./packages/auth dev",
-    "dev:core": "pnpm --filter ./packages/core dev",
-    "dev:launcher": "pnpm --filter ./packages/launcher dev",
-    "dev:api": "pnpm --filter ./apps/api dev",
-    "dev:react": "pnpm --filter ./packages/react dev",
-    "dev:connect-core": "pnpm --filter ./examples/connect-core dev",
-    "dev:connect-electron": "pnpm --filter ./examples/connect-electron dev",
-    "dev:connect-react": "pnpm --filter ./examples/connect-react dev",
+    "build": "turbo build --filter={./apps/*} --filter={./packages/*}",
+    "build:api": "turbo build --filter={./apps/api}",
+    "dev": "turbo dev --filter={./apps/*} --filter={./packages/*}",
+    "dev:react": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/connect-react}",
+    "dev:electron": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/connect-electron}",
     "start:api": "pnpm --filter ./apps/api start",
     "format": "biome format --write .",
     "lint": "biome lint .",
@@ -26,20 +16,19 @@
     "test": "TZ=UTC vitest run",
     "package:changeset": "changeset",
     "package:version": "changeset version",
-    "package:publish": "pnpm build:auth && pnpm build:core && pnpm build:launcher && pnpm build:react && changeset publish",
+    "package:publish": "turbo build --filter={./packages/*} && changeset publish",
     "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@changesets/cli": "catalog:",
     "@types/node": "catalog:",
-    "concurrently": "catalog:",
     "husky": "catalog:",
     "jsdom": "catalog:",
     "knip": "catalog:",
     "lint-staged": "catalog:",
-    "tsup": "catalog:",
     "tsx": "catalog:",
+    "turbo": "^2.2.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
@@ -48,5 +37,6 @@
     "@biomejs/cli-linux-x64": "catalog:",
     "@esbuild/linux-x64": "catalog:",
     "@rollup/rollup-linux-x64-gnu": "catalog:"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }

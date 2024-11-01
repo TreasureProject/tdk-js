@@ -16,8 +16,6 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Generate code
-        run: pnpm generate
       - name: Lint code
         run: pnpm lint
       - name: Analyze code

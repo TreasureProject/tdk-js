@@ -1,6 +1,8 @@
 import { Button, useTreasure } from "@treasure-dev/tdk-react";
 import { useEffect, useState } from "react";
+import { type Address, ZERO_ADDRESS } from "thirdweb";
 import { formatUnits, parseEther, parseUnits } from "viem";
+
 import { formatAmount } from "./helpers/currency";
 import { useAddLiquidity } from "./hooks/useAddLiquidity";
 import { useERC20Balance } from "./hooks/useERC20Balance";
@@ -39,8 +41,8 @@ export const PoolSection = ({ pool }: { pool: Pool }) => {
   const { removeLiquidity, loading: removeLiquidityLoading } =
     useRemoveLiquidity();
   const lpBalance = useERC20Balance({
-    owner: (user?.smartAccountAddress as `0x${string}`) || "0x0",
-    tokenAddress: pool.id as `0x${string}`,
+    owner: (user?.address as Address) ?? ZERO_ADDRESS,
+    tokenAddress: pool.id as Address,
   });
   const baseToken =
     pool.token1.isNFT && !pool.isNFTNFT ? pool.token1 : pool.token0;
@@ -149,7 +151,7 @@ export const PoolSection = ({ pool }: { pool: Pool }) => {
               onClick={() => {
                 if (tokenIn && tokenOut && user) {
                   swap({
-                    address: user?.smartAccountAddress,
+                    address: user?.address,
                     route,
                   });
                 }
@@ -190,7 +192,7 @@ export const PoolSection = ({ pool }: { pool: Pool }) => {
                 pool,
                 amount0: amount0.toString(),
                 amount1: amount1.toString(),
-                address: user.smartAccountAddress,
+                address: user.address,
               });
             }
           }}
