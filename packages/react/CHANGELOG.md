@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.3.2
+
+### Patch Changes
+
+- 1bef9be: Fix analytics for no key
+- Updated dependencies [1bef9be]
+  - @treasure-dev/tdk-core@3.3.2
+
 ## 3.3.1
 
 ### Patch Changes
