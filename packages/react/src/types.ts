@@ -67,7 +67,7 @@ export type ContextValues = {
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
-  trackCustomEvent: (event: AnalyticsEvent) => Promise<string>;
+  trackCustomEvent: (event: AnalyticsEvent) => Promise<string | undefined>;
 } & (
   | {
       isConnected: false;
