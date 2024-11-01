@@ -15,7 +15,7 @@ export function getEventId(): string {
   return `event-${uuidv4()}`;
 }
 
-export function getDevice(): Device {
+export function getDevice(): Device | undefined {
   if (typeof window !== "undefined" && window.navigator) {
     const deviceID = getDeviceUniqueId();
     return {
@@ -29,10 +29,5 @@ export function getDevice(): Device {
             : "Unknown",
     };
   }
-  const os = require("node:os");
-  return {
-    device_name: os.hostname(),
-    device_model: `${os.type()} ${os.release()}`,
-    device_os: os.platform(),
-  };
+  return undefined;
 }

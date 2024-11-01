@@ -133,9 +133,10 @@ const TreasureProviderInner = ({
   const trackCustomEvent = useCallback(
     async (event: AnalyticsEvent) => {
       if (!analyticsManager) {
-        throw new Error(
-          "Cannot call trackCustomEvent because AnalyticsManager is not initialized",
+        console.debug(
+          "[TreasureProvider] Cannot call trackCustomEvent because AnalyticsManager is not initialized",
         );
+        return;
       }
 
       let address = event.address ?? userAddress;
