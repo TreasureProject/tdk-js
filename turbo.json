@@ -28,6 +28,15 @@
       "persistent": true,
       "cache": false
     },
+    "@treasure-dev/tdk-api#dev": {
+      "dependsOn": ["@treasure-dev/auth#build", "@treasure-dev/tdk-core#build"]
+    },
+    "@treasure-dev/tdk-react#dev": {
+      "dependsOn": [
+        "@treasure-dev/launcher#build",
+        "@treasure-dev/tdk-core#build"
+      ]
+    },
     "build": {
       "outputs": ["dist/**", "out/**"],
       "dependsOn": ["generate", "^build"]
