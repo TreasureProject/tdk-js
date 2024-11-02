@@ -20,14 +20,17 @@
     "@treasure-dev/tdk-examples-magicswap#typecheck": {
       "dependsOn": ["@treasure-dev/tdk-react#build"]
     },
-    "build": {
-      "outputs": ["dist/**", "out/**"],
-      "dependsOn": ["generate", "^build"]
+    "test": {
+      "dependsOn": ["generate", "^test"]
     },
     "dev": {
       "dependsOn": ["generate"],
       "persistent": true,
       "cache": false
+    },
+    "build": {
+      "outputs": ["dist/**", "out/**"],
+      "dependsOn": ["generate", "^build"]
     }
   }
 }

@@ -18,10 +18,6 @@ RUN npm install -g pnpm
 # Install dependencies including dev dependencies
 RUN pnpm install --prod=false
 
-# Build packages
-RUN pnpm build:auth
-RUN pnpm build:core
-
 # Build application
 RUN pnpm build:api
 

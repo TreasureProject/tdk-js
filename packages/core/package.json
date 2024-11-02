@@ -31,8 +31,9 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "test": "vitest run",
+    "dev": "tsup --watch",
+    "build": "tsup"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "catalog:",
@@ -48,7 +49,8 @@
   "devDependencies": {
     "@types/uuid": "catalog:",
     "tsup": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "thirdweb": "catalog:"

@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo build --filter={./apps/*} --filter={./packages/*}",
+    "build:all": "turbo build",
     "build:api": "turbo build --filter={./apps/api}",
     "dev": "turbo dev --filter={./apps/*} --filter={./packages/*}",
     "dev:react": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/connect-react}",
@@ -13,7 +14,7 @@
     "lint": "biome lint .",
     "fix": "biome check --write --unsafe .",
     "knip": "knip",
-    "test": "TZ=UTC vitest run",
+    "test": "TZ=UTC turbo test",
     "package:changeset": "changeset",
     "package:version": "changeset version",
     "package:publish": "turbo build --filter={./packages/*} && changeset publish",
@@ -28,10 +29,9 @@
     "knip": "catalog:",
     "lint-staged": "catalog:",
     "tsx": "catalog:",
-    "turbo": "^2.2.3",
+    "turbo": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:"
+    "vite": "catalog:"
   },
   "optionalDependencies": {
     "@biomejs/cli-linux-x64": "catalog:",

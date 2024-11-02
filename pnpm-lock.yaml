@@ -207,6 +207,9 @@ catalogs:
     tsx:
       specifier: ^4.19.2
       version: 4.19.2
+    turbo:
+      specifier: ^2.2.3
+      version: 2.2.3
     typescript:
       specifier: ^5.6.3
       version: 5.6.3
@@ -262,7 +265,7 @@ importers:
         specifier: 'catalog:'
         version: 4.19.2
       turbo:
-        specifier: ^2.2.3
+        specifier: 'catalog:'
         version: 2.2.3
       typescript:
         specifier: 'catalog:'
@@ -270,9 +273,6 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 5.4.10(@types/node@22.7.8)
-      vitest:
-        specifier: 'catalog:'
-        version: 2.1.4(@types/node@22.7.8)(jsdom@25.0.1)
 
   apps/api:
     dependencies:
@@ -340,6 +340,9 @@ importers:
       tsup:
         specifier: 'catalog:'
         version: 8.3.0(jiti@2.3.3)(postcss@8.4.47)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.5.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.4(@types/node@22.7.8)(jsdom@25.0.1)
 
   examples/connect-core:
     dependencies:
@@ -519,6 +522,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.4(@types/node@22.7.8)(jsdom@25.0.1)
 
   packages/core:
     dependencies:
@@ -559,6 +565,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.4(@types/node@22.7.8)(jsdom@25.0.1)
 
   packages/launcher:
     dependencies:
@@ -651,6 +660,9 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 5.4.10(@types/node@22.7.8)
+      vitest:
+        specifier: 'catalog:'
+        version: 2.1.4(@types/node@22.7.8)(jsdom@25.0.1)
 
   packages/tailwind-config:
     devDependencies:
@@ -4263,9 +4275,6 @@ packages:
     resolution: {integrity: sha512-2nk+7SIVb14QrgXFHcm84tD4bKQz0RxPuMT8Ag5KPOq7J5fEmAg0UbXdTOSHqNuHSU28k55qnceesxXRZGzKWA==}
     engines: {node: '>=18'}
 
-  get-func-name@2.0.2:
-    resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
-
   get-intrinsic@1.2.4:
     resolution: {integrity: sha512-5uYhsJH8VJBTv7oslg4BznJYhDoRI6waYCxMmCdnTrcCrHA/fCFKoTFz2JKKE0HdDFUF7/oQuhzumXJK7paBRQ==}
     engines: {node: '>= 0.4'}
@@ -4961,9 +4970,6 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
-
-  loupe@3.1.1:
-    resolution: {integrity: sha512-edNu/8D5MKVfGVFRhFf8aAxiTM6Wumfz5XsaatSxlD3w4R1d/WEKUTydCdPGbl9K7QG/Ca3GnDV2sIKIpXRQcw==}
 
   loupe@3.1.2:
     resolution: {integrity: sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg==}
@@ -11020,7 +11026,7 @@ snapshots:
       assertion-error: 2.0.1
       check-error: 2.1.1
       deep-eql: 5.0.2
-      loupe: 3.1.1
+      loupe: 3.1.2
       pathval: 2.0.0
 
   chalk@2.4.2:
@@ -11962,8 +11968,6 @@ snapshots:
 
   get-east-asian-width@1.2.0: {}
 
-  get-func-name@2.0.2: {}
-
   get-intrinsic@1.2.4:
     dependencies:
       es-errors: 1.3.0
@@ -12768,10 +12772,6 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
-
-  loupe@3.1.1:
-    dependencies:
-      get-func-name: 2.0.2
 
   loupe@3.1.2: {}
 
