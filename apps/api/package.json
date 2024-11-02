@@ -8,9 +8,6 @@
     "generate": "prisma generate",
     "dev": "pnpm generate && tsup --watch --onSuccess 'pnpm start'",
     "start": "node ./dist/index.js",
-    "db:seed": "tsx ./prisma/seed",
-    "db:seed:dev": "pnpm db:seed dev",
-    "db:seed:prod": "pnpm db:seed prod",
     "db:migrate": "prisma migrate dev"
   },
   "dependencies": {

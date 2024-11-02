@@ -71,7 +71,6 @@ catalog:
   "tailwind-merge": ^2.5.4
   thirdweb: ^5.64.4
   tsup: ^8.3.5
-  tsx: ^4.19.2
   typescript: ^5.6.3
   uuid: ^11.0.2
   viem: 2.21.35 # matches Thirdweb version to satisfy getAwsKmsAccount types

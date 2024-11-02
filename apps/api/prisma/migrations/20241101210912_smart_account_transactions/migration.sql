@@ -1,6 +1,3 @@
-import { Prisma, type PrismaClient } from "@prisma/client";
-
-const upsertTransactionsViewSql = Prisma.sql`
   CREATE OR REPLACE VIEW
     "smart_account"."transactions" AS (
         SELECT
@@ -17,8 +14,3 @@ const upsertTransactionsViewSql = Prisma.sql`
         FROM
             smart_account.transactions_jsonb
     );
-`;
-
-export default (prisma: PrismaClient) => {
-  return prisma.$queryRaw(upsertTransactionsViewSql);
-};
