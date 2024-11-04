@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "smart_account"]
+  schemas  = ["public", "smart_account", "treasure_account"]
 }
 
 // Partner within the Treasure ecosystem
@@ -255,16 +255,25 @@ model TransactionErrorLog {
 
 view Transaction {
   id              String   @id
+  chain           String
   chainId         Int      @map("chain_id")
   blockNumber     Decimal  @map("block_number") @db.Decimal
   blockTimestamp  DateTime @map("block_timestamp")
   transactionHash String   @map("transaction_hash")
   fromAddress     String   @map("from_address")
   toAddress       String   @map("to_address")
-  value           Decimal? @db.Decimal
+
+  value                    Decimal? @db.Decimal
+  transactionIndex         Decimal? @map("transaction_index") @db.Decimal
+  receiptEffectiveGasPrice Decimal? @map("receipt_effective_gas_price") @db.Decimal
+  receiptStatus            Decimal? @map("receipt_status") @db.Decimal
+  receiptGasUsed           Decimal? @map("receipt_gas_used") @db.Decimal
+  gasUsed                  Decimal? @map("gas_used") @db.Decimal
+  receiptCumulativeGasUsed Decimal? @map("receipt_cumulative_gas_used") @db.Decimal
+  gas                      Decimal? @db.Decimal
 
   @@map("transactions")
-  @@schema("smart_account")
+  @@schema("treasure_account")
 }
 
 // Ignored models and views added here for diff parity
@@ -284,4 +293,22 @@ model RawTreasureAccount {
   @@map("treasure_accounts_jsonb")
   @@ignore
   @@schema("smart_account")
+}
+
+model RawTransactionTreasureAccount {
+  key  String @id @map("_key")
+  body Json
+
+  @@map("transactions_jsonb")
+  @@ignore
+  @@schema("treasure_account")
+}
+
+model RawTreasureAccountTreasureAccount {
+  key  String @id @map("_key")
+  body Json
+
+  @@map("treasure_accounts_jsonb")
+  @@ignore
+  @@schema("treasure_account")
 }
