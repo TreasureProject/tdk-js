@@ -16,12 +16,12 @@ catalog:
   "@fastify/cors": ^10.0.0
   "@fastify/swagger": ^9.2.0
   "@fastify/swagger-ui": ^5.1.0
-  "@fastify/type-provider-typebox": ^5.0.0
+  "@fastify/type-provider-typebox": ^5.0.1
   "@prisma/client": ^5.21.1
   "@radix-ui/react-dialog": ^1.1.2
   "@radix-ui/react-visually-hidden": ^1.1.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
-  "@sentry/node": ^8.35.0
+  "@sentry/node": ^8.36.0
   "@sinclair/typebox": ^0.33.17
   "@storybook/addon-essentials": ^8.3.6
   "@storybook/react": ^8.3.6
@@ -47,7 +47,7 @@ catalog:
   "electron-builder": ^25.1.7
   "electron-vite": ^2.3.0
   express: ^4.21.0
-  fastify: ^5.0.0
+  fastify: ^5.1.0
   husky: ^9.1.6
   i18next: ^23.16.4
   "i18next-browser-languagedetector": ^8.0.0
@@ -55,7 +55,7 @@ catalog:
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.34.2
+  knip: ^5.36.2
   lint-staged: ^15.2.10
   pino: ^9.5.0
   pino-pretty: ^11.3.0

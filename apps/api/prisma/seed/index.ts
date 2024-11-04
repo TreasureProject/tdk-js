@@ -1,10 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
-import {
-  type Contract,
-  getContractAddress,
-  treasureRuby,
-} from "@treasure-dev/tdk-core";
+import { type Contract, getContractAddress } from "@treasure-dev/tdk-core";
 import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
 import upsertTransactionsViewSql from "./transactions-view";
 
@@ -33,7 +29,7 @@ const PROJECT_DATA: Record<
       name: "Treasure",
     },
     callTargets: {
-      dev: [[treasureRuby.id, "RubyNFT"]],
+      dev: [],
       prod: [],
     },
   },
