@@ -6,10 +6,11 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 import {
-  type ErrorReply,
   type ReadCurrentUserReply,
   type ReadCurrentUserSessionsQuerystring,
   type ReadCurrentUserSessionsReply,
+  type ReadUserPublicProfileParams,
+  type ReadUserPublicProfileReply,
   type ReadUserTransactionsParams,
   type ReadUserTransactionsQuerystring,
   type ReadUserTransactionsReply,
@@ -19,6 +20,7 @@ import {
   readCurrentUserReplySchema,
   readCurrentUserSessionsQuerystringSchema,
   readCurrentUserSessionsReplySchema,
+  readUserPublicProfileReplySchema,
   readUserTransactionsQuerystringSchema,
   readUserTransactionsReplySchema,
   updateCurrentUserBodySchema,
@@ -27,6 +29,7 @@ import {
 import type { TdkApiContext } from "../types";
 import {
   USER_PROFILE_SELECT_FIELDS,
+  USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SELECT_FIELDS,
   USER_SMART_ACCOUNT_SELECT_FIELDS,
 } from "../utils/db";
@@ -42,7 +45,7 @@ export const usersRoutes =
   ({ db, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
-      Reply: ReadCurrentUserReply | ErrorReply;
+      Reply: ReadCurrentUserReply;
     }>(
       "/users/me",
       {
@@ -129,7 +132,7 @@ export const usersRoutes =
 
     app.put<{
       Body: UpdateCurrentUserBody;
-      Reply: UpdateCurrentUserReply | ErrorReply;
+      Reply: UpdateCurrentUserReply;
     }>(
       "/users/me",
       {
@@ -221,7 +224,7 @@ export const usersRoutes =
 
     app.get<{
       Querystring: ReadCurrentUserSessionsQuerystring;
-      Reply: ReadCurrentUserSessionsReply | ErrorReply;
+      Reply: ReadCurrentUserSessionsReply;
     }>(
       "/users/me/sessions",
       {
@@ -268,9 +271,49 @@ export const usersRoutes =
     );
 
     app.get<{
+      Params: ReadUserPublicProfileParams;
+      Reply: ReadUserPublicProfileReply;
+    }>(
+      "/users/:id",
+      {
+        schema: {
+          summary: "Get user profile",
+          description: "Get user's public profile details",
+          response: {
+            200: readUserPublicProfileReplySchema,
+            404: notFoundReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { id: userId } = req.params;
+        const userPublicProfile = await db.userProfile.findUnique({
+          where: {
+            userId,
+          },
+          select: USER_PUBLIC_PROFILE_SELECT_FIELDS,
+        });
+
+        if (!userPublicProfile) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.UserError,
+            code: TDK_ERROR_CODES.USER_NOT_FOUND,
+            statusCode: 404,
+            message: "User not found",
+          });
+        }
+
+        reply.send({
+          ...userPublicProfile,
+          ...transformUserProfileResponseFields(userPublicProfile),
+        });
+      },
+    );
+
+    app.get<{
       Params: ReadUserTransactionsParams;
       Querystring: ReadUserTransactionsQuerystring;
-      Reply: ReadUserTransactionsReply | ErrorReply;
+      Reply: ReadUserTransactionsReply;
     }>(
       "/users/:address/transactions",
       {

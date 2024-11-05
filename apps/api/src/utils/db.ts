@@ -5,21 +5,25 @@ export const USER_SELECT_FIELDS = {
   externalWalletAddress: true,
 } as const satisfies Prisma.UserSelect;
 
-export const USER_PROFILE_SELECT_FIELDS = {
-  email: true,
+export const USER_PUBLIC_PROFILE_SELECT_FIELDS = {
   tag: true,
   discriminant: true,
-  tagClaimed: true,
-  tagModifiedAt: true,
-  tagLastCheckedAt: true,
-  emailSecurityPhrase: true,
-  emailSecurityPhraseUpdatedAt: true,
   featuredNftIds: true,
   featuredBadgeIds: true,
   highlyFeaturedBadgeId: true,
   about: true,
   pfp: true,
   banner: true,
+} as const satisfies Prisma.UserProfileSelect;
+
+export const USER_PROFILE_SELECT_FIELDS = {
+  ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
+  email: true,
+  tagClaimed: true,
+  tagModifiedAt: true,
+  tagLastCheckedAt: true,
+  emailSecurityPhrase: true,
+  emailSecurityPhraseUpdatedAt: true,
   showMagicBalance: true,
   showEthBalance: true,
   showGemsBalance: true,
