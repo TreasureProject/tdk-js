@@ -24,18 +24,14 @@
       "dependsOn": ["generate", "^test"]
     },
     "dev": {
-      "dependsOn": ["generate"],
-      "persistent": true,
-      "cache": false
-    },
-    "@treasure-dev/tdk-api#dev": {
-      "dependsOn": ["@treasure-dev/auth#build", "@treasure-dev/tdk-core#build"]
-    },
-    "@treasure-dev/tdk-react#dev": {
       "dependsOn": [
+        "generate",
+        "@treasure-dev/auth#build",
         "@treasure-dev/launcher#build",
         "@treasure-dev/tdk-core#build"
-      ]
+      ],
+      "persistent": true,
+      "cache": false
     },
     "build": {
       "outputs": ["dist/**", "out/**"],
