@@ -58,8 +58,6 @@ export const withSwagger = (app: App) => {
         nextSchema.tags = ["harvesters"];
       } else if (url.startsWith("/magicswap")) {
         nextSchema.tags = ["magicswap"];
-      } else if (url.startsWith("/projects")) {
-        nextSchema.tags = ["projects"];
       } else if (url.startsWith("/transactions")) {
         nextSchema.tags = ["transactions"];
       } else if (url.startsWith("/users")) {
