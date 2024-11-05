@@ -32,7 +32,6 @@ import type {
   ReadHarvesterReply,
   ReadLoginPayloadQuerystring,
   ReadLoginPayloadReply,
-  ReadProjectReply,
   ReadTransactionReply,
   ReadUserTransactionsQuerystring,
   ReadUserTransactionsReply,
@@ -180,11 +179,6 @@ export class TDKAPI {
       this.get<ReadLoginPayloadReply>("/login/payload", params),
     logIn: (params: LoginBody) =>
       this.post<LoginBody, LoginReply>("/login", params),
-  };
-
-  project = {
-    findBySlug: (slug: string) =>
-      this.get<ReadProjectReply>(`/projects/${slug}`),
   };
 
   user = {

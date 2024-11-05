@@ -143,9 +143,6 @@ export const userSchema = Type.Object({
 export const userProfileSchema = Type.Object({
   tag: nullableStringSchema,
   discriminant: Type.Union([Type.Number(), Type.Null()]),
-  tagClaimed: Type.Boolean(),
-  tagModifiedAt: nullableStringSchema,
-  tagLastCheckedAt: nullableStringSchema,
   emailSecurityPhrase: nullableStringSchema,
   emailSecurityPhraseUpdatedAt: nullableStringSchema,
   featuredNftIds: Type.Array(Type.String()),
