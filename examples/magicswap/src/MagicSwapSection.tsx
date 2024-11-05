@@ -11,17 +11,17 @@ import { usePools } from "./hooks/usePools";
 export const MagicSwapSection = () => {
   const { user, contractAddresses } = useTreasure();
   const magicAllowance = useAllowance({
-    owner: user?.smartAccountAddress,
+    owner: user?.address,
     tokenAddress: contractAddresses.MAGIC,
     spenderAddress: contractAddresses.MagicswapV2Router,
   });
   const lpAllowance = useAllowance({
-    owner: user?.smartAccountAddress,
+    owner: user?.address,
     tokenAddress: "0x0626699bc82858c16ae557b2eaad03a58cfcc8bd",
     spenderAddress: contractAddresses.MagicswapV2Router,
   });
   const areTreasuresApproved = useIsApprovedForAll({
-    owner: user?.smartAccountAddress,
+    owner: user?.address,
     tokenAddress: contractAddresses.Treasures,
     spenderAddress: contractAddresses.MagicswapV2Router,
   });
