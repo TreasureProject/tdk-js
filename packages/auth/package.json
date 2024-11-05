@@ -20,8 +20,7 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -29,15 +28,19 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "pnpm typecheck && tsup",
-    "dev": "pnpm build --watch"
+    "test": "vitest run",
+    "dev": "tsup --watch",
+    "build": "tsup"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "catalog:",
     "jsonwebtoken": "catalog:"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "catalog:"
+    "@types/jsonwebtoken": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"

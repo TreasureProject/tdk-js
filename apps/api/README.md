@@ -34,12 +34,6 @@ Create initial tables in database:
 pnpm db:migrate
 ```
 
-Seed database with development values:
-
-```bash
-pnpm db:seed
-```
-
 Start server:
 
 ```bash
