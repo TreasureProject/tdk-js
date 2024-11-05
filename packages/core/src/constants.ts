@@ -37,30 +37,6 @@ export const MAGICSWAPV2_API_URL = {
 } as const;
 
 // Chains
-export const TREASURE_RUBY_CHAIN_DEFINITION = {
-  id: 978_657,
-  name: "Treasure Ruby",
-  nativeCurrency: {
-    name: "MAGIC",
-    symbol: "MAGIC",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc-testnet.treasure.lol/http"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Treasurescan",
-      url: "https://testnet.treasurescan.io",
-      apiUrl: "https://testnet.treasurescan.io/node-api/proxy/api/v2",
-    },
-  },
-  testnet: true,
-};
-export const treasureRuby = defineChain(TREASURE_RUBY_CHAIN_DEFINITION);
-
 export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
   id: 978_658,
   name: "Treasure Topaz",
@@ -271,11 +247,6 @@ export const CONTRACT_ADDRESSES: Record<
     // Zeeverse
     ZeeverseLlama: "0xd60a53b298a468d2aa3880614b3ebd4515814fc6",
     ZeeverseLlamaEvolve: "0xa8f6f8a7225cf735851acc417e29cc2d1b092dc4",
-  },
-  [treasureRuby.id]: {
-    // Treasure Misc
-    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
-    RubyNFT: "0x76c3b527b711a3b6aa01e4f76ec34b41a671ca29",
   },
   [treasureTopaz.id]: {
     // Magicswap

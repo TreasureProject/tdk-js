@@ -80,7 +80,6 @@ export type Contract =
   | "ManagedAccountFactory"
   | "BulkTransferHelper"
   | "TreasureConduit"
-  | "RubyNFT"
   | "TopazNFT"
   | TokenContract
   | BridgeworldContract
