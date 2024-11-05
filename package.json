@@ -29,7 +29,6 @@
     "jsdom": "catalog:",
     "knip": "catalog:",
     "lint-staged": "catalog:",
-    "tsx": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
