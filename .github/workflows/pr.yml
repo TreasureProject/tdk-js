@@ -20,7 +20,7 @@ jobs:
         run: pnpm knip
       - name: Test code
         run: pnpm test
-      - name: Check types
-        run: pnpm typecheck
       - name: Build code
         run: pnpm build
+      - name: Check types
+        run: pnpm typecheck
