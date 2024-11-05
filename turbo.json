@@ -1,0 +1,45 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "generate": {
+      "dependsOn": ["^generate"]
+    },
+    "typecheck": {
+      "dependsOn": ["generate", "^typecheck"]
+    },
+    "@treasure-dev/tdk-examples-connect-core#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-core#build"]
+    },
+    "@treasure-dev/tdk-examples-connect-electron#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "@treasure-dev/tdk-examples-connect-react#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "@treasure-dev/tdk-examples-magicswap#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "test": {
+      "dependsOn": ["generate", "^test"]
+    },
+    "dev": {
+      "dependsOn": ["generate"],
+      "persistent": true,
+      "cache": false
+    },
+    "@treasure-dev/tdk-api#dev": {
+      "dependsOn": ["@treasure-dev/auth#build", "@treasure-dev/tdk-core#build"]
+    },
+    "@treasure-dev/tdk-react#dev": {
+      "dependsOn": [
+        "@treasure-dev/launcher#build",
+        "@treasure-dev/tdk-core#build"
+      ]
+    },
+    "build": {
+      "outputs": ["dist/**", "out/**"],
+      "dependsOn": ["generate", "^build"]
+    }
+  }
+}
