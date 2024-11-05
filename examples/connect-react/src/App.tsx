@@ -5,7 +5,7 @@ import {
   ConnectButton,
   useTreasure,
 } from "@treasure-dev/tdk-react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   encode,
   getContract,
@@ -56,12 +56,18 @@ export const App = () => {
     contractAddresses,
     trackCustomEvent,
   } = useTreasure();
-
   const [tracking, setTracking] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const addLog = (log: string) => {
+    setLogs((curr) => [log, ...curr]);
+  };
 
   const handleMintMagic = async (amount: number) => {
+    addLog(`Minting ${amount} MAGIC...`);
+
     try {
-      await tdk.transaction.create(
+      const result = await tdk.transaction.create(
         {
           address: contractAddresses.MAGIC,
           abi: ERC20_MINTABLE_ABI,
@@ -70,8 +76,12 @@ export const App = () => {
         },
         { includeAbi: true },
       );
+      addLog(
+        `Successfully minted ${amount} MAGIC: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
+      );
     } catch (err) {
       console.error("Error minting MAGIC:", err);
+      addLog(`Error minting MAGIC: ${err}`);
     }
   };
 
@@ -89,32 +99,47 @@ export const App = () => {
       params: [userAddress as AddressString, toWei(amount.toString())],
     });
 
+    addLog(`Minting ${amount} MAGIC with raw transaction...`);
+
     try {
       const data = await encode(transaction);
-      await tdk.transaction.sendRaw({
+      const result = await tdk.transaction.sendRaw({
         to: contractAddresses.MAGIC,
         data,
       });
+      addLog(
+        `Successfully minted ${amount} MAGIC with raw transaction: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
+      );
     } catch (err) {
       console.error("Error minting MAGIC with raw transaction:", err);
+      addLog(`Error minting MAGIC with raw transaction: ${err}`);
     }
   };
 
   const handleSendNative = async (amount: number) => {
+    const token = chain.id === arbitrumSepolia.id ? "ETH" : "MAGIC";
+    addLog(`Sending ${amount} ${token}...`);
+
     try {
-      await tdk.transaction.sendRaw({
+      const result = await tdk.transaction.sendRaw({
         to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
         value: toWei(amount.toString()),
         data: "0x",
       });
+      addLog(
+        `Successfully sent ${amount} ${token}: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
+      );
     } catch (err) {
-      console.error("Error sending ETH:", err);
+      console.error("Error sending native token:", err);
+      addLog(`Error sending ${token}: ${err}`);
     }
   };
 
   const handleMintTopazNft = async () => {
+    addLog("Minting Topaz NFT...");
+
     try {
-      await tdk.transaction.create(
+      const result = await tdk.transaction.create(
         {
           address: contractAddresses.TopazNFT,
           abi: TOPAZ_NFT_API,
@@ -123,24 +148,32 @@ export const App = () => {
         },
         { includeAbi: true },
       );
+      addLog(
+        `Successfully minted Topaz NFT: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
+      );
     } catch (err) {
-      console.error("Error minting TOPAZ NFT:", err);
+      console.error("Error minting Topaz NFT:", err);
+      addLog(`Error minting Topaz NFT: ${err}`);
     }
   };
 
-  const trackClick = useCallback(async () => {
+  const trackClick = async () => {
     setTracking(true);
+    addLog("Tracking custom event...");
+
     try {
       const result = await trackCustomEvent({
         name: "test-click",
         properties: { test: "test-value" },
       });
-      console.log(`Successfully tracked custom event: ${result}`);
+      addLog(`Successfully tracked custom event: ${result}`);
     } catch (err) {
       console.error("Error tracking custom event:", err);
+      addLog(`Error tracking custom event: ${err}`);
     }
+
     setTracking(false);
-  }, [trackCustomEvent]);
+  };
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-8">
@@ -274,6 +307,16 @@ export const App = () => {
                 </Button>
               </div>
             </div>
+            {logs.length > 0 ? (
+              <div className="space-y-1">
+                <h1 className="font-medium text-xl">Logs</h1>
+                <ul className="list-disc pl-6">
+                  {logs.map((log) => (
+                    <li key={log}>{log}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </>
         ) : (
           <p className="text-center">Connect with Treasure to continue</p>
