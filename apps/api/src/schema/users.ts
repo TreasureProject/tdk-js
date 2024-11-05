@@ -3,6 +3,7 @@ import {
   nullableStringSchema,
   sessionSchema,
   userProfileSchema,
+  userPublicProfileSchema,
   userSchema,
 } from "./shared";
 
@@ -37,6 +38,12 @@ export const readCurrentUserSessionsQuerystringSchema = Type.Object({
 });
 
 export const readCurrentUserSessionsReplySchema = Type.Array(sessionSchema);
+
+const readUserPublicProfileParamsSchema = Type.Object({
+  id: Type.String(),
+});
+
+export const readUserPublicProfileReplySchema = userPublicProfileSchema;
 
 const readUserTransactionsParamsSchema = Type.Object({
   id: Type.String(),
@@ -75,6 +82,12 @@ export type ReadCurrentUserSessionsReply = Static<
 export type UpdateCurrentUserBody = Static<typeof updateCurrentUserBodySchema>;
 export type UpdateCurrentUserReply = Static<
   typeof updateCurrentUserReplySchema
+>;
+export type ReadUserPublicProfileParams = Static<
+  typeof readUserPublicProfileParamsSchema
+>;
+export type ReadUserPublicProfileReply = Static<
+  typeof readUserPublicProfileReplySchema
 >;
 export type ReadUserTransactionsParams = Static<
   typeof readUserTransactionsParamsSchema

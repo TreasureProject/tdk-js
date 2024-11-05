@@ -140,21 +140,27 @@ export const userSchema = Type.Object({
   ),
 });
 
-export const userProfileSchema = Type.Object({
+export const userPublicProfileSchema = Type.Object({
   tag: nullableStringSchema,
   discriminant: Type.Union([Type.Number(), Type.Null()]),
-  emailSecurityPhrase: nullableStringSchema,
-  emailSecurityPhraseUpdatedAt: nullableStringSchema,
   featuredNftIds: Type.Array(Type.String()),
   featuredBadgeIds: Type.Array(Type.String()),
   highlyFeaturedBadgeId: nullableStringSchema,
   about: nullableStringSchema,
   pfp: nullableStringSchema,
   banner: nullableStringSchema,
-  showMagicBalance: Type.Boolean(),
-  showEthBalance: Type.Boolean(),
-  showGemsBalance: Type.Boolean(),
-  testnetFaucetLastUsedAt: nullableStringSchema,
 });
+
+export const userProfileSchema = Type.Intersect([
+  userPublicProfileSchema,
+  Type.Object({
+    emailSecurityPhrase: nullableStringSchema,
+    emailSecurityPhraseUpdatedAt: nullableStringSchema,
+    showMagicBalance: Type.Boolean(),
+    showEthBalance: Type.Boolean(),
+    showGemsBalance: Type.Boolean(),
+    testnetFaucetLastUsedAt: nullableStringSchema,
+  }),
+]);
 
 export type ErrorReply = Static<typeof errorReplySchema>;

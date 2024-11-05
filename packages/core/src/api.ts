@@ -33,6 +33,7 @@ import type {
   ReadLoginPayloadQuerystring,
   ReadLoginPayloadReply,
   ReadTransactionReply,
+  ReadUserPublicProfileReply,
   ReadUserTransactionsQuerystring,
   ReadUserTransactionsReply,
   RouteReply,
@@ -201,6 +202,8 @@ export class TDKAPI {
       ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
+    getPublicProfile: (id: string) =>
+      this.get<ReadUserPublicProfileReply>(`/users/${id}`),
     getTransactions: (id: string, query?: ReadUserTransactionsQuerystring) =>
       this.get<ReadUserTransactionsReply>(`/users/${id}/transactions`, query),
   };
