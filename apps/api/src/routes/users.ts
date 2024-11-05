@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { getUserSessions } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 import { ZERO_ADDRESS } from "thirdweb";
@@ -272,7 +273,7 @@ export const usersRoutes =
       Querystring: ReadUserTransactionsQuerystring;
       Reply: ReadUserTransactionsReply | ErrorReply;
     }>(
-      "/users/:address/transactions",
+      "/users/:id/transactions",
       {
         schema: {
           summary: "Get user transaction history",
@@ -285,12 +286,31 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { address } = req.params;
-        const { chainId, toAddress, page = 1, limit = 25 } = req.query;
-
-        const filter = {
+        const { id: userId } = req.params;
+        const {
           chainId,
-          fromAddress: address.toLowerCase(),
+          fromAddress,
+          toAddress,
+          page = 1,
+          limit = 25,
+        } = req.query;
+
+        // Fetch user's smart account addresses if no from filter is provided
+        const userSmartAccounts = fromAddress
+          ? []
+          : await db.userSmartAccount.findMany({
+              where: {
+                userId,
+              },
+            });
+
+        const filter: Prisma.TransactionWhereInput = {
+          chainId,
+          fromAddress: fromAddress?.toLowerCase() ?? {
+            in: userSmartAccounts.map((smartAccount) =>
+              smartAccount.address.toLowerCase(),
+            ),
+          },
           toAddress,
         };
 
