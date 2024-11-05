@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "pnpm generate && pnpm typecheck && tsup",
     "generate": "prisma generate",
-    "dev": "pnpm generate && tsup --watch --onSuccess 'pnpm start'",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "tsup --watch --onSuccess 'pnpm start'",
+    "build": "tsup",
     "start": "node ./dist/index.js",
     "db:migrate": "prisma migrate dev"
   },
@@ -32,7 +33,9 @@
     "viem": "catalog:"
   },
   "devDependencies": {
-    "prisma": "catalog:"
+    "prisma": "catalog:",
+    "tsup": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=20"
