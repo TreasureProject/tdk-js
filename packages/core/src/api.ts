@@ -32,7 +32,6 @@ import type {
   ReadHarvesterReply,
   ReadLoginPayloadQuerystring,
   ReadLoginPayloadReply,
-  ReadProjectReply,
   ReadTransactionReply,
   ReadUserPublicProfileReply,
   ReadUserTransactionsQuerystring,
@@ -183,11 +182,6 @@ export class TDKAPI {
       this.post<LoginBody, LoginReply>("/login", params),
   };
 
-  project = {
-    findBySlug: (slug: string) =>
-      this.get<ReadProjectReply>(`/projects/${slug}`),
-  };
-
   user = {
     me: ({ overrideAuthToken }: { overrideAuthToken?: string }) =>
       this.get<ReadCurrentUserReply>(
@@ -210,14 +204,8 @@ export class TDKAPI {
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
     getPublicProfile: (id: string) =>
       this.get<ReadUserPublicProfileReply>(`/users/${id}`),
-    getTransactions: (
-      address: string,
-      query?: ReadUserTransactionsQuerystring,
-    ) =>
-      this.get<ReadUserTransactionsReply>(
-        `/users/${address}/transactions`,
-        query,
-      ),
+    getTransactions: (id: string, query?: ReadUserTransactionsQuerystring) =>
+      this.get<ReadUserTransactionsReply>(`/users/${id}/transactions`, query),
   };
 
   transaction = {

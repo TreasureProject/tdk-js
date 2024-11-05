@@ -9,74 +9,6 @@ datasource db {
   schemas  = ["public", "smart_account"]
 }
 
-// Partner within the Treasure ecosystem
-model Project {
-  // Primary key
-  id String @id @default(cuid())
-
-  // Fields
-  slug         String   @unique
-  name         String
-  redirectUris String[] @map("redirect_uris")
-  customAuth   Boolean  @default(false) @map("custom_auth")
-  icon         String?
-  cover        String?
-  color        String?
-
-  // Relations
-  backendWallets BackendWallet[]
-  callTargets    CallTarget[]
-
-  // Computed
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("project")
-  @@schema("public")
-}
-
-// Project wallet that can be used to cover gas when desired
-model BackendWallet {
-  // Primary key
-  id String @id @default(cuid())
-
-  // Fields
-  chainId Int
-  address String
-
-  // Relations
-  projects Project[]
-
-  // Computed
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([chainId, address])
-  @@map("backend_wallet")
-  @@schema("public")
-}
-
-// Contracts that a project user's session should have write access to
-model CallTarget {
-  // Primary key
-  id String @id @default(cuid())
-
-  // Fields
-  chainId Int
-  address String
-
-  // Relations
-  projects Project[]
-
-  // Computed
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([chainId, address])
-  @@map("call_target")
-  @@schema("public")
-}
-
 model User {
   // Primary key
   id String @id @default(cuid())
@@ -140,11 +72,8 @@ model UserProfile {
   email String? @unique
 
   // TreasureTag
-  tag              String?
-  discriminant     Int?      @db.SmallInt
-  tagClaimed       Boolean   @default(false) @map("tag_claimed")
-  tagModifiedAt    DateTime? @map("tag_modified_at")
-  tagLastCheckedAt DateTime? @map("tag_last_checked_at")
+  tag          String?
+  discriminant Int?    @db.SmallInt
 
   // Email security
   emailSecurityPhrase          String?   @map("email_security_phrase")

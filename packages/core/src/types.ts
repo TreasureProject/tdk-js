@@ -90,9 +90,6 @@ export type Contract =
 export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";
 
 // API
-export type Project = Awaited<
-  ReturnType<(typeof TDKAPI)["prototype"]["project"]["findBySlug"]>
->;
 export type Transaction = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["transaction"]["get"]>
 >;

@@ -9,6 +9,5 @@ export {
 export * from "./auth";
 export * from "./harvesters";
 export * from "./magicswap";
-export * from "./projects";
 export * from "./transactions";
 export * from "./users";

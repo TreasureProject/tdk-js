@@ -154,9 +154,6 @@ export const userPublicProfileSchema = Type.Object({
 export const userProfileSchema = Type.Intersect([
   userPublicProfileSchema,
   Type.Object({
-    tagClaimed: Type.Boolean(),
-    tagModifiedAt: nullableStringSchema,
-    tagLastCheckedAt: nullableStringSchema,
     emailSecurityPhrase: nullableStringSchema,
     emailSecurityPhraseUpdatedAt: nullableStringSchema,
     showMagicBalance: Type.Boolean(),

@@ -19,9 +19,6 @@ export const USER_PUBLIC_PROFILE_SELECT_FIELDS = {
 export const USER_PROFILE_SELECT_FIELDS = {
   ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
   email: true,
-  tagClaimed: true,
-  tagModifiedAt: true,
-  tagLastCheckedAt: true,
   emailSecurityPhrase: true,
   emailSecurityPhraseUpdatedAt: true,
   showMagicBalance: true,
