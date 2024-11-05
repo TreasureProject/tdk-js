@@ -39,11 +39,12 @@ export const readCurrentUserSessionsQuerystringSchema = Type.Object({
 export const readCurrentUserSessionsReplySchema = Type.Array(sessionSchema);
 
 const readUserTransactionsParamsSchema = Type.Object({
-  address: Type.String(),
+  id: Type.String(),
 });
 
 export const readUserTransactionsQuerystringSchema = Type.Object({
   chainId: Type.Optional(Type.Number()),
+  fromAddress: Type.Optional(Type.String()),
   toAddress: Type.Optional(Type.String()),
   page: Type.Optional(Type.Number({ minimum: 1 })),
   limit: Type.Optional(Type.Number({ minimum: 1, maximum: 50 })),
