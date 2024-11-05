@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "generate": {
+      "dependsOn": ["^generate"]
+    },
+    "typecheck": {
+      "dependsOn": ["generate", "^typecheck"]
+    },
+    "@treasure-dev/tdk-examples-connect-core#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-core#build"]
+    },
+    "@treasure-dev/tdk-examples-connect-electron#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "@treasure-dev/tdk-examples-connect-react#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "@treasure-dev/tdk-examples-magicswap#typecheck": {
+      "dependsOn": ["@treasure-dev/tdk-react#build"]
+    },
+    "test": {
+      "dependsOn": ["generate", "^test"]
+    },
+    "dev": {
+      "dependsOn": [
+        "generate",
+        "@treasure-dev/auth#build",
+        "@treasure-dev/launcher#build",
+        "@treasure-dev/tdk-core#build"
+      ],
+      "persistent": true,
+      "cache": false
+    },
+    "build": {
+      "outputs": ["dist/**", "out/**"],
+      "dependsOn": ["generate", "^build"]
+    }
+  }
+}
