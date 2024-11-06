@@ -93,9 +93,10 @@ model UserProfile {
   showGemsBalance  Boolean @default(true) @map("show_gems_balance")
 
   // Migration
-  legacyAddress         String?   @unique @map("legacy_address") @db.VarChar(42)
-  legacyEmail           String?   @map("legacy_email")
-  legacyEmailVerifiedAt DateTime? @map("legacy_email_verified_at")
+  legacyAddress           String?   @unique @map("legacy_address") @db.VarChar(42)
+  legacyEmail             String?   @map("legacy_email")
+  legacyEmailVerifiedAt   DateTime? @map("legacy_email_verified_at")
+  legacyProfileMigratedAt DateTime? @map("legacy_profile_migrated_at")
 
   // Status
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
@@ -109,6 +110,7 @@ model UserProfile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([legacyAddress])
+  @@index([legacyEmail, legacyEmailVerifiedAt])
   @@index([tag])
   @@map("user_profile")
   @@schema("public")

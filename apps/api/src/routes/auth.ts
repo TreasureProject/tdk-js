@@ -27,6 +27,7 @@ import {
 import type { TdkApiContext } from "../types";
 import {
   USER_PROFILE_SELECT_FIELDS,
+  USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SMART_ACCOUNT_INCLUDE_FIELDS,
 } from "../utils/db";
 import { throwUnauthorizedError } from "../utils/error";
@@ -172,15 +173,38 @@ export const authRoutes =
         }
 
         const { user } = userSmartAccount;
-        const profile = await db.userProfile.upsert({
-          where: { userId: user.id },
-          update: {},
-          create: {
-            userId: user.id,
-            email: userSmartAccount.initialEmail,
-          },
-          select: USER_PROFILE_SELECT_FIELDS,
-        });
+        const [profile, legacyUserProfiles] = await Promise.all([
+          // Fetch or create user profile
+          db.userProfile.upsert({
+            where: { userId: user.id },
+            update: {},
+            create: {
+              userId: user.id,
+              email: userSmartAccount.initialEmail,
+            },
+            select: USER_PROFILE_SELECT_FIELDS,
+          }),
+          // Detect any migrations related to this user
+          userSmartAccount.initialEmail
+            ? db.userProfile.findMany({
+                where: {
+                  legacyEmail: userSmartAccount.initialEmail,
+                  legacyEmailVerifiedAt: { not: null },
+                },
+                select: {
+                  ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
+                  id: true,
+                },
+              })
+            : userSmartAccount.initialWalletAddress
+              ? db.userProfile.findUnique({
+                  where: {
+                    legacyAddress: userSmartAccount.initialWalletAddress,
+                  },
+                  select: { ...USER_PUBLIC_PROFILE_SELECT_FIELDS, id: true },
+                })
+              : [],
+        ]);
 
         const [authTokenResult, userSessionsResult] = await Promise.allSettled([
           auth.generateJWT<UserContext>(address, {
@@ -232,6 +256,11 @@ export const authRoutes =
             address,
             sessions,
           },
+          legacyProfiles: legacyUserProfiles
+            ? Array.isArray(legacyUserProfiles)
+              ? legacyUserProfiles
+              : [legacyUserProfiles]
+            : [],
         });
       },
     );

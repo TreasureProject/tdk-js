@@ -3,6 +3,7 @@ import {
   EXAMPLE_WALLET_ADDRESS,
   sessionSchema,
   userProfileSchema,
+  userPublicProfileSchema,
   userSchema,
 } from "./shared";
 
@@ -45,6 +46,14 @@ export const loginReplySchema = Type.Object({
       sessions: Type.Array(sessionSchema),
     }),
   ]),
+  legacyProfiles: Type.Array(
+    Type.Intersect([
+      Type.Object({
+        id: Type.String(),
+      }),
+      userPublicProfileSchema,
+    ]),
+  ),
 });
 
 export const loginCustomBodySchema = Type.Object({
