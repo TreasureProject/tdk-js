@@ -16,6 +16,8 @@ import {
   type ReadUserTransactionsQuerystring,
   type ReadUserTransactionsReply,
   type UpdateCurrentUserBody,
+  type UpdateCurrentUserMigrationBody,
+  type UpdateCurrentUserMigrationReply,
   type UpdateCurrentUserReply,
   notFoundReplySchema,
   readCurrentUserReplySchema,
@@ -25,6 +27,7 @@ import {
   readUserTransactionsQuerystringSchema,
   readUserTransactionsReplySchema,
   updateCurrentUserBodySchema,
+  updateCurrentUserMigrationReplySchema,
   updateCurrentUserReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
@@ -149,7 +152,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { chain, userId, authError } = req;
+        const { userId, authError } = req;
         if (!userId) {
           throwUnauthorizedError(authError ?? "Unauthorized");
           return;
@@ -171,7 +174,7 @@ export const usersRoutes =
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
-        const profile = await db.userProfile.update({
+        const updatedProfile = await db.userProfile.update({
           where: { userId },
           data: {
             emailSecurityPhrase,
@@ -186,20 +189,61 @@ export const usersRoutes =
             showEthBalance,
             showGemsBalance,
           },
-          select: {
-            ...USER_PROFILE_SELECT_FIELDS,
-            user: {
-              select: USER_SELECT_FIELDS,
-              include: {
-                smartAccounts: {
-                  select: USER_SMART_ACCOUNT_SELECT_FIELDS,
+          select: USER_PROFILE_SELECT_FIELDS,
+        });
+
+        reply.send({
+          ...updatedProfile,
+          ...transformUserProfileResponseFields(updatedProfile),
+        });
+      },
+    );
+
+    app.post<{
+      Body: UpdateCurrentUserMigrationBody;
+      Reply: UpdateCurrentUserMigrationReply;
+    }>(
+      "/users/me/migrate",
+      {
+        schema: {
+          summary: "Migrate user profile",
+          description: "Migrate user profile from legacy data",
+          response: {
+            200: updateCurrentUserMigrationReplySchema,
+            404: notFoundReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const { userId, authError } = req;
+        if (!userId) {
+          throwUnauthorizedError(authError ?? "Unauthorized");
+          return;
+        }
+
+        const [user, profile, legacyProfile] = await Promise.all([
+          db.user.findUnique({
+            where: {
+              id: userId,
+            },
+            select: {
+              smartAccounts: {
+                select: {
+                  initialEmail: true,
+                  initialWalletAddress: true,
                 },
               },
             },
-          },
-        });
+          }),
+          db.userProfile.findUnique({ where: { userId } }),
+          db.userProfile.findUnique({
+            where: {
+              id: req.body.id,
+            },
+          }),
+        ]);
 
-        if (!profile.user) {
+        if (!user || !legacyProfile) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
             code: TDK_ERROR_CODES.USER_NOT_FOUND,
@@ -208,18 +252,130 @@ export const usersRoutes =
           });
         }
 
-        const { user, ...restProfile } = profile;
-        reply.send({
-          ...user,
-          ...restProfile,
-          ...transformUserProfileResponseFields(restProfile),
-          address:
-            user.smartAccounts.find(
-              (smartAccount) => smartAccount.chainId === chain.id,
-            )?.address ??
-            user.smartAccounts[0]?.address ??
-            ZERO_ADDRESS, // added for TypeScript, should not reach
-        });
+        let canMigrate = false;
+
+        // Check if the current user is linked to this legacy profile via wallet address
+        if (legacyProfile.legacyAddress) {
+          const walletAddresses = user.smartAccounts
+            .map((smartAccount) =>
+              smartAccount.initialWalletAddress.toLowerCase(),
+            )
+            .filter((walletAddress) => Boolean(walletAddress));
+          canMigrate = walletAddresses.includes(
+            legacyProfile.legacyAddress.toLowerCase(),
+          );
+        }
+
+        // Check if the current user is linked to this legacy profile via email address
+        if (
+          !canMigrate &&
+          legacyProfile.legacyEmail &&
+          legacyProfile.legacyEmailVerifiedAt
+        ) {
+          const emailAddresses = user.smartAccounts
+            .map((smartAccount) => smartAccount.initialEmail?.toLowerCase())
+            .filter((emailAddress) => Boolean(emailAddress)) as string[];
+          canMigrate = emailAddresses.includes(
+            legacyProfile.legacyEmail.toLowerCase(),
+          );
+        }
+
+        if (!canMigrate) {
+          // User selected an unlinked profile and cannot migrate
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.UserError,
+            code: TDK_ERROR_CODES.USER_FORBIDDEN,
+            statusCode: 403,
+            message: "Forbidden",
+          });
+        }
+
+        await Promise.all([
+          // Migrate social accounts
+          db.userSocialAccount.updateMany({
+            where: {
+              userId,
+              // Clear legacy profile data so migration is not triggered again
+              legacyUserProfileId: legacyProfile.id,
+            },
+            data: {
+              legacyUserProfileId: null,
+            },
+          }),
+          // Migrate notification settings
+          db.userNotificationSettings.updateMany({
+            where: {
+              userId,
+              // Clear legacy profile data so migration is not triggered again
+              legacyUserProfileId: legacyProfile.id,
+            },
+            data: {
+              legacyUserProfileId: null,
+            },
+          }),
+        ]);
+
+        // Merge data if user has existing profile or connect legacy profile if not
+        if (profile) {
+          const updatedProfile = await db.userProfile.update({
+            where: {
+              id: profile.id,
+            },
+            data: {
+              tag: legacyProfile.tag ?? undefined,
+              discriminant: legacyProfile.discriminant ?? undefined,
+              emailSecurityPhrase:
+                legacyProfile.emailSecurityPhrase ?? undefined,
+              emailSecurityPhraseUpdatedAt:
+                legacyProfile.emailSecurityPhraseUpdatedAt ?? undefined,
+              featuredNftIds: legacyProfile.featuredNftIds,
+              featuredBadgeIds: legacyProfile.featuredBadgeIds,
+              highlyFeaturedBadgeId:
+                legacyProfile.highlyFeaturedBadgeId ?? undefined,
+              about: legacyProfile.about ?? undefined,
+              pfp: legacyProfile.pfp ?? undefined,
+              banner: legacyProfile.banner ?? undefined,
+              showMagicBalance: legacyProfile.showMagicBalance,
+              showEthBalance: legacyProfile.showEthBalance,
+              showGemsBalance: legacyProfile.showGemsBalance,
+              testnetFaucetLastUsedAt:
+                legacyProfile.testnetFaucetLastUsedAt ?? undefined,
+              legacyProfileMigratedAt: new Date(),
+            },
+            select: USER_PROFILE_SELECT_FIELDS,
+          });
+
+          await db.userProfile.delete({
+            where: {
+              id: legacyProfile.id,
+            },
+          });
+
+          reply.send({
+            ...updatedProfile,
+            ...transformUserProfileResponseFields(updatedProfile),
+          });
+        } else {
+          const updatedProfile = await db.userProfile.update({
+            where: {
+              id: legacyProfile.id,
+            },
+            data: {
+              userId,
+              legacyProfileMigratedAt: new Date(),
+              // Clear legacy profile data so migration is not triggered again
+              legacyAddress: null,
+              legacyEmail: null,
+              legacyEmailVerifiedAt: null,
+            },
+            select: USER_PROFILE_SELECT_FIELDS,
+          });
+
+          reply.send({
+            ...updatedProfile,
+            ...transformUserProfileResponseFields(updatedProfile),
+          });
+        }
       },
     );
 
@@ -242,12 +398,8 @@ export const usersRoutes =
       async (req, reply) => {
         const { chain, userAddress, authError } = req;
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError ?? "Unauthorized");
+          return;
         }
 
         const sessions = await getUserSessions({
