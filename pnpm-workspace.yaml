@@ -4,8 +4,8 @@ packages:
   - "examples/*"
 
 catalog:
-  "@aws-sdk/client-kms": ^3.682.0
-  "@aws-sdk/client-secrets-manager": ^3.682.0
+  "@aws-sdk/client-kms": ^3.686.0
+  "@aws-sdk/client-secrets-manager": ^3.686.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
   "@changesets/cli": ^2.27.9
@@ -22,7 +22,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.1.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.37.1
-  "@sinclair/typebox": ^0.33.17
+  "@sinclair/typebox": ^0.33.19
   "@storybook/addon-essentials": ^8.4.2
   "@storybook/react": ^8.4.2
   "@storybook/react-vite": ^8.4.2
@@ -34,7 +34,7 @@ catalog:
   "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
   "@vitejs/plugin-react": ^4.3.3
-  "@wagmi/core": ^2.14.1
+  "@wagmi/core": ^2.14.3
   abitype: ^1.0.6
   autoprefixer: ^10.4.20
   "aws-kms-signer": ^0.5.3
@@ -54,7 +54,7 @@ catalog:
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.36.2
+  knip: ^5.36.3
   lint-staged: ^15.2.10
   pino: ^9.5.0
   pino-pretty: ^11.3.0
@@ -68,7 +68,7 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.4
-  thirdweb: ^5.65.2
+  thirdweb: ^5.66.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   turbo: ^2.2.3
   typescript: ^5.6.3
