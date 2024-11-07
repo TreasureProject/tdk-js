@@ -22,7 +22,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.1.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.37.1
-  "@sinclair/typebox": ^0.33.19
+  "@sinclair/typebox": ^0.33.21
   "@storybook/addon-essentials": ^8.4.2
   "@storybook/react": ^8.4.2
   "@storybook/react-vite": ^8.4.2
@@ -57,7 +57,7 @@ catalog:
   knip: ^5.36.3
   lint-staged: ^15.2.10
   pino: ^9.5.0
-  pino-pretty: ^11.3.0
+  pino-pretty: ^12.0.0
   postcss: ^8.4.47
   prisma: ^5.22.0
   react: ^18.2.0
@@ -73,6 +73,6 @@ catalog:
   turbo: ^2.2.3
   typescript: ^5.6.3
   uuid: ^11.0.2
-  viem: 2.21.35 # matches Thirdweb version to satisfy getAwsKmsAccount types
+  viem: 2.21.40 # matches Thirdweb version to satisfy getAwsKmsAccount types
   vite: ^5.4.10
   vitest: ^2.1.4

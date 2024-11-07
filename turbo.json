@@ -8,6 +8,15 @@
     "typecheck": {
       "dependsOn": ["generate", "^typecheck"]
     },
+    "@treasure-dev/tdk-api#typecheck": {
+      "dependsOn": ["@treasure-dev/auth#build", "@treasure-dev/tdk-core#build"]
+    },
+    "@treasure-dev/tdk-react#typecheck": {
+      "dependsOn": [
+        "@treasure-dev/launcher#build",
+        "@treasure-dev/tdk-core#build"
+      ]
+    },
     "@treasure-dev/tdk-examples-connect-core#typecheck": {
       "dependsOn": ["@treasure-dev/tdk-core#build"]
     },
