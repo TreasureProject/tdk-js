@@ -14,28 +14,6 @@ export const DEFAULT_TDK_ECOSYSTEM_ID = "ecosystem.treasure";
 export const DEFAULT_TDK_DARKMATTER_BASE_URI =
   "https://darkmatter.spellcaster.lol";
 
-// APIs
-export const BRIDGEWORLD_API_URL = {
-  [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
-  [arbitrumSepolia.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-dev/live/gn",
-} as const;
-
-export const BRIDGEWORLD_CORRUPTION_API_URL = {
-  [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption/live/gn",
-  [arbitrumSepolia.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
-} as const;
-
-export const MAGICSWAPV2_API_URL = {
-  [arbitrum.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
-  [arbitrumSepolia.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/live/gn",
-} as const;
-
 // Chains
 export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
   id: 978_658,
@@ -60,6 +38,30 @@ export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
   testnet: true,
 };
 export const treasureTopaz = defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION);
+
+// APIs
+export const BRIDGEWORLD_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-dev/live/gn",
+} as const;
+
+export const BRIDGEWORLD_CORRUPTION_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/bridgeworld-corruption-dev/live/gn",
+} as const;
+
+export const MAGICSWAPV2_API_URL = {
+  [arbitrum.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
+  [arbitrumSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/live/gn",
+  [treasureTopaz.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-topaz/live/gn",
+} as const;
 
 // Tokens
 export const TOKEN_IDS = {
