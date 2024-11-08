@@ -141,7 +141,7 @@ model UserSocialAccount {
   isPublic      Boolean       @default(false) @map("is_public")
 
   // Migration
-  legacyAddress String? @map("legacy_address") @db.VarChar(42)
+  legacyUserProfileId String? @map("legacy_user_profile_id")
 
   // Relations
   userId String? @map("user_id")
@@ -151,7 +151,7 @@ model UserSocialAccount {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([network, legacyAddress])
+  @@index([legacyUserProfileId])
   @@index([userId])
   @@map("user_social_account")
   @@schema("public")
@@ -178,7 +178,7 @@ model UserNotificationSettings {
   isEnabledInApp Boolean          @default(true) @map("is_enabled_in_app")
 
   // Migration
-  legacyAddress String? @map("legacy_address") @db.VarChar(42)
+  legacyUserProfileId String? @map("legacy_user_profile_id")
 
   // Relations
   userId String? @map("user_id")
@@ -189,7 +189,7 @@ model UserNotificationSettings {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([type, userId])
-  @@unique([type, legacyAddress])
+  @@index([legacyUserProfileId])
   @@index([userId])
   @@map("user_notification_settings")
   @@schema("public")

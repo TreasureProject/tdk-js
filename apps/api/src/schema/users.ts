@@ -28,10 +28,13 @@ export const updateCurrentUserBodySchema = Type.Object({
   showGemsBalance: Type.Optional(Type.Boolean()),
 });
 
-export const updateCurrentUserReplySchema = Type.Intersect([
-  userSchema,
-  userProfileSchema,
-]);
+export const updateCurrentUserReplySchema = userProfileSchema;
+
+const updateCurrentUserMigrationBodySchema = Type.Object({
+  id: Type.String(),
+});
+
+export const updateCurrentUserMigrationReplySchema = userProfileSchema;
 
 export const readCurrentUserSessionsQuerystringSchema = Type.Object({
   chainId: Type.Number(),
@@ -82,6 +85,12 @@ export type ReadCurrentUserSessionsReply = Static<
 export type UpdateCurrentUserBody = Static<typeof updateCurrentUserBodySchema>;
 export type UpdateCurrentUserReply = Static<
   typeof updateCurrentUserReplySchema
+>;
+export type UpdateCurrentUserMigrationBody = Static<
+  typeof updateCurrentUserMigrationBodySchema
+>;
+export type UpdateCurrentUserMigrationReply = Static<
+  typeof updateCurrentUserMigrationReplySchema
 >;
 export type ReadUserPublicProfileParams = Static<
   typeof readUserPublicProfileParamsSchema
