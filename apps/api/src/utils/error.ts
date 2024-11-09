@@ -99,3 +99,12 @@ export const throwUnauthorizedError = (message: string) => {
     data: { authError: message },
   });
 };
+
+export const throwUserNotFoundError = () => {
+  throw new TdkError({
+    name: TDK_ERROR_NAMES.UserError,
+    code: TDK_ERROR_CODES.USER_NOT_FOUND,
+    statusCode: 404,
+    message: "User not found",
+  });
+};

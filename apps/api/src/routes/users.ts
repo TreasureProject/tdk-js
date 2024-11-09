@@ -36,12 +36,14 @@ import {
   USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SELECT_FIELDS,
   USER_SMART_ACCOUNT_SELECT_FIELDS,
+  USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "../utils/db";
 import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
   throwUnauthorizedError,
+  throwUserNotFoundError,
 } from "../utils/error";
 import { transformUserProfileResponseFields } from "../utils/user";
 
@@ -83,6 +85,9 @@ export const usersRoutes =
               profile: {
                 select: USER_PROFILE_SELECT_FIELDS,
               },
+              socialAccounts: {
+                select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              },
             },
           }),
           getUserSessions({
@@ -100,12 +105,8 @@ export const usersRoutes =
             : [];
 
         if (!user || !user.profile) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.UserError,
-            code: TDK_ERROR_CODES.USER_NOT_FOUND,
-            statusCode: 404,
-            message: "User not found",
-          });
+          throwUserNotFoundError();
+          return;
         }
 
         const sessions = userSessions.map((session) => ({
@@ -174,27 +175,36 @@ export const usersRoutes =
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
-        const updatedProfile = await db.userProfile.update({
-          where: { userId },
-          data: {
-            emailSecurityPhrase,
-            emailSecurityPhraseUpdatedAt,
-            featuredNftIds,
-            featuredBadgeIds,
-            highlyFeaturedBadgeId,
-            about,
-            pfp,
-            banner,
-            showMagicBalance,
-            showEthBalance,
-            showGemsBalance,
-          },
-          select: USER_PROFILE_SELECT_FIELDS,
-        });
+        const [updatedProfile, socialAccounts] = await Promise.all([
+          db.userProfile.update({
+            where: { userId },
+            data: {
+              emailSecurityPhrase,
+              emailSecurityPhraseUpdatedAt,
+              featuredNftIds,
+              featuredBadgeIds,
+              highlyFeaturedBadgeId,
+              about,
+              pfp,
+              banner,
+              showMagicBalance,
+              showEthBalance,
+              showGemsBalance,
+            },
+            select: USER_PROFILE_SELECT_FIELDS,
+          }),
+          db.userSocialAccount.findMany({
+            where: {
+              userId,
+            },
+            select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+          }),
+        ]);
 
         reply.send({
           ...updatedProfile,
           ...transformUserProfileResponseFields(updatedProfile),
+          socialAccounts,
         });
       },
     );
@@ -244,12 +254,8 @@ export const usersRoutes =
         ]);
 
         if (!user || !legacyProfile) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.UserError,
-            code: TDK_ERROR_CODES.USER_NOT_FOUND,
-            statusCode: 404,
-            message: "User not found",
-          });
+          throwUserNotFoundError();
+          return;
         }
 
         let canMigrate = false;
@@ -317,33 +323,41 @@ export const usersRoutes =
 
         // Merge data if user has existing profile or connect legacy profile if not
         if (profile) {
-          const updatedProfile = await db.userProfile.update({
-            where: {
-              id: profile.id,
-            },
-            data: {
-              tag: legacyProfile.tag ?? undefined,
-              discriminant: legacyProfile.discriminant ?? undefined,
-              emailSecurityPhrase:
-                legacyProfile.emailSecurityPhrase ?? undefined,
-              emailSecurityPhraseUpdatedAt:
-                legacyProfile.emailSecurityPhraseUpdatedAt ?? undefined,
-              featuredNftIds: legacyProfile.featuredNftIds,
-              featuredBadgeIds: legacyProfile.featuredBadgeIds,
-              highlyFeaturedBadgeId:
-                legacyProfile.highlyFeaturedBadgeId ?? undefined,
-              about: legacyProfile.about ?? undefined,
-              pfp: legacyProfile.pfp ?? undefined,
-              banner: legacyProfile.banner ?? undefined,
-              showMagicBalance: legacyProfile.showMagicBalance,
-              showEthBalance: legacyProfile.showEthBalance,
-              showGemsBalance: legacyProfile.showGemsBalance,
-              testnetFaucetLastUsedAt:
-                legacyProfile.testnetFaucetLastUsedAt ?? undefined,
-              legacyProfileMigratedAt: new Date(),
-            },
-            select: USER_PROFILE_SELECT_FIELDS,
-          });
+          const [updatedProfile, updatedSocialAccounts] = await Promise.all([
+            db.userProfile.update({
+              where: {
+                id: profile.id,
+              },
+              data: {
+                tag: legacyProfile.tag ?? undefined,
+                discriminant: legacyProfile.discriminant ?? undefined,
+                emailSecurityPhrase:
+                  legacyProfile.emailSecurityPhrase ?? undefined,
+                emailSecurityPhraseUpdatedAt:
+                  legacyProfile.emailSecurityPhraseUpdatedAt ?? undefined,
+                featuredNftIds: legacyProfile.featuredNftIds,
+                featuredBadgeIds: legacyProfile.featuredBadgeIds,
+                highlyFeaturedBadgeId:
+                  legacyProfile.highlyFeaturedBadgeId ?? undefined,
+                about: legacyProfile.about ?? undefined,
+                pfp: legacyProfile.pfp ?? undefined,
+                banner: legacyProfile.banner ?? undefined,
+                showMagicBalance: legacyProfile.showMagicBalance,
+                showEthBalance: legacyProfile.showEthBalance,
+                showGemsBalance: legacyProfile.showGemsBalance,
+                testnetFaucetLastUsedAt:
+                  legacyProfile.testnetFaucetLastUsedAt ?? undefined,
+                legacyProfileMigratedAt: new Date(),
+              },
+              select: USER_PROFILE_SELECT_FIELDS,
+            }),
+            db.userSocialAccount.findMany({
+              where: {
+                userId,
+              },
+              select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+            }),
+          ]);
 
           await db.userProfile.delete({
             where: {
@@ -354,26 +368,36 @@ export const usersRoutes =
           reply.send({
             ...updatedProfile,
             ...transformUserProfileResponseFields(updatedProfile),
+            socialAccounts: updatedSocialAccounts,
           });
         } else {
-          const updatedProfile = await db.userProfile.update({
-            where: {
-              id: legacyProfile.id,
-            },
-            data: {
-              userId,
-              legacyProfileMigratedAt: new Date(),
-              // Clear legacy profile data so migration is not triggered again
-              legacyAddress: null,
-              legacyEmail: null,
-              legacyEmailVerifiedAt: null,
-            },
-            select: USER_PROFILE_SELECT_FIELDS,
-          });
+          const [updatedProfile, updatedSocialAccounts] = await Promise.all([
+            db.userProfile.update({
+              where: {
+                id: legacyProfile.id,
+              },
+              data: {
+                userId,
+                legacyProfileMigratedAt: new Date(),
+                // Clear legacy profile data so migration is not triggered again
+                legacyAddress: null,
+                legacyEmail: null,
+                legacyEmailVerifiedAt: null,
+              },
+              select: USER_PROFILE_SELECT_FIELDS,
+            }),
+            db.userSocialAccount.findMany({
+              where: {
+                userId,
+              },
+              select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+            }),
+          ]);
 
           reply.send({
             ...updatedProfile,
             ...transformUserProfileResponseFields(updatedProfile),
+            socialAccounts: updatedSocialAccounts,
           });
         }
       },
@@ -440,25 +464,31 @@ export const usersRoutes =
       },
       async (req, reply) => {
         const { id: userId } = req.params;
-        const userPublicProfile = await db.userProfile.findUnique({
-          where: {
-            userId,
-          },
-          select: USER_PUBLIC_PROFILE_SELECT_FIELDS,
-        });
+        const [publicProfile, publicSocialAccounts] = await Promise.all([
+          db.userProfile.findUnique({
+            where: {
+              userId,
+            },
+            select: USER_PUBLIC_PROFILE_SELECT_FIELDS,
+          }),
+          db.userSocialAccount.findMany({
+            where: {
+              userId,
+              isPublic: true,
+            },
+            select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+          }),
+        ]);
 
-        if (!userPublicProfile) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.UserError,
-            code: TDK_ERROR_CODES.USER_NOT_FOUND,
-            statusCode: 404,
-            message: "User not found",
-          });
+        if (!publicProfile) {
+          throwUserNotFoundError();
+          return;
         }
 
         reply.send({
-          ...userPublicProfile,
-          ...transformUserProfileResponseFields(userPublicProfile),
+          ...publicProfile,
+          ...transformUserProfileResponseFields(publicProfile),
+          socialAccounts: publicSocialAccounts,
         });
       },
     );
