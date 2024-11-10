@@ -187,7 +187,7 @@ export const magicswapRoutes =
           nftsOut,
           isExactOut,
           slippage,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
@@ -305,7 +305,7 @@ export const magicswapRoutes =
           amount1Min,
           nfts0,
           nfts1,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
@@ -402,7 +402,7 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           swapLeftover = true,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
 
