@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - "pnpm-lock.yaml"
       - "apps/api/**"
+      - "packages/auth/**"
       - "packages/core/**"
     branches:
       - main
@@ -50,7 +52,7 @@ jobs:
             SENTRY_ENVIRONMENT=${{ vars.ENVIRONMENT }}
             TREASURE_AUTH_KMS_KEY=${{ vars.TREASURE_AUTH_KMS_KEY }}
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ vars.ECS_SERVICE }}
