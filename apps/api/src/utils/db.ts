@@ -32,13 +32,10 @@ export const USER_SMART_ACCOUNT_SELECT_FIELDS = {
   address: true,
 } as const satisfies Prisma.UserSmartAccountSelect;
 
-export const USER_SMART_ACCOUNT_INCLUDE_FIELDS = {
-  user: {
-    select: {
-      ...USER_SELECT_FIELDS,
-      smartAccounts: {
-        select: USER_SMART_ACCOUNT_SELECT_FIELDS,
-      },
-    },
-  },
-} as const satisfies Prisma.UserSmartAccountInclude;
+export const USER_SOCIAL_ACCOUNT_SELECT_FIELDS = {
+  network: true,
+  accountId: true,
+  accountName: true,
+  accountHandle: true,
+  isPublic: true,
+} as const satisfies Prisma.UserSocialAccountSelect;

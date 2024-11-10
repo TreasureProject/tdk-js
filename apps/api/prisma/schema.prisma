@@ -117,10 +117,7 @@ model UserProfile {
 }
 
 enum SocialNetwork {
-  APPLE
   DISCORD
-  FARCASTER
-  GOOGLE
   STEAM
   TWITCH
   TWITTER
@@ -153,6 +150,7 @@ model UserSocialAccount {
 
   @@index([legacyUserProfileId])
   @@index([userId])
+  @@index([isPublic])
   @@map("user_social_account")
   @@schema("public")
 }

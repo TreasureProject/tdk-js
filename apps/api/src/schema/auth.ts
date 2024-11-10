@@ -1,11 +1,11 @@
 import { type Static, Type } from "@sinclair/typebox";
+import { EXAMPLE_WALLET_ADDRESS } from "./shared";
 import {
-  EXAMPLE_WALLET_ADDRESS,
   sessionSchema,
   userProfileSchema,
   userPublicProfileSchema,
   userSchema,
-} from "./shared";
+} from "./users";
 
 const loginPayloadSchema = Type.Object({
   domain: Type.String(),
@@ -51,7 +51,7 @@ export const loginReplySchema = Type.Object({
       Type.Object({
         id: Type.String(),
       }),
-      userPublicProfileSchema,
+      Type.Omit(userPublicProfileSchema, ["socialAccounts"]),
     ]),
   ),
 });

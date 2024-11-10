@@ -28,9 +28,11 @@ import type { TdkApiContext } from "../types";
 import {
   USER_PROFILE_SELECT_FIELDS,
   USER_PUBLIC_PROFILE_SELECT_FIELDS,
-  USER_SMART_ACCOUNT_INCLUDE_FIELDS,
+  USER_SELECT_FIELDS,
+  USER_SMART_ACCOUNT_SELECT_FIELDS,
+  USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "../utils/db";
-import { throwUnauthorizedError } from "../utils/error";
+import { throwUnauthorizedError, throwUserNotFoundError } from "../utils/error";
 import { log } from "../utils/log";
 import {
   getThirdwebUser,
@@ -111,7 +113,6 @@ export const authRoutes =
               address,
             },
           },
-          include: USER_SMART_ACCOUNT_INCLUDE_FIELDS,
         });
 
         // If no smart account exists, fetch user details and create it
@@ -168,18 +169,29 @@ export const authRoutes =
                 },
               },
             },
-            include: USER_SMART_ACCOUNT_INCLUDE_FIELDS,
           });
         }
 
-        const { user } = userSmartAccount;
-        const [profile, legacyUserProfiles] = await Promise.all([
+        const [user, profile, legacyUserProfiles] = await Promise.all([
+          // Fetch user
+          db.user.findUnique({
+            where: { id: userSmartAccount.userId },
+            select: {
+              ...USER_SELECT_FIELDS,
+              smartAccounts: {
+                select: USER_SMART_ACCOUNT_SELECT_FIELDS,
+              },
+              socialAccounts: {
+                select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              },
+            },
+          }),
           // Fetch or create user profile
           db.userProfile.upsert({
-            where: { userId: user.id },
+            where: { userId: userSmartAccount.userId },
             update: {},
             create: {
-              userId: user.id,
+              userId: userSmartAccount.userId,
               email: userSmartAccount.initialEmail,
             },
             select: USER_PROFILE_SELECT_FIELDS,
@@ -205,6 +217,11 @@ export const authRoutes =
                 })
               : [],
         ]);
+
+        if (!user) {
+          throwUserNotFoundError();
+          return;
+        }
 
         const [authTokenResult, userSessionsResult] = await Promise.allSettled([
           auth.generateJWT<UserContext>(address, {
