@@ -58,8 +58,10 @@ const ENGINE_ERROR_MESSAGE_MAP = {
 } as const;
 
 export const normalizeEngineErrorMessage = (rawMessage: string) => {
+  const normalizedMessage = rawMessage.replace("[Bundler]", "").trim();
+
   try {
-    const error: object = JSON.parse(rawMessage);
+    const error: object = JSON.parse(normalizedMessage);
     if ("message" in error && typeof error.message === "string") {
       return error.message;
     }
@@ -69,9 +71,9 @@ export const normalizeEngineErrorMessage = (rawMessage: string) => {
 
   const groups =
     /(?:reason: '(.*?)' at)|(?:reason="execution reverted: (.*?)")|(?:eth_sendUserOperation error: {"message":"(.*?)")|(?:Simulation failed: TransactionError: Error - (.*))|(?:^Simulation failed: (.*))|(?:^Error - (.*))/gi.exec(
-      rawMessage,
+      normalizedMessage,
     );
-  const message = groups?.slice(1).find((group) => group) ?? rawMessage;
+  const message = groups?.slice(1).find((group) => group) ?? normalizedMessage;
   return message in ENGINE_ERROR_MESSAGE_MAP
     ? ENGINE_ERROR_MESSAGE_MAP[message as keyof typeof ENGINE_ERROR_MESSAGE_MAP]
     : message;

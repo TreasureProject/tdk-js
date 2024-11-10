@@ -49,5 +49,12 @@ describe("error utils", () => {
     ).toBe(
       "failed with 50004597 gas: insufficient funds for gas * price + value: address 0xafCB379C0B76265bCb8432ab776A2641F0355Eb3 have 0 want 100000000000000",
     );
+    expect(
+      normalizeEngineErrorMessage(
+        '[Bundler] {"code":-32000,"message":"failed with 156251076 gas: insufficient funds for gas * price + value: address 0xFA2B4D1C2fd0f340d8D156116347B1eC7fFc28E9 have 0 want 100000000000000"}',
+      ),
+    ).toBe(
+      "failed with 156251076 gas: insufficient funds for gas * price + value: address 0xFA2B4D1C2fd0f340d8D156116347B1eC7fFc28E9 have 0 want 100000000000000",
+    );
   });
 });
