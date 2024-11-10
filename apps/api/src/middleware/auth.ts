@@ -20,7 +20,7 @@ declare module "fastify" {
   }
 }
 
-export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
+export const withAuth = (app: App, { auth }: TdkApiContext) => {
   app.decorateRequest("userId", undefined);
   app.decorateRequest("userAddress", undefined);
   app.decorateRequest("backendUserAddress", undefined);
@@ -65,28 +65,6 @@ export const withAuth = (app: App, { auth, thirdwebAuth }: TdkApiContext) => {
         id: req.userId,
         username: req.userAddress,
       });
-      return;
-    } catch (err) {
-      req.authError = err instanceof Error ? err.message : "Unknown error";
-    }
-
-    // Fall back to legacy Thirdweb auth
-    // TODO: remove fallback when all legacy JWTs expire
-    try {
-      const authResult = await thirdwebAuth.verifyJWT({
-        jwt: req.headers.authorization.replace("Bearer ", ""),
-      });
-      if (authResult.valid) {
-        req.authError = undefined;
-        req.userId = (authResult.parsedJWT.ctx as UserContext | undefined)?.id;
-        req.userAddress = authResult.parsedJWT.sub as AddressString;
-        Sentry.setUser({
-          id: req.userId,
-          username: req.userAddress,
-        });
-      } else {
-        req.authError = authResult.error;
-      }
     } catch (err) {
       req.authError = err instanceof Error ? err.message : "Unknown error";
     }

@@ -14,7 +14,6 @@ import {
 } from "@wagmi/core/chains";
 import { createThirdwebClient } from "thirdweb";
 import { createAuth as createThirdwebAuth } from "thirdweb/auth";
-import { privateKeyToAccount } from "thirdweb/wallets";
 import { defineChain } from "viem";
 
 import { withAuth } from "./middleware/auth";
@@ -34,10 +33,6 @@ import { getEnv } from "./utils/env";
 const main = async () => {
   const env = await getEnv();
   const client = createThirdwebClient({ secretKey: env.THIRDWEB_SECRET_KEY });
-  const adminAccount = privateKeyToAccount({
-    client,
-    privateKey: env.THIRDWEB_AUTH_PRIVATE_KEY,
-  });
   const ctx: TdkApiContext = {
     env,
     db: new PrismaClient({
@@ -50,17 +45,13 @@ const main = async () => {
     client,
     auth: createAuth({
       kmsKey: env.TREASURE_AUTH_KMS_KEY,
-      issuer: env.THIRDWEB_AUTH_DOMAIN,
-      audience: adminAccount.address,
+      issuer: env.TREASURE_AUTH_ISSUER,
+      audience: env.TREASURE_AUTH_AUDIENCE,
       expirationTimeSeconds: 86_400, // 1 day
     }),
     thirdwebAuth: createThirdwebAuth({
-      domain: env.THIRDWEB_AUTH_DOMAIN,
+      domain: env.TREASURE_AUTH_ISSUER,
       client,
-      adminAccount,
-      login: {
-        uri: `https://${env.THIRDWEB_AUTH_DOMAIN}`,
-      },
     }),
     engine: new Engine({
       url: env.THIRDWEB_ENGINE_URL,
