@@ -26,6 +26,7 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import {
+  USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
   USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SELECT_FIELDS,
@@ -183,6 +184,9 @@ export const authRoutes =
               },
               socialAccounts: {
                 select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              },
+              notificationSettings: {
+                select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
               },
             },
           }),

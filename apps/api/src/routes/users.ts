@@ -32,6 +32,7 @@ import {
 } from "../schema";
 import type { TdkApiContext } from "../types";
 import {
+  USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
   USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SELECT_FIELDS,
@@ -87,6 +88,9 @@ export const usersRoutes =
               },
               socialAccounts: {
                 select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              },
+              notificationSettings: {
+                select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
               },
             },
           }),
@@ -175,36 +179,44 @@ export const usersRoutes =
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
-        const [updatedProfile, socialAccounts] = await Promise.all([
-          db.userProfile.update({
-            where: { userId },
-            data: {
-              emailSecurityPhrase,
-              emailSecurityPhraseUpdatedAt,
-              featuredNftIds,
-              featuredBadgeIds,
-              highlyFeaturedBadgeId,
-              about,
-              pfp,
-              banner,
-              showMagicBalance,
-              showEthBalance,
-              showGemsBalance,
-            },
-            select: USER_PROFILE_SELECT_FIELDS,
-          }),
-          db.userSocialAccount.findMany({
-            where: {
-              userId,
-            },
-            select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
-          }),
-        ]);
+        const [updatedProfile, socialAccounts, notificationSettings] =
+          await Promise.all([
+            db.userProfile.update({
+              where: { userId },
+              data: {
+                emailSecurityPhrase,
+                emailSecurityPhraseUpdatedAt,
+                featuredNftIds,
+                featuredBadgeIds,
+                highlyFeaturedBadgeId,
+                about,
+                pfp,
+                banner,
+                showMagicBalance,
+                showEthBalance,
+                showGemsBalance,
+              },
+              select: USER_PROFILE_SELECT_FIELDS,
+            }),
+            db.userSocialAccount.findMany({
+              where: {
+                userId,
+              },
+              select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+            }),
+            db.userNotificationSettings.findMany({
+              where: {
+                userId,
+              },
+              select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
+            }),
+          ]);
 
         reply.send({
           ...updatedProfile,
           ...transformUserProfileResponseFields(updatedProfile),
           socialAccounts,
+          notificationSettings,
         });
       },
     );
@@ -321,9 +333,56 @@ export const usersRoutes =
           }),
         ]);
 
+        const [[, updatedSocialAccounts], [, updatedNotificationSettings]] =
+          await Promise.all([
+            db.$transaction([
+              // Migrate social accounts
+              db.userSocialAccount.updateMany({
+                where: {
+                  userId,
+                  // Clear legacy profile data so migration is not triggered again
+                  legacyUserProfileId: legacyProfile.id,
+                },
+                data: {
+                  legacyUserProfileId: null,
+                },
+              }),
+              db.userSocialAccount.findMany({
+                where: {
+                  userId,
+                },
+                select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              }),
+            ]),
+            db.$transaction([
+              // Migrate notification settings
+              db.userNotificationSettings.updateMany({
+                where: {
+                  userId,
+                  // Clear legacy profile data so migration is not triggered again
+                  legacyUserProfileId: legacyProfile.id,
+                },
+                data: {
+                  legacyUserProfileId: null,
+                },
+              }),
+              db.userNotificationSettings.findMany({
+                where: {
+                  userId,
+                },
+                select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
+              }),
+            ]),
+          ]);
+
+        let updatedProfile: Pick<
+          Prisma.$UserProfilePayload["scalars"],
+          keyof typeof USER_PROFILE_SELECT_FIELDS
+        >;
+
         // Merge data if user has existing profile or connect legacy profile if not
         if (profile) {
-          const [updatedProfile, updatedSocialAccounts] = await Promise.all([
+          const [updateResult] = await db.$transaction([
             db.userProfile.update({
               where: {
                 id: profile.id,
@@ -351,55 +410,36 @@ export const usersRoutes =
               },
               select: USER_PROFILE_SELECT_FIELDS,
             }),
-            db.userSocialAccount.findMany({
-              where: {
-                userId,
-              },
-              select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
-            }),
-          ]);
-
-          await db.userProfile.delete({
-            where: {
-              id: legacyProfile.id,
-            },
-          });
-
-          reply.send({
-            ...updatedProfile,
-            ...transformUserProfileResponseFields(updatedProfile),
-            socialAccounts: updatedSocialAccounts,
-          });
-        } else {
-          const [updatedProfile, updatedSocialAccounts] = await Promise.all([
-            db.userProfile.update({
+            db.userProfile.delete({
               where: {
                 id: legacyProfile.id,
               },
-              data: {
-                userId,
-                legacyProfileMigratedAt: new Date(),
-                // Clear legacy profile data so migration is not triggered again
-                legacyAddress: null,
-                legacyEmail: null,
-                legacyEmailVerifiedAt: null,
-              },
-              select: USER_PROFILE_SELECT_FIELDS,
-            }),
-            db.userSocialAccount.findMany({
-              where: {
-                userId,
-              },
-              select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
             }),
           ]);
-
-          reply.send({
-            ...updatedProfile,
-            ...transformUserProfileResponseFields(updatedProfile),
-            socialAccounts: updatedSocialAccounts,
+          updatedProfile = updateResult;
+        } else {
+          updatedProfile = await db.userProfile.update({
+            where: {
+              id: legacyProfile.id,
+            },
+            data: {
+              userId,
+              legacyProfileMigratedAt: new Date(),
+              // Clear legacy profile data so migration is not triggered again
+              legacyAddress: null,
+              legacyEmail: null,
+              legacyEmailVerifiedAt: null,
+            },
+            select: USER_PROFILE_SELECT_FIELDS,
           });
         }
+
+        reply.send({
+          ...updatedProfile,
+          ...transformUserProfileResponseFields(updatedProfile),
+          socialAccounts: updatedSocialAccounts,
+          notificationSettings: updatedNotificationSettings,
+        });
       },
     );
 

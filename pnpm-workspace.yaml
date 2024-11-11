@@ -4,8 +4,8 @@ packages:
   - "examples/*"
 
 catalog:
-  "@aws-sdk/client-kms": ^3.686.0
-  "@aws-sdk/client-secrets-manager": ^3.686.0
+  "@aws-sdk/client-kms": ^3.687.0
+  "@aws-sdk/client-secrets-manager": ^3.687.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
   "@changesets/cli": ^2.27.9
@@ -29,7 +29,7 @@ catalog:
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.16
   "@types/jsonwebtoken": ^9.0.7
-  "@types/node": ^22.7.8
+  "@types/node": ^22.9.0
   "@types/react": ^18.3.12
   "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
@@ -54,10 +54,10 @@ catalog:
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.36.3
+  knip: ^5.36.6
   lint-staged: ^15.2.10
   pino: ^9.5.0
-  pino-pretty: ^12.1.0
+  pino-pretty: ^13.0.0
   postcss: ^8.4.47
   prisma: ^5.22.0
   react: ^18.2.0
