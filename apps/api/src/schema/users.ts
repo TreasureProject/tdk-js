@@ -106,6 +106,20 @@ export const userProfileSchema = Type.Intersect([
     showEthBalance: Type.Boolean(),
     showGemsBalance: Type.Boolean(),
     testnetFaucetLastUsedAt: nullableStringSchema,
+    notificationSettings: Type.Array(
+      Type.Object({
+        type: Type.Union([
+          Type.Literal("BADGE"),
+          Type.Literal("BID_ACTIVITY"),
+          Type.Literal("ITEM_SOLD"),
+          Type.Literal("ITEM_PURCHASED"),
+          Type.Literal("MARKETING"),
+        ]),
+        threshold: Type.Union([Type.Number(), Type.Null()]),
+        isEnabledEmail: Type.Boolean(),
+        isEnabledInApp: Type.Boolean(),
+      }),
+    ),
   }),
 ]);
 

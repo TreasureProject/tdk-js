@@ -39,3 +39,10 @@ export const USER_SOCIAL_ACCOUNT_SELECT_FIELDS = {
   accountHandle: true,
   isPublic: true,
 } as const satisfies Prisma.UserSocialAccountSelect;
+
+export const USER_NOTIFICATION_SETTINGS_SELECT_FIELDS = {
+  type: true,
+  threshold: true,
+  isEnabledEmail: true,
+  isEnabledInApp: true,
+} as const satisfies Prisma.UserNotificationSettingsSelect;
