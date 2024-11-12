@@ -69,7 +69,7 @@ export const usersRoutes =
       async (req, reply) => {
         const { chain, userId, userAddress, authError } = req;
         if (!userId || !userAddress) {
-          throwUnauthorizedError(authError ?? "Unauthorized");
+          throwUnauthorizedError(authError);
           return;
         }
 
@@ -159,7 +159,7 @@ export const usersRoutes =
       async (req, reply) => {
         const { userId, authError } = req;
         if (!userId) {
-          throwUnauthorizedError(authError ?? "Unauthorized");
+          throwUnauthorizedError(authError);
           return;
         }
 
@@ -239,7 +239,7 @@ export const usersRoutes =
       async (req, reply) => {
         const { userId, authError } = req;
         if (!userId) {
-          throwUnauthorizedError(authError ?? "Unauthorized");
+          throwUnauthorizedError(authError);
           return;
         }
 
@@ -462,7 +462,7 @@ export const usersRoutes =
       async (req, reply) => {
         const { chain, userAddress, authError } = req;
         if (!userAddress) {
-          throwUnauthorizedError(authError ?? "Unauthorized");
+          throwUnauthorizedError(authError);
           return;
         }
 

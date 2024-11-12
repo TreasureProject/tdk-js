@@ -26,6 +26,7 @@ import {
   TdkError,
   normalizeEngineErrorMessage,
   parseEngineErrorMessage,
+  throwUnauthorizedError,
 } from "../utils/error";
 import { parseTxOverrides } from "../utils/transaction";
 
@@ -77,12 +78,8 @@ export const transactionsRoutes =
         } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError);
+          return;
         }
 
         try {
@@ -169,12 +166,8 @@ export const transactionsRoutes =
         } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError);
+          return;
         }
 
         const parsedTxOverrides = parseTxOverrides(txOverrides);

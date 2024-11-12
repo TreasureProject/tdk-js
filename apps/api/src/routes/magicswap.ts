@@ -42,6 +42,7 @@ import {
   TDK_ERROR_NAMES,
   TdkError,
   parseEngineErrorMessage,
+  throwUnauthorizedError,
 } from "../utils/error";
 import { writeTransaction } from "../utils/transaction";
 
@@ -169,12 +170,8 @@ export const magicswapRoutes =
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError);
+          return;
         }
 
         const {
@@ -290,12 +287,8 @@ export const magicswapRoutes =
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError);
+          return;
         }
 
         const {
@@ -387,12 +380,8 @@ export const magicswapRoutes =
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.AuthError,
-            code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
-            message: "Unauthorized",
-            data: { authError },
-          });
+          throwUnauthorizedError(authError);
+          return;
         }
 
         const {
