@@ -116,8 +116,9 @@ const TreasureProviderInner = ({
     ? (getUserAddress(user, chain.id) ?? user.smartAccounts[0]?.address)
     : undefined;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: analyticsManager doesnt need to be a dependency
   useEffect(() => {
-    if (!analyticsOptions) {
+    if (!analyticsOptions || analyticsManager) {
       return;
     }
 
