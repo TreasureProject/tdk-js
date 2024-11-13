@@ -6,6 +6,7 @@ import type {
 import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
+import { createPoolFromPair, fetchPairs } from "./pools";
 import type { NFTInput } from "./types";
 
 type SwapFunctionName =
@@ -23,9 +24,15 @@ type SwapFunctionName =
 
 // Swap only needs a small subset of the PoolToken type
 type SwapPoolToken = {
+  id: string;
   isNFT: boolean;
   isETH: boolean;
   collectionId: string;
+};
+
+type SwapPool = {
+  token0: SwapPoolToken;
+  token1: SwapPoolToken;
 };
 
 const getAmountMax = (amount: bigint, slippage: number) =>
@@ -34,6 +41,13 @@ const getAmountMin = (amount: bigint, slippage: number) =>
   amount - (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
 
 const DEFAULT_SLIPPAGE = 0.005;
+
+export const fetchPoolsForSwap = async ({
+  chainId,
+}: { chainId: number }): Promise<SwapPool[]> => {
+  const pairs = await fetchPairs({ chainId });
+  return pairs.map((pair) => createPoolFromPair(pair));
+};
 
 export const createSwapArgs = ({
   toAddress,

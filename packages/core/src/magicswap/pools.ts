@@ -15,7 +15,7 @@ import type {
   TokensByCollectionMap,
 } from "./types";
 
-const fetchPairs = async ({ chainId }: { chainId: number }) => {
+export const fetchPairs = async ({ chainId }: { chainId: number }) => {
   const apiUrl = MAGICSWAPV2_API_URL[chainId];
   if (!apiUrl) {
     throw new Error(`No API configured for chain ${chainId}`);
@@ -34,7 +34,7 @@ const fetchPairs = async ({ chainId }: { chainId: number }) => {
   return pairs;
 };
 
-const fetchPair = async ({
+export const fetchPair = async ({
   chainId,
   pairId,
 }: { chainId: number; pairId: string }) => {
@@ -277,11 +277,11 @@ const createPoolToken = (
   };
 };
 
-const createPoolFromPair = (
+export const createPoolFromPair = (
   pair: Pair,
-  collectionsMap: CollectionsMap,
-  tokensMap: TokensByCollectionMap,
-  magicUSD: number,
+  collectionsMap: CollectionsMap = {},
+  tokensMap: TokensByCollectionMap = {},
+  magicUSD = 0,
   reserves?: [bigint, bigint],
 ) => {
   const token0 = {

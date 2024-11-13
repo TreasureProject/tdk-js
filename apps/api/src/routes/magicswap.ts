@@ -5,7 +5,9 @@ import {
   createRoute,
   createSwapArgs,
   fetchPool,
+  fetchPoolForLiquidity,
   fetchPools,
+  fetchPoolsForSwap,
   magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
@@ -193,13 +195,7 @@ export const magicswapRoutes =
           chain,
         } = req;
 
-        const pools = await fetchPools({
-          client,
-          chainId: chain.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
-        });
-
+        const pools = await fetchPoolsForSwap({ chainId: chain.id });
         const poolTokens = pools
           .flatMap(({ token0, token1 }) => [token0, token1])
           .reduce(
@@ -209,23 +205,13 @@ export const magicswapRoutes =
             },
             {} as Record<string, (typeof pools)[number]["token0"]>,
           );
-
         const tokenIn = poolTokens[tokenInId];
         const tokenOut = poolTokens[tokenOutId];
-
-        if (!tokenIn) {
+        if (!tokenIn || !tokenOut) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Input token not found",
-          });
-        }
-
-        if (!tokenOut) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Output token not found",
+            message: `${!tokenIn ? "Input" : "Output"} token not found`,
           });
         }
 
@@ -291,13 +277,9 @@ export const magicswapRoutes =
           return;
         }
 
-        const pools = await fetchPools({
-          client,
+        const pools = await fetchPoolsForSwap({
           chainId: chain.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
-
         const poolTokens = pools
           .flatMap(({ token0, token1 }) => [token0, token1])
           .reduce(
@@ -307,23 +289,13 @@ export const magicswapRoutes =
             },
             {} as Record<string, (typeof pools)[number]["token0"]>,
           );
-
         const tokenIn = poolTokens[tokenInId];
         const tokenOut = poolTokens[tokenOutId];
-
-        if (!tokenIn) {
+        if (!tokenIn || !tokenOut) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Input token not found",
-          });
-        }
-
-        if (!tokenOut) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Output token not found",
+            message: `${!tokenIn ? "Input" : "Output"} token not found`,
           });
         }
 
@@ -406,39 +378,34 @@ export const magicswapRoutes =
           params,
         } = req;
 
-        // TODO: Only create pool fields needed for liquidity functions
-        const pool = await fetchPool({
-          client,
-          chainId: chain.id,
-          pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
-        });
-
-        if (!pool) {
+        try {
+          const pool = await fetchPoolForLiquidity({
+            chainId: chain.id,
+            pairId: params.id,
+          });
+          const args = createAddLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress as Address,
+            amount0: amount0 ? BigInt(amount0) : undefined,
+            amount1: amount1 ? BigInt(amount1) : undefined,
+            amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
+            amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
+            nfts0,
+            nfts1,
+            pool,
+          });
+          reply.send({
+            ...args,
+            value: args.value?.toString(),
+          });
+        } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
             statusCode: 404,
-            message: "Pool not found",
+            message: err instanceof Error ? err.message : "Pool not found",
           });
         }
-
-        const args = createAddLiquidityArgs({
-          chainId: chain.id,
-          toAddress: toAddress as Address,
-          amount0: amount0 ? BigInt(amount0) : undefined,
-          amount1: amount1 ? BigInt(amount1) : undefined,
-          amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
-          amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
-          nfts0,
-          nfts1,
-          pool,
-        });
-        reply.send({
-          ...args,
-          value: args.value?.toString(),
-        });
       },
     );
 
@@ -486,12 +453,9 @@ export const magicswapRoutes =
           return;
         }
 
-        const pool = await fetchPool({
-          client,
+        const pool = await fetchPoolForLiquidity({
           chainId: chain.id,
           pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
 
         if (!pool) {
@@ -580,38 +544,34 @@ export const magicswapRoutes =
           params,
         } = req;
 
-        const pool = await fetchPool({
-          client,
-          chainId: chain.id,
-          pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
-        });
-
-        if (!pool) {
+        try {
+          const pool = await fetchPoolForLiquidity({
+            chainId: chain.id,
+            pairId: params.id,
+          });
+          const args = createRemoveLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress as Address,
+            amountLP: BigInt(amountLP),
+            amount0Min: BigInt(amount0Min),
+            amount1Min: BigInt(amount1Min),
+            nfts0,
+            nfts1,
+            pool,
+            swapLeftover,
+          });
+          reply.send({
+            ...args,
+            value: args.value?.toString(),
+          });
+        } catch (err) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
             statusCode: 404,
-            message: "Pool not found",
+            message: err instanceof Error ? err.message : "Pool not found",
           });
         }
-
-        const args = createRemoveLiquidityArgs({
-          chainId: chain.id,
-          toAddress: toAddress as Address,
-          amountLP: BigInt(amountLP),
-          amount0Min: BigInt(amount0Min),
-          amount1Min: BigInt(amount1Min),
-          nfts0,
-          nfts1,
-          pool,
-          swapLeftover,
-        });
-        reply.send({
-          ...args,
-          value: args.value?.toString(),
-        });
       },
     );
 
@@ -659,12 +619,9 @@ export const magicswapRoutes =
           return;
         }
 
-        const pool = await fetchPool({
-          client,
+        const pool = await fetchPoolForLiquidity({
           chainId: chain.id,
           pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
 
         if (!pool) {
