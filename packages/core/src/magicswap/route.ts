@@ -10,7 +10,7 @@ import { toUnits } from "thirdweb";
 import type { AddressString } from "../types";
 import { multiplyArray, sumArray } from "../utils/array";
 import { bigIntToNumber } from "../utils/number";
-import type { Pool } from "./fetchPools";
+import type { Pool } from "./pools";
 import type { PoolToken } from "./types";
 
 const tokenToRToken = ({
@@ -25,7 +25,7 @@ const tokenToRToken = ({
   decimals,
 });
 
-const createSwapRoute = (
+const findMultiRoute = (
   tokenIn: PoolToken,
   tokenOut: PoolToken | null,
   pools: Pool[],
@@ -75,7 +75,7 @@ const createSwapRoute = (
   return findMultiRouteExactIn(rTokenIn, rTokenOut, amount, rPools, networks);
 };
 
-export const getSwapRoute = ({
+export const createRoute = ({
   pools,
   tokenInId,
   tokenOutId,
@@ -121,7 +121,7 @@ export const getSwapRoute = ({
     amountOutBI = 0n,
     legs = [],
     priceImpact = 0,
-  } = createSwapRoute(
+  } = findMultiRoute(
     tokenIn,
     tokenOut,
     pools,

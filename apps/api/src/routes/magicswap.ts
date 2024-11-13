@@ -1,11 +1,11 @@
 import {
   type AddressString,
+  createAddLiquidityArgs,
+  createRemoveLiquidityArgs,
+  createRoute,
+  createSwapArgs,
   fetchPool,
   fetchPools,
-  getAddLiquidityArgs,
-  getRemoveLiquidityArgs,
-  getSwapArgs,
-  getSwapRoute,
   magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
@@ -47,7 +47,7 @@ import {
 import { writeTransaction } from "../utils/transaction";
 
 export const magicswapRoutes =
-  ({ env, wagmiConfig, engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ client, env, engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: PoolsReply | ErrorReply;
@@ -64,10 +64,10 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pools = await fetchPools({
+          client,
           chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         reply.send({
@@ -92,11 +92,11 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pool = await fetchPool({
-          pairId: req.params.id,
+          client,
           chainId: req.chain.id,
+          pairId: req.params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {
@@ -131,13 +131,13 @@ export const magicswapRoutes =
         const { chain, body } = req;
 
         const pools = await fetchPools({
+          client,
           chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
-        const route = getSwapRoute({
+        const route = createRoute({
           pools,
           tokenInId: body.tokenInId,
           tokenOutId: body.tokenOutId,
@@ -189,10 +189,10 @@ export const magicswapRoutes =
         } = body;
 
         const pools = await fetchPools({
+          client,
           chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         const poolTokens = pools
@@ -224,7 +224,12 @@ export const magicswapRoutes =
           });
         }
 
-        const swapArguments = getSwapArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createSwapArgs({
           chainId: chain.id,
           toAddress: userAddress,
           tokenIn,
@@ -242,15 +247,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: swapArguments.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: swapArguments.functionName,
-            args: swapArguments.args,
-            txOverrides: swapArguments.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: swapArguments.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,
@@ -303,11 +308,11 @@ export const magicswapRoutes =
         } = body;
 
         const pool = await fetchPool({
-          pairId: params.id,
+          client,
           chainId: chain.id,
+          pairId: params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {
@@ -319,7 +324,12 @@ export const magicswapRoutes =
           });
         }
 
-        const addLiquidityArgs = getAddLiquidityArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createAddLiquidityArgs({
           chainId: chain.id,
           toAddress: userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
@@ -335,15 +345,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: addLiquidityArgs.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: addLiquidityArgs.functionName,
-            args: addLiquidityArgs.args,
-            txOverrides: addLiquidityArgs.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: addLiquidityArgs.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,
@@ -396,11 +406,11 @@ export const magicswapRoutes =
         } = body;
 
         const pool = await fetchPool({
-          pairId: params.id,
+          client,
           chainId: chain.id,
+          pairId: params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {
@@ -412,7 +422,12 @@ export const magicswapRoutes =
           });
         }
 
-        const removeLiquidityArgs = getRemoveLiquidityArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createRemoveLiquidityArgs({
           chainId: chain.id,
           toAddress: userAddress,
           amountLP: BigInt(amountLP),
@@ -428,15 +443,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: removeLiquidityArgs.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: removeLiquidityArgs.functionName,
-            args: removeLiquidityArgs.args,
-            txOverrides: removeLiquidityArgs.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: removeLiquidityArgs.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,

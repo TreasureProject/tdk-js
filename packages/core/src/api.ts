@@ -7,6 +7,7 @@ import type {
 
 import {
   type Hex,
+  ZERO_ADDRESS,
   defineChain,
   getContract,
   prepareContractCall,
@@ -46,8 +47,14 @@ import type {
   RouteBody,
   SwapBody,
 } from "../../../apps/api/src/schema/magicswap";
+import { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
-import type { TreasureConnectClient } from "./types";
+import {
+  createAddLiquidityArgs,
+  createRemoveLiquidityArgs,
+  createSwapArgs,
+} from "./magicswap";
+import type { AddressString, TreasureConnectClient } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -57,6 +64,14 @@ BigInt.prototype.toJSON = function () {
 class APIError extends Error {
   statusCode?: number;
 }
+
+type SendTransactionOptions = Partial<{
+  includeAbi: boolean;
+  skipWaitForCompletion: boolean;
+  accountAddress: string;
+  accountSignature: string;
+  useActiveWallet: boolean;
+}>;
 
 export class TDKAPI {
   baseUri: string;
@@ -226,13 +241,7 @@ export class TDKAPI {
           "inputs"
         >;
       },
-      options?: {
-        includeAbi?: boolean;
-        skipWaitForCompletion?: boolean;
-        accountAddress?: string;
-        accountSignature?: string;
-        useActiveWallet?: boolean;
-      },
+      options?: SendTransactionOptions,
     ) => {
       const chain = defineChain(this.chainId);
       // TODO: remove ZK check when sessions are supported
@@ -313,12 +322,7 @@ export class TDKAPI {
       params: Omit<CreateRawTransactionBody, "value"> & {
         value?: bigint | string;
       },
-      options?: {
-        skipWaitForCompletion?: boolean;
-        accountAddress?: string;
-        accountSignature?: string;
-        useActiveWallet?: boolean;
-      },
+      options?: SendTransactionOptions,
     ) => {
       const chain = defineChain(this.chainId);
       // TODO: remove ZK check when sessions are supported
@@ -433,34 +437,259 @@ export class TDKAPI {
     getPool: (id: string) => this.get<PoolReply>(`/magicswap/pools/${id}`),
     getRoute: (body: RouteBody) =>
       this.post<RouteBody, RouteReply>("/magicswap/route", body),
-    swap: async (body: SwapBody, waitForCompletion = true) => {
+    swap: async (
+      body: SwapBody & {
+        toAddress?: AddressString;
+      },
+      options?: SendTransactionOptions,
+    ) => {
+      const chain = defineChain(this.chainId);
+      // TODO: remove ZK check when sessions are supported
+      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+        if (!this.client) {
+          throw new Error("No Treasure Connect client set");
+        }
+
+        const account = this.activeWallet?.getAccount();
+        if (!account) {
+          throw new Error("No active wallet set");
+        }
+
+        const { pools } = await this.magicswap.getPools();
+        const poolTokens = pools
+          .flatMap(({ token0, token1 }) => [token0, token1])
+          .reduce(
+            (acc, poolToken) => {
+              acc[poolToken.id] = poolToken;
+              return acc;
+            },
+            {} as Record<string, (typeof pools)[number]["token0"]>,
+          );
+
+        const {
+          tokenInId,
+          tokenOutId,
+          amountIn,
+          amountOut,
+          path,
+          nftsIn,
+          nftsOut,
+          isExactOut,
+          slippage,
+          toAddress,
+        } = body;
+
+        const tokenIn = poolTokens[tokenInId];
+        const tokenOut = poolTokens[tokenOutId];
+
+        if (!tokenIn) {
+          throw new Error("Input token not found");
+        }
+
+        if (!tokenOut) {
+          throw new Error("Output token not found");
+        }
+
+        const { address, functionName, args, value } = createSwapArgs({
+          chainId: chain.id,
+          toAddress: toAddress ?? ZERO_ADDRESS,
+          tokenIn,
+          tokenOut,
+          nftsIn,
+          nftsOut,
+          amountIn: amountIn ? BigInt(amountIn) : undefined,
+          amountOut: amountOut ? BigInt(amountOut) : undefined,
+          isExactOut,
+          path: path as AddressString[],
+          slippage,
+        });
+
+        const contract = getContract({
+          client: this.client,
+          chain,
+          address,
+          abi: magicswapV2RouterAbi,
+        });
+
+        // @ts-ignore: abitype and the Thirdweb SDK don't play well
+        const transaction = prepareContractCall({
+          contract,
+          method: functionName,
+          params: args,
+          value: value ? BigInt(value) : undefined,
+        });
+        const receipt = await sendAndConfirmTransaction({
+          account,
+          transaction,
+        });
+        return {
+          status: receipt.status === "success" ? "success" : "errored",
+          transactionHash: receipt.transactionHash,
+          errorMessage:
+            receipt.status === "reverted" ? "Transaction reverted" : null,
+        };
+      }
+
       const result = await this.post<SwapBody, CreateTransactionReply>(
         "/magicswap/swap",
         body,
       );
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
     addLiquidity: async (
       poolId: string,
-      body: AddLiquidityBody,
-      waitForCompletion = true,
+      body: AddLiquidityBody & {
+        toAddress?: AddressString;
+      },
+      options?: SendTransactionOptions,
     ) => {
+      const chain = defineChain(this.chainId);
+      // TODO: remove ZK check when sessions are supported
+      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+        if (!this.client) {
+          throw new Error("No Treasure Connect client set");
+        }
+
+        const account = this.activeWallet?.getAccount();
+        if (!account) {
+          throw new Error("No active wallet set");
+        }
+
+        const pool = await this.magicswap.getPool(poolId);
+        const {
+          amount0,
+          amount1,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          toAddress,
+        } = body;
+
+        const { address, functionName, args, value } = createAddLiquidityArgs({
+          chainId: chain.id,
+          toAddress: toAddress ?? ZERO_ADDRESS,
+          amount0: amount0 ? BigInt(amount0) : undefined,
+          amount1: amount1 ? BigInt(amount1) : undefined,
+          amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
+          amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
+          nfts0,
+          nfts1,
+          pool,
+        });
+
+        const contract = getContract({
+          client: this.client,
+          chain,
+          address,
+          abi: magicswapV2RouterAbi,
+        });
+
+        // @ts-ignore: abitype and the Thirdweb SDK don't play well
+        const transaction = prepareContractCall({
+          contract,
+          method: functionName,
+          params: args,
+          value: value ? BigInt(value) : undefined,
+        });
+        const receipt = await sendAndConfirmTransaction({
+          account,
+          transaction,
+        });
+        return {
+          status: receipt.status === "success" ? "success" : "errored",
+          transactionHash: receipt.transactionHash,
+          errorMessage:
+            receipt.status === "reverted" ? "Transaction reverted" : null,
+        };
+      }
+
       const result = await this.post<AddLiquidityBody, CreateTransactionReply>(
         `/magicswap/pools/${poolId}/add-liquidity`,
         body,
       );
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
     removeLiquidity: async (
       poolId: string,
-      body: RemoveLiquidityBody,
-      waitForCompletion = true,
+      body: RemoveLiquidityBody & {
+        toAddress?: AddressString;
+      },
+      options?: SendTransactionOptions,
     ) => {
+      const chain = defineChain(this.chainId);
+      // TODO: remove ZK check when sessions are supported
+      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+        if (!this.client) {
+          throw new Error("No Treasure Connect client set");
+        }
+
+        const account = this.activeWallet?.getAccount();
+        if (!account) {
+          throw new Error("No active wallet set");
+        }
+
+        const pool = await this.magicswap.getPool(poolId);
+        const {
+          amountLP,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          swapLeftover = true,
+          toAddress,
+        } = body;
+
+        const { address, functionName, args, value } =
+          createRemoveLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress ?? ZERO_ADDRESS,
+            amountLP: BigInt(amountLP),
+            amount0Min: BigInt(amount0Min),
+            amount1Min: BigInt(amount1Min),
+            nfts0,
+            nfts1,
+            pool,
+            swapLeftover,
+          });
+
+        const contract = getContract({
+          client: this.client,
+          chain,
+          address,
+          abi: magicswapV2RouterAbi,
+        });
+
+        // @ts-ignore: abitype and the Thirdweb SDK don't play well
+        const transaction = prepareContractCall({
+          contract,
+          method: functionName,
+          params: args,
+          value: value ? BigInt(value) : undefined,
+        });
+        const receipt = await sendAndConfirmTransaction({
+          account,
+          transaction,
+        });
+        return {
+          status: receipt.status === "success" ? "success" : "errored",
+          transactionHash: receipt.transactionHash,
+          errorMessage:
+            receipt.status === "reverted" ? "Transaction reverted" : null,
+        };
+      }
+
       const result = await this.post<
         RemoveLiquidityBody,
         CreateTransactionReply
       >(`/magicswap/pools/${poolId}/remove-liquidity`, body);
-      return waitForCompletion ? this.transaction.wait(result.queueId) : result;
+      return options?.skipWaitForCompletion
+        ? result
+        : this.transaction.wait(result.queueId);
     },
   };
 }

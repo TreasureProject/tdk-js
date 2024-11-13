@@ -6,6 +6,7 @@ export type Token = {
   name: string;
   symbol: string;
   isNFT: boolean;
+  isMAGIC: boolean;
   isETH: boolean;
   decimals: string;
   derivedMAGIC: string;

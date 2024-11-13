@@ -1,5 +1,4 @@
-export { fetchPools, fetchPool } from "./fetchPools";
-export { getSwapRoute } from "./getSwapRoute";
-export { getSwapArgs } from "./swap";
-export { getAddLiquidityArgs } from "./getAddLiquidityArgs";
-export { getRemoveLiquidityArgs } from "./getRemoveLiquidityArgs";
+export { fetchPools, fetchPool } from "./pools";
+export { createRoute } from "./route";
+export { createSwapArgs } from "./swap";
+export { createAddLiquidityArgs, createRemoveLiquidityArgs } from "./liquidity";

@@ -99,6 +99,12 @@ export type User = Awaited<
 export type Session = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["user"]["getSessions"]>
 >[number];
+export type MagicswapPool = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["magicswap"]["getPool"]>
+>;
+export type MagicswapRoute = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["magicswap"]["getRoute"]>
+>;
 
 export type CollectionResponse = {
   contractType: "ERC721" | "ERC1155";

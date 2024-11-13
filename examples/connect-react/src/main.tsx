@@ -4,12 +4,12 @@ import "@treasure-dev/tailwind-config/fonts.css";
 import { treasureTopaz } from "@treasure-dev/tdk-core";
 import { TreasureProvider } from "@treasure-dev/tdk-react";
 import ReactDOM from "react-dom/client";
+import { arbitrumSepolia } from "thirdweb/chains";
 import { ThirdwebProvider } from "thirdweb/react";
 
 import { App } from "./App.tsx";
-import "./index.css";
-import { arbitrumSepolia } from "thirdweb/chains";
 import { SESSION_OPTIONS_BY_CHAIN_ID } from "./constants";
+import "./index.css";
 
 const root = document.getElementById("root");
 if (root) {
