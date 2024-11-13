@@ -10,6 +10,7 @@
     "typecheck": "turbo typecheck",
     "build": "turbo build --filter={./apps/*} --filter={./packages/*}",
     "build:all": "turbo build",
+    "build:core": "turbo build --filter={./packages/core}",
     "build:api": "turbo build --filter={./apps/api}",
     "start:api": "pnpm --filter ./apps/api start",
     "format": "biome format --write .",

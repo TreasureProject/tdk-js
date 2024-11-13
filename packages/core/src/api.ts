@@ -50,9 +50,9 @@ import type {
 import { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
 import {
-  getAddLiquidityArgs,
-  getRemoveLiquidityArgs,
-  getSwapArgs,
+  createAddLiquidityArgs,
+  createRemoveLiquidityArgs,
+  createSwapArgs,
 } from "./magicswap";
 import type { AddressString, TreasureConnectClient } from "./types";
 
@@ -490,7 +490,7 @@ export class TDKAPI {
           throw new Error("Output token not found");
         }
 
-        const { address, functionName, args, value } = getSwapArgs({
+        const { address, functionName, args, value } = createSwapArgs({
           chainId: chain.id,
           toAddress: toAddress ?? ZERO_ADDRESS,
           tokenIn,
@@ -568,7 +568,7 @@ export class TDKAPI {
           toAddress,
         } = body;
 
-        const { address, functionName, args, value } = getAddLiquidityArgs({
+        const { address, functionName, args, value } = createAddLiquidityArgs({
           chainId: chain.id,
           toAddress: toAddress ?? ZERO_ADDRESS,
           amount0: amount0 ? BigInt(amount0) : undefined,
@@ -644,17 +644,18 @@ export class TDKAPI {
           toAddress,
         } = body;
 
-        const { address, functionName, args, value } = getRemoveLiquidityArgs({
-          chainId: chain.id,
-          toAddress: toAddress ?? ZERO_ADDRESS,
-          amountLP: BigInt(amountLP),
-          amount0Min: BigInt(amount0Min),
-          amount1Min: BigInt(amount1Min),
-          nfts0,
-          nfts1,
-          pool,
-          swapLeftover,
-        });
+        const { address, functionName, args, value } =
+          createRemoveLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress ?? ZERO_ADDRESS,
+            amountLP: BigInt(amountLP),
+            amount0Min: BigInt(amount0Min),
+            amount1Min: BigInt(amount1Min),
+            nfts0,
+            nfts1,
+            pool,
+            swapLeftover,
+          });
 
         const contract = getContract({
           client: this.client,

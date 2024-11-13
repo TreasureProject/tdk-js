@@ -1,11 +1,11 @@
 import {
   type AddressString,
+  createAddLiquidityArgs,
+  createRemoveLiquidityArgs,
+  createRoute,
+  createSwapArgs,
   fetchPool,
   fetchPools,
-  getAddLiquidityArgs,
-  getRemoveLiquidityArgs,
-  getSwapArgs,
-  getSwapRoute,
   magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
@@ -137,7 +137,7 @@ export const magicswapRoutes =
           inventoryApiKey: env.TROVE_API_KEY,
         });
 
-        const route = getSwapRoute({
+        const route = createRoute({
           pools,
           tokenInId: body.tokenInId,
           tokenOutId: body.tokenOutId,
@@ -224,7 +224,12 @@ export const magicswapRoutes =
           });
         }
 
-        const swapArguments = getSwapArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createSwapArgs({
           chainId: chain.id,
           toAddress: userAddress,
           tokenIn,
@@ -242,15 +247,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: swapArguments.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: swapArguments.functionName,
-            args: swapArguments.args,
-            txOverrides: swapArguments.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: swapArguments.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,
@@ -319,7 +324,12 @@ export const magicswapRoutes =
           });
         }
 
-        const addLiquidityArgs = getAddLiquidityArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createAddLiquidityArgs({
           chainId: chain.id,
           toAddress: userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
@@ -335,15 +345,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: addLiquidityArgs.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: addLiquidityArgs.functionName,
-            args: addLiquidityArgs.args,
-            txOverrides: addLiquidityArgs.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: addLiquidityArgs.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,
@@ -412,7 +422,12 @@ export const magicswapRoutes =
           });
         }
 
-        const removeLiquidityArgs = getRemoveLiquidityArgs({
+        const {
+          address: contractAddress,
+          functionName,
+          args,
+          value,
+        } = createRemoveLiquidityArgs({
           chainId: chain.id,
           toAddress: userAddress,
           amountLP: BigInt(amountLP),
@@ -428,15 +443,15 @@ export const magicswapRoutes =
           const result = await writeTransaction({
             engine,
             chainId: chain.id,
-            contractAddress: removeLiquidityArgs.address,
+            contractAddress,
             backendWallet: req.backendWallet ?? backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
-            functionName: removeLiquidityArgs.functionName,
-            args: removeLiquidityArgs.args,
-            txOverrides: removeLiquidityArgs.value
+            functionName,
+            args,
+            txOverrides: value
               ? {
-                  value: removeLiquidityArgs.value.toString(),
+                  value: value.toString(),
                 }
               : undefined,
             simulateTransaction,

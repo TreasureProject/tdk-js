@@ -35,7 +35,7 @@ const getAmountMin = (amount: bigint, slippage: number) =>
 
 const DEFAULT_SLIPPAGE = 0.005;
 
-export const getSwapArgs = ({
+export const createSwapArgs = ({
   toAddress,
   tokenIn,
   tokenOut,
