@@ -6,7 +6,8 @@ import {
 import { Button, ConnectButton, useTreasure } from "@treasure-dev/tdk-react";
 import { useEffect, useState } from "react";
 import { ZERO_ADDRESS, getContract, toTokens, toUnits } from "thirdweb";
-import { allowance, balanceOf } from "thirdweb/extensions/erc20";
+import { allowance } from "thirdweb/extensions/erc20";
+import { getWalletBalance } from "thirdweb/wallets";
 
 const useMagicswapPools = () => {
   const { tdk } = useTreasure();
@@ -146,10 +147,12 @@ const PoolDetailsPage = ({
       abi: erc20Abi,
     });
 
-    const [tokenInBalance, tokenInAllowance] = await Promise.all([
-      balanceOf({
-        contract: tokenInContract,
+    const [{ value: tokenInBalance }, tokenInAllowance] = await Promise.all([
+      getWalletBalance({
+        client,
+        chain,
         address: userAddress,
+        tokenAddress: route.tokenIn.isETH ? undefined : tokenInId,
       }),
       allowance({
         contract: tokenInContract,
@@ -162,26 +165,28 @@ const PoolDetailsPage = ({
       throw new Error(`Insufficient ${route.tokenIn.symbol} balance`);
     }
 
-    if (tokenInAllowance < amountBI) {
-      addLog(`Approving ${amount} ${route.tokenIn.symbol} for trading...`);
-      try {
-        const result = await tdk.transaction.create({
-          address: tokenInId,
-          abi: erc20Abi,
-          functionName: "approve",
-          args: [
-            contractAddresses.MagicswapV2Router,
-            toUnits(amount, route.tokenIn.decimals),
-          ],
-        });
-        addLog(
-          `Successfully approved ${route.tokenIn.symbol}: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
-        );
-      } catch (err) {
-        throw new Error(`Error approving ${route.tokenIn.symbol}: ${err}`);
+    if (!route.tokenIn.isETH) {
+      if (tokenInAllowance < amountBI) {
+        addLog(`Approving ${amount} ${route.tokenIn.symbol} for trading...`);
+        try {
+          const result = await tdk.transaction.create({
+            address: tokenInId,
+            abi: erc20Abi,
+            functionName: "approve",
+            args: [
+              contractAddresses.MagicswapV2Router,
+              toUnits(amount, route.tokenIn.decimals),
+            ],
+          });
+          addLog(
+            `Successfully approved ${route.tokenIn.symbol}: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
+          );
+        } catch (err) {
+          throw new Error(`Error approving ${route.tokenIn.symbol}: ${err}`);
+        }
+      } else {
+        addLog(`${route.tokenIn.symbol} is already approved for trading`);
       }
-    } else {
-      addLog(`${route.tokenIn.symbol} is already approved for trading`);
     }
 
     addLog(
