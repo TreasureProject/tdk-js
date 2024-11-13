@@ -6,6 +6,7 @@
     "dev": "turbo dev --filter={./apps/*} --filter={./packages/*}",
     "dev:react": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/connect-react}",
     "dev:electron": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/connect-electron}",
+    "dev:magicswap": "turbo dev --filter={./apps/*} --filter={./packages/*} --filter={./examples/magicswap}",
     "typecheck": "turbo typecheck",
     "build": "turbo build --filter={./apps/*} --filter={./packages/*}",
     "build:all": "turbo build",

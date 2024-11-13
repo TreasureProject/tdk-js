@@ -1,9 +1,8 @@
-import { type Config, readContracts } from "@wagmi/core";
-import { toUnits } from "thirdweb";
+import { defineChain, getContract, readContract, toUnits } from "thirdweb";
 
 import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
 import { MAGICSWAPV2_API_URL } from "../constants";
-import type { AddressString } from "../types";
+import type { TreasureConnectClient } from "../types";
 import { fetchCollections, fetchTokens } from "../utils/inventory";
 import { getPair, getPairs, getStats } from "./graph-queries";
 import type {
@@ -19,7 +18,7 @@ import type {
 const fetchPairs = async ({ chainId }: { chainId: number }) => {
   const apiUrl = MAGICSWAPV2_API_URL[chainId];
   if (!apiUrl) {
-    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+    throw new Error(`No API configured for chain ${chainId}`);
   }
 
   const response = await fetch(apiUrl, {
@@ -41,7 +40,7 @@ const fetchPair = async ({
 }: { chainId: number; pairId: string }) => {
   const apiUrl = MAGICSWAPV2_API_URL[chainId];
   if (!apiUrl) {
-    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+    throw new Error(`No API configured for chain ${chainId}`);
   }
 
   const response = await fetch(apiUrl, {
@@ -53,7 +52,7 @@ const fetchPair = async ({
   });
   const {
     data: { pair },
-  } = (await response.json()) as { data: { pair: Pair } };
+  } = (await response.json()) as { data: { pair: Pair | null } };
 
   return pair;
 };
@@ -61,7 +60,7 @@ const fetchPair = async ({
 const fetchStats = async ({ chainId }: { chainId: number }) => {
   const apiUrl = MAGICSWAPV2_API_URL[chainId];
   if (!apiUrl) {
-    throw new Error(`No Magicswap API URL found for chain ID ${chainId}`);
+    throw new Error(`No API configured for chain ${chainId}`);
   }
 
   const response = await fetch(apiUrl, {
@@ -269,7 +268,6 @@ const createPoolToken = (
         ? ""
         : `https://magicswap.lol/img/tokens/${symbol.toLowerCase()}.png`),
     decimals: Number(token.decimals),
-    isMAGIC: symbol.toLowerCase() === "magic",
     collections: tokenCollections,
     urlSlug: tokenCollections[0]?.urlSlug ?? "",
     collectionId: tokenCollections[0]?.id ?? "",
@@ -334,19 +332,19 @@ const createPoolFromPair = (
 };
 
 const buildPools = async ({
+  client,
+  chainId,
   stats,
   pairs,
-  chainId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig,
 }: {
+  client: TreasureConnectClient;
+  chainId: number;
   pairs: Pair[];
   stats: Awaited<ReturnType<typeof fetchStats>>;
-  chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig: Config;
 }) => {
   const magicUSD = Number(stats.global?.magicUSD ?? 0);
 
@@ -357,44 +355,42 @@ const buildPools = async ({
     inventoryApiKey,
   });
 
-  const reserves = await readContracts(wagmiConfig, {
-    contracts: pairs.map(({ id }) => ({
-      address: id as AddressString,
-      abi: uniswapV2PairAbi,
-      functionName: "getReserves",
-      chainId,
-    })),
-  });
+  const reserves = await Promise.all(
+    pairs.map(({ id }) => {
+      const contract = getContract({
+        client,
+        chain: defineChain(chainId),
+        address: id,
+        abi: uniswapV2PairAbi,
+      });
+      return readContract({
+        contract,
+        method: "getReserves",
+      });
+    }),
+  );
 
   const pools = pairs.map((pair, i) => {
-    const reserve = reserves[i] as {
-      result: [bigint, bigint, number];
-      status: "success" | "reverted";
-    };
-    return createPoolFromPair(
-      pair,
-      collectionsMap,
-      tokensMap,
-      magicUSD,
-      reserve?.status === "success"
-        ? [reserve.result[0], reserve.result[1]]
-        : undefined,
-    );
+    const reserve = reserves[i]!;
+    return createPoolFromPair(pair, collectionsMap, tokensMap, magicUSD, [
+      reserve[0],
+      reserve[1],
+    ]);
   });
 
   return pools;
 };
 
 export const fetchPools = async ({
+  client,
   chainId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig,
 }: {
+  client: TreasureConnectClient;
   chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig: Config;
 }) => {
   const [pairs, stats] = await Promise.all([
     fetchPairs({ chainId }),
@@ -402,39 +398,43 @@ export const fetchPools = async ({
   ]);
 
   return buildPools({
+    client,
+    chainId,
     pairs,
     stats,
-    chainId,
     inventoryApiUrl,
     inventoryApiKey,
-    wagmiConfig,
   });
 };
 
 export const fetchPool = async ({
-  pairId,
+  client,
   chainId,
+  pairId,
   inventoryApiUrl,
   inventoryApiKey,
-  wagmiConfig,
 }: {
-  pairId: string;
+  client: TreasureConnectClient;
   chainId: number;
+  pairId: string;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  wagmiConfig: Config;
 }) => {
   const [pair, stats] = await Promise.all([
     fetchPair({ chainId, pairId }),
     fetchStats({ chainId }),
   ]);
+  if (!pair) {
+    throw new Error(`Pool ${pairId} not found on chain ${chainId}`);
+  }
+
   const [pool] = await buildPools({
+    client,
+    chainId,
     pairs: [pair],
     stats,
-    chainId,
     inventoryApiUrl,
     inventoryApiKey,
-    wagmiConfig,
   });
 
   return pool;

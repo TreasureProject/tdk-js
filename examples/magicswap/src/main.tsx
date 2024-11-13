@@ -1,33 +1,36 @@
 import "@treasure-dev/tdk-react/dist/index.css";
 import "@treasure-dev/tailwind-config/fonts.css";
 
+import { treasureTopaz } from "@treasure-dev/tdk-core";
 import { TreasureProvider } from "@treasure-dev/tdk-react";
 import ReactDOM from "react-dom/client";
+import { arbitrumSepolia } from "thirdweb/chains";
 import { ThirdwebProvider } from "thirdweb/react";
 
 import { App } from "./App.tsx";
+import { SESSION_OPTIONS_BY_CHAIN_ID } from "./constants";
 import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <ThirdwebProvider>
-    <TreasureProvider
-      appName="Magicswap"
-      apiUri={import.meta.env.VITE_TDK_API_URL}
-      defaultChainId={421614}
-      clientId={import.meta.env.VITE_TDK_CLIENT_ID}
-      ecosystemId={import.meta.env.VITE_TDK_ECOSYSTEM_ID}
-      ecosystemPartnerId={import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID}
-      sessionOptions={{
-        backendWallet: import.meta.env.VITE_TDK_BACKEND_WALLET,
-        approvedTargets: [
-          "0x55d0cf68a1afe0932aff6f36c87efa703508191c", // MAGIC
-          "0xfe592736200d7545981397ca7a8e896ac0c166d4", // Treasures
-          "0xd0a4fbcc5cde863a2be50c75b564efd942b03154", // Router
-          "0x0626699bc82858c16ae557b2eaad03a58cfcc8bd", // LP Token
-        ],
-      }}
-    >
-      <App />
-    </TreasureProvider>
-  </ThirdwebProvider>,
-);
+const root = document.getElementById("root");
+if (root) {
+  const params = new URLSearchParams(window.location.search);
+  const defaultChainId =
+    params.get("chain_id") === arbitrumSepolia.id.toString()
+      ? arbitrumSepolia.id
+      : treasureTopaz.id;
+  ReactDOM.createRoot(root).render(
+    <ThirdwebProvider>
+      <TreasureProvider
+        appName="Magicswap"
+        apiUri={import.meta.env.VITE_TDK_API_URL}
+        defaultChainId={defaultChainId}
+        clientId={import.meta.env.VITE_TDK_CLIENT_ID}
+        ecosystemId={import.meta.env.VITE_TDK_ECOSYSTEM_ID}
+        ecosystemPartnerId={import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID}
+        sessionOptions={SESSION_OPTIONS_BY_CHAIN_ID[defaultChainId]}
+      >
+        <App />
+      </TreasureProvider>
+    </ThirdwebProvider>,
+  );
+}

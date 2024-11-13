@@ -6,6 +6,8 @@ const TOKEN_FRAGMENT = `
     decimals
     derivedMAGIC
     isNFT
+    isMAGIC
+    isETH
     vaultCollections {
       collection {
         id

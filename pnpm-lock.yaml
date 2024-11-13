@@ -454,6 +454,9 @@ importers:
 
   examples/magicswap:
     dependencies:
+      '@treasure-dev/tdk-core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@treasure-dev/tdk-react':
         specifier: workspace:*
         version: link:../../packages/react

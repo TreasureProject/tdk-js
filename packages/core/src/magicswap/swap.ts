@@ -6,7 +6,7 @@ import type {
 import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import type { NFTInput, PoolToken } from "./types";
+import type { NFTInput } from "./types";
 
 type SwapFunctionName =
   | "swapExactTokensForTokens"
@@ -28,6 +28,13 @@ const getAmountMin = (amount: bigint, slippage: number) =>
 
 const DEFAULT_SLIPPAGE = 0.005;
 
+// Swap only needs a small subset of the PoolToken type
+type SwapPoolToken = {
+  isNFT: boolean;
+  isETH: boolean;
+  collectionId: string;
+};
+
 export const getSwapArgs = ({
   toAddress,
   tokenIn,
@@ -42,8 +49,8 @@ export const getSwapArgs = ({
   slippage = DEFAULT_SLIPPAGE,
 }: {
   toAddress: AddressString;
-  tokenIn: PoolToken;
-  tokenOut: PoolToken;
+  tokenIn: SwapPoolToken;
+  tokenOut: SwapPoolToken;
   nftsIn?: NFTInput[];
   nftsOut?: NFTInput[];
   amountIn?: bigint;

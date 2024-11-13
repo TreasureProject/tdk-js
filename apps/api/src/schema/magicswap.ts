@@ -46,7 +46,10 @@ const tokenSchema = Type.Object(
     ),
     image: Type.String({ description: "URL of the token image" }),
     isMAGIC: Type.Boolean({
-      description: "Boolean indicating if the token is a MAGIC token",
+      description: "Boolean indicating if the token is the MAGIC token",
+    }),
+    isETH: Type.Boolean({
+      description: "Boolean indicating if the token is the native token",
     }),
     collections: Type.Array(
       Type.Object({

@@ -47,7 +47,7 @@ import {
 import { writeTransaction } from "../utils/transaction";
 
 export const magicswapRoutes =
-  ({ env, wagmiConfig, engine }: TdkApiContext): FastifyPluginAsync =>
+  ({ client, env, engine }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: PoolsReply | ErrorReply;
@@ -64,10 +64,10 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pools = await fetchPools({
+          client,
           chainId: req.chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         reply.send({
@@ -92,11 +92,11 @@ export const magicswapRoutes =
       },
       async (req, reply) => {
         const pool = await fetchPool({
-          pairId: req.params.id,
+          client,
           chainId: req.chain.id,
+          pairId: req.params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {
@@ -131,10 +131,10 @@ export const magicswapRoutes =
         const { chain, body } = req;
 
         const pools = await fetchPools({
+          client,
           chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         const route = getSwapRoute({
@@ -189,10 +189,10 @@ export const magicswapRoutes =
         } = body;
 
         const pools = await fetchPools({
+          client,
           chainId: chain.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         const poolTokens = pools
@@ -303,11 +303,11 @@ export const magicswapRoutes =
         } = body;
 
         const pool = await fetchPool({
-          pairId: params.id,
+          client,
           chainId: chain.id,
+          pairId: params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {
@@ -396,11 +396,11 @@ export const magicswapRoutes =
         } = body;
 
         const pool = await fetchPool({
-          pairId: params.id,
+          client,
           chainId: chain.id,
+          pairId: params.id,
           inventoryApiUrl: env.TROVE_API_URL,
           inventoryApiKey: env.TROVE_API_KEY,
-          wagmiConfig,
         });
 
         if (!pool) {

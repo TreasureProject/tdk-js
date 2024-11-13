@@ -8,6 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@treasure-dev/tdk-core": "workspace:*",
     "@treasure-dev/tdk-react": "workspace:*",
     "decimal.js-light": "catalog:",
     "react": "catalog:",
