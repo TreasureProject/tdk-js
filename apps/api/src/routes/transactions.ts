@@ -26,6 +26,7 @@ import {
   TdkError,
   normalizeEngineErrorMessage,
   parseEngineErrorMessage,
+  throwForbiddenBackendWalletError,
   throwUnauthorizedError,
 } from "../utils/error";
 import { parseTxOverrides } from "../utils/transaction";
@@ -72,13 +73,18 @@ export const transactionsRoutes =
             functionName,
             args,
             txOverrides,
-            backendWallet,
+            backendWallet = req.backendWallet,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
         if (!userAddress) {
           throwUnauthorizedError(authError);
+          return;
+        }
+
+        if (!backendWallet) {
+          throwForbiddenBackendWalletError();
           return;
         }
 
@@ -109,7 +115,7 @@ export const transactionsRoutes =
           const { result } = await engine.contract.write(
             chain.id.toString(),
             address,
-            req.backendWallet ?? backendWallet,
+            backendWallet,
             {
               abi: transactionAbi,
               functionName,
@@ -160,7 +166,7 @@ export const transactionsRoutes =
             value = "0x00",
             data,
             txOverrides,
-            backendWallet,
+            backendWallet = req.backendWallet,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
@@ -170,13 +176,18 @@ export const transactionsRoutes =
           return;
         }
 
+        if (!backendWallet) {
+          throwForbiddenBackendWalletError();
+          return;
+        }
+
         const parsedTxOverrides = parseTxOverrides(txOverrides);
 
         try {
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
             chain.id.toString(),
-            req.backendWallet ?? backendWallet,
+            backendWallet,
             {
               toAddress: to,
               value: value,
