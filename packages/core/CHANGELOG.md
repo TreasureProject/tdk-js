@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.4.1
+
+### Patch Changes
+
+- 084c47d: Updated `backendWallet` to remain an optional field in transaction payloads
+
 ## 3.4.0
 
 ### Minor Changes
