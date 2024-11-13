@@ -6,7 +6,6 @@ import type {
 import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import type { Pool } from "./fetchPools";
 import type { NFTInput } from "./types";
 
 type AddLiquidityFunctionName =
@@ -15,6 +14,21 @@ type AddLiquidityFunctionName =
   | "addLiquidityNFT"
   | "addLiquidityNFTETH"
   | "addLiquidityNFTNFT";
+
+// Add liquidity only needs a small subset of the Pool type
+type AddLiquidityPoolToken = {
+  id: string;
+  isNFT: boolean;
+  isETH: boolean;
+  collectionId: string;
+};
+
+type AddLiquidityPool = {
+  token0: AddLiquidityPoolToken;
+  token1: AddLiquidityPoolToken;
+  hasNFT: boolean;
+  isNFTNFT: boolean;
+};
 
 export const getAddLiquidityArgs = ({
   pool,
@@ -27,7 +41,7 @@ export const getAddLiquidityArgs = ({
   amount0Min = 0n,
   amount1Min = 0n,
 }: {
-  pool: Pool;
+  pool: AddLiquidityPool;
   chainId: number;
   toAddress: AddressString;
   nfts0?: NFTInput[];

@@ -21,19 +21,19 @@ type SwapFunctionName =
   | "swapNftForETH"
   | "swapNftForNft";
 
-const getAmountMax = (amount: bigint, slippage: number) =>
-  amount + (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
-const getAmountMin = (amount: bigint, slippage: number) =>
-  amount - (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
-
-const DEFAULT_SLIPPAGE = 0.005;
-
 // Swap only needs a small subset of the PoolToken type
 type SwapPoolToken = {
   isNFT: boolean;
   isETH: boolean;
   collectionId: string;
 };
+
+const getAmountMax = (amount: bigint, slippage: number) =>
+  amount + (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
+const getAmountMin = (amount: bigint, slippage: number) =>
+  amount - (amount * BigInt(Math.ceil(slippage * 1000))) / 1000n;
+
+const DEFAULT_SLIPPAGE = 0.005;
 
 export const getSwapArgs = ({
   toAddress,

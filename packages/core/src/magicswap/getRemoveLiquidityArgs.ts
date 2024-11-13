@@ -6,7 +6,6 @@ import type {
 import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
-import type { Pool } from "./fetchPools";
 import type { NFTInput } from "./types";
 
 type RemoveLiquidityFunctionName =
@@ -15,6 +14,21 @@ type RemoveLiquidityFunctionName =
   | "removeLiquidityNFT"
   | "removeLiquidityNFTETH"
   | "removeLiquidityNFTNFT";
+
+// Add liquidity only needs a small subset of the Pool type
+type RemoveLiquidityPoolToken = {
+  id: string;
+  isNFT: boolean;
+  isETH: boolean;
+  collectionId: string;
+};
+
+type RemoveLiquidityPool = {
+  token0: RemoveLiquidityPoolToken;
+  token1: RemoveLiquidityPoolToken;
+  hasNFT: boolean;
+  isNFTNFT: boolean;
+};
 
 export const getRemoveLiquidityArgs = ({
   pool,
@@ -27,7 +41,7 @@ export const getRemoveLiquidityArgs = ({
   nfts1 = [],
   swapLeftover,
 }: {
-  pool: Pool;
+  pool: RemoveLiquidityPool;
   chainId: number;
   toAddress: AddressString;
   amountLP: bigint;
