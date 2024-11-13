@@ -9,12 +9,12 @@ import {
   magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
+import type { Address } from "thirdweb";
 
 import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 
-import type { Address } from "thirdweb";
 import {
   type CreateTransactionReply,
   type ErrorReply,
@@ -25,24 +25,24 @@ import {
 } from "../schema";
 import {
   type AddLiquidityArgsBody,
-  type AddLiquidityArgsReply,
   type AddLiquidityBody,
+  type ContractArgsReply,
   type PoolParams,
   type PoolReply,
   type RemoveLiquidityArgsBody,
-  type RemoveLiquidityArgsReply,
   type RemoveLiquidityBody,
   type RouteBody,
+  type SwapArgsBody,
   type SwapBody,
   addLiquidityArgsBodySchema,
-  addLiquidityArgsReplySchema,
   addLiquidityBodySchema,
+  contractArgsReplySchema,
   poolReplySchema,
   removeLiquidityArgsBodySchema,
-  removeLiquidityArgsReplySchema,
   removeLiquidityBodySchema,
   routeBodySchema,
   routeReplySchema,
+  swapArgsBodySchema,
   swapBodySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
@@ -159,6 +159,92 @@ export const magicswapRoutes =
           ...route,
           amountIn: route.amountIn.toString(),
           amountOut: route.amountOut.toString(),
+        });
+      },
+    );
+
+    app.post<{ Body: SwapArgsBody; Reply: ContractArgsReply | ErrorReply }>(
+      "/magicswap/swap/args",
+      {
+        schema: {
+          summary: "Create swap args",
+          description:
+            "Create args required for calling swap functions in a Magicswap trade",
+          body: swapArgsBodySchema,
+          response: {
+            200: contractArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            tokenInId,
+            tokenOutId,
+            amountIn,
+            amountOut,
+            path,
+            nftsIn,
+            nftsOut,
+            isExactOut,
+            slippage,
+            toAddress,
+          },
+          chain,
+        } = req;
+
+        const pools = await fetchPools({
+          client,
+          chainId: chain.id,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+        });
+
+        const poolTokens = pools
+          .flatMap(({ token0, token1 }) => [token0, token1])
+          .reduce(
+            (acc, poolToken) => {
+              acc[poolToken.id] = poolToken;
+              return acc;
+            },
+            {} as Record<string, (typeof pools)[number]["token0"]>,
+          );
+
+        const tokenIn = poolTokens[tokenInId];
+        const tokenOut = poolTokens[tokenOutId];
+
+        if (!tokenIn) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Input token not found",
+          });
+        }
+
+        if (!tokenOut) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "Output token not found",
+          });
+        }
+
+        const args = createSwapArgs({
+          chainId: chain.id,
+          toAddress: toAddress as Address,
+          tokenIn,
+          tokenOut,
+          nftsIn,
+          nftsOut,
+          amountIn: amountIn ? BigInt(amountIn) : undefined,
+          amountOut: amountOut ? BigInt(amountOut) : undefined,
+          isExactOut,
+          path: path as AddressString[],
+          slippage,
+        });
+        reply.send({
+          ...args,
+          value: args.value?.toString(),
         });
       },
     );
@@ -288,12 +374,12 @@ export const magicswapRoutes =
       },
     );
 
-    app.get<{
+    app.post<{
       Params: PoolParams;
       Body: AddLiquidityArgsBody;
-      Reply: AddLiquidityArgsReply | ErrorReply;
+      Reply: ContractArgsReply | ErrorReply;
     }>(
-      "/magicswap/pools/:id/add-liquidity",
+      "/magicswap/pools/:id/add-liquidity/args",
       {
         schema: {
           summary: "Create add liquidity args",
@@ -301,7 +387,7 @@ export const magicswapRoutes =
             "Create args required for calling add liquidity functions on a Magicswap pool",
           body: addLiquidityArgsBodySchema,
           response: {
-            200: addLiquidityArgsReplySchema,
+            200: contractArgsReplySchema,
           },
         },
       },
@@ -462,12 +548,12 @@ export const magicswapRoutes =
       },
     );
 
-    app.get<{
+    app.post<{
       Params: PoolParams;
       Body: RemoveLiquidityArgsBody;
-      Reply: RemoveLiquidityArgsReply | ErrorReply;
+      Reply: ContractArgsReply | ErrorReply;
     }>(
-      "/magicswap/pools/:id/remove-liquidity",
+      "/magicswap/pools/:id/remove-liquidity/args",
       {
         schema: {
           summary: "Create remove liquidity args",
@@ -475,7 +561,7 @@ export const magicswapRoutes =
             "Create args required for calling remove liquidity functions on a Magicswap pool",
           body: removeLiquidityArgsBodySchema,
           response: {
-            200: removeLiquidityArgsReplySchema,
+            200: contractArgsReplySchema,
           },
         },
       },
