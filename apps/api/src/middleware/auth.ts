@@ -60,7 +60,11 @@ export const withAuth = (app: App, { auth }: TdkApiContext) => {
         req.headers.authorization.replace("Bearer ", ""),
       );
       req.userId = decoded.ctx.id;
-      req.userAddress = decoded.sub as AddressString;
+      req.userAddress = (decoded.ctx.smartAccounts.find(
+        ({ chainId }) => chainId === req.chain.id,
+      )?.address ??
+        decoded.ctx.address ??
+        decoded.sub) as AddressString;
       Sentry.setUser({
         id: req.userId,
         username: req.userAddress,

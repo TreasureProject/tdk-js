@@ -3,9 +3,9 @@ import { ApiError } from "@thirdweb-dev/engine";
 
 export const TDK_ERROR_NAMES = {
   AuthError: "AuthError",
+  BackendWalletError: "BackendWalletError",
   HarvesterError: "HarvesterError",
   MagicswapError: "MagicswapError",
-  ProjectError: "ProjectError",
   TransactionError: "TransactionError",
   UserError: "UserError",
 } as const;
@@ -13,12 +13,12 @@ export const TDK_ERROR_NAMES = {
 export const TDK_ERROR_CODES = {
   MAINTENANCE_MODE_ENABLED: "MAINTENANCE_MODE_ENABLED",
   AUTH_UNAUTHORIZED: "AUTH_UNAUTHORIZED",
+  BACKEND_WALLET_FORBIDDEN: "BACKEND_WALLET_FORBIDDEN",
   HARVESTER_NFT_HANDLER_NOT_FOUND: "HARVESTER_NFT_HANDLER_NOT_FOUND",
   MAGICSWAP_POOL_NOT_FOUND: "MAGICSWAP_POOL_NOT_FOUND",
   MAGICSWAP_SWAP_FAILED: "MAGICSWAP_SWAP_FAILED",
   MAGICSWAP_ADD_LIQUIDITY_FAILED: "MAGICSWAP_ADD_LIQUIDITY_FAILED",
   MAGICSWAP_REMOVE_LIQUIDITY_FAILED: "MAGICSWAP_REMOVE_LIQUIDITY_FAILED",
-  PROJECT_NOT_FOUND: "PROJECT_NOT_FOUND",
   TRANSACTION_CREATE_FAILED: "TRANSACTION_CREATE_FAILED",
   TRANSACTION_READ_FAILED: "TRANSACTION_READ_FAILED",
   USER_FORBIDDEN: "USER_FORBIDDEN",
@@ -107,5 +107,14 @@ export const throwUserNotFoundError = () => {
     code: TDK_ERROR_CODES.USER_NOT_FOUND,
     statusCode: 404,
     message: "User not found",
+  });
+};
+
+export const throwForbiddenBackendWalletError = () => {
+  throw new TdkError({
+    name: TDK_ERROR_NAMES.BackendWalletError,
+    code: TDK_ERROR_CODES.BACKEND_WALLET_FORBIDDEN,
+    statusCode: 403,
+    message: "Backend wallet is forbidden",
   });
 };

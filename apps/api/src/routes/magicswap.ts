@@ -42,6 +42,7 @@ import {
   TDK_ERROR_NAMES,
   TdkError,
   parseEngineErrorMessage,
+  throwForbiddenBackendWalletError,
   throwUnauthorizedError,
 } from "../utils/error";
 import { writeTransaction } from "../utils/transaction";
@@ -184,9 +185,14 @@ export const magicswapRoutes =
           nftsOut,
           isExactOut,
           slippage,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet = req.backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
+
+        if (!backendWallet) {
+          throwForbiddenBackendWalletError();
+          return;
+        }
 
         const pools = await fetchPools({
           client,
@@ -248,7 +254,7 @@ export const magicswapRoutes =
             engine,
             chainId: chain.id,
             contractAddress,
-            backendWallet: req.backendWallet ?? backendWallet,
+            backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName,
@@ -303,9 +309,14 @@ export const magicswapRoutes =
           amount1Min,
           nfts0,
           nfts1,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet = req.backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
+
+        if (!backendWallet) {
+          throwForbiddenBackendWalletError();
+          return;
+        }
 
         const pool = await fetchPool({
           client,
@@ -346,7 +357,7 @@ export const magicswapRoutes =
             engine,
             chainId: chain.id,
             contractAddress,
-            backendWallet: req.backendWallet ?? backendWallet,
+            backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName,
@@ -401,9 +412,14 @@ export const magicswapRoutes =
           nfts0,
           nfts1,
           swapLeftover = true,
-          backendWallet = env.DEFAULT_BACKEND_WALLET,
+          backendWallet = req.backendWallet,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
         } = body;
+
+        if (!backendWallet) {
+          throwForbiddenBackendWalletError();
+          return;
+        }
 
         const pool = await fetchPool({
           client,
@@ -444,7 +460,7 @@ export const magicswapRoutes =
             engine,
             chainId: chain.id,
             contractAddress,
-            backendWallet: req.backendWallet ?? backendWallet,
+            backendWallet,
             smartAccountAddress: userAddress,
             abi: magicswapV2RouterAbi,
             functionName,
