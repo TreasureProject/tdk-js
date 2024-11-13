@@ -104,6 +104,8 @@ const TreasureProviderInner = ({
       }),
     [apiUri, chain.id, sessionOptions?.backendWallet, client],
   );
+  const [analyticsManager, setAnalyticsManager] =
+    useState<AnalyticsManager | null>(null);
 
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
@@ -114,9 +116,9 @@ const TreasureProviderInner = ({
     ? (getUserAddress(user, chain.id) ?? user.smartAccounts[0]?.address)
     : undefined;
 
-  const analyticsManager = useMemo(() => {
+  useEffect(() => {
     if (!analyticsOptions) {
-      return undefined;
+      return;
     }
 
     AnalyticsManager.instance.init({
@@ -127,7 +129,7 @@ const TreasureProviderInner = ({
       device: analyticsOptions.device,
     });
 
-    return AnalyticsManager.instance;
+    setAnalyticsManager(AnalyticsManager.instance);
   }, [analyticsOptions]);
 
   const trackCustomEvent = useCallback(
