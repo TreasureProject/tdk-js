@@ -47,7 +47,7 @@ export function addCachedEvent(event: AnalyticsPayload): void {
   cachedEventIds.push(event.id);
   localStorage.setItem(
     "tdk-analytics-event-ids",
-    JSON.stringify(cachedEventIds)
+    JSON.stringify(cachedEventIds),
   );
   localStorage.setItem(`tdk-analytic-${event.id}`, JSON.stringify(event));
 }
