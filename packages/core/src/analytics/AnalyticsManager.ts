@@ -52,6 +52,10 @@ export class AnalyticsManager {
     cartridgeTag: string;
     device?: Device;
   }) {
+    if (this.initialized) {
+      throw new Error("AnalyticsManager is already initialized");
+    }
+
     this.apiUri = apiUri;
     this.apiKey = apiKey;
     this.app = app;

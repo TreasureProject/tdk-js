@@ -1,6 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import type { AnalyticsPayload } from "./types";
 
+const localStorage: Pick<
+  WindowLocalStorage["localStorage"],
+  "getItem" | "setItem" | "removeItem"
+> =
+  typeof window !== "undefined"
+    ? window.localStorage
+    : {
+        getItem: () => null,
+        setItem: () => null,
+        removeItem: () => null,
+      };
+
 function getCachedEventIds(): string[] {
   let cachedEventIds: string[] = [];
   const cachedEventIdsValue = localStorage.getItem("tdk-analytics-event-ids");
