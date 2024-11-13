@@ -176,27 +176,29 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain } = req;
+        const {
+          authError,
+          body: {
+            tokenInId,
+            tokenOutId,
+            amountIn,
+            amountOut,
+            path,
+            nftsIn,
+            nftsOut,
+            isExactOut,
+            slippage,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throwUnauthorizedError(authError);
           return;
         }
-
-        const {
-          tokenInId,
-          tokenOutId,
-          amountIn,
-          amountOut,
-          path,
-          nftsIn,
-          nftsOut,
-          isExactOut,
-          slippage,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
 
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
@@ -371,24 +373,27 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain, params } = req;
+        const {
+          authError,
+          body: {
+            amount0,
+            amount1,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+          params,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throwUnauthorizedError(authError);
           return;
         }
-
-        const {
-          amount0,
-          amount1,
-          amount0Min,
-          amount1Min,
-          nfts0,
-          nfts1,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
 
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
@@ -541,24 +546,27 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain, params } = req;
+        const {
+          authError,
+          body: {
+            amountLP,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            swapLeftover = true,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+          params,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
           throwUnauthorizedError(authError);
           return;
         }
-
-        const {
-          amountLP,
-          amount0Min,
-          amount1Min,
-          nfts0,
-          nfts1,
-          swapLeftover = true,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
 
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
