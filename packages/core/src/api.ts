@@ -47,10 +47,10 @@ import type {
   RouteBody,
   SwapBody,
 } from "../../../apps/api/src/schema/magicswap";
-import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
-import type { AddressString, TreasureConnectClient } from "./types";
-import { getSwapArgs } from "./magicswap";
 import { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
+import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
+import { getSwapArgs } from "./magicswap";
+import type { AddressString, TreasureConnectClient } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
