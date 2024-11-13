@@ -207,7 +207,7 @@ export const swapBodySchema = Type.Object({
   simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
-export const addLiquidityBodySchema = Type.Object({
+const addLiquidityBaseBodySchema = Type.Object({
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -222,11 +222,33 @@ export const addLiquidityBodySchema = Type.Object({
   amount1Min: Type.Optional(
     Type.String({ description: "Minimum amount for token1" }),
   ),
-  backendWallet: Type.Optional(Type.String()),
-  simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
-export const removeLiquidityBodySchema = Type.Object({
+export const addLiquidityArgsBodySchema = Type.Intersect([
+  addLiquidityBaseBodySchema,
+  Type.Object({
+    toAddress: Type.String({ description: "Address to send LP tokens" }),
+  }),
+]);
+
+export const addLiquidityArgsReplySchema = Type.Object({
+  address: Type.String({ description: "Contract address to call" }),
+  functionName: Type.String({ description: "Function name to call" }),
+  args: Type.Any({ description: "Arguments to call on the function" }),
+  value: Type.Optional(
+    Type.String({ description: "Value to send with call, if applicable" }),
+  ),
+});
+
+export const addLiquidityBodySchema = Type.Intersect([
+  addLiquidityBaseBodySchema,
+  Type.Object({
+    backendWallet: Type.Optional(Type.String()),
+    simulateTransaction: Type.Optional(Type.Boolean()),
+  }),
+]);
+
+const removeLiquidityBaseBodySchema = Type.Object({
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -242,9 +264,31 @@ export const removeLiquidityBodySchema = Type.Object({
       description: "Boolean indicating if swap leftover",
     }),
   ),
-  backendWallet: Type.Optional(Type.String()),
-  simulateTransaction: Type.Optional(Type.Boolean()),
 });
+
+export const removeLiquidityArgsBodySchema = Type.Intersect([
+  removeLiquidityBaseBodySchema,
+  Type.Object({
+    toAddress: Type.String({ description: "Address to send tokens" }),
+  }),
+]);
+
+export const removeLiquidityArgsReplySchema = Type.Object({
+  address: Type.String({ description: "Contract address to call" }),
+  functionName: Type.String({ description: "Function name to call" }),
+  args: Type.Any({ description: "Arguments to call on the function" }),
+  value: Type.Optional(
+    Type.String({ description: "Value to send with call, if applicable" }),
+  ),
+});
+
+export const removeLiquidityBodySchema = Type.Intersect([
+  removeLiquidityBaseBodySchema,
+  Type.Object({
+    backendWallet: Type.Optional(Type.String()),
+    simulateTransaction: Type.Optional(Type.Boolean()),
+  }),
+]);
 
 const poolParamsSchema = Type.Object({
   id: Type.String(),
@@ -260,5 +304,14 @@ export type RouteReply = Static<typeof routeReplySchema>;
 
 export type SwapBody = Static<typeof swapBodySchema>;
 
+export type AddLiquidityArgsBody = Static<typeof addLiquidityArgsBodySchema>;
+export type AddLiquidityArgsReply = Static<typeof addLiquidityArgsReplySchema>;
 export type AddLiquidityBody = Static<typeof addLiquidityBodySchema>;
+
+export type RemoveLiquidityArgsBody = Static<
+  typeof removeLiquidityArgsBodySchema
+>;
+export type RemoveLiquidityArgsReply = Static<
+  typeof removeLiquidityArgsReplySchema
+>;
 export type RemoveLiquidityBody = Static<typeof removeLiquidityBodySchema>;

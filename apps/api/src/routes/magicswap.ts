@@ -14,6 +14,7 @@ import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
 
+import type { Address } from "thirdweb";
 import {
   type CreateTransactionReply,
   type ErrorReply,
@@ -23,14 +24,22 @@ import {
   poolsReplySchema,
 } from "../schema";
 import {
+  type AddLiquidityArgsBody,
+  type AddLiquidityArgsReply,
   type AddLiquidityBody,
   type PoolParams,
   type PoolReply,
+  type RemoveLiquidityArgsBody,
+  type RemoveLiquidityArgsReply,
   type RemoveLiquidityBody,
   type RouteBody,
   type SwapBody,
+  addLiquidityArgsBodySchema,
+  addLiquidityArgsReplySchema,
   addLiquidityBodySchema,
   poolReplySchema,
+  removeLiquidityArgsBodySchema,
+  removeLiquidityArgsReplySchema,
   removeLiquidityBodySchema,
   routeBodySchema,
   routeReplySchema,
@@ -277,6 +286,74 @@ export const magicswapRoutes =
       },
     );
 
+    app.get<{
+      Params: PoolParams;
+      Body: AddLiquidityArgsBody;
+      Reply: AddLiquidityArgsReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/add-liquidity",
+      {
+        schema: {
+          summary: "Create add liquidity args",
+          description:
+            "Create args required for calling add liquidity functions on a Magicswap pool",
+          body: addLiquidityArgsBodySchema,
+          response: {
+            200: addLiquidityArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            amount0,
+            amount1,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            toAddress,
+          },
+          chain,
+          params,
+        } = req;
+
+        // TODO: Only create pool fields needed for liquidity functions
+        const pool = await fetchPool({
+          client,
+          chainId: chain.id,
+          pairId: params.id,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+        });
+
+        if (!pool) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: "Pool not found",
+          });
+        }
+
+        const args = createAddLiquidityArgs({
+          chainId: chain.id,
+          toAddress: toAddress as Address,
+          amount0: amount0 ? BigInt(amount0) : undefined,
+          amount1: amount1 ? BigInt(amount1) : undefined,
+          amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
+          amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
+          nfts0,
+          nfts1,
+          pool,
+        });
+        reply.send({
+          ...args,
+          value: args.value?.toString(),
+        });
+      },
+    );
+
     app.post<{
       Params: PoolParams;
       Body: AddLiquidityBody;
@@ -377,6 +454,73 @@ export const magicswapRoutes =
             message: parseEngineErrorMessage(err),
           });
         }
+      },
+    );
+
+    app.get<{
+      Params: PoolParams;
+      Body: RemoveLiquidityArgsBody;
+      Reply: RemoveLiquidityArgsReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/remove-liquidity",
+      {
+        schema: {
+          summary: "Create remove liquidity args",
+          description:
+            "Create args required for calling remove liquidity functions on a Magicswap pool",
+          body: removeLiquidityArgsBodySchema,
+          response: {
+            200: removeLiquidityArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            amountLP,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            swapLeftover = true,
+            toAddress,
+          },
+          chain,
+          params,
+        } = req;
+
+        const pool = await fetchPool({
+          client,
+          chainId: chain.id,
+          pairId: params.id,
+          inventoryApiUrl: env.TROVE_API_URL,
+          inventoryApiKey: env.TROVE_API_KEY,
+        });
+
+        if (!pool) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: "Pool not found",
+          });
+        }
+
+        const args = createRemoveLiquidityArgs({
+          chainId: chain.id,
+          toAddress: toAddress as Address,
+          amountLP: BigInt(amountLP),
+          amount0Min: BigInt(amount0Min),
+          amount1Min: BigInt(amount1Min),
+          nfts0,
+          nfts1,
+          pool,
+          swapLeftover,
+        });
+        reply.send({
+          ...args,
+          value: args.value?.toString(),
+        });
       },
     );
 
