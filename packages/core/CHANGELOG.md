@@ -1,5 +1,18 @@
 # @treasure-dev/tdk-core
 
+## 3.4.0
+
+### Minor Changes
+
+- a3ce0c1: Updated Magicswap helpers to support Topaz testnet
+- f70b149: Removed deprecate Project API helper and type
+- e4ac175: Removed Treasure Ruby chain support
+
+### Patch Changes
+
+- 2ee4c54: Updated user transactions API helper to fetch by user ID
+- f5ce87e: Added fetch user public profile to API client
+
 ## 3.3.2
 
 ### Patch Changes
