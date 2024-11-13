@@ -82,7 +82,7 @@ export const createTransactionBodySchema = Type.Object({
   }),
   args: txArgsSchema,
   txOverrides: Type.Optional(txOverridesSchema),
-  backendWallet: Type.String(),
+  backendWallet: Type.Optional(Type.String()),
   simulateTransaction: Type.Optional(Type.Boolean()),
 });
 
@@ -108,7 +108,7 @@ export const createRawTransactionBodySchema = Type.Object({
     description: "Raw transaction data",
   }),
   txOverrides: Type.Optional(Type.Omit(txOverridesSchema, ["value"])),
-  backendWallet: Type.String(),
+  backendWallet: Type.Optional(Type.String()),
   simulateTransaction: Type.Optional(Type.Boolean()),
 });
 

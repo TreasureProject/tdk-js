@@ -72,7 +72,7 @@ export const transactionsRoutes =
             functionName,
             args,
             txOverrides,
-            backendWallet,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;
@@ -160,7 +160,7 @@ export const transactionsRoutes =
             value = "0x00",
             data,
             txOverrides,
-            backendWallet,
+            backendWallet = env.DEFAULT_BACKEND_WALLET,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
         } = req;

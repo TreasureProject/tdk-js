@@ -25,6 +25,7 @@ const { AWS_REGION, DATABASE_SECRET_NAME, API_ENV_SECRET_NAME, DATABASE_URL } =
 const envSchema = Type.Object({
   PORT: Type.Number({ default: 8080 }),
   DATABASE_URL: Type.String(),
+  DEFAULT_BACKEND_WALLET: Type.String(),
   THIRDWEB_CLIENT_ID: Type.String(),
   THIRDWEB_ENGINE_URL: Type.String(),
   THIRDWEB_ENGINE_ACCESS_TOKEN: Type.String(),
