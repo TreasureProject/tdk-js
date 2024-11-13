@@ -5,7 +5,7 @@ import {
 } from "@treasure-dev/tdk-core";
 import { Button, ConnectButton, useTreasure } from "@treasure-dev/tdk-react";
 import { useEffect, useState } from "react";
-import { getContract, toTokens, toUnits, ZERO_ADDRESS } from "thirdweb";
+import { ZERO_ADDRESS, getContract, toTokens, toUnits } from "thirdweb";
 import { allowance, balanceOf } from "thirdweb/extensions/erc20";
 
 const useMagicswapPools = () => {
@@ -101,7 +101,7 @@ const useMagicswapRoute = ({
   return state;
 };
 
-export const PoolDetailsPage = ({
+const PoolDetailsPage = ({
   id,
   addLog,
   onBack,
@@ -297,9 +297,7 @@ export const PoolDetailsPage = ({
   );
 };
 
-export const PoolListPage = ({
-  onSelect,
-}: { onSelect: (id: string) => void }) => {
+const PoolListPage = ({ onSelect }: { onSelect: (id: string) => void }) => {
   const { pools, isLoading: isLoadingPools } = useMagicswapPools();
   return (
     <div>

@@ -39,7 +39,6 @@ catalog:
   autoprefixer: ^10.4.20
   "aws-kms-signer": ^0.5.3
   clsx: ^2.1.1
-  "decimal.js-light": ^2.5.1
   dotenv: ^16.3.1
   "dotenv-cli": ^7.4.1
   electron: ^31.1.2

@@ -111,9 +111,6 @@ catalogs:
     clsx:
       specifier: ^2.1.1
       version: 2.1.1
-    decimal.js-light:
-      specifier: ^2.5.1
-      version: 2.5.1
     dotenv:
       specifier: ^16.3.1
       version: 16.4.5
@@ -460,9 +457,6 @@ importers:
       '@treasure-dev/tdk-react':
         specifier: workspace:*
         version: link:../../packages/react
-      decimal.js-light:
-        specifier: 'catalog:'
-        version: 2.5.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -472,9 +466,6 @@ importers:
       thirdweb:
         specifier: 'catalog:'
         version: 5.67.0(@aws-sdk/client-kms@3.687.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
-      viem:
-        specifier: 'catalog:'
-        version: 2.21.41(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
