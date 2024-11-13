@@ -346,17 +346,14 @@ const buildPools = async ({
   inventoryApiUrl: string;
   inventoryApiKey: string;
 }) => {
-  const magicUSD = Number(stats.global?.magicUSD ?? 0);
-
-  const { collectionsMap, tokensMap } = await fetchPairAssociatedData({
-    pairs,
-    chainId,
-    inventoryApiUrl,
-    inventoryApiKey,
-  });
-
-  const reserves = await Promise.all(
-    pairs.map(({ id }) => {
+  const [{ collectionsMap, tokensMap }, ...reserves] = await Promise.all([
+    fetchPairAssociatedData({
+      pairs,
+      chainId,
+      inventoryApiUrl,
+      inventoryApiKey,
+    }),
+    ...pairs.map(({ id }) => {
       const contract = getContract({
         client,
         chain: defineChain(chainId),
@@ -368,15 +365,15 @@ const buildPools = async ({
         method: "getReserves",
       });
     }),
-  );
+  ]);
 
-  const pools = pairs.map((pair, i) => {
-    const reserve = reserves[i]!;
-    return createPoolFromPair(pair, collectionsMap, tokensMap, magicUSD, [
-      reserve[0],
-      reserve[1],
-    ]);
-  });
+  const magicUSD = Number(stats.global?.magicUSD ?? 0);
+  const pools = pairs.map((pair, i) =>
+    createPoolFromPair(pair, collectionsMap, tokensMap, magicUSD, [
+      reserves[i]?.[0] ?? 0n,
+      reserves[i]?.[1] ?? 0n,
+    ]),
+  );
 
   return pools;
 };
