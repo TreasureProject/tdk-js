@@ -1,6 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import type { AnalyticsPayload } from "./types";
 
+const localStorage: Pick<
+  WindowLocalStorage["localStorage"],
+  "getItem" | "setItem" | "removeItem"
+> =
+  typeof window !== "undefined"
+    ? window.localStorage
+    : {
+        getItem: () => null,
+        setItem: () => null,
+        removeItem: () => null,
+      };
+
 function getCachedEventIds(): string[] {
   let cachedEventIds: string[] = [];
   const cachedEventIdsValue = localStorage.getItem("tdk-analytics-event-ids");
@@ -35,7 +47,7 @@ export function addCachedEvent(event: AnalyticsPayload): void {
   cachedEventIds.push(event.id);
   localStorage.setItem(
     "tdk-analytics-event-ids",
-    JSON.stringify(cachedEventIds),
+    JSON.stringify(cachedEventIds)
   );
   localStorage.setItem(`tdk-analytic-${event.id}`, JSON.stringify(event));
 }
