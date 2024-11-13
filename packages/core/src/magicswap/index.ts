@@ -1,4 +1,8 @@
 export { fetchPools, fetchPool } from "./pools";
 export { createRoute } from "./route";
-export { createSwapArgs } from "./swap";
-export { createAddLiquidityArgs, createRemoveLiquidityArgs } from "./liquidity";
+export { fetchPoolsForSwap, createSwapArgs } from "./swap";
+export {
+  fetchPoolForLiquidity,
+  createAddLiquidityArgs,
+  createRemoveLiquidityArgs,
+} from "./liquidity";

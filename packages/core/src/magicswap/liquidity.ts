@@ -6,6 +6,7 @@ import type {
 import type { magicswapV2RouterAbi } from "../abis/magicswapV2RouterAbi";
 import type { AddressString } from "../types";
 import { getContractAddresses } from "../utils/contracts";
+import { createPoolFromPair, fetchPair } from "./pools";
 import type { NFTInput } from "./types";
 
 type AddLiquidityFunctionName =
@@ -35,6 +36,18 @@ type LiquidityPool = {
   token1: LiquidityPoolToken;
   hasNFT: boolean;
   isNFTNFT: boolean;
+};
+
+export const fetchPoolForLiquidity = async ({
+  chainId,
+  pairId,
+}: { chainId: number; pairId: string }): Promise<LiquidityPool> => {
+  const pair = await fetchPair({ chainId, pairId });
+  if (!pair) {
+    throw new Error(`Pool ${pairId} not found on chain ${chainId}`);
+  }
+
+  return createPoolFromPair(pair);
 };
 
 export const createAddLiquidityArgs = ({

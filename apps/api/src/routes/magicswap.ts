@@ -5,10 +5,13 @@ import {
   createRoute,
   createSwapArgs,
   fetchPool,
+  fetchPoolForLiquidity,
   fetchPools,
+  fetchPoolsForSwap,
   magicswapV2RouterAbi,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
+import type { Address } from "thirdweb";
 
 import "../middleware/auth";
 import "../middleware/chain";
@@ -23,17 +26,25 @@ import {
   poolsReplySchema,
 } from "../schema";
 import {
+  type AddLiquidityArgsBody,
   type AddLiquidityBody,
+  type ContractArgsReply,
   type PoolParams,
   type PoolReply,
+  type RemoveLiquidityArgsBody,
   type RemoveLiquidityBody,
   type RouteBody,
+  type SwapArgsBody,
   type SwapBody,
+  addLiquidityArgsBodySchema,
   addLiquidityBodySchema,
+  contractArgsReplySchema,
   poolReplySchema,
+  removeLiquidityArgsBodySchema,
   removeLiquidityBodySchema,
   routeBodySchema,
   routeReplySchema,
+  swapArgsBodySchema,
   swapBodySchema,
 } from "../schema/magicswap";
 import type { TdkApiContext } from "../types";
@@ -154,6 +165,84 @@ export const magicswapRoutes =
       },
     );
 
+    app.post<{ Body: SwapArgsBody; Reply: ContractArgsReply | ErrorReply }>(
+      "/magicswap/swap/args",
+      {
+        schema: {
+          summary: "Create swap args",
+          description:
+            "Create args required for calling swap functions in a Magicswap trade",
+          body: swapArgsBodySchema,
+          response: {
+            200: contractArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            tokenInId,
+            tokenOutId,
+            amountIn,
+            amountOut,
+            path,
+            nftsIn,
+            nftsOut,
+            isExactOut,
+            slippage,
+            toAddress = req.userAddress,
+          },
+          chain,
+        } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "No toAddress provided",
+          });
+        }
+
+        const pools = await fetchPoolsForSwap({ chainId: chain.id });
+        const poolTokens = pools
+          .flatMap(({ token0, token1 }) => [token0, token1])
+          .reduce(
+            (acc, poolToken) => {
+              acc[poolToken.id] = poolToken;
+              return acc;
+            },
+            {} as Record<string, (typeof pools)[number]["token0"]>,
+          );
+        const tokenIn = poolTokens[tokenInId];
+        const tokenOut = poolTokens[tokenOutId];
+        if (!tokenIn || !tokenOut) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: `${!tokenIn ? "Input" : "Output"} token not found`,
+          });
+        }
+
+        const args = createSwapArgs({
+          chainId: chain.id,
+          toAddress: toAddress as Address,
+          tokenIn,
+          tokenOut,
+          nftsIn,
+          nftsOut,
+          amountIn: amountIn ? BigInt(amountIn) : undefined,
+          amountOut: amountOut ? BigInt(amountOut) : undefined,
+          isExactOut,
+          path: path as AddressString[],
+          slippage,
+        });
+        reply.send({
+          ...args,
+          value: args.value?.toString(),
+        });
+      },
+    );
+
     app.post<{ Body: SwapBody; Reply: CreateTransactionReply | ErrorReply }>(
       "/magicswap/swap",
       {
@@ -167,7 +256,24 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain } = req;
+        const {
+          authError,
+          body: {
+            tokenInId,
+            tokenOutId,
+            amountIn,
+            amountOut,
+            path,
+            nftsIn,
+            nftsOut,
+            isExactOut,
+            slippage,
+            toAddress,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
@@ -175,32 +281,14 @@ export const magicswapRoutes =
           return;
         }
 
-        const {
-          tokenInId,
-          tokenOutId,
-          amountIn,
-          amountOut,
-          path,
-          nftsIn,
-          nftsOut,
-          isExactOut,
-          slippage,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
-
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
           return;
         }
 
-        const pools = await fetchPools({
-          client,
+        const pools = await fetchPoolsForSwap({
           chainId: chain.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
-
         const poolTokens = pools
           .flatMap(({ token0, token1 }) => [token0, token1])
           .reduce(
@@ -210,23 +298,13 @@ export const magicswapRoutes =
             },
             {} as Record<string, (typeof pools)[number]["token0"]>,
           );
-
         const tokenIn = poolTokens[tokenInId];
         const tokenOut = poolTokens[tokenOutId];
-
-        if (!tokenIn) {
+        if (!tokenIn || !tokenOut) {
           throw new TdkError({
             name: TDK_ERROR_NAMES.MagicswapError,
             code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Input token not found",
-          });
-        }
-
-        if (!tokenOut) {
-          throw new TdkError({
-            name: TDK_ERROR_NAMES.MagicswapError,
-            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
-            message: "Output token not found",
+            message: `${!tokenIn ? "Input" : "Output"} token not found`,
           });
         }
 
@@ -237,7 +315,7 @@ export const magicswapRoutes =
           value,
         } = createSwapArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           tokenIn,
           tokenOut,
           nftsIn,
@@ -279,6 +357,77 @@ export const magicswapRoutes =
 
     app.post<{
       Params: PoolParams;
+      Body: AddLiquidityArgsBody;
+      Reply: ContractArgsReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/add-liquidity/args",
+      {
+        schema: {
+          summary: "Create add liquidity args",
+          description:
+            "Create args required for calling add liquidity functions on a Magicswap pool",
+          body: addLiquidityArgsBodySchema,
+          response: {
+            200: contractArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            amount0,
+            amount1,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            toAddress = req.userAddress,
+          },
+          chain,
+          params,
+        } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_ADD_LIQUIDITY_FAILED,
+            message: "No toAddress provided",
+          });
+        }
+
+        try {
+          const pool = await fetchPoolForLiquidity({
+            chainId: chain.id,
+            pairId: params.id,
+          });
+          const args = createAddLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress as Address,
+            amount0: amount0 ? BigInt(amount0) : undefined,
+            amount1: amount1 ? BigInt(amount1) : undefined,
+            amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
+            amount1Min: amount1Min ? BigInt(amount1Min) : undefined,
+            nfts0,
+            nfts1,
+            pool,
+          });
+          reply.send({
+            ...args,
+            value: args.value?.toString(),
+          });
+        } catch (err) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: err instanceof Error ? err.message : "Pool not found",
+          });
+        }
+      },
+    );
+
+    app.post<{
+      Params: PoolParams;
       Body: AddLiquidityBody;
       Reply: CreateTransactionReply | ErrorReply;
     }>(
@@ -294,7 +443,22 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain, params } = req;
+        const {
+          authError,
+          body: {
+            amount0,
+            amount1,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            toAddress,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+          params,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
@@ -302,28 +466,14 @@ export const magicswapRoutes =
           return;
         }
 
-        const {
-          amount0,
-          amount1,
-          amount0Min,
-          amount1Min,
-          nfts0,
-          nfts1,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
-
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
           return;
         }
 
-        const pool = await fetchPool({
-          client,
+        const pool = await fetchPoolForLiquidity({
           chainId: chain.id,
           pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
 
         if (!pool) {
@@ -342,7 +492,7 @@ export const magicswapRoutes =
           value,
         } = createAddLiquidityArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
           amount1: amount1 ? BigInt(amount1) : undefined,
           amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
@@ -382,6 +532,77 @@ export const magicswapRoutes =
 
     app.post<{
       Params: PoolParams;
+      Body: RemoveLiquidityArgsBody;
+      Reply: ContractArgsReply | ErrorReply;
+    }>(
+      "/magicswap/pools/:id/remove-liquidity/args",
+      {
+        schema: {
+          summary: "Create remove liquidity args",
+          description:
+            "Create args required for calling remove liquidity functions on a Magicswap pool",
+          body: removeLiquidityArgsBodySchema,
+          response: {
+            200: contractArgsReplySchema,
+          },
+        },
+      },
+      async (req, reply) => {
+        const {
+          body: {
+            amountLP,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            swapLeftover = true,
+            toAddress = req.userAddress,
+          },
+          chain,
+          params,
+        } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_REMOVE_LIQUIDITY_FAILED,
+            message: "No toAddress provided",
+          });
+        }
+
+        try {
+          const pool = await fetchPoolForLiquidity({
+            chainId: chain.id,
+            pairId: params.id,
+          });
+          const args = createRemoveLiquidityArgs({
+            chainId: chain.id,
+            toAddress: toAddress as Address,
+            amountLP: BigInt(amountLP),
+            amount0Min: BigInt(amount0Min),
+            amount1Min: BigInt(amount1Min),
+            nfts0,
+            nfts1,
+            pool,
+            swapLeftover,
+          });
+          reply.send({
+            ...args,
+            value: args.value?.toString(),
+          });
+        } catch (err) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_POOL_NOT_FOUND,
+            statusCode: 404,
+            message: err instanceof Error ? err.message : "Pool not found",
+          });
+        }
+      },
+    );
+
+    app.post<{
+      Params: PoolParams;
       Body: RemoveLiquidityBody;
       Reply: CreateTransactionReply | ErrorReply;
     }>(
@@ -397,7 +618,22 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
-        const { authError, body, chain, params } = req;
+        const {
+          authError,
+          body: {
+            amountLP,
+            amount0Min,
+            amount1Min,
+            nfts0,
+            nfts1,
+            swapLeftover = true,
+            toAddress,
+            backendWallet = req.backendWallet,
+            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          },
+          chain,
+          params,
+        } = req;
         const userAddress = req.backendUserAddress ?? req.userAddress;
 
         if (!userAddress) {
@@ -405,28 +641,14 @@ export const magicswapRoutes =
           return;
         }
 
-        const {
-          amountLP,
-          amount0Min,
-          amount1Min,
-          nfts0,
-          nfts1,
-          swapLeftover = true,
-          backendWallet = req.backendWallet,
-          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-        } = body;
-
         if (!backendWallet) {
           throwForbiddenBackendWalletError();
           return;
         }
 
-        const pool = await fetchPool({
-          client,
+        const pool = await fetchPoolForLiquidity({
           chainId: chain.id,
           pairId: params.id,
-          inventoryApiUrl: env.TROVE_API_URL,
-          inventoryApiKey: env.TROVE_API_KEY,
         });
 
         if (!pool) {
@@ -445,7 +667,7 @@ export const magicswapRoutes =
           value,
         } = createRemoveLiquidityArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           amountLP: BigInt(amountLP),
           amount0Min: BigInt(amount0Min),
           amount1Min: BigInt(amount1Min),
