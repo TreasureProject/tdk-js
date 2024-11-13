@@ -1,5 +1,14 @@
 # @treasure-dev/tdk-react
 
+## 3.5.0
+
+### Patch Changes
+
+- 78bb7e6: Remove analytics manager from SSR
+- Updated dependencies [78bb7e6]
+- Updated dependencies [45fb5a3]
+  - @treasure-dev/tdk-core@3.5.0
+
 ## 3.4.1
 
 ### Patch Changes

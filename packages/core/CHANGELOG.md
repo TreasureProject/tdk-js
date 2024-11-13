@@ -1,5 +1,15 @@
 # @treasure-dev/tdk-core
 
+## 3.5.0
+
+### Minor Changes
+
+- 45fb5a3: Added helpers for fetching minimal Magicswap pool payloads
+
+### Patch Changes
+
+- 78bb7e6: Remove analytics manager from SSR
+
 ## 3.4.1
 
 ### Patch Changes
