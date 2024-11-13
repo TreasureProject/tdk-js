@@ -190,10 +190,18 @@ export const magicswapRoutes =
             nftsOut,
             isExactOut,
             slippage,
-            toAddress,
+            toAddress = req.userAddress,
           },
           chain,
         } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_SWAP_FAILED,
+            message: "No toAddress provided",
+          });
+        }
 
         const pools = await fetchPoolsForSwap({ chainId: chain.id });
         const poolTokens = pools
@@ -260,6 +268,7 @@ export const magicswapRoutes =
             nftsOut,
             isExactOut,
             slippage,
+            toAddress,
             backendWallet = req.backendWallet,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
@@ -306,7 +315,7 @@ export const magicswapRoutes =
           value,
         } = createSwapArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           tokenIn,
           tokenOut,
           nftsIn,
@@ -372,11 +381,19 @@ export const magicswapRoutes =
             amount1Min,
             nfts0,
             nfts1,
-            toAddress,
+            toAddress = req.userAddress,
           },
           chain,
           params,
         } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_ADD_LIQUIDITY_FAILED,
+            message: "No toAddress provided",
+          });
+        }
 
         try {
           const pool = await fetchPoolForLiquidity({
@@ -435,6 +452,7 @@ export const magicswapRoutes =
             amount1Min,
             nfts0,
             nfts1,
+            toAddress,
             backendWallet = req.backendWallet,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
@@ -474,7 +492,7 @@ export const magicswapRoutes =
           value,
         } = createAddLiquidityArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           amount0: amount0 ? BigInt(amount0) : undefined,
           amount1: amount1 ? BigInt(amount1) : undefined,
           amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
@@ -538,11 +556,19 @@ export const magicswapRoutes =
             nfts0,
             nfts1,
             swapLeftover = true,
-            toAddress,
+            toAddress = req.userAddress,
           },
           chain,
           params,
         } = req;
+
+        if (!toAddress) {
+          throw new TdkError({
+            name: TDK_ERROR_NAMES.MagicswapError,
+            code: TDK_ERROR_CODES.MAGICSWAP_REMOVE_LIQUIDITY_FAILED,
+            message: "No toAddress provided",
+          });
+        }
 
         try {
           const pool = await fetchPoolForLiquidity({
@@ -601,6 +627,7 @@ export const magicswapRoutes =
             nfts0,
             nfts1,
             swapLeftover = true,
+            toAddress,
             backendWallet = req.backendWallet,
             simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
           },
@@ -640,7 +667,7 @@ export const magicswapRoutes =
           value,
         } = createRemoveLiquidityArgs({
           chainId: chain.id,
-          toAddress: userAddress,
+          toAddress: (toAddress as Address | undefined) ?? userAddress,
           amountLP: BigInt(amountLP),
           amount0Min: BigInt(amount0Min),
           amount1Min: BigInt(amount1Min),

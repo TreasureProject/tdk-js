@@ -192,7 +192,7 @@ const nftInputSchema = Type.Object({
   quantity: Type.Number({ description: "The quantity of the NFT" }),
 });
 
-const swapBaseBodySchema = Type.Object({
+export const swapArgsBodySchema = Type.Object({
   tokenInId: Type.String({
     description: "The unique identifier of the `in` token",
   }),
@@ -212,24 +212,20 @@ const swapBaseBodySchema = Type.Object({
     Type.Array(nftInputSchema, { description: "Array of NFTs to swap out" }),
   ),
   slippage: Type.Optional(Type.Number({ description: "Slippage tolerance" })),
+  toAddress: Type.Optional(
+    Type.String({ description: "Address to send tokens" }),
+  ),
 });
 
-export const swapArgsBodySchema = Type.Intersect([
-  swapBaseBodySchema,
-  Type.Object({
-    toAddress: Type.String({ description: "Address to send tokens" }),
-  }),
-]);
-
 export const swapBodySchema = Type.Intersect([
-  swapBaseBodySchema,
+  swapArgsBodySchema,
   Type.Object({
     backendWallet: Type.Optional(Type.String()),
     simulateTransaction: Type.Optional(Type.Boolean()),
   }),
 ]);
 
-const addLiquidityBaseBodySchema = Type.Object({
+export const addLiquidityArgsBodySchema = Type.Object({
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -244,24 +240,20 @@ const addLiquidityBaseBodySchema = Type.Object({
   amount1Min: Type.Optional(
     Type.String({ description: "Minimum amount for token1" }),
   ),
+  toAddress: Type.Optional(
+    Type.String({ description: "Address to send LP tokens" }),
+  ),
 });
 
-export const addLiquidityArgsBodySchema = Type.Intersect([
-  addLiquidityBaseBodySchema,
-  Type.Object({
-    toAddress: Type.String({ description: "Address to send LP tokens" }),
-  }),
-]);
-
 export const addLiquidityBodySchema = Type.Intersect([
-  addLiquidityBaseBodySchema,
+  addLiquidityArgsBodySchema,
   Type.Object({
     backendWallet: Type.Optional(Type.String()),
     simulateTransaction: Type.Optional(Type.Boolean()),
   }),
 ]);
 
-const removeLiquidityBaseBodySchema = Type.Object({
+export const removeLiquidityArgsBodySchema = Type.Object({
   nfts0: Type.Optional(
     Type.Array(nftInputSchema, { description: "Array of NFTs for token0" }),
   ),
@@ -277,17 +269,13 @@ const removeLiquidityBaseBodySchema = Type.Object({
       description: "Boolean indicating if swap leftover",
     }),
   ),
+  toAddress: Type.Optional(
+    Type.String({ description: "Address to send tokens" }),
+  ),
 });
 
-export const removeLiquidityArgsBodySchema = Type.Intersect([
-  removeLiquidityBaseBodySchema,
-  Type.Object({
-    toAddress: Type.String({ description: "Address to send tokens" }),
-  }),
-]);
-
 export const removeLiquidityBodySchema = Type.Intersect([
-  removeLiquidityBaseBodySchema,
+  removeLiquidityArgsBodySchema,
   Type.Object({
     backendWallet: Type.Optional(Type.String()),
     simulateTransaction: Type.Optional(Type.Boolean()),
