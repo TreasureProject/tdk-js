@@ -53,7 +53,7 @@ export class AnalyticsManager {
     device?: Device;
   }) {
     if (this.initialized) {
-      throw new Error("AnalyticsManager is already initialized");
+      return;
     }
 
     this.apiUri = apiUri;
@@ -67,12 +67,9 @@ export class AnalyticsManager {
     };
     this.initialized = true;
 
-    setInterval(
-      () => {
-        this.retryAllCachedEvents();
-      },
-      1000 * 60 * 5,
-    );
+    setInterval(() => {
+      this.retryAllCachedEvents();
+    }, 1000 * 60 * 5);
   }
 
   /**
@@ -107,7 +104,7 @@ export class AnalyticsManager {
    */
   async trackCustomEvent(
     event: TrackableEvent,
-    cacheOnFailure = true,
+    cacheOnFailure = true
   ): Promise<string> {
     const serverTime = await getServerTime(this.apiUri);
     const localTime = `${Date.now()}`;
