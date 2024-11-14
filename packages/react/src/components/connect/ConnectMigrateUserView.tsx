@@ -1,4 +1,7 @@
+import type { LegacyProfile } from "@treasure-dev/tdk-core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ZERO_ADDRESS } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 
 import { TreasureSparklesIcon } from "../../icons/TreasureSparklesIcon";
@@ -6,22 +9,16 @@ import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 
 type Props = {
-  legacyProfiles: {
-    id: string;
-    tag: string | null;
-    discriminant: number | null;
-    pfp: string | null;
-    banner: string | null;
-    legacyAddress: string;
-  }[];
+  legacyProfiles: LegacyProfile[];
+  isLoading?: boolean;
   error?: string;
   onApprove: (id: string) => void;
   onReject: () => void;
-  onCancel: () => void;
 };
 
 export const ConnectMigrateUserView = ({
   legacyProfiles,
+  isLoading = false,
   error,
   onApprove,
   onReject,
@@ -29,6 +26,7 @@ export const ConnectMigrateUserView = ({
   const [selectedProfileId, setSelectedProfileId] = useState(
     legacyProfiles[0]?.id,
   );
+  const { t } = useTranslation();
   return (
     <div className="tdk-bg-night tdk-p-8 tdk-font-sans tdk-space-y-6">
       <div className="tdk-space-y-2">
@@ -37,12 +35,10 @@ export const ConnectMigrateUserView = ({
           className="tdk-text-lg tdk-font-semibold tdk-text-white tdk-m-0"
           aria-hidden="true"
         >
-          Migrate existing accounts
+          {t("connect.migrate.header")}
         </h2>
         <p className="tdk-text-sm tdk-text-silver">
-          It looks like you have several existing Treasure profiles! Please
-          choose one you would like to use moving forward as your identity
-          across the Treasure ecosystem.
+          {t("connect.migrate.description")}
         </p>
       </div>
       <div className="tdk-flex tdk-items-center tdk-gap-3 tdk-flex-wrap">
@@ -92,7 +88,7 @@ export const ConnectMigrateUserView = ({
                   </div>
                 ) : (
                   <div className="tdk-text-silver-500 tdk-font-medium">
-                    {shortenAddress(legacyAddress)}
+                    {shortenAddress(legacyAddress ?? ZERO_ADDRESS)}
                   </div>
                 )}
               </div>
@@ -108,19 +104,19 @@ export const ConnectMigrateUserView = ({
       <div className="tdk-space-y-2">
         <div className="tdk-flex tdk-items-center tdk-gap-2">
           <Button
-            disabled={!selectedProfileId}
+            disabled={!selectedProfileId || isLoading}
             onClick={
               selectedProfileId ? () => onApprove(selectedProfileId) : undefined
             }
           >
-            Use this account
+            {t("connect.migrate.approve")}
           </Button>
-          <Button variant="secondary" onClick={onReject}>
-            Start fresh
+          <Button variant="secondary" disabled={isLoading} onClick={onReject}>
+            {t("connect.migrate.reject")}
           </Button>
         </div>
         <p className="tdk-text-xs tdk-text-silver-600">
-          NOTE: This is irreversible, so please choose carefully.
+          {t("connect.migrate.disclaimer")}
         </p>
       </div>
     </div>

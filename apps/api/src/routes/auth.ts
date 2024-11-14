@@ -210,6 +210,7 @@ export const authRoutes =
                 select: {
                   ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
                   id: true,
+                  legacyAddress: true,
                 },
               })
             : userSmartAccount.initialWalletAddress
@@ -217,7 +218,11 @@ export const authRoutes =
                   where: {
                     legacyAddress: userSmartAccount.initialWalletAddress,
                   },
-                  select: { ...USER_PUBLIC_PROFILE_SELECT_FIELDS, id: true },
+                  select: {
+                    ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
+                    id: true,
+                    legacyAddress: true,
+                  },
                 })
               : [],
         ]);

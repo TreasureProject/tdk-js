@@ -2,6 +2,7 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
   type ConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
+  type LegacyProfile,
   SUPPORTED_WEB3_WALLETS,
   type SocialConnectMethod,
   type User,
@@ -23,6 +24,7 @@ import {
   type Options as ConnectMethodSelectionOptions,
   ConnectMethodSelectionView,
 } from "./ConnectMethodSelectionView";
+import { ConnectMigrateUserView } from "./ConnectMigrateUserView";
 import { ConnectVerifyCodeView } from "./ConnectVerifyCodeView";
 
 export type Options = ConnectMethodSelectionOptions & {
@@ -43,6 +45,7 @@ export type Props = Options & {
 
 const DEFAULT_STATE = {
   email: "",
+  legacyProfiles: [],
   isLoading: false,
   error: undefined,
 };
@@ -77,8 +80,9 @@ export const ConnectModal = ({
     factoryAddress: contractAddresses.ManagedAccountFactory,
     sponsorGas: true,
   };
-  const [{ email, isLoading, error }, setState] = useState<{
+  const [{ email, legacyProfiles, isLoading, error }, setState] = useState<{
     email: string;
+    legacyProfiles: LegacyProfile[];
     isLoading: boolean;
     error: string | undefined;
   }>(DEFAULT_STATE);
@@ -87,6 +91,8 @@ export const ConnectModal = ({
     accountAbstraction,
   });
   const { connect: connectWeb3Wallet } = useConnectModal();
+
+  const isMigrating = legacyProfiles.length > 1;
 
   const setIsLoading = (isLoading = true) =>
     setState((curr) => ({
@@ -98,6 +104,7 @@ export const ConnectModal = ({
   const setError = (err: unknown, resetEmail = false) =>
     setState((curr) => ({
       email: resetEmail ? "" : curr.email,
+      legacyProfiles: [],
       isLoading: false,
       error: getErrorMessage(err),
     }));
@@ -126,10 +133,15 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        const nextUser = await logIn(wallet);
-        // Login was successful, close the connect modal
-        onConnected?.("email", wallet, nextUser);
-        onOpenChange(false);
+        const { user, legacyProfiles } = await logIn(wallet);
+        if (legacyProfiles.length > 1) {
+          // User has a legacy profile migration choice
+          setState((curr) => ({ ...curr, legacyProfiles }));
+        } else {
+          // Nothing to migrate, close the connect modal
+          onConnected?.("email", wallet, user);
+          onOpenChange(false);
+        }
       } catch (err) {
         console.error("Error logging in wallet with email:", err);
         setError(err, true);
@@ -157,7 +169,12 @@ export const ConnectModal = ({
           ecosystemPartnerId,
           email: nextEmail,
         });
-        setState({ email: nextEmail, isLoading: false, error: undefined });
+        setState({
+          email: nextEmail,
+          legacyProfiles: [],
+          isLoading: false,
+          error: undefined,
+        });
       } catch (err) {
         console.error("Error sending email verification code:", err);
         setError(err);
@@ -246,10 +263,15 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        const nextUser = await logIn(wallet);
-        // Login was successful, close the connect modal
-        onConnected?.(method, wallet, nextUser);
-        onOpenChange(false);
+        const { user, legacyProfiles } = await logIn(wallet);
+        if (legacyProfiles.length > 1) {
+          // User has a legacy profile migration choice
+          setState((curr) => ({ ...curr, legacyProfiles }));
+        } else {
+          // Nothing to migrate, close the connect modal
+          onConnected?.(method, wallet, user);
+          onOpenChange(false);
+        }
       } catch (err) {
         console.error("Error logging in wallet:", err);
         setError(err);
@@ -296,7 +318,9 @@ export const ConnectModal = ({
       >
         <VisuallyHidden.Root>
           <DialogTitle>
-            {email ? (
+            {isMigrating ? (
+              t("connect.migrate.header")
+            ) : email ? (
               t("connect.verify.header")
             ) : (
               <Trans i18nKey="connect.header" values={{ appName }}>
@@ -307,7 +331,15 @@ export const ConnectModal = ({
           </DialogTitle>
         </VisuallyHidden.Root>
         <div className="tdk-rounded-lg tdk-overflow-hidden tdk-bg-night tdk-border tdk-border-night-600">
-          {email ? (
+          {isMigrating ? (
+            <ConnectMigrateUserView
+              legacyProfiles={legacyProfiles}
+              isLoading={isLoading}
+              error={error}
+              onApprove={() => {}}
+              onReject={() => {}}
+            />
+          ) : email ? (
             <ConnectVerifyCodeView
               recipient={email}
               isLoading={isLoading}

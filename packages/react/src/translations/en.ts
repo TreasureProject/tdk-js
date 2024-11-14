@@ -30,6 +30,14 @@ export const en = {
           countdown: "Resend available in {{resendAvailableInSec}}s...",
         },
       },
+      migrate: {
+        header: "Migrate existing accounts",
+        description:
+          "It looks like you have several existing Treasure profiles. Please choose one you would like to use moving forward as your identity across the Treasure ecosystem.",
+        approve: "Use this account",
+        reject: "Start fresh",
+        disclaimer: "NOTE: This is irreversible, so please choose carefully.",
+      },
     },
   },
 };
