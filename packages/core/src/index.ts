@@ -59,7 +59,6 @@ export { getUserAddress } from "./connect/user";
 
 // Bridgeworld
 export {
-  fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "./bridgeworld/harvesters";

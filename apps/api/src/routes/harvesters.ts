@@ -1,6 +1,5 @@
 import {
   type AddressString,
-  fetchHarvesterCorruptionRemovalInfo,
   getHarvesterInfo,
   getHarvesterUserInfo,
 } from "@treasure-dev/tdk-core";
@@ -10,16 +9,11 @@ import { ZERO_ADDRESS } from "thirdweb";
 import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
-import type {
-  ReadHarvesterCorruptionRemovalParams,
-  ReadHarvesterCorruptionRemovalReply,
-} from "../schema";
 import {
   type ErrorReply,
   type ReadHarvesterParams,
   type ReadHarvesterReply,
   notFoundReplySchema,
-  readHarvesterCorruptionRemovalReplySchema,
   readHarvesterReplySchema,
 } from "../schema";
 import type { TdkApiContext } from "../types";
@@ -83,42 +77,6 @@ export const harvestersRoutes =
           ...harvesterInfo,
           ...harvesterUserInfo,
         });
-      },
-    );
-
-    app.get<{
-      Params: ReadHarvesterCorruptionRemovalParams;
-      Reply: ReadHarvesterCorruptionRemovalReply | ErrorReply;
-    }>(
-      "/harvesters/:id/corruption-removal",
-      {
-        schema: {
-          summary: "Get Harvester Corruption Removal",
-          description:
-            "Get Corruption Removal recipes for Harvester including user info if valid authorization token is provided",
-          deprecated: true,
-          response: {
-            200: readHarvesterCorruptionRemovalReplySchema,
-          },
-        },
-      },
-      async (req, reply) => {
-        const {
-          chain,
-          params: { id },
-          userAddress,
-        } = req;
-
-        const harvesterCorruptionRemovalInfo =
-          await fetchHarvesterCorruptionRemovalInfo({
-            chainId: chain.id,
-            harvesterAddress: id,
-            userAddress,
-            inventoryApiUrl: env.TROVE_API_URL,
-            inventoryApiKey: env.TROVE_API_KEY,
-            wagmiConfig,
-          });
-        reply.send(harvesterCorruptionRemovalInfo);
       },
     );
   };

@@ -40,30 +40,6 @@ const inventoryTokenSchema = Type.Intersect([
   }),
 ]);
 
-const corruptionRemovalRecipeSchema = Type.Object({
-  id: Type.String(),
-  corruptionRemoved: Type.String({
-    description: "Amount of Corruption removed by recipe",
-  }),
-  items: Type.Array(
-    Type.Object({
-      address: Type.String(),
-      tokenIds: Type.Array(Type.Number()),
-      amount: Type.Number(),
-      customHandler: Type.Optional(Type.String()),
-    }),
-  ),
-});
-
-const corruptionRemovalSchema = Type.Object({
-  requestId: Type.String(),
-  recipeId: Type.String(),
-  status: Type.Enum({
-    Started: "Started",
-    Ready: "Ready",
-  }),
-});
-
 const harvesterInfoSchema = Type.Object({
   id: Type.String(),
   // NFT Handler
@@ -125,10 +101,6 @@ const harvesterInfoSchema = Type.Object({
   magicMaxStakeable: Type.String({
     description: "Maximum amount of MAGIC that can be staked",
   }),
-  // Corruption settings
-  corruptionMaxGenerated: Type.String({
-    description: "Maximum Corruption level",
-  }),
   // Overall state
   totalEmissionsActivated: Type.Number({
     description: "Percentage of emissions currently activated",
@@ -141,9 +113,6 @@ const harvesterInfoSchema = Type.Object({
   }),
   totalBoostersBoost: Type.Number({
     description: "Total boost from Boosters",
-  }),
-  totalCorruption: Type.String({
-    description: "Current Corruption level",
   }),
   // Boosters state
   boosters: Type.Array(
@@ -246,39 +215,9 @@ export const readHarvesterReplySchema = Type.Composite([
   Type.Partial(harvesterUserInfoSchema),
 ]);
 
-const readHarvesterCorruptionRemovalParamsSchema = Type.Object({
-  id: Type.String(),
-});
-
-export const readHarvesterCorruptionRemovalReplySchema = Type.Object({
-  corruptionRemovalRecipes: Type.Array(corruptionRemovalRecipeSchema),
-  userInventoryCorruptionRemovalRecipeItems: Type.Array(inventoryTokenSchema),
-  userApprovalsCorruptionRemovalRecipeItems: Type.Record(
-    Type.String(),
-    Type.Object({
-      operator: Type.String(),
-      approved: Type.Boolean(),
-    }),
-  ),
-  userCorruptionRemovals: Type.Array(corruptionRemovalSchema),
-});
-
 export type Token = Static<typeof tokenSchema>;
 export type InventoryToken = Static<typeof inventoryTokenSchema>;
-export type CorruptionRemovalRecipe = Static<
-  typeof corruptionRemovalRecipeSchema
->;
-export type CorruptionRemoval = Static<typeof corruptionRemovalSchema>;
 export type HarvesterInfo = Static<typeof harvesterInfoSchema>;
 export type HarvesterUserInfo = Static<typeof harvesterUserInfoSchema>;
-export type HarvesterCorruptionRemovalInfo = Static<
-  typeof readHarvesterCorruptionRemovalReplySchema
->;
 export type ReadHarvesterParams = Static<typeof readHarvesterParamsSchema>;
 export type ReadHarvesterReply = Static<typeof readHarvesterReplySchema>;
-export type ReadHarvesterCorruptionRemovalParams = Static<
-  typeof readHarvesterCorruptionRemovalParamsSchema
->;
-export type ReadHarvesterCorruptionRemovalReply = Static<
-  typeof readHarvesterCorruptionRemovalReplySchema
->;

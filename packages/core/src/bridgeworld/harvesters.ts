@@ -3,8 +3,6 @@ import { ZERO_ADDRESS, toEther } from "thirdweb";
 import { arbitrumSepolia } from "thirdweb/chains";
 
 import type {
-  CorruptionRemoval,
-  HarvesterCorruptionRemovalInfo,
   HarvesterInfo,
   HarvesterUserInfo,
   InventoryToken,
@@ -13,7 +11,6 @@ import type {
 import { boostersStakingRulesAbi } from "../abis/boostersStakingRulesAbi";
 import { charactersStakingRulesAbi } from "../abis/charactersStakingRulesAbi";
 import { consumablesAbi } from "../abis/consumablesAbi";
-import { corruptionAbi } from "../abis/corruptionAbi";
 import { erc20Abi } from "../abis/erc20Abi";
 import { erc721Abi } from "../abis/erc721Abi";
 import { erc1155Abi } from "../abis/erc1155Abi";
@@ -27,10 +24,6 @@ import type { AddressString } from "../types";
 import { sumArray } from "../utils/array";
 import { getContractAddress, getContractAddresses } from "../utils/contracts";
 import { fetchTokens, fetchUserInventory } from "../utils/inventory";
-import {
-  fetchCorruptionRemovalRecipes,
-  fetchCorruptionRemovals,
-} from "./corruption";
 
 const DEFAULT_BOOSTERS_MAX_STAKEABLE = 10n;
 const DEFAULT_BOOSTERS_LIFETIMES = [
@@ -151,10 +144,6 @@ export const getHarvesterInfo = async ({
     { result: totalEmissionsActivated = 0n },
     { result: totalMagicStaked = 0n },
     { result: totalBoost = 0n },
-    {
-      result: [, , , , , corruptionMaxGenerated = 0n] = [],
-    },
-    { result: totalCorruption = 0n },
   ] = await readContracts(wagmiConfig, {
     contracts: [
       {
@@ -187,20 +176,6 @@ export const getHarvesterInfo = async ({
         address: contractAddresses.Middleman,
         abi: middlemanAbi,
         functionName: "getHarvesterEmissionsBoost",
-        args: [harvesterAddress],
-      },
-      {
-        chainId,
-        address: contractAddresses.Corruption,
-        abi: corruptionAbi,
-        functionName: "addressToStreamInfo",
-        args: [harvesterAddress],
-      },
-      {
-        chainId,
-        address: contractAddresses.Corruption,
-        abi: corruptionAbi,
-        functionName: "balanceOf",
         args: [harvesterAddress],
       },
     ],
@@ -343,12 +318,10 @@ export const getHarvesterInfo = async ({
       permitsMaxStakeable * permitsMagicMaxStakeable
     ).toString(),
     boostersMaxStakeable: Number(boostersMaxStakeable),
-    corruptionMaxGenerated: corruptionMaxGenerated.toString(),
     totalEmissionsActivated: Number(toEther(totalEmissionsActivated)),
     totalMagicStaked: totalMagicStaked.toString(),
     totalBoost: Number(toEther(totalBoost)),
     totalBoostersBoost: Number(toEther(totalBoostersBoost)),
-    totalCorruption: totalCorruption.toString(),
     boosters: boosters.map(({ tokenId, user, stakedTimestamp }) => ({
       tokenId: Number(tokenId),
       user,
@@ -686,119 +659,5 @@ export const getHarvesterUserInfo = async ({
       Number(toEther(userTotalBoost)) +
       (chainId === arbitrumSepolia.id ? 0.05 : 0), // Testnet has a timelock boost applied to it
     userMagicRewardsClaimable: userMagicRewardsClaimable.toString(),
-  };
-};
-
-export const fetchHarvesterCorruptionRemovalInfo = async ({
-  chainId,
-  harvesterAddress,
-  userAddress,
-  inventoryApiUrl,
-  inventoryApiKey,
-  wagmiConfig,
-}: {
-  chainId: number;
-  harvesterAddress: string;
-  userAddress?: string;
-  inventoryApiUrl?: string;
-  inventoryApiKey?: string;
-  wagmiConfig: Config;
-}): Promise<HarvesterCorruptionRemovalInfo> => {
-  const corruptionRemovalAddress = getContractAddress(
-    chainId,
-    "CorruptionRemoval",
-  );
-  const corruptionRemovalRecipes = await fetchCorruptionRemovalRecipes({
-    chainId,
-    buildingAddress: harvesterAddress,
-    wagmiConfig,
-  });
-
-  let userCorruptionRemovals: CorruptionRemoval[] = [];
-  let userInventoryCorruptionRemovalRecipeItems: InventoryToken[] = [];
-  let userApprovalsCorruptionRemovalRecipeItems: Record<
-    string,
-    {
-      operator: string;
-      approved: boolean;
-    }
-  > = {};
-  if (userAddress) {
-    // Prep mapping of addresses to operator for Corruption removal approval
-    const addressesToOperator: Record<string, string> = {};
-    for (const { items } of corruptionRemovalRecipes) {
-      for (const { address, customHandler } of items) {
-        if (!addressesToOperator[address]) {
-          addressesToOperator[address.toLowerCase()] = (
-            customHandler ?? corruptionRemovalAddress
-          ).toLowerCase();
-        }
-      }
-    }
-    const addressesAndOperators = Object.entries(addressesToOperator);
-
-    const [corruptionRemovals, approvals, inventoryTokens = []] =
-      await Promise.all([
-        fetchCorruptionRemovals({
-          chainId,
-          buildingAddress: harvesterAddress,
-          userAddress,
-        }),
-        readContracts(wagmiConfig, {
-          contracts: addressesAndOperators.map(([address, operator]) => ({
-            chainId,
-            address: address as AddressString,
-            // TODO: change this to be generic
-            abi: erc1155Abi,
-            functionName: "isApprovedForAll",
-            args: [userAddress, operator as AddressString],
-          })),
-        }),
-        ...(inventoryApiUrl && inventoryApiKey
-          ? [
-              fetchUserInventory({
-                chainId,
-                apiUrl: inventoryApiUrl,
-                apiKey: inventoryApiKey,
-                userAddress,
-                collectionAddresses: corruptionRemovalRecipes.flatMap(
-                  ({ items }) => items.map(({ address }) => address),
-                ),
-              }),
-            ]
-          : []),
-      ]);
-
-    userCorruptionRemovals = corruptionRemovals;
-    // TODO: filter Corruption Removal recipe item inventory to only include relevant token IDs
-    userInventoryCorruptionRemovalRecipeItems = inventoryTokens;
-    userApprovalsCorruptionRemovalRecipeItems = approvals.reduce(
-      (acc, { result }, i) => {
-        const addressAndOperator = addressesAndOperators[i];
-        if (addressAndOperator) {
-          const [address, operator] = addressAndOperator;
-          acc[address] = {
-            operator,
-            approved: !!result,
-          };
-        }
-
-        return acc;
-      },
-      {} as Record<
-        string,
-        {
-          operator: string;
-          approved: boolean;
-        }
-      >,
-    );
-  }
-
-  return {
-    corruptionRemovalRecipes,
-    userInventoryCorruptionRemovalRecipeItems,
-    userApprovalsCorruptionRemovalRecipeItems,
-    userCorruptionRemovals,
   };
 };

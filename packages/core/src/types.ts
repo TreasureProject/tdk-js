@@ -41,8 +41,6 @@ type TokenContract = "MAGIC" | "ARB" | "VEE" | "CRV";
 type BridgeworldContract =
   // General
   | "Middleman"
-  // Tokens
-  | "Corruption"
   // NFTs
   | "BalancerCrystals"
   | "Consumables"
@@ -64,10 +62,7 @@ type BridgeworldContract =
   | "HarvesterShinoba"
   | "NftHandlerShinoba"
   | "HarvesterThundermane"
-  | "NftHandlerThundermane"
-  // Gameplay
-  | "CorruptionRemoval"
-  | "ERC1155TokenSetCorruptionHandler";
+  | "NftHandlerThundermane";
 type MagicswapContract = "MagicswapV2Router";
 type ZeeverseContract =
   | "ZeeverseZee"
