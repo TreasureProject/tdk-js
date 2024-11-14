@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-core
 
+## 3.6.0
+
+### Minor Changes
+
+- 64ac715: Removed unused contract and token data
+- f1e1d53: Removed Bridgeworld Corruption data helpers
+
+### Patch Changes
+
+- 41d00c2: Fixing the analytics manager double init from throwing a render error
+
 ## 3.5.0
 
 ### Minor Changes
