@@ -37,49 +37,24 @@ export type UserContext = {
 export type AddressString = `0x${string}`;
 
 // Contracts
-type TokenContract = "MAGIC" | "ARB" | "VEE" | "CRV";
-type BridgeworldContract =
-  // General
+export type Contract =
+  // Treasure Connect
+  | "ManagedAccountFactory"
+  // Tokens
+  | "MAGIC"
+  | "VEE"
+  // Bridgeworld
   | "Middleman"
-  // NFTs
   | "BalancerCrystals"
   | "Consumables"
   | "Legions"
   | "Treasures"
-  // Harvesters
-  | "HarvesterAfarit"
-  | "NftHandlerAfarit"
-  | "HarvesterAsiterra"
-  | "NftHandlerAsiterra"
-  | "HarvesterEmberwing"
-  | "NftHandlerEmberwing"
-  | "HarvesterEmerion"
-  | "NftHandlerEmerion"
-  | "HarvesterKameji"
-  | "NftHandlerKameji"
-  | "HarvesterLupusMagus"
-  | "NftHandlerLupusMagus"
-  | "HarvesterShinoba"
-  | "NftHandlerShinoba"
-  | "HarvesterThundermane"
-  | "NftHandlerThundermane";
-type MagicswapContract = "MagicswapV2Router";
-type ZeeverseContract =
-  | "ZeeverseZee"
-  | "ZeeverseItems"
-  | "ZeeverseVeeClaimer"
-  | "ZeeverseLlama"
-  | "ZeeverseLlamaEvolve"
-  | "ZeeverseGame";
-export type Contract =
-  | "ManagedAccountFactory"
+  // Magicswap
+  | "MagicswapV2Router"
+  // Treasure Misc
   | "BulkTransferHelper"
   | "TreasureConduit"
-  | "TopazNFT"
-  | TokenContract
-  | BridgeworldContract
-  | MagicswapContract
-  | ZeeverseContract;
+  | "TopazNFT";
 
 // Approvals
 export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";
