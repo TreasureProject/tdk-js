@@ -53,7 +53,7 @@ export class AnalyticsManager {
     device?: Device;
   }) {
     if (this.initialized) {
-      throw new Error("AnalyticsManager is already initialized");
+      return;
     }
 
     this.apiUri = apiUri;
