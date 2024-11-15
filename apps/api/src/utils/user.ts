@@ -4,8 +4,8 @@ import {
   type EcosystemIdString,
 } from "@treasure-dev/tdk-core";
 import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
-
 import { checksumAddress } from "thirdweb/utils";
+
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
@@ -100,42 +100,23 @@ export const migrateLegacyUser = async ({
   userProfileId?: string;
   legacyProfile: UserProfile;
 }) => {
-  await Promise.all([
-    // Migrate social accounts
-    db.userSocialAccount.updateMany({
-      where: {
-        userId,
-        // Clear legacy profile data so migration is not triggered again
-        legacyUserProfileId: legacyProfile.id,
-      },
-      data: {
-        legacyUserProfileId: null,
-      },
-    }),
-    // Migrate notification settings
-    db.userNotificationSettings.updateMany({
-      where: {
-        userId,
-        // Clear legacy profile data so migration is not triggered again
-        legacyUserProfileId: legacyProfile.id,
-      },
-      data: {
-        legacyUserProfileId: null,
-      },
-    }),
-  ]);
-
-  const [[, updatedSocialAccounts], [, updatedNotificationSettings]] =
+  const [[, , updatedSocialAccounts], [, , updatedNotificationSettings]] =
     await Promise.all([
       db.$transaction([
+        // Delete current social accounts
+        db.userSocialAccount.deleteMany({
+          where: {
+            userId,
+          },
+        }),
         // Migrate social accounts
         db.userSocialAccount.updateMany({
           where: {
-            userId,
-            // Clear legacy profile data so migration is not triggered again
             legacyUserProfileId: legacyProfile.id,
           },
           data: {
+            userId,
+            // Clear legacy profile data so migration is not triggered again
             legacyUserProfileId: null,
           },
         }),
@@ -147,14 +128,20 @@ export const migrateLegacyUser = async ({
         }),
       ]),
       db.$transaction([
+        // Delete current notification settings
+        db.userNotificationSettings.deleteMany({
+          where: {
+            userId,
+          },
+        }),
         // Migrate notification settings
         db.userNotificationSettings.updateMany({
           where: {
-            userId,
-            // Clear legacy profile data so migration is not triggered again
             legacyUserProfileId: legacyProfile.id,
           },
           data: {
+            userId,
+            // Clear legacy profile data so migration is not triggered again
             legacyUserProfileId: null,
           },
         }),
