@@ -49,7 +49,7 @@ import {
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, client }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, env, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply;
@@ -432,6 +432,29 @@ export const usersRoutes =
             },
             select: USER_PROFILE_SELECT_FIELDS,
           });
+        }
+
+        // Transfer rewards from legacy profile to new profile.
+        if (
+          canMigrate &&
+          legacyProfile.legacyAddress !== user.externalWalletAddress
+        ) {
+          const response = await fetch(
+            `${env.TROVE_API_URL}/admin/transfer-rewards`,
+            {
+              method: "POST",
+              headers: { "X-API-Key": env.TROVE_API_KEY },
+              body: JSON.stringify({
+                oldAddress: legacyProfile.legacyAddress,
+                newAddress: user.externalWalletAddress,
+              }),
+            },
+          );
+          if (!response.ok) {
+            console.warning(
+              `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
+            );
+          }
         }
 
         reply.send({
