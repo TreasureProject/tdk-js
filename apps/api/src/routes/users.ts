@@ -49,7 +49,7 @@ import {
 import { transformUserProfileResponseFields } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, env, client }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply;
@@ -249,6 +249,7 @@ export const usersRoutes =
               id: userId,
             },
             select: {
+              externalWalletAddress: true,
               smartAccounts: {
                 select: {
                   initialEmail: true,
@@ -435,28 +436,28 @@ export const usersRoutes =
         }
 
         // Transfer rewards from legacy profile to new profile.
-        if (
-          canMigrate &&
-          legacyProfile.legacyAddress !== user.externalWalletAddress
-        ) {
-          const response = await fetch(
-            `${env.TROVE_API_URL}/admin/transfer-rewards`,
-            {
-              method: "POST",
-              headers: { "X-API-Key": env.TROVE_API_KEY },
-              body: JSON.stringify({
-                oldAddress: legacyProfile.legacyAddress,
-                newAddress: user.externalWalletAddress,
-              }),
-            },
-          );
-          const { status } = await response.json();
-          if (status !== 'ok') {
-            console.warning(
-              `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
-            );
-          }
-        }
+        // if (
+        //   canMigrate &&
+        //   legacyProfile.legacyAddress !== user.externalWalletAddress
+        // ) {
+        //   const response = await fetch(
+        //     `${env.TROVE_API_URL}/admin/transfer-rewards`,
+        //     {
+        //       method: "POST",
+        //       headers: { "X-API-Key": env.TROVE_API_KEY },
+        //       body: JSON.stringify({
+        //         oldAddress: legacyProfile.legacyAddress,
+        //         newAddress: user.externalWalletAddress,
+        //       }),
+        //     },
+        //   );
+        //   const { status } = await response.json();
+        //   if (status !== "ok") {
+        //     log.warn(
+        //       `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
+        //     );
+        //   }
+        // }
 
         reply.send({
           ...updatedProfile,
