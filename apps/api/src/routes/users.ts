@@ -47,6 +47,7 @@ import {
   throwUserNotFoundError,
 } from "../utils/error";
 import {
+  clearLegacyUser,
   migrateLegacyUser,
   transformUserProfileResponseFields,
 } from "../utils/user";
@@ -240,7 +241,11 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, authError } = req;
+        const {
+          userId,
+          authError,
+          body: { id: legacyProfileId, rejected = false },
+        } = req;
         if (!userId) {
           throwUnauthorizedError(authError);
           return;
@@ -267,7 +272,7 @@ export const usersRoutes =
           }),
           db.userProfile.findUnique({
             where: {
-              id: req.body.id,
+              id: legacyProfileId,
             },
           }),
         ]);
@@ -315,23 +320,53 @@ export const usersRoutes =
           });
         }
 
-        const {
-          updatedProfile,
-          updatedSocialAccounts,
-          updatedNotificationSettings,
-        } = await migrateLegacyUser({
-          db,
-          userId,
-          userProfileId: profile?.id ?? undefined,
-          legacyProfile,
-        });
-
-        reply.send({
-          ...updatedProfile,
-          ...transformUserProfileResponseFields(updatedProfile),
-          socialAccounts: updatedSocialAccounts,
-          notificationSettings: updatedNotificationSettings,
-        });
+        if (rejected) {
+          await clearLegacyUser({ db, legacyProfile });
+          const [profile, socialAccounts, notificationSettings] =
+            await Promise.all([
+              db.userProfile.upsert({
+                where: { userId },
+                update: {},
+                create: { userId, email: legacyProfile.email },
+                select: USER_PROFILE_SELECT_FIELDS,
+              }),
+              db.userSocialAccount.findMany({
+                where: {
+                  userId,
+                },
+                select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+              }),
+              db.userNotificationSettings.findMany({
+                where: {
+                  userId,
+                },
+                select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
+              }),
+            ]);
+          reply.send({
+            ...profile,
+            ...transformUserProfileResponseFields(profile),
+            socialAccounts,
+            notificationSettings,
+          });
+        } else {
+          const {
+            updatedProfile,
+            updatedSocialAccounts,
+            updatedNotificationSettings,
+          } = await migrateLegacyUser({
+            db,
+            userId,
+            userProfileId: profile?.id ?? undefined,
+            legacyProfile,
+          });
+          reply.send({
+            ...updatedProfile,
+            ...transformUserProfileResponseFields(updatedProfile),
+            socialAccounts: updatedSocialAccounts,
+            notificationSettings: updatedNotificationSettings,
+          });
+        }
       },
     );
 
