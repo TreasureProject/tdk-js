@@ -450,7 +450,8 @@ export const usersRoutes =
               }),
             },
           );
-          if (!response.ok) {
+          const { status } = await response.json();
+          if (status !== 'ok') {
             console.warning(
               `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
             );
