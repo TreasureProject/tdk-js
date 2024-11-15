@@ -46,7 +46,10 @@ import {
   throwUnauthorizedError,
   throwUserNotFoundError,
 } from "../utils/error";
-import { transformUserProfileResponseFields } from "../utils/user";
+import {
+  migrateLegacyUser,
+  transformUserProfileResponseFields,
+} from "../utils/user";
 
 export const usersRoutes =
   ({ db, client }: TdkApiContext): FastifyPluginAsync =>
@@ -258,7 +261,10 @@ export const usersRoutes =
               },
             },
           }),
-          db.userProfile.findUnique({ where: { userId } }),
+          db.userProfile.findUnique({
+            where: { userId },
+            select: { id: true },
+          }),
           db.userProfile.findUnique({
             where: {
               id: req.body.id,
@@ -309,155 +315,16 @@ export const usersRoutes =
           });
         }
 
-        await Promise.all([
-          // Migrate social accounts
-          db.userSocialAccount.updateMany({
-            where: {
-              userId,
-              // Clear legacy profile data so migration is not triggered again
-              legacyUserProfileId: legacyProfile.id,
-            },
-            data: {
-              legacyUserProfileId: null,
-            },
-          }),
-          // Migrate notification settings
-          db.userNotificationSettings.updateMany({
-            where: {
-              userId,
-              // Clear legacy profile data so migration is not triggered again
-              legacyUserProfileId: legacyProfile.id,
-            },
-            data: {
-              legacyUserProfileId: null,
-            },
-          }),
-        ]);
-
-        const [[, updatedSocialAccounts], [, updatedNotificationSettings]] =
-          await Promise.all([
-            db.$transaction([
-              // Migrate social accounts
-              db.userSocialAccount.updateMany({
-                where: {
-                  userId,
-                  // Clear legacy profile data so migration is not triggered again
-                  legacyUserProfileId: legacyProfile.id,
-                },
-                data: {
-                  legacyUserProfileId: null,
-                },
-              }),
-              db.userSocialAccount.findMany({
-                where: {
-                  userId,
-                },
-                select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
-              }),
-            ]),
-            db.$transaction([
-              // Migrate notification settings
-              db.userNotificationSettings.updateMany({
-                where: {
-                  userId,
-                  // Clear legacy profile data so migration is not triggered again
-                  legacyUserProfileId: legacyProfile.id,
-                },
-                data: {
-                  legacyUserProfileId: null,
-                },
-              }),
-              db.userNotificationSettings.findMany({
-                where: {
-                  userId,
-                },
-                select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
-              }),
-            ]),
-          ]);
-
-        let updatedProfile: Pick<
-          Prisma.$UserProfilePayload["scalars"],
-          keyof typeof USER_PROFILE_SELECT_FIELDS
-        >;
-
-        // Merge data if user has existing profile or connect legacy profile if not
-        if (profile) {
-          const [updateResult] = await db.$transaction([
-            db.userProfile.update({
-              where: {
-                id: profile.id,
-              },
-              data: {
-                tag: legacyProfile.tag ?? undefined,
-                discriminant: legacyProfile.discriminant ?? undefined,
-                emailSecurityPhrase:
-                  legacyProfile.emailSecurityPhrase ?? undefined,
-                emailSecurityPhraseUpdatedAt:
-                  legacyProfile.emailSecurityPhraseUpdatedAt ?? undefined,
-                featuredNftIds: legacyProfile.featuredNftIds,
-                featuredBadgeIds: legacyProfile.featuredBadgeIds,
-                highlyFeaturedBadgeId:
-                  legacyProfile.highlyFeaturedBadgeId ?? undefined,
-                about: legacyProfile.about ?? undefined,
-                pfp: legacyProfile.pfp ?? undefined,
-                banner: legacyProfile.banner ?? undefined,
-                showMagicBalance: legacyProfile.showMagicBalance,
-                showEthBalance: legacyProfile.showEthBalance,
-                showGemsBalance: legacyProfile.showGemsBalance,
-                testnetFaucetLastUsedAt:
-                  legacyProfile.testnetFaucetLastUsedAt ?? undefined,
-                legacyProfileMigratedAt: new Date(),
-              },
-              select: USER_PROFILE_SELECT_FIELDS,
-            }),
-            db.userProfile.delete({
-              where: {
-                id: legacyProfile.id,
-              },
-            }),
-          ]);
-          updatedProfile = updateResult;
-        } else {
-          updatedProfile = await db.userProfile.update({
-            where: {
-              id: legacyProfile.id,
-            },
-            data: {
-              userId,
-              legacyProfileMigratedAt: new Date(),
-              // Clear legacy profile data so migration is not triggered again
-              legacyAddress: null,
-              legacyEmail: null,
-              legacyEmailVerifiedAt: null,
-            },
-            select: USER_PROFILE_SELECT_FIELDS,
-          });
-        }
-
-        // Transfer rewards from legacy profile to new profile.
-        // if (
-        //   canMigrate &&
-        //   legacyProfile.legacyAddress !== user.externalWalletAddress
-        // ) {
-        //   const response = await fetch(
-        //     `${env.TROVE_API_URL}/admin/transfer-rewards`,
-        //     {
-        //       method: "POST",
-        //       headers: { "X-API-Key": env.TROVE_API_KEY },
-        //       body: JSON.stringify({
-        //         oldAddress: legacyProfile.legacyAddress,
-        //         newAddress: user.externalWalletAddress,
-        //       }),
-        //     },
-        //   );
-        //   const { status } = await response.json();
-        //   if (status !== "ok") {
-        //     log.warn(
-        //       `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
-        //     );
-        //   }
-        // }
+        const {
+          updatedProfile,
+          updatedSocialAccounts,
+          updatedNotificationSettings,
+        } = await migrateLegacyUser({
+          db,
+          userId,
+          userProfileId: profile?.id ?? undefined,
+          legacyProfile,
+        });
 
         reply.send({
           ...updatedProfile,

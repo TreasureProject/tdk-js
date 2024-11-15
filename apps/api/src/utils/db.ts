@@ -18,6 +18,7 @@ export const USER_PUBLIC_PROFILE_SELECT_FIELDS = {
 
 export const USER_PROFILE_SELECT_FIELDS = {
   ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
+  id: true,
   email: true,
   emailSecurityPhrase: true,
   emailSecurityPhraseUpdatedAt: true,

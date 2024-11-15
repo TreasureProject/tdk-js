@@ -28,7 +28,6 @@ import type { TdkApiContext } from "../types";
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
-  USER_PUBLIC_PROFILE_SELECT_FIELDS,
   USER_SELECT_FIELDS,
   USER_SMART_ACCOUNT_SELECT_FIELDS,
   USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
@@ -37,6 +36,7 @@ import { throwUnauthorizedError, throwUserNotFoundError } from "../utils/error";
 import { log } from "../utils/log";
 import {
   getThirdwebUser,
+  migrateLegacyUser,
   parseThirdwebUserEmail,
   transformUserProfileResponseFields,
 } from "../utils/user";
@@ -173,7 +173,7 @@ export const authRoutes =
           });
         }
 
-        const [user, profile, legacyUserProfiles] = await Promise.all([
+        const [user, profile, legacyProfiles] = await Promise.all([
           // Fetch user
           db.user.findUnique({
             where: { id: userSmartAccount.userId },
@@ -207,21 +207,11 @@ export const authRoutes =
                   legacyEmail: userSmartAccount.initialEmail,
                   legacyEmailVerifiedAt: { not: null },
                 },
-                select: {
-                  ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
-                  id: true,
-                  legacyAddress: true,
-                },
               })
             : userSmartAccount.initialWalletAddress
-              ? db.userProfile.findUnique({
+              ? db.userProfile.findMany({
                   where: {
                     legacyAddress: userSmartAccount.initialWalletAddress,
-                  },
-                  select: {
-                    ...USER_PUBLIC_PROFILE_SELECT_FIELDS,
-                    id: true,
-                    legacyAddress: true,
                   },
                 })
               : [],
@@ -273,20 +263,30 @@ export const authRoutes =
           endTimestamp: session.endTimestamp.toString(),
         }));
 
+        let updatedProfile: typeof profile | undefined;
+
+        // Automatically migrate legacy profile if only one exists
+        if (legacyProfiles.length === 1 && !!legacyProfiles[0]) {
+          const result = await migrateLegacyUser({
+            db,
+            userId: user.id,
+            userProfileId: profile.id,
+            legacyProfile: legacyProfiles[0],
+          });
+          updatedProfile = result.updatedProfile;
+        }
+
+        const finalProfile = updatedProfile ?? profile;
         reply.send({
           token: authTokenResult.value,
           user: {
             ...user,
-            ...profile,
-            ...transformUserProfileResponseFields(profile),
+            ...finalProfile,
+            ...transformUserProfileResponseFields(finalProfile),
             address,
             sessions,
           },
-          legacyProfiles: legacyUserProfiles
-            ? Array.isArray(legacyUserProfiles)
-              ? legacyUserProfiles
-              : [legacyUserProfiles]
-            : [],
+          legacyProfiles: legacyProfiles.length > 1 ? legacyProfiles : [],
         });
       },
     );
