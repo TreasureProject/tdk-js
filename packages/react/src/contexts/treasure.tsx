@@ -331,6 +331,8 @@ const TreasureProviderInner = ({
         isUsingTreasureLauncher,
         logIn,
         logOut,
+        updateUser: (partialUser) =>
+          setUser((curr) => (curr ? { ...curr, ...partialUser } : undefined)),
         startUserSession: (options: SessionOptions) =>
           isUsingTreasureLauncher
             ? startUserSessionViaLauncher(options)

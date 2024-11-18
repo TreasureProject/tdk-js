@@ -71,9 +71,11 @@ export const ConnectModal = ({
     ecosystemId,
     ecosystemPartnerId,
     chain,
+    tdk,
     contractAddresses,
     logIn,
     logOut,
+    updateUser,
   } = useTreasure();
   const accountAbstraction = {
     chain,
@@ -139,9 +141,10 @@ export const ConnectModal = ({
           setState((curr) => ({ ...curr, legacyProfiles }));
         } else {
           // Nothing to migrate, close the connect modal
-          onConnected?.("email", wallet, user);
           onOpenChange(false);
         }
+
+        onConnected?.("email", wallet, user);
       } catch (err) {
         console.error("Error logging in wallet with email:", err);
         setError(err, true);
@@ -269,9 +272,10 @@ export const ConnectModal = ({
           setState((curr) => ({ ...curr, legacyProfiles }));
         } else {
           // Nothing to migrate, close the connect modal
-          onConnected?.(method, wallet, user);
           onOpenChange(false);
         }
+
+        onConnected?.(method, wallet, user);
       } catch (err) {
         console.error("Error logging in wallet:", err);
         setError(err);
@@ -296,6 +300,26 @@ export const ConnectModal = ({
       setError(err);
       onConnectError?.("email", err);
     }
+  };
+
+  const handleMigrateUser = async ({
+    legacyProfileId,
+    rejected = false,
+  }: { legacyProfileId: string; rejected?: boolean }) => {
+    try {
+      const updatedUser = await tdk.user.migrate({
+        id: legacyProfileId,
+        rejected,
+      });
+      updateUser(updatedUser);
+    } catch (err) {
+      console.error("Error migrating user:", err);
+      setError(err);
+      return;
+    }
+
+    // Migration complete, close the connect modal
+    onOpenChange(false);
   };
 
   // Reset modal state when it's opened
@@ -336,8 +360,12 @@ export const ConnectModal = ({
               legacyProfiles={legacyProfiles}
               isLoading={isLoading}
               error={error}
-              onApprove={() => {}}
-              onReject={() => {}}
+              onApprove={(legacyProfileId) =>
+                handleMigrateUser({ legacyProfileId })
+              }
+              onReject={(legacyProfileId) =>
+                handleMigrateUser({ legacyProfileId, rejected: true })
+              }
             />
           ) : email ? (
             <ConnectVerifyCodeView

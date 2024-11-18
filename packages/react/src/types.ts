@@ -67,6 +67,7 @@ export type ContextValues = {
     chainId?: number,
   ) => Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }>;
   logOut: () => void;
+  updateUser: (user: Partial<User>) => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;

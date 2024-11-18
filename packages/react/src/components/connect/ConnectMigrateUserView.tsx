@@ -13,7 +13,7 @@ type Props = {
   isLoading?: boolean;
   error?: string;
   onApprove: (id: string) => void;
-  onReject: () => void;
+  onReject: (id: string) => void;
 };
 
 export const ConnectMigrateUserView = ({
@@ -111,7 +111,13 @@ export const ConnectMigrateUserView = ({
           >
             {t("connect.migrate.approve")}
           </Button>
-          <Button variant="secondary" disabled={isLoading} onClick={onReject}>
+          <Button
+            variant="secondary"
+            disabled={!selectedProfileId || isLoading}
+            onClick={
+              selectedProfileId ? () => onReject(selectedProfileId) : undefined
+            }
+          >
             {t("connect.migrate.reject")}
           </Button>
         </div>

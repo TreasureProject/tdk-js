@@ -39,6 +39,8 @@ import type {
   ReadUserTransactionsReply,
   RouteReply,
   UpdateCurrentUserBody,
+  UpdateCurrentUserMigrationBody,
+  UpdateCurrentUserMigrationReply,
   UpdateCurrentUserReply,
 } from "../../../apps/api/src/schema";
 import type {
@@ -213,6 +215,11 @@ export class TDKAPI {
     update: (params: UpdateCurrentUserBody) =>
       this.put<UpdateCurrentUserBody, UpdateCurrentUserReply>(
         "/users/me",
+        params,
+      ),
+    migrate: (params: UpdateCurrentUserMigrationBody) =>
+      this.put<UpdateCurrentUserMigrationBody, UpdateCurrentUserMigrationReply>(
+        "/users/me/migrate",
         params,
       ),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
