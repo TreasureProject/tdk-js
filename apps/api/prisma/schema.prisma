@@ -58,6 +58,7 @@ model UserSmartAccount {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([chainId, address])
+  @@index([address])
   @@index([userId])
   @@map("user_smart_account")
   @@schema("public")
