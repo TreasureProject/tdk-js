@@ -31,7 +31,7 @@ export const en = {
         },
       },
       migrate: {
-        header: "Migrate existing accounts",
+        header: "Migrate existing account",
         description:
           "It looks like you have several existing Treasure profiles. Please choose one you would like to use moving forward as your identity across the Treasure ecosystem.",
         approve: "Use this account",

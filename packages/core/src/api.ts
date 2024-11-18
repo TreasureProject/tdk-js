@@ -218,10 +218,10 @@ export class TDKAPI {
         params,
       ),
     migrate: (params: UpdateCurrentUserMigrationBody) =>
-      this.put<UpdateCurrentUserMigrationBody, UpdateCurrentUserMigrationReply>(
-        "/users/me/migrate",
-        params,
-      ),
+      this.post<
+        UpdateCurrentUserMigrationBody,
+        UpdateCurrentUserMigrationReply
+      >("/users/me/migrate", params),
     getSessions: (params: ReadCurrentUserSessionsQuerystring) =>
       this.get<ReadCurrentUserSessionsReply>("/users/me/sessions", params),
     getPublicProfile: (id: string) =>

@@ -138,7 +138,7 @@ export const ConnectModal = ({
         const { user, legacyProfiles } = await logIn(wallet);
         if (legacyProfiles.length > 1) {
           // User has a legacy profile migration choice
-          setState((curr) => ({ ...curr, legacyProfiles }));
+          setState((curr) => ({ ...curr, isLoading: false, legacyProfiles }));
         } else {
           // Nothing to migrate, close the connect modal
           onOpenChange(false);
@@ -269,7 +269,7 @@ export const ConnectModal = ({
         const { user, legacyProfiles } = await logIn(wallet);
         if (legacyProfiles.length > 1) {
           // User has a legacy profile migration choice
-          setState((curr) => ({ ...curr, legacyProfiles }));
+          setState((curr) => ({ ...curr, isLoading: false, legacyProfiles }));
         } else {
           // Nothing to migrate, close the connect modal
           onOpenChange(false);

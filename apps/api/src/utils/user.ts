@@ -106,7 +106,7 @@ export const migrateLegacyUser = async ({
   >;
 
   // Merge data if user has existing profile or connect legacy profile if not
-  if (userProfileId) {
+  if (userProfileId && userProfileId !== legacyProfile.id) {
     const [updateResult] = await db.$transaction([
       db.userProfile.update({
         where: {
