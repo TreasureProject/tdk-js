@@ -58,11 +58,11 @@ catalogs:
       specifier: ^4.24.0
       version: 4.24.0
     '@sentry/node':
-      specifier: ^8.38.0
-      version: 8.38.0
+      specifier: ^8.39.0
+      version: 8.39.0
     '@sinclair/typebox':
-      specifier: ^0.34.3
-      version: 0.34.3
+      specifier: ^0.34.4
+      version: 0.34.4
     '@storybook/addon-essentials':
       specifier: ^8.4.4
       version: 8.4.4
@@ -82,8 +82,8 @@ catalogs:
       specifier: ^9.0.7
       version: 9.0.7
     '@types/node':
-      specifier: ^22.9.0
-      version: 22.9.0
+      specifier: ^22.9.1
+      version: 22.9.1
     '@types/react':
       specifier: ^18.3.12
       version: 18.3.12
@@ -115,8 +115,8 @@ catalogs:
       specifier: ^16.3.1
       version: 16.4.5
     dotenv-cli:
-      specifier: ^7.4.1
-      version: 7.4.2
+      specifier: ^7.4.3
+      version: 7.4.3
     electron:
       specifier: ^31.1.2
       version: 31.6.0
@@ -136,8 +136,8 @@ catalogs:
       specifier: ^9.1.7
       version: 9.1.7
     i18next:
-      specifier: ^23.16.5
-      version: 23.16.5
+      specifier: ^23.16.6
+      version: 23.16.6
     i18next-browser-languagedetector:
       specifier: ^8.0.0
       version: 8.0.0
@@ -242,7 +242,7 @@ importers:
         version: 2.27.9
       '@types/node':
         specifier: 'catalog:'
-        version: 22.9.0
+        version: 22.9.1
       husky:
         specifier: 'catalog:'
         version: 9.1.7
@@ -251,7 +251,7 @@ importers:
         version: 25.0.1
       knip:
         specifier: 'catalog:'
-        version: 5.37.1(@types/node@22.9.0)(typescript@5.6.3)
+        version: 5.37.1(@types/node@22.9.1)(typescript@5.6.3)
       lint-staged:
         specifier: 'catalog:'
         version: 15.2.10
@@ -263,7 +263,7 @@ importers:
         version: 5.6.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   apps/api:
     dependencies:
@@ -281,16 +281,16 @@ importers:
         version: 5.1.0
       '@fastify/type-provider-typebox':
         specifier: 'catalog:'
-        version: 5.0.1(@sinclair/typebox@0.34.3)
+        version: 5.0.1(@sinclair/typebox@0.34.4)
       '@prisma/client':
         specifier: 'catalog:'
         version: 5.22.0(prisma@5.22.0)
       '@sentry/node':
         specifier: 'catalog:'
-        version: 8.38.0
+        version: 8.39.0
       '@sinclair/typebox':
         specifier: 'catalog:'
-        version: 0.34.3
+        version: 0.34.4
       '@thirdweb-dev/engine':
         specifier: 'catalog:'
         version: 0.0.16
@@ -320,7 +320,7 @@ importers:
         version: 13.0.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
       viem:
         specifier: 'catalog:'
         version: 2.21.44(typescript@5.6.3)(zod@3.23.8)
@@ -333,7 +333,7 @@ importers:
         version: 8.3.0(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.5.1)
       vitest:
         specifier: 'catalog:'
-        version: 2.1.5(@types/node@22.9.0)(jsdom@25.0.1)
+        version: 2.1.5(@types/node@22.9.1)(jsdom@25.0.1)
 
   examples/connect-core:
     dependencies:
@@ -346,7 +346,7 @@ importers:
         version: 5.6.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   examples/connect-electron:
     dependencies:
@@ -367,11 +367,11 @@ importers:
         version: 4.21.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@electron-toolkit/tsconfig':
         specifier: 'catalog:'
-        version: 1.0.1(@types/node@22.9.0)
+        version: 1.0.1(@types/node@22.9.1)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.12
@@ -380,10 +380,10 @@ importers:
         version: 18.3.1
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.3(vite@5.4.11(@types/node@22.9.0))
+        version: 4.3.3(vite@5.4.11(@types/node@22.9.1))
       dotenv-cli:
         specifier: 'catalog:'
-        version: 7.4.2
+        version: 7.4.3
       electron:
         specifier: 'catalog:'
         version: 31.6.0
@@ -392,7 +392,7 @@ importers:
         version: 25.1.7(electron-builder-squirrel-windows@24.13.3)
       electron-vite:
         specifier: 'catalog:'
-        version: 2.3.0(vite@5.4.11(@types/node@22.9.0))
+        version: 2.3.0(vite@5.4.11(@types/node@22.9.1))
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -404,7 +404,7 @@ importers:
         version: 5.6.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   examples/connect-react:
     dependencies:
@@ -422,7 +422,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -435,7 +435,7 @@ importers:
         version: 18.3.1
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.3(vite@5.4.11(@types/node@22.9.0))
+        version: 4.3.3(vite@5.4.11(@types/node@22.9.1))
       autoprefixer:
         specifier: 'catalog:'
         version: 10.4.20(postcss@8.4.49)
@@ -447,7 +447,7 @@ importers:
         version: 3.4.15
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   examples/magicswap:
     dependencies:
@@ -465,7 +465,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -478,7 +478,7 @@ importers:
         version: 18.3.1
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.3(vite@5.4.11(@types/node@22.9.0))
+        version: 4.3.3(vite@5.4.11(@types/node@22.9.1))
       autoprefixer:
         specifier: 'catalog:'
         version: 10.4.20(postcss@8.4.49)
@@ -490,7 +490,7 @@ importers:
         version: 3.4.15
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   packages/auth:
     dependencies:
@@ -512,7 +512,7 @@ importers:
         version: 5.6.3
       vitest:
         specifier: 'catalog:'
-        version: 2.1.5(@types/node@22.9.0)(jsdom@25.0.1)
+        version: 2.1.5(@types/node@22.9.1)(jsdom@25.0.1)
 
   packages/core:
     dependencies:
@@ -536,7 +536,7 @@ importers:
         version: 4.0.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
       uuid:
         specifier: 'catalog:'
         version: 11.0.3
@@ -555,13 +555,13 @@ importers:
         version: 5.6.3
       vitest:
         specifier: 'catalog:'
-        version: 2.1.5(@types/node@22.9.0)(jsdom@25.0.1)
+        version: 2.1.5(@types/node@22.9.1)(jsdom@25.0.1)
 
   packages/launcher:
     dependencies:
       '@treasure-dev/tdk-core':
         specifier: '*'
-        version: 2.7.1(@tanstack/query-core@5.59.20)(@types/react@18.3.12)(react@18.3.1)(thirdweb@5.68.0(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8))(typescript@5.6.3)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)
+        version: 2.7.1(@tanstack/query-core@5.59.20)(@types/react@18.3.12)(react@18.3.1)(thirdweb@5.68.0(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8))(typescript@5.6.3)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)
     devDependencies:
       tsup:
         specifier: 'catalog:'
@@ -589,7 +589,7 @@ importers:
         version: 2.1.1
       i18next:
         specifier: 'catalog:'
-        version: 23.16.5
+        version: 23.16.6
       i18next-browser-languagedetector:
         specifier: 'catalog:'
         version: 8.0.0
@@ -601,13 +601,13 @@ importers:
         version: 18.3.1
       react-i18next:
         specifier: 'catalog:'
-        version: 15.1.1(i18next@23.16.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 15.1.1(i18next@23.16.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: 'catalog:'
         version: 2.5.4
       thirdweb:
         specifier: 'catalog:'
-        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+        version: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@storybook/addon-essentials':
         specifier: 'catalog:'
@@ -617,7 +617,7 @@ importers:
         version: 8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)
       '@storybook/react-vite':
         specifier: 'catalog:'
-        version: 8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.24.0)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))
+        version: 8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.24.0)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.1))
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
         version: link:../tailwind-config
@@ -647,10 +647,10 @@ importers:
         version: 5.6.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
       vitest:
         specifier: 'catalog:'
-        version: 2.1.5(@types/node@22.9.0)(jsdom@25.0.1)
+        version: 2.1.5(@types/node@22.9.1)(jsdom@25.0.1)
 
   packages/tailwind-config:
     devDependencies:
@@ -2317,16 +2317,16 @@ packages:
   '@scure/bip39@1.4.0':
     resolution: {integrity: sha512-BEEm6p8IueV/ZTfQLp/0vhw4NPnT9oWf5+28nvmeUICjP99f4vr2d+qc7AVGDDtwRep6ifR43Yed9ERVmiITzw==}
 
-  '@sentry/core@8.38.0':
-    resolution: {integrity: sha512-sGD+5TEHU9G7X7zpyaoJxpOtwjTjvOd1f/MKBrWW2vf9UbYK+GUJrOzLhMoSWp/pHSYgvObkJkDb/HwieQjvhQ==}
+  '@sentry/core@8.39.0':
+    resolution: {integrity: sha512-rg2mHtwdCaedqub7bd+ht08vZgtwPO7el5m5sPNeb7V75GcQwSziu6G02vGxCBCsAHpoFn1A+0JLEajaYzZI7w==}
     engines: {node: '>=14.18'}
 
-  '@sentry/node@8.38.0':
-    resolution: {integrity: sha512-nwW0XqZFQseXYn0i6i6nKPkbjgHMBEFSF9TnK6mHHqJHHObHIZ6qu5CfvGKgxATia8JPIg9NN8XcyYOnQMi07w==}
+  '@sentry/node@8.39.0':
+    resolution: {integrity: sha512-poQBV1OG5XdESQQNT/qQzrcPBEsQIuK3kz7cE7MVOcdTqjfWGC+gVYMMjvfBrZ+A1jdLolepMLnEG80OzvHoNA==}
     engines: {node: '>=14.18'}
 
-  '@sentry/opentelemetry@8.38.0':
-    resolution: {integrity: sha512-AfjmIf/v7+x2WplhkX66LyGKvrzzPeSgff9uJ0cFCC2s0yd1qA2VPuIwEyr5i/FOJOP5bvFr8tu/hz3LA4+F5Q==}
+  '@sentry/opentelemetry@8.39.0':
+    resolution: {integrity: sha512-ZnZ6zpyRPOUR6LwmvXqXK6XXDfjIXIRoX1ZVy44ZqN3XQL1Cg5n5sp0W/8T0qpKVyyEkE+AphLI/EGyp/gQLfQ==}
     engines: {node: '>=14.18'}
     peerDependencies:
       '@opentelemetry/api': ^1.9.0
@@ -2335,16 +2335,16 @@ packages:
       '@opentelemetry/sdk-trace-base': ^1.26.0
       '@opentelemetry/semantic-conventions': ^1.27.0
 
-  '@sentry/types@8.38.0':
-    resolution: {integrity: sha512-fP5H9ZX01W4Z/EYctk3mkSHi7d06cLcX2/UWqwdWbyPWI+pL2QpUPICeO/C+8SnmYx//wFj3qWDhyPCh1PdFAA==}
+  '@sentry/types@8.39.0':
+    resolution: {integrity: sha512-/n1bGkbJcSLZQpzd1Oksi8LFAMbcO8j/d+N8mcXS74GuhGgkxQiEwHF2CKTz6SHt8J4hrlyzqIwVzCevUOxZ2Q==}
     engines: {node: '>=14.18'}
 
-  '@sentry/utils@8.38.0':
-    resolution: {integrity: sha512-3X7MgIKIx+2q5Al7QkhaRB4wV6DvzYsaeIwdqKUzGLuRjXmNgJrLoU87TAwQRmZ6Wr3IoEpThZZMNrzYPXxArw==}
+  '@sentry/utils@8.39.0':
+    resolution: {integrity: sha512-pIBnr/cROds92CcYWBW3z1zFH4uJkMPL2AxEv/ZcLg/NTb1Okz/ZaDP+NMzUfzriYvFBOFk0wPk0h5sYx6Umqw==}
     engines: {node: '>=14.18'}
 
-  '@sinclair/typebox@0.34.3':
-    resolution: {integrity: sha512-fEgncmnqn6WGibPn34deH5PwmMTuNCZ2clwlwevgFn8rP0l38zzWRg3KVYhoOZwkZ2Ew3yhZ/STdGDuMig66oQ==}
+  '@sinclair/typebox@0.34.4':
+    resolution: {integrity: sha512-ZUV1+nYQHjkDy/L5YMy5BxUjSFX8PElhBzNjI4gyeN23XJa7PZbmj5eDWzLAK3oxVs99EQWc/h1qFYkxpM+AwQ==}
 
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
@@ -2809,11 +2809,11 @@ packages:
   '@types/node@22.7.4':
     resolution: {integrity: sha512-y+NPi1rFzDs1NdQHHToqeiX2TIS79SWEAw9GYhkkx8bD0ChpfqC+n2j5OXOCpzfojBEBt6DnEnnG9MY0zk1XLg==}
 
-  '@types/node@22.7.8':
-    resolution: {integrity: sha512-a922jJy31vqR5sk+kAdIENJjHblqcZ4RmERviFsER4WJcEONqxKcjNOlk0q7OUfrF5sddT+vng070cdfMlrPLg==}
-
   '@types/node@22.9.0':
     resolution: {integrity: sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ==}
+
+  '@types/node@22.9.1':
+    resolution: {integrity: sha512-p8Yy/8sw1caA8CdRIQBG5tiLHmxtQKObCijiAa9Ez+d4+PRffM4054xbju0msf+cvhJpnFEeNjxmVT/0ipktrg==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -3776,8 +3776,8 @@ packages:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
 
-  dotenv-cli@7.4.2:
-    resolution: {integrity: sha512-SbUj8l61zIbzyhIbg0FwPJq6+wjbzdn9oEtozQpZ6kW2ihCcapKVZj49oCT3oPM+mgQm+itgvUQcG5szxVrZTA==}
+  dotenv-cli@7.4.3:
+    resolution: {integrity: sha512-lf1E+TL1xFeoOHy2hSO3kLkx3KX8CDi17ccn5z5dVCnk2PuWqUKAnBVgQmhfS0BPuzFbptTEHVcIKFsGF0NAcg==}
     hasBin: true
 
   dotenv-expand@10.0.0:
@@ -4396,8 +4396,8 @@ packages:
   i18next-browser-languagedetector@8.0.0:
     resolution: {integrity: sha512-zhXdJXTTCoG39QsrOCiOabnWj2jecouOqbchu3EfhtSHxIB5Uugnm9JaizenOy39h7ne3+fLikIjeW88+rgszw==}
 
-  i18next@23.16.5:
-    resolution: {integrity: sha512-KTlhE3EP9x6pPTAW7dy0WKIhoCpfOGhRQlO+jttQLgzVaoOjWwBWramu7Pp0i+8wDNduuzXfe3kkVbzrKyrbTA==}
+  i18next@23.16.6:
+    resolution: {integrity: sha512-wGdE5rUfkZtrL5k6MCptxbpjmgwku4rBRVU/YOJ7Xfd841fgaZjlxHpVJ5NIz8sfSvAJhEhJrvJ8qE7AWXE4Xg==}
 
   iconv-corefoundation@1.1.7:
     resolution: {integrity: sha512-T10qvkw0zz4wnm560lOEg0PovVqUXuOFhhHAkixw8/sycy7TJt7v/RrkEKEQnAw2viPSJu6iAkErxnzR0g8PpQ==}
@@ -7717,13 +7717,13 @@ snapshots:
       human-id: 1.0.2
       prettier: 2.8.8
 
-  '@coinbase/wallet-sdk@4.2.2(@types/node@22.9.0)(jsdom@25.0.1)':
+  '@coinbase/wallet-sdk@4.2.2(@types/node@22.9.1)(jsdom@25.0.1)':
     dependencies:
       '@noble/hashes': 1.5.0
       clsx: 1.2.1
       eventemitter3: 5.0.1
       preact: 10.24.2
-      vitest: 2.1.5(@types/node@22.9.0)(jsdom@25.0.1)
+      vitest: 2.1.5(@types/node@22.9.1)(jsdom@25.0.1)
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@types/node'
@@ -7750,9 +7750,9 @@ snapshots:
     dependencies:
       electron: 31.6.0
 
-  '@electron-toolkit/tsconfig@1.0.1(@types/node@22.9.0)':
+  '@electron-toolkit/tsconfig@1.0.1(@types/node@22.9.1)':
     dependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
 
   '@electron-toolkit/utils@3.0.0(electron@31.6.0)':
     dependencies:
@@ -8257,9 +8257,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@fastify/type-provider-typebox@5.0.1(@sinclair/typebox@0.34.3)':
+  '@fastify/type-provider-typebox@5.0.1(@sinclair/typebox@0.34.4)':
     dependencies:
-      '@sinclair/typebox': 0.34.3
+      '@sinclair/typebox': 0.34.4
 
   '@floating-ui/core@1.6.8':
     dependencies:
@@ -8294,13 +8294,13 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))':
+  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.1))':
     dependencies:
       glob: 7.2.3
       glob-promise: 4.2.2(glob@7.2.3)
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@5.6.3)
-      vite: 5.4.11(@types/node@22.9.0)
+      vite: 5.4.11(@types/node@22.9.1)
     optionalDependencies:
       typescript: 5.6.3
 
@@ -9123,12 +9123,12 @@ snapshots:
       '@noble/hashes': 1.5.0
       '@scure/base': 1.1.9
 
-  '@sentry/core@8.38.0':
+  '@sentry/core@8.39.0':
     dependencies:
-      '@sentry/types': 8.38.0
-      '@sentry/utils': 8.38.0
+      '@sentry/types': 8.39.0
+      '@sentry/utils': 8.39.0
 
-  '@sentry/node@8.38.0':
+  '@sentry/node@8.39.0':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/context-async-hooks': 1.26.0(@opentelemetry/api@1.9.0)
@@ -9162,32 +9162,32 @@ snapshots:
       '@opentelemetry/sdk-trace-base': 1.26.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.27.0
       '@prisma/instrumentation': 5.19.1
-      '@sentry/core': 8.38.0
-      '@sentry/opentelemetry': 8.38.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.54.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.27.0)
-      '@sentry/types': 8.38.0
-      '@sentry/utils': 8.38.0
+      '@sentry/core': 8.39.0
+      '@sentry/opentelemetry': 8.39.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.54.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.27.0)
+      '@sentry/types': 8.39.0
+      '@sentry/utils': 8.39.0
       import-in-the-middle: 1.11.2
     transitivePeerDependencies:
       - supports-color
 
-  '@sentry/opentelemetry@8.38.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.54.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.27.0)':
+  '@sentry/opentelemetry@8.39.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.54.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.27.0)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.26.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.54.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.26.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.27.0
-      '@sentry/core': 8.38.0
-      '@sentry/types': 8.38.0
-      '@sentry/utils': 8.38.0
+      '@sentry/core': 8.39.0
+      '@sentry/types': 8.39.0
+      '@sentry/utils': 8.39.0
 
-  '@sentry/types@8.38.0': {}
+  '@sentry/types@8.39.0': {}
 
-  '@sentry/utils@8.38.0':
+  '@sentry/utils@8.39.0':
     dependencies:
-      '@sentry/types': 8.38.0
+      '@sentry/types': 8.39.0
 
-  '@sinclair/typebox@0.34.3': {}
+  '@sinclair/typebox@0.34.4': {}
 
   '@sindresorhus/is@4.6.0': {}
 
@@ -9634,13 +9634,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/builder-vite@8.4.4(storybook@8.4.4(prettier@2.8.8))(vite@5.4.11(@types/node@22.9.0))':
+  '@storybook/builder-vite@8.4.4(storybook@8.4.4(prettier@2.8.8))(vite@5.4.11(@types/node@22.9.1))':
     dependencies:
       '@storybook/csf-plugin': 8.4.4(storybook@8.4.4(prettier@2.8.8))
       browser-assert: 1.2.1
       storybook: 8.4.4(prettier@2.8.8)
       ts-dedent: 2.2.0
-      vite: 5.4.11(@types/node@22.9.0)
+      vite: 5.4.11(@types/node@22.9.1)
     transitivePeerDependencies:
       - webpack-sources
 
@@ -9700,11 +9700,11 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.4.4(prettier@2.8.8)
 
-  '@storybook/react-vite@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.24.0)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))':
+  '@storybook/react-vite@8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.24.0)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.1))':
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.1))
       '@rollup/pluginutils': 5.1.2(rollup@4.24.0)
-      '@storybook/builder-vite': 8.4.4(storybook@8.4.4(prettier@2.8.8))(vite@5.4.11(@types/node@22.9.0))
+      '@storybook/builder-vite': 8.4.4(storybook@8.4.4(prettier@2.8.8))(vite@5.4.11(@types/node@22.9.1))
       '@storybook/react': 8.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(prettier@2.8.8))(typescript@5.6.3)
       find-up: 5.0.0
       magic-string: 0.30.12
@@ -9714,7 +9714,7 @@ snapshots:
       resolve: 1.22.8
       storybook: 8.4.4(prettier@2.8.8)
       tsconfig-paths: 4.2.0
-      vite: 5.4.11(@types/node@22.9.0)
+      vite: 5.4.11(@types/node@22.9.1)
     transitivePeerDependencies:
       - '@storybook/test'
       - rollup
@@ -9763,13 +9763,13 @@ snapshots:
 
   '@tootallnate/once@2.0.0': {}
 
-  '@treasure-dev/tdk-core@2.7.1(@tanstack/query-core@5.59.20)(@types/react@18.3.12)(react@18.3.1)(thirdweb@5.68.0(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8))(typescript@5.6.3)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)':
+  '@treasure-dev/tdk-core@2.7.1(@tanstack/query-core@5.59.20)(@types/react@18.3.12)(react@18.3.1)(thirdweb@5.68.0(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8))(typescript@5.6.3)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)':
     dependencies:
       '@sushiswap/tines': 1.0.11(viem@2.21.44(typescript@5.6.3)(zod@3.23.8))(zod@3.23.8)
       '@wagmi/core': 2.14.3(@tanstack/query-core@5.59.20)(@types/react@18.3.12)(react@18.3.1)(typescript@5.6.3)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.44(typescript@5.6.3)(zod@3.23.8))
       abitype: 1.0.6(typescript@5.6.3)(zod@3.23.8)
       jwt-decode: 4.0.0
-      thirdweb: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
+      thirdweb: 5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8)
       viem: 2.21.44(typescript@5.6.3)(zod@3.23.8)
     transitivePeerDependencies:
       - '@tanstack/query-core'
@@ -9807,7 +9807,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
       '@types/responselike': 1.0.3
 
   '@types/connect@3.4.36':
@@ -9824,12 +9824,12 @@ snapshots:
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
 
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
 
   '@types/http-cache-semantics@4.0.4': {}
 
@@ -9839,7 +9839,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
 
   '@types/mdx@2.0.13': {}
 
@@ -9861,11 +9861,11 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@22.7.8':
+  '@types/node@22.9.0':
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@22.9.0':
+  '@types/node@22.9.1':
     dependencies:
       undici-types: 6.19.8
 
@@ -9883,7 +9883,7 @@ snapshots:
 
   '@types/plist@3.0.5':
     dependencies:
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
       xmlbuilder: 15.1.1
     optional: true
 
@@ -9902,7 +9902,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
 
   '@types/shimmer@1.2.0': {}
 
@@ -9921,17 +9921,17 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.7.8
+      '@types/node': 22.9.0
     optional: true
 
-  '@vitejs/plugin-react@4.3.3(vite@5.4.11(@types/node@22.9.0))':
+  '@vitejs/plugin-react@4.3.3(vite@5.4.11(@types/node@22.9.1))':
     dependencies:
       '@babel/core': 7.25.7
       '@babel/plugin-transform-react-jsx-self': 7.25.7(@babel/core@7.25.7)
       '@babel/plugin-transform-react-jsx-source': 7.25.7(@babel/core@7.25.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.11(@types/node@22.9.0)
+      vite: 5.4.11(@types/node@22.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -9942,13 +9942,13 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.5(vite@5.4.10(@types/node@22.9.0))':
+  '@vitest/mocker@2.1.5(vite@5.4.10(@types/node@22.9.1))':
     dependencies:
       '@vitest/spy': 2.1.5
       estree-walker: 3.0.3
       magic-string: 0.30.12
     optionalDependencies:
-      vite: 5.4.10(@types/node@22.9.0)
+      vite: 5.4.10(@types/node@22.9.1)
 
   '@vitest/pretty-format@2.1.5':
     dependencies:
@@ -11201,7 +11201,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  dotenv-cli@7.4.2:
+  dotenv-cli@7.4.3:
     dependencies:
       cross-spawn: 7.0.3
       dotenv: 16.4.5
@@ -11298,7 +11298,7 @@ snapshots:
 
   electron-to-chromium@1.5.32: {}
 
-  electron-vite@2.3.0(vite@5.4.11(@types/node@22.9.0)):
+  electron-vite@2.3.0(vite@5.4.11(@types/node@22.9.1)):
     dependencies:
       '@babel/core': 7.25.7
       '@babel/plugin-transform-arrow-functions': 7.25.7(@babel/core@7.25.7)
@@ -11306,7 +11306,7 @@ snapshots:
       esbuild: 0.21.5
       magic-string: 0.30.11
       picocolors: 1.1.0
-      vite: 5.4.11(@types/node@22.9.0)
+      vite: 5.4.11(@types/node@22.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -12037,7 +12037,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-  i18next@23.16.5:
+  i18next@23.16.6:
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -12348,11 +12348,11 @@ snapshots:
 
   keyvaluestorage-interface@1.0.0: {}
 
-  knip@5.37.1(@types/node@22.9.0)(typescript@5.6.3):
+  knip@5.37.1(@types/node@22.9.1)(typescript@5.6.3):
     dependencies:
       '@nodelib/fs.walk': 1.2.8
       '@snyk/github-codeowners': 1.1.0
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
       easy-table: 1.2.0
       enhanced-resolve: 5.17.1
       fast-glob: 3.3.2
@@ -13323,11 +13323,11 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
-  react-i18next@15.1.1(i18next@23.16.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-i18next@15.1.1(i18next@23.16.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.25.7
       html-parse-stringify: 3.0.1
-      i18next: 23.16.5
+      i18next: 23.16.6
       react: 18.3.1
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
@@ -13941,9 +13941,9 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  thirdweb@5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8):
+  thirdweb@5.68.0(@aws-sdk/client-kms@3.693.0)(@types/node@22.9.1)(@types/react-dom@18.3.1)(@types/react@18.3.12)(encoding@0.1.13)(jsdom@25.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(zod@3.23.8):
     dependencies:
-      '@coinbase/wallet-sdk': 4.2.2(@types/node@22.9.0)(jsdom@25.0.1)
+      '@coinbase/wallet-sdk': 4.2.2(@types/node@22.9.1)(jsdom@25.0.1)
       '@emotion/react': 11.13.3(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled': 11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@google/model-viewer': 2.1.1
@@ -14313,13 +14313,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  vite-node@2.1.5(@types/node@22.9.0):
+  vite-node@2.1.5(@types/node@22.9.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
       es-module-lexer: 1.5.4
       pathe: 1.1.2
-      vite: 5.4.10(@types/node@22.9.0)
+      vite: 5.4.10(@types/node@22.9.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -14331,28 +14331,28 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.10(@types/node@22.9.0):
+  vite@5.4.10(@types/node@22.9.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.24.0
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
       fsevents: 2.3.3
 
-  vite@5.4.11(@types/node@22.9.0):
+  vite@5.4.11(@types/node@22.9.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.24.0
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
       fsevents: 2.3.3
 
-  vitest@2.1.5(@types/node@22.9.0)(jsdom@25.0.1):
+  vitest@2.1.5(@types/node@22.9.1)(jsdom@25.0.1):
     dependencies:
       '@vitest/expect': 2.1.5
-      '@vitest/mocker': 2.1.5(vite@5.4.10(@types/node@22.9.0))
+      '@vitest/mocker': 2.1.5(vite@5.4.10(@types/node@22.9.1))
       '@vitest/pretty-format': 2.1.5
       '@vitest/runner': 2.1.5
       '@vitest/snapshot': 2.1.5
@@ -14368,11 +14368,11 @@ snapshots:
       tinyexec: 0.3.1
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.10(@types/node@22.9.0)
-      vite-node: 2.1.5(@types/node@22.9.0)
+      vite: 5.4.10(@types/node@22.9.1)
+      vite-node: 2.1.5(@types/node@22.9.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
       jsdom: 25.0.1
     transitivePeerDependencies:
       - less
