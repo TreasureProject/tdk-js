@@ -164,6 +164,65 @@ export const migrateLegacyUser = async ({
   userProfileId?: string;
   legacyProfile: UserProfile;
 }) => {
+  // Migrate supporting data
+  const [[, , updatedSocialAccounts], [, , updatedNotificationSettings]] =
+    await Promise.all([
+      // Migrate social accounts
+      db.$transaction([
+        // Delete current social accounts
+        db.userSocialAccount.deleteMany({
+          where: {
+            userId,
+          },
+        }),
+        // Connect social accounts to user
+        db.userSocialAccount.updateMany({
+          where: {
+            legacyUserProfileId: legacyProfile.id,
+          },
+          data: {
+            userId,
+            // Clear legacy profile data so migration is not triggered again
+            legacyUserProfileId: null,
+          },
+        }),
+        // Select migrated social accounts
+        db.userSocialAccount.findMany({
+          where: {
+            userId,
+          },
+          select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
+        }),
+      ]),
+      // Migrate notification settings
+      db.$transaction([
+        // Delete current notification settings
+        db.userNotificationSettings.deleteMany({
+          where: {
+            userId,
+          },
+        }),
+        // Connect notification settings to user
+        db.userNotificationSettings.updateMany({
+          where: {
+            legacyUserProfileId: legacyProfile.id,
+          },
+          data: {
+            userId,
+            // Clear legacy profile data so migration is not triggered again
+            legacyUserProfileId: null,
+          },
+        }),
+        // Select migrated notification settings
+        db.userNotificationSettings.findMany({
+          where: {
+            userId,
+          },
+          select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
+        }),
+      ]),
+    ]);
+
   let updatedProfile: Pick<
     UserProfile,
     keyof typeof USER_PROFILE_SELECT_FIELDS
@@ -223,80 +282,23 @@ export const migrateLegacyUser = async ({
     });
   }
 
-  const [[, , updatedSocialAccounts], [, , updatedNotificationSettings]] =
-    await Promise.all([
-      // Migrate social accounts
-      db.$transaction([
-        // Delete current social accounts
-        db.userSocialAccount.deleteMany({
-          where: {
-            userId,
-          },
-        }),
-        // Connect social accounts to user
-        db.userSocialAccount.updateMany({
-          where: {
-            legacyUserProfileId: legacyProfile.id,
-          },
-          data: {
-            userId,
-            // Clear legacy profile data so migration is not triggered again
-            legacyUserProfileId: null,
-          },
-        }),
-        // Select migrated social accounts
-        db.userSocialAccount.findMany({
-          where: {
-            userId,
-          },
-          select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
-        }),
-      ]),
-      // Migrate notification settings
-      db.$transaction([
-        // Delete current notification settings
-        db.userNotificationSettings.deleteMany({
-          where: {
-            userId,
-          },
-        }),
-        // Connect notification settings to user
-        db.userNotificationSettings.updateMany({
-          where: {
-            legacyUserProfileId: legacyProfile.id,
-          },
-          data: {
-            userId,
-            // Clear legacy profile data so migration is not triggered again
-            legacyUserProfileId: null,
-          },
-        }),
-        // Select migrated notification settings
-        db.userNotificationSettings.findMany({
-          where: {
-            userId,
-          },
-          select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
-        }),
-      ]),
-      // Delete any other legacy records that weren't migrated
-      db.$transaction([
-        db.userProfile.deleteMany({
-          where: {
-            legacyAddress: legacyProfile.legacyAddress,
-          },
-        }),
-        ...(legacyProfile.email
-          ? []
-          : [
-              db.userProfile.deleteMany({
-                where: {
-                  legacyEmail: legacyProfile.legacyEmail,
-                },
-              }),
-            ]),
-      ]),
-    ]);
+  // Delete any other legacy records that weren't migrated
+  await db.$transaction([
+    db.userProfile.deleteMany({
+      where: {
+        legacyAddress: legacyProfile.legacyAddress,
+      },
+    }),
+    ...(legacyProfile.email
+      ? []
+      : [
+          db.userProfile.deleteMany({
+            where: {
+              legacyEmail: legacyProfile.legacyEmail,
+            },
+          }),
+        ]),
+  ]);
 
   return {
     updatedProfile,
