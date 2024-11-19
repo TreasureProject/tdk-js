@@ -4,6 +4,7 @@ import {
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
+  type LegacyProfile,
   type SessionOptions,
   TDKAPI,
   type TrackableEvent,
@@ -208,25 +209,26 @@ const TreasureProviderInner = ({
   const logIn = async (
     wallet: Wallet,
     chainId?: number,
-  ): Promise<User | undefined> => {
+  ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
     if (isUsingTreasureLauncher) {
       console.debug(
         "[TreasureProvider] Skipping login because launcher is being used",
       );
-      return;
+      return { user: undefined, legacyProfiles: [] };
     }
 
-    let nextUser: User | undefined;
+    let user: User | undefined;
+    let legacyProfiles: LegacyProfile[] = [];
 
     // Check for existing stored auth token
-    let nextAuthToken = getStoredAuthToken();
-    if (nextAuthToken) {
+    let authToken = getStoredAuthToken();
+    if (authToken) {
       // Validate if it's expired before attempting to use it
       try {
-        const { exp: authTokenExpirationDate } = decodeAuthToken(nextAuthToken);
+        const { exp: authTokenExpirationDate } = decodeAuthToken(authToken);
         if (authTokenExpirationDate > Date.now() / 1000) {
           setIsAuthenticating(true);
-          nextUser = await tdk.user.me({ overrideAuthToken: nextAuthToken });
+          user = await tdk.user.me({ overrideAuthToken: authToken });
         }
       } catch (err) {
         console.debug(
@@ -237,15 +239,19 @@ const TreasureProviderInner = ({
       }
     }
 
-    if (!nextUser) {
+    if (!user) {
       setIsAuthenticating(true);
-      const { token, user } = await authenticateWallet({ wallet, tdk });
-      nextAuthToken = token;
-      nextUser = user;
+      const result = await authenticateWallet({
+        wallet,
+        tdk,
+      });
+      authToken = result.token;
+      user = result.user;
+      legacyProfiles = result.legacyProfiles;
     }
 
     // Set auth token and wallet on TDK so they can be used in future requests
-    tdk.setAuthToken(nextAuthToken as string);
+    tdk.setAuthToken(authToken as string);
     tdk.setActiveWallet(wallet);
 
     // Start user session if configured
@@ -256,14 +262,14 @@ const TreasureProviderInner = ({
         wallet,
         chainId: chainId ?? chain.id,
         tdk,
-        sessions: nextUser.sessions,
+        sessions: user.sessions,
         options: sessionOptions,
       });
     }
 
     // Update user state
-    setUser(nextUser);
-    setStoredAuthToken(nextAuthToken as string);
+    setUser(user);
+    setStoredAuthToken(authToken as string);
 
     trackCustomEvent({
       name: EVT_TREASURECONNECT_CONNECTED,
@@ -273,10 +279,10 @@ const TreasureProviderInner = ({
     });
 
     // Trigger completion callback
-    onConnect?.(nextUser);
+    onConnect?.(user);
 
     setIsAuthenticating(false);
-    return nextUser;
+    return { user, legacyProfiles };
   };
 
   // Attempt an automatic background connection
@@ -325,6 +331,8 @@ const TreasureProviderInner = ({
         isUsingTreasureLauncher,
         logIn,
         logOut,
+        updateUser: (partialUser) =>
+          setUser((curr) => (curr ? { ...curr, ...partialUser } : undefined)),
         startUserSession: (options: SessionOptions) =>
           isUsingTreasureLauncher
             ? startUserSessionViaLauncher(options)

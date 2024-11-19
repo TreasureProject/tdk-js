@@ -148,6 +148,7 @@ export const updateCurrentUserReplySchema = userProfileSchema;
 
 const updateCurrentUserMigrationBodySchema = Type.Object({
   id: Type.String(),
+  rejected: Type.Optional(Type.Boolean()),
 });
 
 export const updateCurrentUserMigrationReplySchema = userProfileSchema;

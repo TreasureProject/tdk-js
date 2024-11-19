@@ -1,5 +1,5 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { EXAMPLE_WALLET_ADDRESS } from "./shared";
+import { EXAMPLE_WALLET_ADDRESS, nullableStringSchema } from "./shared";
 import {
   sessionSchema,
   userProfileSchema,
@@ -50,6 +50,7 @@ export const loginReplySchema = Type.Object({
     Type.Intersect([
       Type.Object({
         id: Type.String(),
+        legacyAddress: nullableStringSchema,
       }),
       Type.Omit(userPublicProfileSchema, ["socialAccounts"]),
     ]),

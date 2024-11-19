@@ -58,6 +58,7 @@ model UserSmartAccount {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([chainId, address])
+  @@index([address])
   @@index([userId])
   @@map("user_smart_account")
   @@schema("public")
@@ -102,8 +103,10 @@ model UserProfile {
   testnetFaucetLastUsedAt DateTime? @map("testnet_faucet_last_used_at")
 
   // Relations
-  userId String? @unique @map("user_id")
-  user   User?   @relation(fields: [userId], references: [id])
+  userId                     String?                    @unique @map("user_id")
+  user                       User?                      @relation(fields: [userId], references: [id])
+  legacySocialAccounts       UserSocialAccount[]
+  legacyNotificationSettings UserNotificationSettings[]
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at")
@@ -138,7 +141,8 @@ model UserSocialAccount {
   isPublic      Boolean       @default(false) @map("is_public")
 
   // Migration
-  legacyUserProfileId String? @map("legacy_user_profile_id")
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
 
   // Relations
   userId String? @map("user_id")
@@ -176,7 +180,8 @@ model UserNotificationSettings {
   isEnabledInApp Boolean          @default(true) @map("is_enabled_in_app")
 
   // Migration
-  legacyUserProfileId String? @map("legacy_user_profile_id")
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
 
   // Relations
   userId String? @map("user_id")

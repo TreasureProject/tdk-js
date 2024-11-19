@@ -4,6 +4,7 @@ import type {
   Contract,
   Device,
   EcosystemIdString,
+  LegacyProfile,
   PropertyValue,
   SessionOptions,
   TDKAPI,
@@ -61,8 +62,12 @@ export type ContextValues = {
   ecosystemPartnerId: string;
   isConnecting: boolean;
   isUsingTreasureLauncher: boolean;
-  logIn: (wallet: Wallet, chainId?: number) => Promise<User | undefined>;
+  logIn: (
+    wallet: Wallet,
+    chainId?: number,
+  ) => Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }>;
   logOut: () => void;
+  updateUser: (user: Partial<User>) => void;
   startUserSession: (options: SessionOptions) => void;
   switchChain: (chainId: number) => void;
   setRootElement: (el: ReactNode) => void;

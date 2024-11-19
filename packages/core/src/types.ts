@@ -66,6 +66,9 @@ export type Transaction = Awaited<
 export type User = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["user"]["me"]>
 >;
+export type LegacyProfile = Awaited<
+  ReturnType<(typeof TDKAPI)["prototype"]["auth"]["logIn"]>
+>["legacyProfiles"][number];
 export type Session = Awaited<
   ReturnType<(typeof TDKAPI)["prototype"]["user"]["getSessions"]>
 >[number];

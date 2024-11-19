@@ -46,10 +46,15 @@ import {
   throwUnauthorizedError,
   throwUserNotFoundError,
 } from "../utils/error";
-import { transformUserProfileResponseFields } from "../utils/user";
+import {
+  checkCanMigrateLegacyUser,
+  clearLegacyUser,
+  migrateLegacyUser,
+  transformUserProfileResponseFields,
+} from "../utils/user";
 
 export const usersRoutes =
-  ({ db, client }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, env, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply;
@@ -237,68 +242,19 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, authError } = req;
-        if (!userId) {
+        const {
+          userId,
+          authError,
+          body: { id: legacyProfileId, rejected = false },
+        } = req;
+        if (!userId || !env.USER_MIGRATION_ENABLED) {
           throwUnauthorizedError(authError);
           return;
         }
 
-        const [user, profile, legacyProfile] = await Promise.all([
-          db.user.findUnique({
-            where: {
-              id: userId,
-            },
-            select: {
-              smartAccounts: {
-                select: {
-                  initialEmail: true,
-                  initialWalletAddress: true,
-                },
-              },
-            },
-          }),
-          db.userProfile.findUnique({ where: { userId } }),
-          db.userProfile.findUnique({
-            where: {
-              id: req.body.id,
-            },
-          }),
-        ]);
-
-        if (!user || !legacyProfile) {
-          throwUserNotFoundError();
-          return;
-        }
-
-        let canMigrate = false;
-
-        // Check if the current user is linked to this legacy profile via wallet address
-        if (legacyProfile.legacyAddress) {
-          const walletAddresses = user.smartAccounts
-            .map((smartAccount) =>
-              smartAccount.initialWalletAddress.toLowerCase(),
-            )
-            .filter((walletAddress) => Boolean(walletAddress));
-          canMigrate = walletAddresses.includes(
-            legacyProfile.legacyAddress.toLowerCase(),
-          );
-        }
-
-        // Check if the current user is linked to this legacy profile via email address
-        if (
-          !canMigrate &&
-          legacyProfile.legacyEmail &&
-          legacyProfile.legacyEmailVerifiedAt
-        ) {
-          const emailAddresses = user.smartAccounts
-            .map((smartAccount) => smartAccount.initialEmail?.toLowerCase())
-            .filter((emailAddress) => Boolean(emailAddress)) as string[];
-          canMigrate = emailAddresses.includes(
-            legacyProfile.legacyEmail.toLowerCase(),
-          );
-        }
-
-        if (!canMigrate) {
+        const { canMigrate, profile, legacyProfile } =
+          await checkCanMigrateLegacyUser({ db, userId, legacyProfileId });
+        if (!canMigrate || !profile || !legacyProfile) {
           // User selected an unlinked profile and cannot migrate
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
@@ -308,44 +264,15 @@ export const usersRoutes =
           });
         }
 
-        await Promise.all([
-          // Migrate social accounts
-          db.userSocialAccount.updateMany({
-            where: {
-              userId,
-              // Clear legacy profile data so migration is not triggered again
-              legacyUserProfileId: legacyProfile.id,
-            },
-            data: {
-              legacyUserProfileId: null,
-            },
-          }),
-          // Migrate notification settings
-          db.userNotificationSettings.updateMany({
-            where: {
-              userId,
-              // Clear legacy profile data so migration is not triggered again
-              legacyUserProfileId: legacyProfile.id,
-            },
-            data: {
-              legacyUserProfileId: null,
-            },
-          }),
-        ]);
-
-        const [[, updatedSocialAccounts], [, updatedNotificationSettings]] =
-          await Promise.all([
-            db.$transaction([
-              // Migrate social accounts
-              db.userSocialAccount.updateMany({
-                where: {
-                  userId,
-                  // Clear legacy profile data so migration is not triggered again
-                  legacyUserProfileId: legacyProfile.id,
-                },
-                data: {
-                  legacyUserProfileId: null,
-                },
+        if (rejected) {
+          await clearLegacyUser({ db, legacyProfile });
+          const [profile, socialAccounts, notificationSettings] =
+            await Promise.all([
+              db.userProfile.upsert({
+                where: { userId },
+                update: {},
+                create: { userId, email: legacyProfile.email },
+                select: USER_PROFILE_SELECT_FIELDS,
               }),
               db.userSocialAccount.findMany({
                 where: {
@@ -353,93 +280,37 @@ export const usersRoutes =
                 },
                 select: USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
               }),
-            ]),
-            db.$transaction([
-              // Migrate notification settings
-              db.userNotificationSettings.updateMany({
-                where: {
-                  userId,
-                  // Clear legacy profile data so migration is not triggered again
-                  legacyUserProfileId: legacyProfile.id,
-                },
-                data: {
-                  legacyUserProfileId: null,
-                },
-              }),
               db.userNotificationSettings.findMany({
                 where: {
                   userId,
                 },
                 select: USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
               }),
-            ]),
-          ]);
-
-        let updatedProfile: Pick<
-          Prisma.$UserProfilePayload["scalars"],
-          keyof typeof USER_PROFILE_SELECT_FIELDS
-        >;
-
-        // Merge data if user has existing profile or connect legacy profile if not
-        if (profile) {
-          const [updateResult] = await db.$transaction([
-            db.userProfile.update({
-              where: {
-                id: profile.id,
-              },
-              data: {
-                tag: legacyProfile.tag ?? undefined,
-                discriminant: legacyProfile.discriminant ?? undefined,
-                emailSecurityPhrase:
-                  legacyProfile.emailSecurityPhrase ?? undefined,
-                emailSecurityPhraseUpdatedAt:
-                  legacyProfile.emailSecurityPhraseUpdatedAt ?? undefined,
-                featuredNftIds: legacyProfile.featuredNftIds,
-                featuredBadgeIds: legacyProfile.featuredBadgeIds,
-                highlyFeaturedBadgeId:
-                  legacyProfile.highlyFeaturedBadgeId ?? undefined,
-                about: legacyProfile.about ?? undefined,
-                pfp: legacyProfile.pfp ?? undefined,
-                banner: legacyProfile.banner ?? undefined,
-                showMagicBalance: legacyProfile.showMagicBalance,
-                showEthBalance: legacyProfile.showEthBalance,
-                showGemsBalance: legacyProfile.showGemsBalance,
-                testnetFaucetLastUsedAt:
-                  legacyProfile.testnetFaucetLastUsedAt ?? undefined,
-                legacyProfileMigratedAt: new Date(),
-              },
-              select: USER_PROFILE_SELECT_FIELDS,
-            }),
-            db.userProfile.delete({
-              where: {
-                id: legacyProfile.id,
-              },
-            }),
-          ]);
-          updatedProfile = updateResult;
+            ]);
+          reply.send({
+            ...profile,
+            ...transformUserProfileResponseFields(profile),
+            socialAccounts,
+            notificationSettings,
+          });
         } else {
-          updatedProfile = await db.userProfile.update({
-            where: {
-              id: legacyProfile.id,
-            },
-            data: {
-              userId,
-              legacyProfileMigratedAt: new Date(),
-              // Clear legacy profile data so migration is not triggered again
-              legacyAddress: null,
-              legacyEmail: null,
-              legacyEmailVerifiedAt: null,
-            },
-            select: USER_PROFILE_SELECT_FIELDS,
+          const {
+            updatedProfile,
+            updatedSocialAccounts,
+            updatedNotificationSettings,
+          } = await migrateLegacyUser({
+            db,
+            userId,
+            userProfileId: profile?.id ?? undefined,
+            legacyProfile,
+          });
+          reply.send({
+            ...updatedProfile,
+            ...transformUserProfileResponseFields(updatedProfile),
+            socialAccounts: updatedSocialAccounts,
+            notificationSettings: updatedNotificationSettings,
           });
         }
-
-        reply.send({
-          ...updatedProfile,
-          ...transformUserProfileResponseFields(updatedProfile),
-          socialAccounts: updatedSocialAccounts,
-          notificationSettings: updatedNotificationSettings,
-        });
       },
     );
 
