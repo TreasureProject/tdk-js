@@ -89,6 +89,70 @@ export const parseThirdwebUserEmail = (user: GetUserResult) => {
   return undefined;
 };
 
+export const checkCanMigrateLegacyUser = async ({
+  db,
+  userId,
+  legacyProfileId,
+}: {
+  db: PrismaClient;
+  userId: string;
+  legacyProfileId: string;
+}) => {
+  const [user, profile, legacyProfile] = await Promise.all([
+    db.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        externalWalletAddress: true,
+        smartAccounts: {
+          select: {
+            initialEmail: true,
+            initialWalletAddress: true,
+          },
+        },
+      },
+    }),
+    db.userProfile.findUnique({
+      where: { userId },
+      select: { id: true },
+    }),
+    db.userProfile.findUnique({
+      where: {
+        id: legacyProfileId,
+      },
+    }),
+  ]);
+
+  if (!user || !legacyProfile) {
+    return { canMigrate: false };
+  }
+
+  let canMigrate = false;
+
+  // Check if the current user is linked to this legacy profile via wallet address
+  if (legacyProfile.legacyAddress) {
+    const walletAddresses = user.smartAccounts
+      .map((smartAccount) => smartAccount.initialWalletAddress.toLowerCase())
+      .filter((walletAddress) => Boolean(walletAddress));
+    canMigrate = walletAddresses.includes(
+      legacyProfile.legacyAddress.toLowerCase(),
+    );
+  }
+
+  // Check if the current user is linked to this legacy profile via email address
+  if (legacyProfile.legacyEmail && legacyProfile.legacyEmailVerifiedAt) {
+    const emailAddresses = user.smartAccounts
+      .map((smartAccount) => smartAccount.initialEmail?.toLowerCase())
+      .filter((emailAddress) => Boolean(emailAddress)) as string[];
+    canMigrate = emailAddresses.includes(
+      legacyProfile.legacyEmail.toLowerCase(),
+    );
+  }
+
+  return { canMigrate, profile, legacyProfile };
+};
+
 export const migrateLegacyUser = async ({
   db,
   userId,

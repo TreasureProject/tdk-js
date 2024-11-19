@@ -47,6 +47,7 @@ import {
   throwUserNotFoundError,
 } from "../utils/error";
 import {
+  checkCanMigrateLegacyUser,
   clearLegacyUser,
   migrateLegacyUser,
   transformUserProfileResponseFields,
@@ -251,66 +252,9 @@ export const usersRoutes =
           return;
         }
 
-        const [user, profile, legacyProfile] = await Promise.all([
-          db.user.findUnique({
-            where: {
-              id: userId,
-            },
-            select: {
-              externalWalletAddress: true,
-              smartAccounts: {
-                select: {
-                  initialEmail: true,
-                  initialWalletAddress: true,
-                },
-              },
-            },
-          }),
-          db.userProfile.findUnique({
-            where: { userId },
-            select: { id: true },
-          }),
-          db.userProfile.findUnique({
-            where: {
-              id: legacyProfileId,
-            },
-          }),
-        ]);
-
-        if (!user || !legacyProfile) {
-          throwUserNotFoundError();
-          return;
-        }
-
-        let canMigrate = false;
-
-        // Check if the current user is linked to this legacy profile via wallet address
-        if (legacyProfile.legacyAddress) {
-          const walletAddresses = user.smartAccounts
-            .map((smartAccount) =>
-              smartAccount.initialWalletAddress.toLowerCase(),
-            )
-            .filter((walletAddress) => Boolean(walletAddress));
-          canMigrate = walletAddresses.includes(
-            legacyProfile.legacyAddress.toLowerCase(),
-          );
-        }
-
-        // Check if the current user is linked to this legacy profile via email address
-        if (
-          !canMigrate &&
-          legacyProfile.legacyEmail &&
-          legacyProfile.legacyEmailVerifiedAt
-        ) {
-          const emailAddresses = user.smartAccounts
-            .map((smartAccount) => smartAccount.initialEmail?.toLowerCase())
-            .filter((emailAddress) => Boolean(emailAddress)) as string[];
-          canMigrate = emailAddresses.includes(
-            legacyProfile.legacyEmail.toLowerCase(),
-          );
-        }
-
-        if (!canMigrate) {
+        const { canMigrate, profile, legacyProfile } =
+          await checkCanMigrateLegacyUser({ db, userId, legacyProfileId });
+        if (!canMigrate || !profile || !legacyProfile) {
           // User selected an unlinked profile and cannot migrate
           throw new TdkError({
             name: TDK_ERROR_NAMES.UserError,
