@@ -298,27 +298,6 @@ export const migrateLegacyUser = async ({
       ]),
     ]);
 
-  // Transfer rewards from legacy profile to new profile.
-  // if (legacyProfile.legacyAddress !== user.externalWalletAddress) {
-  //   const response = await fetch(
-  //     `${env.TROVE_API_URL}/admin/transfer-rewards`,
-  //     {
-  //       method: "POST",
-  //       headers: { "X-API-Key": env.TROVE_API_KEY },
-  //       body: JSON.stringify({
-  //         oldAddress: legacyProfile.legacyAddress,
-  //         newAddress: user.externalWalletAddress,
-  //       }),
-  //     },
-  //   );
-  //   const { status } = await response.json();
-  //   if (status !== "ok") {
-  //     log.warn(
-  //       `Failed to transfer rewards from ${legacyProfile.legacyAddress} to ${user.externalWalletAddress}.`,
-  //     );
-  //   }
-  // }
-
   return {
     updatedProfile,
     updatedSocialAccounts,
