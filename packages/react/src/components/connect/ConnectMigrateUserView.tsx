@@ -9,7 +9,10 @@ import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 
 type Props = {
-  legacyProfiles: LegacyProfile[];
+  legacyProfiles: Pick<
+    LegacyProfile,
+    "id" | "tag" | "discriminant" | "pfp" | "banner" | "legacyAddress"
+  >[];
   isLoading?: boolean;
   error?: string;
   onApprove: (id: string) => void;
