@@ -54,7 +54,7 @@ import {
 } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, client }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, env, client }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply;
@@ -247,7 +247,7 @@ export const usersRoutes =
           authError,
           body: { id: legacyProfileId, rejected = false },
         } = req;
-        if (!userId) {
+        if (!userId || !env.USER_MIGRATION_ENABLED) {
           throwUnauthorizedError(authError);
           return;
         }

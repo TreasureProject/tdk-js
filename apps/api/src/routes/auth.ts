@@ -265,15 +265,17 @@ export const authRoutes =
 
         let updatedProfile: typeof profile | undefined;
 
-        // Automatically migrate legacy profile if only one exists
-        if (legacyProfiles.length === 1 && !!legacyProfiles[0]) {
-          const result = await migrateLegacyUser({
-            db,
-            userId: user.id,
-            userProfileId: profile.id,
-            legacyProfile: legacyProfiles[0],
-          });
-          updatedProfile = result.updatedProfile;
+        if (env.USER_MIGRATION_ENABLED) {
+          // Automatically migrate legacy profile if only one exists
+          if (legacyProfiles.length === 1 && !!legacyProfiles[0]) {
+            const result = await migrateLegacyUser({
+              db,
+              userId: user.id,
+              userProfileId: profile.id,
+              legacyProfile: legacyProfiles[0],
+            });
+            updatedProfile = result.updatedProfile;
+          }
         }
 
         const finalProfile = updatedProfile ?? profile;
@@ -286,7 +288,10 @@ export const authRoutes =
             address,
             sessions,
           },
-          legacyProfiles: legacyProfiles.length > 1 ? legacyProfiles : [],
+          legacyProfiles:
+            env.USER_MIGRATION_ENABLED && legacyProfiles.length > 1
+              ? legacyProfiles
+              : [],
         });
       },
     );

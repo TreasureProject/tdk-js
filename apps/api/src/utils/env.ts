@@ -41,6 +41,7 @@ const envSchema = Type.Object({
   TROVE_API_KEY: Type.String(),
   ENGINE_MAINTENANCE_MODE_ENABLED: Type.Boolean({ default: false }),
   ENGINE_TRANSACTION_SIMULATION_ENABLED: Type.Boolean({ default: false }),
+  USER_MIGRATION_ENABLED: Type.Boolean({ default: false }),
 });
 
 export type TdkApiEnv = Static<typeof envSchema>;
