@@ -5,7 +5,7 @@ Backend server powering the Treasure Development Kit
 ## Prerequisites
 
 - [>= Node 20.11.0](https://nodejs.org/en)
-- [PostgreSQL](https://www.postgresql.org) server
+- [Docker Compose](https://docs.docker.com/compose/install/)
 - AWS credentials set up for Secrets Manager and Key Management Service access
 
 ## Development
@@ -26,12 +26,6 @@ Generate database client:
 
 ```bash
 pnpm generate
-```
-
-Create initial tables in database:
-
-```bash
-pnpm db:migrate
 ```
 
 Start server:

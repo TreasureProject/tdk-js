@@ -5,11 +5,14 @@
   "scripts": {
     "generate": "prisma generate",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "dev": "tsup --watch --onSuccess 'pnpm start'",
+    "test": "pnpm db:start:test && dotenv -e .env.test -- vitest run",
+    "dev": "pnpm db:start:dev && tsup --watch --onSuccess 'pnpm start'",
     "build": "tsup",
     "start": "node ./dist/index.js",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:test": "dotenv -e .env.test -- pnpm db:migrate",
+    "db:start:dev": "docker-compose up -d --wait && pnpm db:migrate",
+    "db:start:test": "docker-compose --env-file .env.test -f docker-compose.test.yml up -d --wait && dotenv -e .env.test -- pnpm db:migrate"
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "catalog:",
@@ -33,6 +36,7 @@
     "viem": "catalog:"
   },
   "devDependencies": {
+    "dotenv-cli": "catalog:",
     "prisma": "catalog:",
     "tsup": "catalog:",
     "vitest": "catalog:"

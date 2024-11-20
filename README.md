@@ -39,11 +39,10 @@ Start watch mode for base workspaces:
 pnpm dev
 ```
 
-Start any example apps:
+Or start watch mode for specific example app:
 
 ```bash
-$ cd examples/connect-react
-$ pnpm dev
+pnpm dev:react
 ```
 
 ### Contributing

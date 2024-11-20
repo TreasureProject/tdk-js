@@ -30,7 +30,8 @@
       "dependsOn": ["@treasure-dev/tdk-react#build"]
     },
     "test": {
-      "dependsOn": ["generate", "^test"]
+      "dependsOn": ["generate", "^test"],
+      "cache": false
     },
     "dev": {
       "dependsOn": [
