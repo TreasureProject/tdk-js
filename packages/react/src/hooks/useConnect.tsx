@@ -15,6 +15,7 @@ import {
   type Options as ConnectModalOptions,
   type Props as ConnectModalProps,
 } from "../components/connect/ConnectModal";
+import { UserDisplayName } from "../components/user/UserDisplayName";
 import { useTreasure } from "../contexts/treasure";
 import { getLocaleId } from "../i18n";
 import {
@@ -73,6 +74,7 @@ export const useConnect = (props?: Props) => {
     chain,
     client,
     ecosystemId,
+    user,
     logIn,
     logOut,
     setRootElement,
@@ -138,6 +140,10 @@ export const useConnect = (props?: Props) => {
       connectOptions: {
         hiddenWallets: ["inApp", ecosystemId],
       },
+      connectedAccountAvatarUrl: user?.pfp ?? undefined,
+      connectedAccountName: user ? (
+        <UserDisplayName address={user.address} tag={user.tag} />
+      ) : undefined,
       networkSelector: {
         onSwitch: (nextChain) => {
           if (activeWallet) {
