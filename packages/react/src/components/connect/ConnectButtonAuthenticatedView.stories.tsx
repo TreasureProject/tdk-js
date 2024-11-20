@@ -11,6 +11,21 @@ type Story = StoryObj<typeof ConnectButtonAuthenticatedView>;
 
 export const Default: Story = {
   args: {
-    userAddress: "0x1234000000000000000000000000000000005678",
+    address: "0x73239D66c237D5923a7DF2D4E1E59fB7432c7826",
+  },
+};
+
+export const WithProfilePic: Story = {
+  args: {
+    address: "0x73239D66c237D5923a7DF2D4E1E59fB7432c7826",
+    pfp: "https://djmahssgw62sw.cloudfront.net/general/0xb8e0d594cd869e49ae55c5b44fa886857b1cdeb9d4aeb49b44d47eeccf97c835.png",
+  },
+};
+
+export const WithTag: Story = {
+  args: {
+    address: "0x73239D66c237D5923a7DF2D4E1E59fB7432c7826",
+    tag: "rappzula",
+    pfp: "https://djmahssgw62sw.cloudfront.net/general/0xb8e0d594cd869e49ae55c5b44fa886857b1cdeb9d4aeb49b44d47eeccf97c835.png",
   },
 };
