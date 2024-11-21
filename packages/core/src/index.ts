@@ -1,6 +1,7 @@
 export * from "./types";
 
 export {
+  ACCOUNT_FACTORY_ADDRESS,
   CONTRACT_ADDRESSES,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_APP,

@@ -11,6 +11,7 @@ import { hasStoredPasskey } from "thirdweb/wallets/in-app";
 
 import { TDKAPI } from "../api";
 import {
+  ACCOUNT_FACTORY_ADDRESS,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
@@ -20,7 +21,6 @@ import type {
   EcosystemIdString,
   TreasureConnectClient,
 } from "../types";
-import { getContractAddress } from "../utils/contracts";
 import { startUserSession } from "./session";
 
 const SUPPORTED_SOCIAL_OPTIONS = [
@@ -151,7 +151,7 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
   const chain = defineChain(params.chainId ?? DEFAULT_TDK_CHAIN_ID);
   const smartWallet = createSmartWallet({
     chain,
-    factoryAddress: getContractAddress(chain.id, "ManagedAccountFactory"),
+    factoryAddress: ACCOUNT_FACTORY_ADDRESS,
     sponsorGas: true,
   });
 

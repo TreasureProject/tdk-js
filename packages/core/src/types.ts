@@ -38,8 +38,6 @@ export type AddressString = `0x${string}`;
 
 // Contracts
 export type Contract =
-  // Treasure Connect
-  | "ManagedAccountFactory"
   // Tokens
   | "MAGIC"
   | "VEE"

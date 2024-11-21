@@ -1,5 +1,5 @@
 import { defineChain } from "thirdweb";
-import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
+import { arbitrum, arbitrumSepolia, sepolia } from "thirdweb/chains";
 
 import type { AddressString, Contract } from "./types";
 
@@ -76,8 +76,6 @@ export const CONTRACT_ADDRESSES: Record<
   Partial<Record<Contract, AddressString>>
 > = {
   [arbitrum.id]: {
-    // Treasure Connect
-    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     // Tokens
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
     VEE: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
@@ -94,8 +92,6 @@ export const CONTRACT_ADDRESSES: Record<
     TreasureConduit: "0x8bf85fa9213647ec3485afd9dd5888b4db017434",
   },
   [arbitrumSepolia.id]: {
-    // Treasure Connect
-    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     // Tokens
     MAGIC: "0x55d0cf68a1afe0932aff6f36c87efa703508191c",
     VEE: "0x23be0504127475387a459fe4b01e54f1e336ffae",
@@ -111,13 +107,7 @@ export const CONTRACT_ADDRESSES: Record<
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",
   },
-  [mainnet.id]: {
-    // Treasure Connect
-    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
-  },
   [sepolia.id]: {
-    // Treasure Connect
-    ManagedAccountFactory: "0x463effb51873c7720c810ac7fb2e145ec2f8cc60",
     // Tokens
     MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
     VEE: "0x3398ddf47c19f20e7d048727ea7989e0a71d8cde",
@@ -136,3 +126,6 @@ export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
   [arbitrumSepolia.id]:
     "0xc51f27cf93531be66671dd0543cf22b475d00873000000000000000000000001",
 };
+
+export const ACCOUNT_FACTORY_ADDRESS =
+  "0x463effb51873c7720c810ac7fb2e145ec2f8cc60";

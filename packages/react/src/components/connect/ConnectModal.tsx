@@ -1,5 +1,6 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
+  ACCOUNT_FACTORY_ADDRESS,
   type ConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
   type LegacyProfile,
@@ -72,14 +73,13 @@ export const ConnectModal = ({
     ecosystemPartnerId,
     chain,
     tdk,
-    contractAddresses,
     logIn,
     logOut,
     updateUser,
   } = useTreasure();
   const accountAbstraction = {
     chain,
-    factoryAddress: contractAddresses.ManagedAccountFactory,
+    factoryAddress: ACCOUNT_FACTORY_ADDRESS,
     sponsorGas: true,
   };
   const [{ email, legacyProfiles, isLoading, error }, setState] = useState<{
