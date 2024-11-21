@@ -67,11 +67,11 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.4
-  thirdweb: ^5.68.0
+  thirdweb: ^5.70.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   turbo: ^2.3.0
   typescript: ^5.6.3
   uuid: ^11.0.3
-  viem: 2.21.44 # matches Thirdweb version to satisfy getAwsKmsAccount types
+  viem: 2.21.45 # matches Thirdweb version to satisfy getAwsKmsAccount types
   vite: ^5.4.11
   vitest: ^2.1.5
