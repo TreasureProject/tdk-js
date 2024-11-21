@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-core
 
+## 3.7.0
+
+### Patch Changes
+
+- 3b8bccc: Added API client helper for legacy user migration
+- c9f0393: Moved account factory to be constant address across all chains
+
 ## 3.6.0
 
 ### Minor Changes

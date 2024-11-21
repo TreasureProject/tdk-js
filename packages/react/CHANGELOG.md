@@ -1,5 +1,20 @@
 # @treasure-dev/tdk-react
 
+## 3.7.0
+
+### Minor Changes
+
+- 3b8bccc: Added legacy user migration flow to connect modal
+
+### Patch Changes
+
+- c9f0393: Moved account factory to be constant address across all chains
+- 7262679: Updated connected account modal to show user tag and profile pic when available
+- 0412906: Updated ConnectButton to show user tag and profile pic when available
+- Updated dependencies [3b8bccc]
+- Updated dependencies [c9f0393]
+  - @treasure-dev/tdk-core@3.7.0
+
 ## 3.6.0
 
 ### Patch Changes
