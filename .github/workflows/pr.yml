@@ -29,9 +29,9 @@ jobs:
         run: pnpm lint
       - name: Analyze code
         run: pnpm knip
-      - name: Test code
-        run: pnpm test
       - name: Build code
         run: pnpm build
       - name: Check types
         run: pnpm typecheck
+      - name: Test code
+        run: pnpm test
