@@ -8,7 +8,7 @@ catalog:
   "@aws-sdk/client-secrets-manager": ^3.693.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
-  "@changesets/cli": ^2.27.9
+  "@changesets/cli": ^2.27.10
   "@electron-toolkit/preload": ^3.0.1
   "@electron-toolkit/tsconfig": ^1.0.1
   "@electron-toolkit/utils": ^3.0.0
@@ -22,7 +22,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.1.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.39.0
-  "@sinclair/typebox": ^0.34.4
+  "@sinclair/typebox": ^0.34.7
   "@storybook/addon-essentials": ^8.4.4
   "@storybook/react": ^8.4.4
   "@storybook/react-vite": ^8.4.4
@@ -40,7 +40,7 @@ catalog:
   "aws-kms-signer": ^0.5.3
   clsx: ^2.1.1
   dotenv: ^16.3.1
-  "dotenv-cli": ^7.4.3
+  "dotenv-cli": ^7.4.4
   electron: ^31.1.2
   "electron-builder": ^25.1.7
   "electron-vite": ^2.3.0
@@ -69,7 +69,7 @@ catalog:
   "tailwind-merge": ^2.5.4
   thirdweb: ^5.70.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
-  turbo: ^2.3.0
+  turbo: ^2.3.1
   typescript: ^5.6.3
   uuid: ^11.0.3
   viem: 2.21.45 # matches Thirdweb version to satisfy getAwsKmsAccount types
