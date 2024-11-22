@@ -16,7 +16,7 @@ export const DEFAULT_TDK_DARKMATTER_BASE_URI =
 
 // Chains
 export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
-  id: 978_658,
+  id: 978658,
   name: "Treasure Topaz",
   nativeCurrency: {
     name: "MAGIC",
@@ -30,14 +30,37 @@ export const TREASURE_TOPAZ_CHAIN_DEFINITION = {
   },
   blockExplorers: {
     default: {
-      name: "Treasurescan",
+      name: "Treasure Topaz Explorer",
       url: "https://topaz.treasurescan.io",
-      apiUrl: "https://block-explorer.topaz.treasurescan.io/api",
+      apiUrl: "https://topaz.treasurescan.io/node-api/proxy/api/v2",
     },
   },
   testnet: true,
 };
 export const treasureTopaz = defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION);
+
+export const TREASURE_CHAIN_DEFINITION = {
+  id: 61166,
+  name: "Treasure",
+  nativeCurrency: {
+    name: "MAGIC",
+    symbol: "MAGIC",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc.treasure.lol"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Treasure Explorer",
+      url: "https://treasurescan.io",
+      apiUrl: "https://treasurescan.io/api/v2",
+    },
+  },
+};
+export const treasure = defineChain(TREASURE_CHAIN_DEFINITION);
 
 // APIs
 export const BRIDGEWORLD_API_URL = {

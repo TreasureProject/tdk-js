@@ -4,7 +4,10 @@ import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
 import { createAuth } from "@treasure-dev/auth";
-import { TREASURE_TOPAZ_CHAIN_DEFINITION } from "@treasure-dev/tdk-core";
+import {
+  TREASURE_CHAIN_DEFINITION,
+  TREASURE_TOPAZ_CHAIN_DEFINITION,
+} from "@treasure-dev/tdk-core";
 import { http, createConfig, fallback } from "@wagmi/core";
 import {
   arbitrum,
@@ -63,6 +66,7 @@ const main = async () => {
         arbitrumSepolia,
         mainnet,
         sepolia,
+        defineChain(TREASURE_CHAIN_DEFINITION),
         defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION),
       ],
       transports: {
@@ -87,6 +91,12 @@ const main = async () => {
         [sepolia.id]: fallback([
           http(
             `https://${sepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+          http(),
+        ]),
+        [TREASURE_CHAIN_DEFINITION.id]: fallback([
+          http(
+            `https://${TREASURE_CHAIN_DEFINITION.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
           ),
           http(),
         ]),
