@@ -31,7 +31,6 @@ model User {
   socialAccounts       UserSocialAccount[]
   notificationSettings UserNotificationSettings[]
   gemsSummary          GemsSummary?
-  gemsTransactions     GemsTx[]
   vouchers             Voucher[]
   quests               UserQuest[]
 
@@ -270,7 +269,6 @@ model GemsTx {
 
   // Relations
   userId String? @map("user_id")
-  user   User?   @relation(fields: [userId], references: [id])
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
