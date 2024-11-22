@@ -32,8 +32,11 @@ model User {
   notificationSettings UserNotificationSettings[]
 
   // Computed
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  GemsSummary GemsSummary?
+  Voucher     Voucher[]
+  UserQuest   UserQuest[]
 
   @@map("user")
   @@schema("public")
@@ -109,8 +112,11 @@ model UserProfile {
   legacyNotificationSettings UserNotificationSettings[]
 
   // Computed
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  GemsSummary GemsSummary?
+  Voucher     Voucher[]
+  UserQuest   UserQuest[]
 
   @@index([legacyAddress])
   @@index([legacyEmail, legacyEmailVerifiedAt])
@@ -257,8 +263,13 @@ model RawTreasureAccount {
 model GemsSummary {
   id String @id @default(cuid())
 
-  userId        String? @unique @map("user_id")
-  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+  // Relations
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @unique @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
 
   gems         Int @default(0)
   gemsEarned   Int @default(0) @map("gems_earned")
@@ -266,20 +277,17 @@ model GemsSummary {
   shardsEarned Int @default(0) @map("shards_earned")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@index([gems])
   @@index([gemsEarned])
-  @@index([shards])
-  @@index([shardsEarned])
-  @@index([createdAt])
-  @@index([updatedAt])
   @@map("gems_summary")
   @@schema("public")
 }
 
 model GemsTx {
-  txId String @id @map("tx_id")
+  id String @id @default(cuid())
+
+  txId String @unique @map("tx_id")
 
   userId        String? @map("user_id")
   legacyAddress String? @map("legacy_address")
@@ -292,33 +300,31 @@ model GemsTx {
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@index([userId])
-  @@index([legacyAddress])
-  @@index([category])
-  @@index([amount])
-  @@index([amountShards])
-  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([legacyAddress, createdAt])
   @@map("gems_tx")
   @@schema("public")
 }
 
 // Rewards/Chests/Vouchers.
 enum RewardType {
-  Nft
-  Coin
+  NFT
+  COIN
 
   @@map("reward_type_enum")
   @@schema("public")
 }
 
 model Reward {
-  id           String     @id
+  id String @id @default(cuid())
+
+  rewardId     String     @unique @map("reward_id")
   type         RewardType
   subType      String?    @map("sub_type")
   chain        String
   tokenAddress String     @map("token_address")
   createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // NFT Type only
   slug     String?
@@ -331,57 +337,62 @@ model Reward {
   // Relations.
   chestTypeRewards ChestTypeReward[]
 
-  @@map("rewards")
+  @@map("reward")
   @@schema("public")
 }
 
 model ChestSeason {
-  id     String  @id
-  name   String
-  price  Int
-  active Boolean @default(false)
+  id String @id @default(cuid())
+
+  chestSeasonId String  @unique @map("chest_season_id")
+  name          String
+  price         Int
+  active        Boolean @default(false)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // Relations.
   chestTypes ChestType[]
 
-  @@index([active])
-  @@map("chest_seasons")
+  @@map("chest_season")
   @@schema("public")
 }
 
 model ChestType {
-  id            String  @id
-  metadata      Json
+  id String @id @default(cuid())
+
+  chestTypeId   String  @unique @map("chest_type_id")
   chestSeasonId String? @map("chest_season_id")
+  metadata      Json
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // Relations.
-  season   ChestSeason?      @relation(fields: [chestSeasonId], references: [id])
+  season   ChestSeason?      @relation(fields: [chestSeasonId], references: [chestSeasonId])
   chests   Chest[]
   vouchers Voucher[]
   rewards  ChestTypeReward[]
 
   @@index([createdAt])
   @@index([updatedAt])
-  @@map("chest_types")
+  @@map("chest_type")
   @@schema("public")
 }
 
 model ChestTypeReward {
+  id String @id @default(cuid())
+
   chestTypeId String @map("chest_type_id")
   rewardId    String @map("reward_id")
 
-  // Relations.
-  chestType ChestType @relation(fields: [chestTypeId], references: [id])
-  reward    Reward    @relation(fields: [rewardId], references: [id])
+  // Relations
+  chestType ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
+  reward    Reward    @relation(fields: [rewardId], references: [rewardId])
 
-  @@id([chestTypeId, rewardId])
-  @@map("chest_type_rewards")
+  @@unique([chestTypeId, rewardId])
+  @@map("chest_type_reward")
   @@schema("public")
 }
 
@@ -395,11 +406,12 @@ enum ChestStatus {
 }
 
 model Chest {
-  id     Int         @id @default(autoincrement())
+  id String @id @default(cuid())
+
   status ChestStatus @default(AVAILABLE)
 
   chestTypeId String    @map("chest_type_id")
-  chestType   ChestType @relation(fields: [chestTypeId], references: [id])
+  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
 
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
@@ -410,7 +422,7 @@ model Chest {
   @@index([chestTypeId])
   @@index([createdAt])
   @@index([claimedAt])
-  @@map("chests")
+  @@map("chest")
   @@schema("public")
 }
 
@@ -424,33 +436,35 @@ enum VoucherStatus {
 }
 
 model Voucher {
-  id Int @id @default(autoincrement())
-
-  userId        String? @map("user_id")
-  legacyAddress String? @map("legacy_address") @db.VarChar(42)
+  id String @id @default(cuid())
 
   gemsValue Int           @map("gems_value")
   nonce     String
   status    VoucherStatus @default(UNCLAIMED)
 
   chestTypeId String    @map("chest_type_id")
-  chestType   ChestType @relation(fields: [chestTypeId], references: [id])
+  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
 
-  chestId Int   @unique @map("chest_id")
-  chest   Chest @relation(fields: [chestId], references: [id])
+  chestId String @unique @map("chest_id")
+  chest   Chest  @relation(fields: [chestId], references: [id])
 
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
 
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
+
   @@index([userId])
-  @@index([legacyAddress])
+  @@index([legacyUserProfileId])
   @@index([status])
   @@index([status, userId])
-  @@index([status, legacyAddress])
-  @@index([chestTypeId])
-  @@index([createdAt])
-  @@index([claimedAt])
-  @@map("vouchers")
+  @@index([status, legacyUserProfileId])
+  @@map("voucher")
   @@schema("public")
 }
 
@@ -466,29 +480,26 @@ enum QuestStatus {
 }
 
 model QuestConfig {
-  questId String @id @map("quest_id")
+  id String @id @default(cuid())
+
+  questId String @unique @map("quest_id")
   data    Json
 
-  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@map("quest_configs")
+  @@map("quest_config")
   @@schema("public")
 }
 
 model UserQuest {
-  id String @id
+  id String @id @default(cuid())
 
-  userId        String? @map("user_id")
-  legacyAddress String? @map("legacy_address") @db.VarChar(42)
-
-  questId String @map("quest_id")
-
-  questStatus QuestStatus @map("quest_status")
-
-  isHiddenByUser Boolean @default(false) @map("is_hidden_by_user")
+  questId        String      @map("quest_id")
+  questStatus    QuestStatus @map("quest_status")
+  isHiddenByUser Boolean     @default(false) @map("is_hidden_by_user")
 
   startedAt   DateTime? @map("started_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @map("updated_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
   ackedAt     DateTime? @map("acked_at") @db.Timestamptz(6)
   abandonedAt DateTime? @map("abandoned_at") @db.Timestamptz(6)
@@ -497,24 +508,33 @@ model UserQuest {
 
   notificationId String? @map("notification_id")
 
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
+
   @@unique([userId, questId])
-  @@unique([legacyAddress, questId])
+  @@unique([legacyUserProfileId, questId])
   @@index([userId])
-  @@index([legacyAddress])
+  @@index([legacyUserProfileId])
   @@index([questStatus, userId])
-  @@index([questStatus, legacyAddress])
+  @@index([questStatus, legacyUserProfileId])
   @@index([questStatus, questId])
   @@index([questStatus, questId, completedAt])
-  @@map("user_quests")
+  @@map("user_quest")
   @@schema("public")
 }
 
 model QuestStat {
-  questId String @id @map("quest_id")
+  id      String @id @default(cuid())
+  questId String @unique @map("quest_id")
   data    Json
 
-  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@map("quest_stats")
+  @@map("quest_stat")
   @@schema("public")
 }
