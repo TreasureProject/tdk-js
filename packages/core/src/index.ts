@@ -11,7 +11,9 @@ export {
   DEFAULT_TDK_ECOSYSTEM_ID,
   TOKEN_IDS,
   TREASURE_CONDUIT_KEYS,
+  TREASURE_CHAIN_DEFINITION,
   TREASURE_TOPAZ_CHAIN_DEFINITION,
+  treasure,
   treasureTopaz,
 } from "./constants";
 export { erc20Abi } from "./abis/erc20Abi";

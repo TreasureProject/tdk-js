@@ -1,8 +1,5 @@
 import * as Sentry from "@sentry/node";
-import {
-  ACCOUNT_FACTORY_ADDRESS,
-  getContractAddress,
-} from "@treasure-dev/tdk-core";
+import { ACCOUNT_FACTORY_ADDRESS } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/auth";
