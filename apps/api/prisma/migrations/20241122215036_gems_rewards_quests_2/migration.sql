@@ -21,10 +21,9 @@
 -- AlterEnum
 BEGIN;
 CREATE TYPE "public"."reward_type_enum_new" AS ENUM ('NFT', 'COIN');
-ALTER TABLE "public"."reward" ALTER COLUMN "type" TYPE "public"."reward_type_enum_new" USING ("type"::text::"public"."reward_type_enum_new");
 ALTER TYPE "public"."reward_type_enum" RENAME TO "reward_type_enum_old";
 ALTER TYPE "public"."reward_type_enum_new" RENAME TO "reward_type_enum";
-DROP TYPE "public"."reward_type_enum_old";
+DROP TYPE "public"."reward_type_enum_old" CASCADE;
 COMMIT;
 
 -- DropForeignKey
