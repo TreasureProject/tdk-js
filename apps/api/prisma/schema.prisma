@@ -252,3 +252,269 @@ model RawTreasureAccount {
   @@ignore
   @@schema("smart_account")
 }
+
+// Gems.
+model GemsSummary {
+  id String @id @default(cuid())
+
+  userId        String? @unique @map("user_id")
+  legacyAddress String? @unique @map("legacy_address") @db.VarChar(42)
+
+  gems         Int @default(0)
+  gemsEarned   Int @default(0) @map("gems_earned")
+  shards       Int @default(0)
+  shardsEarned Int @default(0) @map("shards_earned")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+
+  @@index([gems])
+  @@index([gemsEarned])
+  @@index([shards])
+  @@index([shardsEarned])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("gems_summary")
+  @@schema("public")
+}
+
+model GemsTx {
+  txId String @id @map("tx_id")
+
+  userId        String? @map("user_id")
+  legacyAddress String? @map("legacy_address")
+
+  category     String
+  amount       Int     @default(0)
+  amountShards Int     @default(0) @map("amount_shards")
+  description  String
+  internalNote String? @map("internal_note")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([legacyAddress])
+  @@index([category])
+  @@index([amount])
+  @@index([amountShards])
+  @@index([createdAt])
+  @@map("gems_tx")
+  @@schema("public")
+}
+
+// Rewards/Chests/Vouchers.
+enum RewardType {
+  Nft
+  Coin
+
+  @@map("reward_type_enum")
+  @@schema("public")
+}
+
+model Reward {
+  id           String     @id
+  type         RewardType
+  subType      String?    @map("sub_type")
+  chain        String
+  tokenAddress String     @map("token_address")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at")
+
+  // NFT Type only
+  slug     String?
+  tokenId  String? @map("token_id")
+  quantity Int?
+
+  // Coin Type only
+  quantityWei String? @map("quantity_wei")
+
+  // Relations.
+  chestTypeRewards ChestTypeReward[]
+
+  @@map("rewards")
+  @@schema("public")
+}
+
+model ChestSeason {
+  id     String  @id
+  name   String
+  price  Int
+  active Boolean @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relations.
+  chestTypes ChestType[]
+
+  @@index([active])
+  @@map("chest_seasons")
+  @@schema("public")
+}
+
+model ChestType {
+  id            String  @id
+  metadata      Json
+  chestSeasonId String? @map("chest_season_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+
+  // Relations.
+  season   ChestSeason?      @relation(fields: [chestSeasonId], references: [id])
+  chests   Chest[]
+  vouchers Voucher[]
+  rewards  ChestTypeReward[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("chest_types")
+  @@schema("public")
+}
+
+model ChestTypeReward {
+  chestTypeId String @map("chest_type_id")
+  rewardId    String @map("reward_id")
+
+  // Relations.
+  chestType ChestType @relation(fields: [chestTypeId], references: [id])
+  reward    Reward    @relation(fields: [rewardId], references: [id])
+
+  @@id([chestTypeId, rewardId])
+  @@map("chest_type_rewards")
+  @@schema("public")
+}
+
+enum ChestStatus {
+  AVAILABLE
+  CLAIMED
+  EXPIRED
+
+  @@map("chest_status_enum")
+  @@schema("public")
+}
+
+model Chest {
+  id     Int         @id @default(autoincrement())
+  status ChestStatus @default(AVAILABLE)
+
+  chestTypeId String    @map("chest_type_id")
+  chestType   ChestType @relation(fields: [chestTypeId], references: [id])
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
+
+  voucher Voucher?
+
+  @@index([status])
+  @@index([chestTypeId])
+  @@index([createdAt])
+  @@index([claimedAt])
+  @@map("chests")
+  @@schema("public")
+}
+
+enum VoucherStatus {
+  UNCLAIMED
+  CLAIMED
+  EXPIRED
+
+  @@map("voucher_status_enum")
+  @@schema("public")
+}
+
+model Voucher {
+  id Int @id @default(autoincrement())
+
+  userId        String? @map("user_id")
+  legacyAddress String? @map("legacy_address") @db.VarChar(42)
+
+  gemsValue Int           @map("gems_value")
+  nonce     String
+  status    VoucherStatus @default(UNCLAIMED)
+
+  chestTypeId String    @map("chest_type_id")
+  chestType   ChestType @relation(fields: [chestTypeId], references: [id])
+
+  chestId Int   @unique @map("chest_id")
+  chest   Chest @relation(fields: [chestId], references: [id])
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([legacyAddress])
+  @@index([status])
+  @@index([status, userId])
+  @@index([status, legacyAddress])
+  @@index([chestTypeId])
+  @@index([createdAt])
+  @@index([claimedAt])
+  @@map("vouchers")
+  @@schema("public")
+}
+
+// Quests.
+enum QuestStatus {
+  ACTIVE
+  ABANDONED
+  COMPLETE
+  INACTIVE
+
+  @@map("quest_status_enum")
+  @@schema("public")
+}
+
+model QuestConfig {
+  questId String @id @map("quest_id")
+  data    Json
+
+  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+
+  @@map("quest_configs")
+  @@schema("public")
+}
+
+model UserQuest {
+  id String @id
+
+  userId        String? @map("user_id")
+  legacyAddress String? @map("legacy_address") @db.VarChar(42)
+
+  questId String @map("quest_id")
+
+  questStatus QuestStatus @map("quest_status")
+
+  isHiddenByUser Boolean @default(false) @map("is_hidden_by_user")
+
+  startedAt   DateTime? @map("started_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @map("updated_at") @db.Timestamptz(6)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  ackedAt     DateTime? @map("acked_at") @db.Timestamptz(6)
+  abandonedAt DateTime? @map("abandoned_at") @db.Timestamptz(6)
+
+  progressSummary Json? @map("progress_summary")
+
+  notificationId String? @map("notification_id")
+
+  @@unique([userId, questId])
+  @@unique([legacyAddress, questId])
+  @@index([userId])
+  @@index([legacyAddress])
+  @@index([questStatus, userId])
+  @@index([questStatus, legacyAddress])
+  @@index([questStatus, questId])
+  @@index([questStatus, questId, completedAt])
+  @@map("user_quests")
+  @@schema("public")
+}
+
+model QuestStat {
+  questId String @id @map("quest_id")
+  data    Json
+
+  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+
+  @@map("quest_stats")
+  @@schema("public")
+}
