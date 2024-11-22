@@ -30,13 +30,14 @@ model User {
   smartAccounts        UserSmartAccount[]
   socialAccounts       UserSocialAccount[]
   notificationSettings UserNotificationSettings[]
+  gemsSummary          GemsSummary?
+  gemsTransactions     GemsTx[]
+  vouchers             Voucher[]
+  quests               UserQuest[]
 
   // Computed
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  GemsSummary GemsSummary?
-  Voucher     Voucher[]
-  UserQuest   UserQuest[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user")
   @@schema("public")
@@ -110,13 +111,13 @@ model UserProfile {
   user                       User?                      @relation(fields: [userId], references: [id])
   legacySocialAccounts       UserSocialAccount[]
   legacyNotificationSettings UserNotificationSettings[]
+  gemsSummary                GemsSummary?
+  vouchers                   Voucher[]
+  quests                     UserQuest[]
 
   // Computed
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  GemsSummary GemsSummary?
-  Voucher     Voucher[]
-  UserQuest   UserQuest[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([legacyAddress])
   @@index([legacyEmail, legacyEmailVerifiedAt])
@@ -226,6 +227,313 @@ model TransactionErrorLog {
   @@schema("public")
 }
 
+// Gems.
+model GemsSummary {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  gems         Int @default(0)
+  gemsEarned   Int @default(0) @map("gems_earned")
+  shards       Int @default(0)
+  shardsEarned Int @default(0) @map("shards_earned")
+
+  // Relations
+  userId String? @unique @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @unique @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([gemsEarned])
+  @@map("gems_summary")
+  @@schema("public")
+}
+
+model GemsTx {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  txId          String  @unique @map("tx_id")
+  legacyAddress String? @map("legacy_address")
+  category      String
+  amount        Int     @default(0)
+  amountShards  Int     @default(0) @map("amount_shards")
+  description   String
+  internalNote  String? @map("internal_note")
+
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId, createdAt])
+  @@index([legacyAddress, createdAt])
+  @@map("gems_tx")
+  @@schema("public")
+}
+
+// Rewards/Chests/Vouchers.
+enum RewardType {
+  NFT
+  COIN
+
+  @@map("reward_type_enum")
+  @@schema("public")
+}
+
+model Reward {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  rewardId     String     @unique @map("reward_id")
+  type         RewardType
+  subType      String?    @map("sub_type")
+  chain        String
+  tokenAddress String     @map("token_address")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  // NFT Type only
+  slug         String?
+  tokenId      String?    @map("token_id")
+  quantity     Int?
+  // Coin Type only
+  quantityWei  String?    @map("quantity_wei")
+
+  // Relations
+  chestTypeRewards ChestTypeReward[]
+
+  @@map("reward")
+  @@schema("public")
+}
+
+model ChestSeason {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  chestSeasonId String  @unique @map("chest_season_id")
+  name          String
+  price         Int
+  active        Boolean @default(false)
+
+  // Relations
+  chestTypes ChestType[]
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("chest_season")
+  @@schema("public")
+}
+
+model ChestType {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  chestTypeId String @unique @map("chest_type_id")
+  metadata    Json
+
+  // Relations
+  chestSeasonId String?           @map("chest_season_id")
+  season        ChestSeason?      @relation(fields: [chestSeasonId], references: [chestSeasonId])
+  chests        Chest[]
+  vouchers      Voucher[]
+  rewards       ChestTypeReward[]
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@map("chest_type")
+  @@schema("public")
+}
+
+model ChestTypeReward {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+
+  // Relations
+  chestTypeId String    @map("chest_type_id")
+  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
+  rewardId    String    @map("reward_id")
+  reward      Reward    @relation(fields: [rewardId], references: [rewardId])
+
+  @@unique([chestTypeId, rewardId])
+  @@map("chest_type_reward")
+  @@schema("public")
+}
+
+enum ChestStatus {
+  AVAILABLE
+  CLAIMED
+  EXPIRED
+
+  @@map("chest_status_enum")
+  @@schema("public")
+}
+
+model Chest {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  status      ChestStatus @default(AVAILABLE)
+  chestTypeId String      @map("chest_type_id")
+  chestType   ChestType   @relation(fields: [chestTypeId], references: [chestTypeId])
+
+  // Computed
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
+
+  // Relations
+  voucher Voucher?
+
+  @@index([status])
+  @@index([chestTypeId])
+  @@index([createdAt])
+  @@index([claimedAt])
+  @@map("chest")
+  @@schema("public")
+}
+
+enum VoucherStatus {
+  UNCLAIMED
+  CLAIMED
+  EXPIRED
+
+  @@map("voucher_status_enum")
+  @@schema("public")
+}
+
+model Voucher {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  gemsValue Int           @map("gems_value")
+  nonce     String
+  status    VoucherStatus @default(UNCLAIMED)
+  claimedAt DateTime?     @map("claimed_at") @db.Timestamptz(6)
+
+  // Relations
+  userId      String?   @map("user_id")
+  user        User?     @relation(fields: [userId], references: [id])
+  chestTypeId String    @map("chest_type_id")
+  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
+  chestId     String    @unique @map("chest_id")
+  chest       Chest     @relation(fields: [chestId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
+
+  // Computed
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([legacyUserProfileId])
+  @@index([status])
+  @@index([status, userId])
+  @@index([status, legacyUserProfileId])
+  @@map("voucher")
+  @@schema("public")
+}
+
+// Quests.
+enum QuestStatus {
+  ACTIVE
+  ABANDONED
+  COMPLETE
+  INACTIVE
+
+  @@map("quest_status_enum")
+  @@schema("public")
+}
+
+model QuestConfig {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  questId String @unique @map("quest_id")
+  data    Json
+
+  // Computed
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("quest_config")
+  @@schema("public")
+}
+
+model UserQuest {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  questId         String      @map("quest_id")
+  questStatus     QuestStatus @map("quest_status")
+  isHiddenByUser  Boolean     @default(false) @map("is_hidden_by_user")
+  startedAt       DateTime?   @map("started_at") @db.Timestamptz(6)
+  completedAt     DateTime?   @map("completed_at") @db.Timestamptz(6)
+  ackedAt         DateTime?   @map("acked_at") @db.Timestamptz(6)
+  abandonedAt     DateTime?   @map("abandoned_at") @db.Timestamptz(6)
+  progressSummary Json?       @map("progress_summary")
+  notificationId  String?     @map("notification_id")
+
+  // Relations
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
+
+  // Computed
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId, questId])
+  @@unique([legacyUserProfileId, questId])
+  @@index([userId])
+  @@index([legacyUserProfileId])
+  @@index([questStatus, userId])
+  @@index([questStatus, legacyUserProfileId])
+  @@index([questStatus, questId])
+  @@index([questStatus, questId, completedAt])
+  @@map("user_quest")
+  @@schema("public")
+}
+
+model QuestStat {
+  // Primary key
+  id String @id @default(cuid())
+
+  // Fields
+  questId String @unique @map("quest_id")
+  data    Json
+
+  // Computed
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("quest_stat")
+  @@schema("public")
+}
+
 view Transaction {
   id              String   @id
   chainId         Int      @map("chain_id")
@@ -257,284 +565,4 @@ model RawTreasureAccount {
   @@map("treasure_accounts_jsonb")
   @@ignore
   @@schema("smart_account")
-}
-
-// Gems.
-model GemsSummary {
-  id String @id @default(cuid())
-
-  // Relations
-  userId String? @unique @map("user_id")
-  user   User?   @relation(fields: [userId], references: [id])
-
-  // Migration
-  legacyUserProfileId String?      @unique @map("legacy_user_profile_id")
-  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
-
-  gems         Int @default(0)
-  gemsEarned   Int @default(0) @map("gems_earned")
-  shards       Int @default(0)
-  shardsEarned Int @default(0) @map("shards_earned")
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  @@index([gemsEarned])
-  @@map("gems_summary")
-  @@schema("public")
-}
-
-model GemsTx {
-  id String @id @default(cuid())
-
-  txId String @unique @map("tx_id")
-
-  userId        String? @map("user_id")
-  legacyAddress String? @map("legacy_address")
-
-  category     String
-  amount       Int     @default(0)
-  amountShards Int     @default(0) @map("amount_shards")
-  description  String
-  internalNote String? @map("internal_note")
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  @@index([userId, createdAt])
-  @@index([legacyAddress, createdAt])
-  @@map("gems_tx")
-  @@schema("public")
-}
-
-// Rewards/Chests/Vouchers.
-enum RewardType {
-  NFT
-  COIN
-
-  @@map("reward_type_enum")
-  @@schema("public")
-}
-
-model Reward {
-  id String @id @default(cuid())
-
-  rewardId     String     @unique @map("reward_id")
-  type         RewardType
-  subType      String?    @map("sub_type")
-  chain        String
-  tokenAddress String     @map("token_address")
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // NFT Type only
-  slug     String?
-  tokenId  String? @map("token_id")
-  quantity Int?
-
-  // Coin Type only
-  quantityWei String? @map("quantity_wei")
-
-  // Relations.
-  chestTypeRewards ChestTypeReward[]
-
-  @@map("reward")
-  @@schema("public")
-}
-
-model ChestSeason {
-  id String @id @default(cuid())
-
-  chestSeasonId String  @unique @map("chest_season_id")
-  name          String
-  price         Int
-  active        Boolean @default(false)
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations.
-  chestTypes ChestType[]
-
-  @@map("chest_season")
-  @@schema("public")
-}
-
-model ChestType {
-  id String @id @default(cuid())
-
-  chestTypeId   String  @unique @map("chest_type_id")
-  chestSeasonId String? @map("chest_season_id")
-  metadata      Json
-
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations.
-  season   ChestSeason?      @relation(fields: [chestSeasonId], references: [chestSeasonId])
-  chests   Chest[]
-  vouchers Voucher[]
-  rewards  ChestTypeReward[]
-
-  @@index([createdAt])
-  @@index([updatedAt])
-  @@map("chest_type")
-  @@schema("public")
-}
-
-model ChestTypeReward {
-  id String @id @default(cuid())
-
-  chestTypeId String @map("chest_type_id")
-  rewardId    String @map("reward_id")
-
-  // Relations
-  chestType ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
-  reward    Reward    @relation(fields: [rewardId], references: [rewardId])
-
-  @@unique([chestTypeId, rewardId])
-  @@map("chest_type_reward")
-  @@schema("public")
-}
-
-enum ChestStatus {
-  AVAILABLE
-  CLAIMED
-  EXPIRED
-
-  @@map("chest_status_enum")
-  @@schema("public")
-}
-
-model Chest {
-  id String @id @default(cuid())
-
-  status ChestStatus @default(AVAILABLE)
-
-  chestTypeId String    @map("chest_type_id")
-  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
-
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
-
-  voucher Voucher?
-
-  @@index([status])
-  @@index([chestTypeId])
-  @@index([createdAt])
-  @@index([claimedAt])
-  @@map("chest")
-  @@schema("public")
-}
-
-enum VoucherStatus {
-  UNCLAIMED
-  CLAIMED
-  EXPIRED
-
-  @@map("voucher_status_enum")
-  @@schema("public")
-}
-
-model Voucher {
-  id String @id @default(cuid())
-
-  gemsValue Int           @map("gems_value")
-  nonce     String
-  status    VoucherStatus @default(UNCLAIMED)
-
-  chestTypeId String    @map("chest_type_id")
-  chestType   ChestType @relation(fields: [chestTypeId], references: [chestTypeId])
-
-  chestId String @unique @map("chest_id")
-  chest   Chest  @relation(fields: [chestId], references: [id])
-
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  claimedAt DateTime? @map("claimed_at") @db.Timestamptz(6)
-
-  // Relations
-  userId String? @map("user_id")
-  user   User?   @relation(fields: [userId], references: [id])
-
-  // Migration
-  legacyUserProfileId String?      @map("legacy_user_profile_id")
-  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([legacyUserProfileId])
-  @@index([status])
-  @@index([status, userId])
-  @@index([status, legacyUserProfileId])
-  @@map("voucher")
-  @@schema("public")
-}
-
-// Quests.
-enum QuestStatus {
-  ACTIVE
-  ABANDONED
-  COMPLETE
-  INACTIVE
-
-  @@map("quest_status_enum")
-  @@schema("public")
-}
-
-model QuestConfig {
-  id String @id @default(cuid())
-
-  questId String @unique @map("quest_id")
-  data    Json
-
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  @@map("quest_config")
-  @@schema("public")
-}
-
-model UserQuest {
-  id String @id @default(cuid())
-
-  questId        String      @map("quest_id")
-  questStatus    QuestStatus @map("quest_status")
-  isHiddenByUser Boolean     @default(false) @map("is_hidden_by_user")
-
-  startedAt   DateTime? @map("started_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
-  ackedAt     DateTime? @map("acked_at") @db.Timestamptz(6)
-  abandonedAt DateTime? @map("abandoned_at") @db.Timestamptz(6)
-
-  progressSummary Json? @map("progress_summary")
-
-  notificationId String? @map("notification_id")
-
-  // Relations
-  userId String? @map("user_id")
-  user   User?   @relation(fields: [userId], references: [id])
-
-  // Migration
-  legacyUserProfileId String?      @map("legacy_user_profile_id")
-  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, questId])
-  @@unique([legacyUserProfileId, questId])
-  @@index([userId])
-  @@index([legacyUserProfileId])
-  @@index([questStatus, userId])
-  @@index([questStatus, legacyUserProfileId])
-  @@index([questStatus, questId])
-  @@index([questStatus, questId, completedAt])
-  @@map("user_quest")
-  @@schema("public")
-}
-
-model QuestStat {
-  id      String @id @default(cuid())
-  questId String @unique @map("quest_id")
-  data    Json
-
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  @@map("quest_stat")
-  @@schema("public")
 }
