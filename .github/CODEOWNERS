@@ -11,6 +11,7 @@ apps/api/ @alecananian
 
 packages/auth/ @alecananian
 packages/core/ @alecananian
+packages/launcher @WyattMufson
 packages/react/ @alecananian
 packages/tailwind-config/ @alecananian
 
@@ -19,4 +20,4 @@ packages/tailwind-config/ @alecananian
 examples/connect-core/ @alecananian
 examples/connect-react/ @alecananian
 examples/connect-electron/ @WyattMufson
-examples/magicswap/ @cdotta
+examples/magicswap/ @alecananian
