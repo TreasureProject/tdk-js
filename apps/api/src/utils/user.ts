@@ -2,6 +2,7 @@ import type { PrismaClient, UserProfile } from "@prisma/client";
 import {
   DEFAULT_TDK_ECOSYSTEM_ID,
   type EcosystemIdString,
+  USER_PROFILE_FREE_BANNER_URLS,
   fetchUserInventory,
   getContractAddress,
 } from "@treasure-dev/tdk-core";
@@ -16,13 +17,6 @@ import {
   USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "./db";
 import { log } from "./log";
-
-const USER_PROFILE_FREE_BANNER_URLS = {
-  ruby: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Ruby.png",
-  honey: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Honey.png",
-  sapphire:
-    "https://images.treasure.lol/0/ProfileBanner2/Treasure_Sapphire.png",
-};
 
 export const transformUserProfileResponseFields = (
   profile: Partial<UserProfile>,

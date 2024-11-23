@@ -13,6 +13,7 @@ export {
   TREASURE_CONDUIT_KEYS,
   TREASURE_CHAIN_DEFINITION,
   TREASURE_TOPAZ_CHAIN_DEFINITION,
+  USER_PROFILE_FREE_BANNER_URLS,
   treasure,
   treasureTopaz,
 } from "./constants";

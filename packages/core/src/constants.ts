@@ -154,3 +154,10 @@ export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
 
 export const ACCOUNT_FACTORY_ADDRESS =
   "0x463effb51873c7720c810ac7fb2e145ec2f8cc60";
+
+export const USER_PROFILE_FREE_BANNER_URLS = {
+  ruby: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Ruby.png",
+  honey: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Honey.png",
+  sapphire:
+    "https://images.treasure.lol/0/ProfileBanner2/Treasure_Sapphire.png",
+};
