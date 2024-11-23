@@ -137,10 +137,34 @@ export const updateCurrentUserBodySchema = Type.Object({
   featuredBadgeIds: Type.Optional(Type.Array(Type.String())),
   highlyFeaturedBadgeId: Type.Optional(nullableStringSchema),
   about: Type.Optional(nullableStringSchema),
-  pfp: Type.Optional(nullableStringSchema),
-  bannerId: Type.Optional(nullableStringSchema),
-  bannerCollectionAddress: Type.Optional(nullableStringSchema),
-  bannerTokenId: Type.Optional(nullableStringSchema),
+  pfpData: Type.Optional(
+    Type.Object({
+      chainId: Type.Integer(),
+      collectionAddress: Type.String(),
+      tokenId: Type.String(),
+      cropArea: Type.Optional(
+        Type.Object({
+          x: Type.Integer(),
+          y: Type.Integer(),
+          width: Type.Integer(),
+          height: Type.Integer(),
+        }),
+      ),
+    }),
+  ),
+  bannerData: Type.Optional(
+    Type.Union([
+      Type.Null(),
+      Type.Literal("ruby"),
+      Type.Literal("honey"),
+      Type.Literal("sapphire"),
+      Type.Object({
+        chainId: Type.Integer(),
+        collectionAddress: Type.String(),
+        tokenId: Type.String(),
+      }),
+    ]),
+  ),
   showMagicBalance: Type.Optional(Type.Boolean()),
   showEthBalance: Type.Optional(Type.Boolean()),
   showGemsBalance: Type.Optional(Type.Boolean()),

@@ -9,6 +9,7 @@ import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
 import { checksumAddress } from "thirdweb/utils";
 
 import { arbitrum } from "thirdweb/chains";
+import type { UpdateCurrentUserBody } from "../schema";
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
@@ -114,47 +115,57 @@ const isValidUserProfileBannerCollection = ({
   );
 };
 
-export const getUserProfileBannerUrl = async ({
+export const createUserProfileBannerUrl = async ({
   userAddress,
-  bannerId,
-  chainId,
+  bannerData,
   inventoryApiUrl,
   inventoryApiKey,
-  collectionAddress,
-  tokenId,
 }: {
   userAddress: string;
-  bannerId?: string;
-  chainId: number;
+  bannerData: NonNullable<UpdateCurrentUserBody["bannerData"]>;
   inventoryApiUrl: string;
   inventoryApiKey: string;
-  collectionAddress?: string;
-  tokenId?: string;
 }) => {
-  if (bannerId && bannerId in USER_PROFILE_FREE_BANNER_URLS) {
-    return USER_PROFILE_FREE_BANNER_URLS[
-      bannerId as keyof typeof USER_PROFILE_FREE_BANNER_URLS
-    ];
+  if (typeof bannerData === "string") {
+    return USER_PROFILE_FREE_BANNER_URLS[bannerData];
   }
 
-  if (
-    collectionAddress &&
-    tokenId &&
-    isValidUserProfileBannerCollection({ chainId, collectionAddress })
-  ) {
-    const tokens = await fetchUserInventory({
-      chainId,
-      apiUrl: inventoryApiUrl,
-      apiKey: inventoryApiKey,
-      userAddress,
-      tokens: [{ address: collectionAddress, tokenId }],
-    });
-    if (tokens[0] && tokens[0].balance > 0) {
-      return tokens[0].image;
-    }
+  const { chainId, collectionAddress, tokenId } = bannerData;
+  if (!isValidUserProfileBannerCollection({ chainId, collectionAddress })) {
+    return null;
   }
 
-  return null;
+  const [token] = await fetchUserInventory({
+    chainId,
+    apiUrl: inventoryApiUrl,
+    apiKey: inventoryApiKey,
+    userAddress,
+    tokens: [{ address: collectionAddress, tokenId }],
+  });
+  return token && token.balance > 0 ? token.image : null;
+};
+
+export const createUserProfilePictureUrl = async ({
+  userAddress,
+  pfpData,
+  inventoryApiUrl,
+  inventoryApiKey,
+}: {
+  userAddress: string;
+  pfpData: NonNullable<UpdateCurrentUserBody["pfpData"]>;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+}) => {
+  const { chainId, collectionAddress, tokenId } = pfpData;
+  const [token] = await fetchUserInventory({
+    chainId,
+    apiUrl: inventoryApiUrl,
+    apiKey: inventoryApiKey,
+    userAddress,
+    tokens: [{ address: collectionAddress, tokenId }],
+  });
+  // TODO: implement crop and upload
+  return token && token.balance > 0 ? token.image : null;
 };
 
 export const checkCanMigrateLegacyUser = async ({

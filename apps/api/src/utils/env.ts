@@ -23,8 +23,11 @@ const { AWS_REGION, DATABASE_SECRET_NAME, API_ENV_SECRET_NAME, DATABASE_URL } =
 
 // Define remote environment variables schema
 const envSchema = Type.Object({
+  // API
   PORT: Type.Number({ default: 8080 }),
+  // Database
   DATABASE_URL: Type.String(),
+  // Thirdweb
   THIRDWEB_CLIENT_ID: Type.String(),
   THIRDWEB_ENGINE_URL: Type.String(),
   THIRDWEB_ENGINE_ACCESS_TOKEN: Type.String(),
@@ -34,11 +37,14 @@ const envSchema = Type.Object({
     { default: DEFAULT_TDK_ECOSYSTEM_ID },
   ),
   THIRDWEB_ECOSYSTEM_PARTNER_ID: Type.String(),
+  // Treasure Auth
   TREASURE_AUTH_KMS_KEY: Type.String(),
   TREASURE_AUTH_ISSUER: Type.String(),
   TREASURE_AUTH_AUDIENCE: Type.String(),
+  // Trove API
   TROVE_API_URL: Type.String({ default: "https://trove-api.treasure.lol" }),
   TROVE_API_KEY: Type.String(),
+  // Feature Flags
   ENGINE_MAINTENANCE_MODE_ENABLED: Type.Boolean({ default: false }),
   ENGINE_TRANSACTION_SIMULATION_ENABLED: Type.Boolean({ default: false }),
   USER_MIGRATION_ENABLED: Type.Boolean({ default: false }),

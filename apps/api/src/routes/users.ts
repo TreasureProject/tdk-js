@@ -50,7 +50,8 @@ import {
 import {
   checkCanMigrateLegacyUser,
   clearLegacyUser,
-  getUserProfileBannerUrl,
+  createUserProfileBannerUrl,
+  createUserProfilePictureUrl,
   migrateLegacyUser,
   transformUserProfileResponseFields,
 } from "../utils/user";
@@ -164,7 +165,7 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, userAddress, authError, chain } = req;
+        const { userId, userAddress, authError } = req;
         if (!userId || !userAddress) {
           throwUnauthorizedError(authError);
           return;
@@ -176,30 +177,31 @@ export const usersRoutes =
           featuredBadgeIds,
           highlyFeaturedBadgeId,
           about,
-          pfp,
-          bannerId,
-          bannerCollectionAddress,
-          bannerTokenId,
+          pfpData,
+          bannerData,
           showMagicBalance,
           showEthBalance,
           showGemsBalance,
         } = req.body;
 
-        const isUpdatingBanner =
-          typeof bannerId !== "undefined" ||
-          (typeof bannerCollectionAddress !== "undefined" &&
-            typeof bannerTokenId !== "undefined");
-        const banner = isUpdatingBanner
-          ? await getUserProfileBannerUrl({
-              userAddress,
-              bannerId: bannerId ?? undefined,
-              chainId: chain.id,
-              inventoryApiUrl: env.TROVE_API_URL,
-              inventoryApiKey: env.TROVE_API_KEY,
-              collectionAddress: bannerCollectionAddress ?? undefined,
-              tokenId: bannerTokenId ?? undefined,
-            })
-          : undefined;
+        const [pfp, banner] = await Promise.all([
+          pfpData
+            ? await createUserProfilePictureUrl({
+                userAddress,
+                pfpData,
+                inventoryApiUrl: env.TROVE_API_URL,
+                inventoryApiKey: env.TROVE_API_KEY,
+              })
+            : pfpData,
+          bannerData
+            ? await createUserProfileBannerUrl({
+                userAddress,
+                bannerData,
+                inventoryApiUrl: env.TROVE_API_URL,
+                inventoryApiKey: env.TROVE_API_KEY,
+              })
+            : bannerData,
+        ]);
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
