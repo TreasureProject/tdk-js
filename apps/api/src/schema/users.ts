@@ -138,7 +138,9 @@ export const updateCurrentUserBodySchema = Type.Object({
   highlyFeaturedBadgeId: Type.Optional(nullableStringSchema),
   about: Type.Optional(nullableStringSchema),
   pfp: Type.Optional(nullableStringSchema),
-  banner: Type.Optional(nullableStringSchema),
+  bannerId: Type.Optional(nullableStringSchema),
+  bannerCollectionAddress: Type.Optional(nullableStringSchema),
+  bannerTokenId: Type.Optional(nullableStringSchema),
   showMagicBalance: Type.Optional(Type.Boolean()),
   showEthBalance: Type.Optional(Type.Boolean()),
   showGemsBalance: Type.Optional(Type.Boolean()),
@@ -146,7 +148,7 @@ export const updateCurrentUserBodySchema = Type.Object({
 
 export const updateCurrentUserReplySchema = userProfileSchema;
 
-const updateCurrentUserMigrationBodySchema = Type.Object({
+export const updateCurrentUserMigrationBodySchema = Type.Object({
   id: Type.String(),
   rejected: Type.Optional(Type.Boolean()),
 });

@@ -33,6 +33,7 @@ export {
   getDateDaysFromNow,
   getDateYearsFromNow,
 } from "./utils/date";
+export { fetchUserInventory } from "./utils/inventory";
 
 // Connect
 export {

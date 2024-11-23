@@ -2,16 +2,26 @@ import type { PrismaClient, UserProfile } from "@prisma/client";
 import {
   DEFAULT_TDK_ECOSYSTEM_ID,
   type EcosystemIdString,
+  fetchUserInventory,
+  getContractAddress,
 } from "@treasure-dev/tdk-core";
 import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
 import { checksumAddress } from "thirdweb/utils";
 
+import { arbitrum } from "thirdweb/chains";
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
   USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "./db";
 import { log } from "./log";
+
+const USER_PROFILE_FREE_BANNER_URLS = {
+  ruby: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Ruby.png",
+  honey: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Honey.png",
+  sapphire:
+    "https://images.treasure.lol/0/ProfileBanner2/Treasure_Sapphire.png",
+};
 
 export const transformUserProfileResponseFields = (
   profile: Partial<UserProfile>,
@@ -87,6 +97,64 @@ export const parseThirdwebUserEmail = (user: GetUserResult) => {
   }
 
   return undefined;
+};
+
+const isValidUserProfileBannerCollection = ({
+  chainId,
+  collectionAddress,
+}: {
+  chainId: number;
+  collectionAddress: string;
+}) => {
+  const address = collectionAddress.toLowerCase();
+  return (
+    (chainId === arbitrum.id &&
+      address.toLowerCase() === "0xb8c465243b405a5908dc2a664535025b5ba5bac0") || // Wastelands
+    address === getContractAddress(chainId, "TreasureBanners")
+  );
+};
+
+export const getUserProfileBannerUrl = async ({
+  userAddress,
+  bannerId,
+  chainId,
+  inventoryApiUrl,
+  inventoryApiKey,
+  collectionAddress,
+  tokenId,
+}: {
+  userAddress: string;
+  bannerId?: string;
+  chainId: number;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+  collectionAddress?: string;
+  tokenId?: string;
+}) => {
+  if (bannerId && bannerId in USER_PROFILE_FREE_BANNER_URLS) {
+    return USER_PROFILE_FREE_BANNER_URLS[
+      bannerId as keyof typeof USER_PROFILE_FREE_BANNER_URLS
+    ];
+  }
+
+  if (
+    collectionAddress &&
+    tokenId &&
+    isValidUserProfileBannerCollection({ chainId, collectionAddress })
+  ) {
+    const tokens = await fetchUserInventory({
+      chainId,
+      apiUrl: inventoryApiUrl,
+      apiKey: inventoryApiKey,
+      userAddress,
+      tokens: [{ address: collectionAddress, tokenId }],
+    });
+    if (tokens[0] && tokens[0].balance > 0) {
+      return tokens[0].image;
+    }
+  }
+
+  return null;
 };
 
 export const checkCanMigrateLegacyUser = async ({

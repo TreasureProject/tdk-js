@@ -27,6 +27,7 @@ import {
   readUserTransactionsQuerystringSchema,
   readUserTransactionsReplySchema,
   updateCurrentUserBodySchema,
+  updateCurrentUserMigrationBodySchema,
   updateCurrentUserMigrationReplySchema,
   updateCurrentUserReplySchema,
 } from "../schema";
@@ -49,6 +50,7 @@ import {
 import {
   checkCanMigrateLegacyUser,
   clearLegacyUser,
+  getUserProfileBannerUrl,
   migrateLegacyUser,
   transformUserProfileResponseFields,
 } from "../utils/user";
@@ -162,8 +164,8 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, authError } = req;
-        if (!userId) {
+        const { userId, userAddress, authError, chain } = req;
+        if (!userId || !userAddress) {
           throwUnauthorizedError(authError);
           return;
         }
@@ -175,12 +177,29 @@ export const usersRoutes =
           highlyFeaturedBadgeId,
           about,
           pfp,
-          banner,
+          bannerId,
+          bannerCollectionAddress,
+          bannerTokenId,
           showMagicBalance,
           showEthBalance,
           showGemsBalance,
         } = req.body;
 
+        const isUpdatingBanner =
+          typeof bannerId !== "undefined" ||
+          (typeof bannerCollectionAddress !== "undefined" &&
+            typeof bannerTokenId !== "undefined");
+        const banner = isUpdatingBanner
+          ? await getUserProfileBannerUrl({
+              userAddress,
+              bannerId: bannerId ?? undefined,
+              chainId: chain.id,
+              inventoryApiUrl: env.TROVE_API_URL,
+              inventoryApiKey: env.TROVE_API_KEY,
+              collectionAddress: bannerCollectionAddress ?? undefined,
+              tokenId: bannerTokenId ?? undefined,
+            })
+          : undefined;
         const emailSecurityPhraseUpdatedAt =
           typeof emailSecurityPhrase !== "undefined" ? new Date() : undefined;
 
@@ -235,6 +254,7 @@ export const usersRoutes =
         schema: {
           summary: "Migrate user profile",
           description: "Migrate user profile from legacy data",
+          body: updateCurrentUserMigrationBodySchema,
           response: {
             200: updateCurrentUserMigrationReplySchema,
             404: notFoundReplySchema,
