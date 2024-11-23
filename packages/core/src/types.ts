@@ -52,7 +52,8 @@ export type Contract =
   // Treasure Misc
   | "BulkTransferHelper"
   | "TreasureConduit"
-  | "TopazNFT";
+  | "TopazNFT"
+  | "TreasureBanners";
 
 // Approvals
 export type TokenStandard = "ERC20" | "ERC721" | "ERC1155";

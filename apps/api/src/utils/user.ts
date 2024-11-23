@@ -2,10 +2,15 @@ import type { PrismaClient, UserProfile } from "@prisma/client";
 import {
   DEFAULT_TDK_ECOSYSTEM_ID,
   type EcosystemIdString,
+  USER_PROFILE_FREE_BANNER_URLS,
+  fetchUserInventory,
+  getContractAddress,
 } from "@treasure-dev/tdk-core";
 import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
 import { checksumAddress } from "thirdweb/utils";
 
+import { arbitrum } from "thirdweb/chains";
+import type { UpdateCurrentUserBody } from "../schema";
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
@@ -87,6 +92,74 @@ export const parseThirdwebUserEmail = (user: GetUserResult) => {
   }
 
   return undefined;
+};
+
+const isValidUserProfileBannerCollection = ({
+  chainId,
+  collectionAddress,
+}: {
+  chainId: number;
+  collectionAddress: string;
+}) => {
+  const address = collectionAddress.toLowerCase();
+  return (
+    (chainId === arbitrum.id &&
+      address.toLowerCase() === "0xb8c465243b405a5908dc2a664535025b5ba5bac0") || // Wastelands
+    address === getContractAddress(chainId, "TreasureBanners")
+  );
+};
+
+export const createUserProfileBannerUrl = async ({
+  userAddress,
+  bannerData,
+  inventoryApiUrl,
+  inventoryApiKey,
+}: {
+  userAddress: string;
+  bannerData: NonNullable<UpdateCurrentUserBody["bannerData"]>;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+}) => {
+  if (typeof bannerData === "string") {
+    return USER_PROFILE_FREE_BANNER_URLS[bannerData];
+  }
+
+  const { chainId, collectionAddress, tokenId } = bannerData;
+  if (!isValidUserProfileBannerCollection({ chainId, collectionAddress })) {
+    return null;
+  }
+
+  const [token] = await fetchUserInventory({
+    chainId,
+    apiUrl: inventoryApiUrl,
+    apiKey: inventoryApiKey,
+    userAddress,
+    tokens: [{ address: collectionAddress, tokenId }],
+  });
+  return token && token.balance > 0 ? token.image : null;
+};
+
+export const createUserProfilePictureUrl = async ({
+  userAddress,
+  pfpData,
+  inventoryApiUrl,
+  inventoryApiKey,
+}: {
+  userAddress: string;
+  pfpData: NonNullable<UpdateCurrentUserBody["pfpData"]>;
+  inventoryApiUrl: string;
+  inventoryApiKey: string;
+}) => {
+  const { chainId, collectionAddress, tokenId } = pfpData;
+  const [token] = await fetchUserInventory({
+    chainId,
+    apiUrl: inventoryApiUrl,
+    apiKey: inventoryApiKey,
+    userAddress,
+    tokens: [{ address: collectionAddress, tokenId }],
+  });
+  // TODO: implement crop and upload
+  return token && token.balance > 0 ? token.image : null;
 };
 
 export const checkCanMigrateLegacyUser = async ({

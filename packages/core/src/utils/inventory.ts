@@ -1,6 +1,9 @@
-import { arbitrumSepolia } from "thirdweb/chains";
+import { arbitrum, arbitrumSepolia } from "thirdweb/chains";
 
-import type { InventoryToken, Token } from "../../../../apps/api/src/schema";
+import {
+  TREASURE_CHAIN_DEFINITION,
+  TREASURE_TOPAZ_CHAIN_DEFINITION,
+} from "../constants";
 import type { CollectionResponse } from "../types";
 
 type TokenResponse = {
@@ -25,8 +28,15 @@ type InventoryTokenResponse = TokenResponse & {
   queryUserQuantityOwned: number;
 };
 
+const CHAIN_ID_TO_SLUG_MAP = {
+  [arbitrum.id]: "arb",
+  [arbitrumSepolia.id]: "arbsepolia",
+  [TREASURE_TOPAZ_CHAIN_DEFINITION.id]: "topaz",
+  [TREASURE_CHAIN_DEFINITION.id]: "treasure",
+} as const;
+
 const getChainSlug = (chainId: number) =>
-  chainId === arbitrumSepolia.id ? "arbsepolia" : "arb";
+  CHAIN_ID_TO_SLUG_MAP[chainId] ?? "arb";
 
 export type InventoryTokenItem = Awaited<
   ReturnType<typeof fetchTokens>
@@ -73,7 +83,7 @@ export const fetchTokens = async ({
         tokenId,
         metadata: { name, attributes, imageAlt },
         image: { uri: image, originalUri },
-      }): Token => ({
+      }) => ({
         address,
         tokenId: Number(tokenId),
         name,
@@ -131,7 +141,7 @@ export const fetchUserInventory = async ({
   collectionAddresses?: string[];
   tokens?: { address: string; tokenId: number | string }[];
   projection?: string;
-}): Promise<InventoryToken[]> => {
+}) => {
   const chainSlug = getChainSlug(chainId);
   const url = new URL(`${apiUrl}/tokens-for-user`);
   url.searchParams.append("userAddress", userAddress);
@@ -170,7 +180,7 @@ export const fetchUserInventory = async ({
         metadata: { name, attributes, imageAlt },
         image: { uri: image, originalUri },
         queryUserQuantityOwned: balance,
-      }): InventoryToken => ({
+      }) => ({
         user: userAddress,
         address,
         tokenId: Number(tokenId),

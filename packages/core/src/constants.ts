@@ -113,6 +113,7 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x8bf85fa9213647ec3485afd9dd5888b4db017434",
+    TreasureBanners: "0x100cdab97f2a8a0e0f0311ba6f6d08592136472e",
   },
   [arbitrumSepolia.id]: {
     // Tokens
@@ -129,6 +130,7 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",
+    TreasureBanners: "0x023083def4855918dea65f1dea351fcdabb1e073",
   },
   [sepolia.id]: {
     // Tokens
@@ -152,3 +154,10 @@ export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
 
 export const ACCOUNT_FACTORY_ADDRESS =
   "0x463effb51873c7720c810ac7fb2e145ec2f8cc60";
+
+export const USER_PROFILE_FREE_BANNER_URLS = {
+  ruby: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Ruby.png",
+  honey: "https://images.treasure.lol/0/ProfileBanner2/Treasure_Honey.png",
+  sapphire:
+    "https://images.treasure.lol/0/ProfileBanner2/Treasure_Sapphire.png",
+};
