@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-core
 
+## 3.7.1
+
+### Patch Changes
+
+- d133cb5: Added Treasure chain configuration
+- b9b7858: Updated PFP and banner payloads in update user API
+
 ## 3.7.0
 
 ### Patch Changes
