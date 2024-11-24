@@ -11,7 +11,9 @@ type Props = {
 
 export const UserDisplayName = ({ address, tag, className }: Props) => (
   <span className={cn("tdk-flex tdk-items-center tdk-gap-1", className)}>
-    <TreasureSparklesIcon className="tdk-w-3.5 tdk-h-3.5 tdk-text-ruby" />
+    {tag ? (
+      <TreasureSparklesIcon className="tdk-w-3.5 tdk-h-3.5 tdk-text-ruby" />
+    ) : null}
     <span className={cn("tdk-text-cream", !!tag && "tdk-font-medium")}>
       {tag ?? shortenAddress(address)}
     </span>

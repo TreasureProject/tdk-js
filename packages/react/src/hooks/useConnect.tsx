@@ -1,15 +1,16 @@
 import {
+  getContractAddress,
+  getContractAddresses,
+} from "@treasure-dev/tdk-core";
+import { ZERO_ADDRESS, defineChain } from "thirdweb";
+import {
   type SupportedTokens,
+  type UseWalletDetailsModalOptions,
   darkTheme,
   useActiveWallet,
   useWalletDetailsModal,
 } from "thirdweb/react";
 
-import {
-  getContractAddress,
-  getContractAddresses,
-} from "@treasure-dev/tdk-core";
-import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
@@ -26,8 +27,7 @@ import {
 export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
   connectModalSize?: ConnectModalProps["size"];
-  hideDisconnect?: boolean;
-  hideSwitchWallet?: boolean;
+  accountModalProps?: UseWalletDetailsModalOptions;
 };
 
 type Props = Options;
@@ -87,8 +87,7 @@ export const useConnect = (props?: Props) => {
   const {
     supportedChainIds,
     connectModalSize,
-    hideDisconnect,
-    hideSwitchWallet,
+    accountModalProps,
     ...connectModalProps
   } = props ?? {};
 
@@ -171,11 +170,10 @@ export const useConnect = (props?: Props) => {
         return acc;
       }, {} as SupportedTokens),
       showTestnetFaucet: true,
-      hideDisconnect,
-      hideSwitchWallet,
       onDisconnect: () => {
         logOut();
       },
+      ...accountModalProps,
     });
   };
 
