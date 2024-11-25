@@ -11,11 +11,11 @@ import {
   type TrackableEvent,
   type User,
   authenticateWallet,
+  startUserSession as coreStartSession,
   createTreasureConnectClient,
   decodeAuthToken,
   getContractAddresses,
   getUserAddress,
-  startUserSession,
 } from "@treasure-dev/tdk-core";
 import {
   type PropsWithChildren,
@@ -173,16 +173,29 @@ const TreasureProviderInner = ({
     [analyticsManager, userAddress],
   );
 
+  const startUserSession = useCallback(
+    (options: SessionOptions) =>
+      isUsingTreasureLauncher
+        ? startUserSessionViaLauncher(options)
+        : coreStartSession({
+            client,
+            wallet: activeWallet,
+            chainId: chain.id,
+            options,
+          }),
+    [client, activeWallet, chain.id],
+  );
+
   const onAuthTokenUpdated = useCallback(
     (authToken: string) => {
       tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
         setUser(user);
         setStoredAuthToken(authToken);
         tdk.setAuthToken(authToken);
-        onConnect?.(user);
+        onConnect?.(user, startUserSession);
       });
     },
-    [tdk.user.me, tdk.setAuthToken, onConnect],
+    [tdk.user.me, tdk.setAuthToken, onConnect, startUserSession],
   );
 
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
@@ -264,7 +277,7 @@ const TreasureProviderInner = ({
     });
 
     // Trigger completion callback
-    onConnect?.(user);
+    onConnect?.(user, startUserSession);
 
     setIsAuthenticating(false);
     return { user, legacyProfiles };
@@ -318,15 +331,7 @@ const TreasureProviderInner = ({
         logOut,
         updateUser: (partialUser) =>
           setUser((curr) => (curr ? { ...curr, ...partialUser } : undefined)),
-        startUserSession: (options: SessionOptions) =>
-          isUsingTreasureLauncher
-            ? startUserSessionViaLauncher(options)
-            : startUserSession({
-                client,
-                wallet: activeWallet,
-                chainId: chain.id,
-                options,
-              }),
+        startUserSession,
         switchChain: (chainId: number) =>
           switchActiveWalletChain(defineChain(chainId)),
         setRootElement: setEl,
