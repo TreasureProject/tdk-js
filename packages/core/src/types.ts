@@ -1,3 +1,9 @@
+import type {
+  Abi,
+  AbiParametersToPrimitiveTypes,
+  ExtractAbiFunction,
+  ExtractAbiFunctionNames,
+} from "abitype";
 import type { ThirdwebClient } from "thirdweb";
 
 import type { TDKAPI } from "./api";
@@ -35,6 +41,29 @@ export type UserContext = {
 
 // General transactions
 export type AddressString = `0x${string}`;
+
+export type TransactionOverrides = {
+  value: bigint | string;
+  gas: bigint | string;
+  maxFeePerGas: bigint | string;
+  maxPriorityFeePerGas: bigint | string;
+};
+
+export type ContractWriteTransaction<
+  TAbi extends Abi,
+  TFunctionName extends ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">,
+> = {
+  address: string;
+  abi: TAbi;
+  functionName:
+    | TFunctionName
+    | ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">;
+  args: AbiParametersToPrimitiveTypes<
+    ExtractAbiFunction<TAbi, TFunctionName>["inputs"],
+    "inputs"
+  >;
+  overrides?: Partial<TransactionOverrides>;
+};
 
 // Contracts
 export type Contract =

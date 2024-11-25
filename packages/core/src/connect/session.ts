@@ -122,7 +122,7 @@ export const validateSession = ({
   });
 };
 
-export const createSession = async ({
+const createSession = async ({
   client,
   chainId,
   account,

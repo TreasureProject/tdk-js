@@ -68,12 +68,25 @@ class APIError extends Error {
 }
 
 type SendTransactionOptions = Partial<{
+  chainId: number;
   includeAbi: boolean;
   skipWaitForCompletion: boolean;
   accountAddress: string;
   accountSignature: string;
   useActiveWallet: boolean;
 }>;
+
+const createSendTransactionHeaders = (
+  options: SendTransactionOptions | undefined,
+) => ({
+  ...(options?.chainId ? { "x-chain-id": options.chainId.toString() } : {}),
+  ...(options?.accountAddress
+    ? { "x-account-address": options.accountAddress }
+    : {}),
+  ...(options?.accountSignature
+    ? { "x-account-signature": options.accountSignature }
+    : {}),
+});
 
 export class TDKAPI {
   baseUri: string;
@@ -250,7 +263,7 @@ export class TDKAPI {
       },
       options?: SendTransactionOptions,
     ) => {
-      const chain = defineChain(this.chainId);
+      const chain = defineChain(options?.chainId ?? this.chainId);
       // TODO: remove ZK check when sessions are supported
       if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
         if (!this.client) {
@@ -260,6 +273,10 @@ export class TDKAPI {
         const account = this.activeWallet?.getAccount();
         if (!account) {
           throw new Error("No active wallet set");
+        }
+
+        if (this.activeWallet?.getChain()?.id !== chain.id) {
+          this.activeWallet?.switchChain(chain);
         }
 
         const { address, abi, functionName, args, txOverrides } = params;
@@ -310,14 +327,7 @@ export class TDKAPI {
           backendWallet: params.backendWallet ?? this.backendWallet,
         },
         {
-          headers: {
-            ...(options?.accountAddress
-              ? { "x-account-address": options.accountAddress }
-              : {}),
-            ...(options?.accountSignature
-              ? { "x-account-signature": options.accountSignature }
-              : {}),
-          },
+          headers: createSendTransactionHeaders(options),
         },
       );
 
@@ -331,7 +341,7 @@ export class TDKAPI {
       },
       options?: SendTransactionOptions,
     ) => {
-      const chain = defineChain(this.chainId);
+      const chain = defineChain(options?.chainId ?? this.chainId);
       // TODO: remove ZK check when sessions are supported
       if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
         if (!this.client) {
@@ -381,14 +391,7 @@ export class TDKAPI {
           backendWallet: params.backendWallet ?? this.backendWallet,
         },
         {
-          headers: {
-            ...(options?.accountAddress
-              ? { "x-account-address": options.accountAddress }
-              : {}),
-            ...(options?.accountSignature
-              ? { "x-account-signature": options.accountSignature }
-              : {}),
-          },
+          headers: createSendTransactionHeaders(options),
         },
       );
 
@@ -450,7 +453,7 @@ export class TDKAPI {
       },
       options?: SendTransactionOptions,
     ) => {
-      const chain = defineChain(this.chainId);
+      const chain = defineChain(options?.chainId ?? this.chainId);
       // TODO: remove ZK check when sessions are supported
       if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
         if (!this.client) {
@@ -540,6 +543,9 @@ export class TDKAPI {
       const result = await this.post<SwapBody, CreateTransactionReply>(
         "/magicswap/swap",
         body,
+        {
+          headers: createSendTransactionHeaders(options),
+        },
       );
       return options?.skipWaitForCompletion
         ? result
@@ -552,7 +558,7 @@ export class TDKAPI {
       },
       options?: SendTransactionOptions,
     ) => {
-      const chain = defineChain(this.chainId);
+      const chain = defineChain(options?.chainId ?? this.chainId);
       // TODO: remove ZK check when sessions are supported
       if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
         if (!this.client) {
@@ -616,6 +622,9 @@ export class TDKAPI {
       const result = await this.post<AddLiquidityBody, CreateTransactionReply>(
         `/magicswap/pools/${poolId}/add-liquidity`,
         body,
+        {
+          headers: createSendTransactionHeaders(options),
+        },
       );
       return options?.skipWaitForCompletion
         ? result
@@ -628,7 +637,7 @@ export class TDKAPI {
       },
       options?: SendTransactionOptions,
     ) => {
-      const chain = defineChain(this.chainId);
+      const chain = defineChain(options?.chainId ?? this.chainId);
       // TODO: remove ZK check when sessions are supported
       if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
         if (!this.client) {
@@ -693,7 +702,9 @@ export class TDKAPI {
       const result = await this.post<
         RemoveLiquidityBody,
         CreateTransactionReply
-      >(`/magicswap/pools/${poolId}/remove-liquidity`, body);
+      >(`/magicswap/pools/${poolId}/remove-liquidity`, body, {
+        headers: createSendTransactionHeaders(options),
+      });
       return options?.skipWaitForCompletion
         ? result
         : this.transaction.wait(result.queueId);

@@ -1,8 +1,14 @@
-import { getUserAddress, treasureTopaz } from "@treasure-dev/tdk-core";
+import {
+  getContractAddress,
+  getUserAddress,
+  treasureTopaz,
+} from "@treasure-dev/tdk-core";
 import {
   type AddressString,
   Button,
   ConnectButton,
+  useSendRawTransaction,
+  useSendTransaction,
   useTreasure,
 } from "@treasure-dev/tdk-react";
 import { useState } from "react";
@@ -47,15 +53,9 @@ const TOPAZ_NFT_API = [
 ] as const;
 
 export const App = () => {
-  const {
-    client,
-    chain,
-    tdk,
-    user,
-    userAddress,
-    contractAddresses,
-    trackCustomEvent,
-  } = useTreasure();
+  const { client, chain, user, userAddress, trackCustomEvent } = useTreasure();
+  const { sendTransaction } = useSendTransaction();
+  const { sendRawTransaction } = useSendRawTransaction();
   const [tracking, setTracking] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
@@ -67,29 +67,33 @@ export const App = () => {
     addLog(`Minting ${amount} MAGIC...`);
 
     try {
-      const result = await tdk.transaction.create(
+      const result = await sendTransaction(
         {
-          address: contractAddresses.MAGIC,
+          address: getContractAddress(arbitrumSepolia.id, "MAGIC"),
           abi: ERC20_MINTABLE_ABI,
           functionName: "mint",
           args: [userAddress as AddressString, toWei(amount.toString())],
         },
-        { includeAbi: true },
+        { chainId: arbitrumSepolia.id },
       );
       addLog(
         `Successfully minted ${amount} MAGIC: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
       );
     } catch (err) {
       console.error("Error minting MAGIC:", err);
-      addLog(`Error minting MAGIC: ${err}`);
+      addLog(
+        `Error minting MAGIC: ${err instanceof Error ? err.message : err}`,
+      );
     }
   };
 
   const handleRawMintMagic = async (amount: number) => {
+    const contractAddress = getContractAddress(arbitrumSepolia.id, "MAGIC");
+
     const contract = getContract({
       client,
       chain,
-      address: contractAddresses.MAGIC,
+      address: contractAddress,
       abi: ERC20_MINTABLE_ABI,
     });
 
@@ -103,10 +107,13 @@ export const App = () => {
 
     try {
       const data = await encode(transaction);
-      const result = await tdk.transaction.sendRaw({
-        to: contractAddresses.MAGIC,
-        data,
-      });
+      const result = await sendRawTransaction(
+        {
+          to: contractAddress,
+          data,
+        },
+        { chainId: arbitrumSepolia.id },
+      );
       addLog(
         `Successfully minted ${amount} MAGIC with raw transaction: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
       );
@@ -116,16 +123,19 @@ export const App = () => {
     }
   };
 
-  const handleSendNative = async (amount: number) => {
+  const handleSendNative = async (amount: number, chainId?: number) => {
     const token = chain.id === arbitrumSepolia.id ? "ETH" : "MAGIC";
     addLog(`Sending ${amount} ${token}...`);
 
     try {
-      const result = await tdk.transaction.sendRaw({
-        to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
-        value: toWei(amount.toString()),
-        data: "0x",
-      });
+      const result = await sendRawTransaction(
+        {
+          to: "0xE647b2c46365741e85268ceD243113d08F7E00B8",
+          value: toWei(amount.toString()),
+          data: "0x",
+        },
+        { chainId },
+      );
       addLog(
         `Successfully sent ${amount} ${token}: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
       );
@@ -139,21 +149,23 @@ export const App = () => {
     addLog("Minting Topaz NFT...");
 
     try {
-      const result = await tdk.transaction.create(
+      const result = await sendTransaction(
         {
-          address: contractAddresses.TopazNFT,
+          address: getContractAddress(treasureTopaz.id, "TopazNFT"),
           abi: TOPAZ_NFT_API,
           functionName: "mint",
           args: [],
         },
-        { includeAbi: true },
+        { chainId: treasureTopaz.id },
       );
       addLog(
         `Successfully minted Topaz NFT: ${"transactionHash" in result ? result.transactionHash : "Unknown transaction"}`,
       );
     } catch (err) {
       console.error("Error minting Topaz NFT:", err);
-      addLog(`Error minting Topaz NFT: ${err}`);
+      addLog(
+        `Error minting Topaz NFT: ${err instanceof Error ? err.message : err}`,
+      );
     }
   };
 
@@ -273,32 +285,33 @@ export const App = () => {
                 <p>No active sessions</p>
               )}
             </div>
-            {chain.id === arbitrumSepolia.id ? (
-              <div className="space-y-1">
-                <h1 className="font-medium text-xl">Test Transactions</h1>
-                <div className="flex flex-wrap gap-2">
-                  <Button onClick={() => handleMintMagic(1000)}>
-                    Mint 1,000 MAGIC
-                  </Button>
-                  <Button onClick={() => handleRawMintMagic(1000)}>
-                    Mint 1,000 MAGIC (Raw)
-                  </Button>
-                  <Button onClick={() => handleSendNative(0.0001)}>
-                    Send 0.0001 ETH
-                  </Button>
-                </div>
+            <div className="space-y-1">
+              <h1 className="font-medium text-xl">
+                Test Transactions (Arbitrum Sepolia)
+              </h1>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => handleMintMagic(1000)}>
+                  Mint 1,000 MAGIC
+                </Button>
+                <Button onClick={() => handleRawMintMagic(1000)}>
+                  Mint 1,000 MAGIC (Raw)
+                </Button>
+                <Button onClick={() => handleSendNative(0.0001)}>
+                  Send 0.0001 ETH
+                </Button>
               </div>
-            ) : (
-              <div className="space-y-1">
-                <h1 className="font-medium text-xl">Test Transactions</h1>
-                <div className="flex flex-wrap gap-2">
-                  <Button onClick={handleMintTopazNft}>Mint Topaz NFT</Button>
-                  <Button onClick={() => handleSendNative(0.0001)}>
-                    Send 0.0001 MAGIC
-                  </Button>
-                </div>
+            </div>
+            <div className="space-y-1">
+              <h1 className="font-medium text-xl">Test Transactions (Topaz)</h1>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={handleMintTopazNft}>Mint Topaz NFT</Button>
+                <Button
+                  onClick={() => handleSendNative(0.0001, treasureTopaz.id)}
+                >
+                  Send 0.0001 MAGIC
+                </Button>
               </div>
-            )}
+            </div>
             <div className="space-y-1">
               <h1 className="font-medium text-xl">Test Analytics</h1>
               <div className="flex flex-wrap gap-2">

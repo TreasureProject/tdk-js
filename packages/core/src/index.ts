@@ -35,6 +35,7 @@ export {
   getDateYearsFromNow,
 } from "./utils/date";
 export { fetchUserInventory } from "./utils/inventory";
+export { sendTransaction, sendRawTransaction } from "./utils/transactions";
 
 // Connect
 export {
@@ -55,12 +56,11 @@ export {
   logIn,
 } from "./connect/login";
 export {
-  createSession,
   getUserSessions,
   startUserSession,
-  validateSession,
 } from "./connect/session";
 export { getUserAddress } from "./connect/user";
+export { isSmartWallet } from "./connect/wallet";
 
 // Bridgeworld
 export {

@@ -11,3 +11,5 @@ export {
   useContractAddress,
   useContractAddresses,
 } from "./hooks/useContractAddress";
+export { useSendTransaction } from "./hooks/useSendTransaction";
+export { useSendRawTransaction } from "./hooks/useSendRawTransaction";

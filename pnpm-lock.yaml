@@ -587,6 +587,9 @@ importers:
       '@treasure-dev/tdk-core':
         specifier: workspace:*
         version: link:../core
+      abitype:
+        specifier: 'catalog:'
+        version: 1.0.6(typescript@5.6.3)(zod@3.23.8)
       clsx:
         specifier: 'catalog:'
         version: 2.1.1

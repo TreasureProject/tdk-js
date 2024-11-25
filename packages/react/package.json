@@ -45,6 +45,7 @@
     "@radix-ui/react-visually-hidden": "catalog:",
     "@treasure-dev/tdk-core": "workspace:*",
     "@treasure-dev/launcher": "workspace:*",
+    "abitype": "catalog:",
     "clsx": "catalog:",
     "i18next": "catalog:",
     "i18next-browser-languagedetector": "catalog:",
