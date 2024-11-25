@@ -8,7 +8,6 @@ import { arbitrumSepolia } from "thirdweb/chains";
 import { ThirdwebProvider } from "thirdweb/react";
 
 import { App } from "./App.tsx";
-import { SESSION_OPTIONS_BY_CHAIN_ID } from "./constants";
 import "./index.css";
 
 const root = document.getElementById("root");
@@ -27,7 +26,6 @@ if (root) {
         clientId={import.meta.env.VITE_TDK_CLIENT_ID}
         ecosystemId={import.meta.env.VITE_TDK_ECOSYSTEM_ID}
         ecosystemPartnerId={import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID}
-        sessionOptions={SESSION_OPTIONS_BY_CHAIN_ID[defaultChainId]}
       >
         <App />
       </TreasureProvider>

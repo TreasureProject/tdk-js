@@ -44,7 +44,6 @@ export type Config = {
   clientId: string;
   ecosystemId?: EcosystemIdString;
   ecosystemPartnerId: string;
-  sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
   launcherOptions?: LauncherOptions;

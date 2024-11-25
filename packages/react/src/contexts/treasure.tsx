@@ -77,7 +77,6 @@ const TreasureProviderInner = ({
   clientId,
   ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
   ecosystemPartnerId,
-  sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
   launcherOptions,
@@ -101,10 +100,9 @@ const TreasureProviderInner = ({
       new TDKAPI({
         baseUri: apiUri,
         chainId: chain.id,
-        backendWallet: sessionOptions?.backendWallet,
         client,
       }),
-    [apiUri, chain.id, sessionOptions?.backendWallet, client],
+    [apiUri, chain.id, client],
   );
   const [analyticsManager, setAnalyticsManager] =
     useState<AnalyticsManager | null>(null);
@@ -209,7 +207,6 @@ const TreasureProviderInner = ({
 
   const logIn = async (
     wallet: Wallet,
-    chainId?: number,
   ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
     if (isUsingTreasureLauncher) {
       console.debug(
@@ -254,18 +251,6 @@ const TreasureProviderInner = ({
     // Set auth token and wallet on TDK so they can be used in future requests
     tdk.setAuthToken(authToken as string);
     tdk.setActiveWallet(wallet);
-
-    // Start user session if configured
-    if (sessionOptions) {
-      setIsAuthenticating(true);
-      await startUserSession({
-        client,
-        wallet,
-        chainId: chainId ?? chain.id,
-        sessions: user.sessions,
-        options: sessionOptions,
-      });
-    }
 
     // Update user state
     setUser(user);
