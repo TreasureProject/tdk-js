@@ -262,7 +262,6 @@ const TreasureProviderInner = ({
         client,
         wallet,
         chainId: chainId ?? chain.id,
-        tdk,
         sessions: user.sessions,
         options: sessionOptions,
       });
@@ -341,7 +340,6 @@ const TreasureProviderInner = ({
                 client,
                 wallet: activeWallet,
                 chainId: chain.id,
-                tdk,
                 options,
               }),
         switchChain: (chainId: number) =>

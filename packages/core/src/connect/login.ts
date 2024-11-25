@@ -256,7 +256,6 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
       client,
       wallet,
       chainId,
-      tdk,
       sessions: user.sessions,
       options: sessionOptions,
     });

@@ -1,5 +1,4 @@
 import {
-  type Chain,
   type ThirdwebClient,
   defineChain,
   getContract,
@@ -13,13 +12,7 @@ import {
 } from "thirdweb/extensions/erc4337";
 import type { Account, Wallet } from "thirdweb/wallets";
 
-import type { TDKAPI } from "../api";
-import type {
-  AddressString,
-  Session,
-  SessionOptions,
-  TreasureConnectClient,
-} from "../types";
+import type { Session, SessionOptions, TreasureConnectClient } from "../types";
 import {
   getDateHoursFromNow,
   getDateSecondsFromNow,
@@ -28,16 +21,16 @@ import {
 
 export const getUserSessions = async ({
   client,
-  chain,
+  chainId,
   address,
 }: {
   client: ThirdwebClient;
-  chain: Chain;
+  chainId: number;
   address: string;
-}) => {
+}): Promise<Session[]> => {
   const contract = getContract({
     client,
-    chain,
+    chain: defineChain(chainId),
     address,
   });
   const [allActiveSigners, allAdmins] = await Promise.all([
@@ -48,21 +41,25 @@ export const getUserSessions = async ({
     ...allActiveSigners.map((activeSigner) => ({
       ...activeSigner,
       isAdmin: allAdmins.includes(activeSigner.signer),
-      signer: activeSigner.signer as AddressString,
-      approvedTargets: activeSigner.approvedTargets.map(
-        (target) => target as AddressString,
+      approvedTargets: activeSigner.approvedTargets.map((target) =>
+        target.toLowerCase(),
       ),
+      nativeTokenLimitPerTransaction:
+        activeSigner.nativeTokenLimitPerTransaction.toString(),
+      startTimestamp: activeSigner.startTimestamp.toString(),
+      endTimestamp: activeSigner.endTimestamp.toString(),
     })),
     ...allAdmins.map((adminAddress) => ({
       isAdmin: true,
-      signer: adminAddress as AddressString,
+      signer: adminAddress,
       approvedTargets: [],
-      nativeTokenLimitPerTransaction: 0n,
-      startTimestamp: 0n,
+      nativeTokenLimitPerTransaction: "0",
+      startTimestamp: "0",
       // Date in the distant future because admins don't expire until they're explicitly removed
-      endTimestamp: BigInt(
-        Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 10,
-      ),
+      endTimestamp: (
+        Math.floor(Date.now() / 1000) +
+        60 * 60 * 24 * 365 * 10
+      ).toString(),
     })),
   ];
 };
@@ -178,14 +175,12 @@ export const startUserSession = async ({
   client,
   wallet,
   chainId,
-  tdk,
   sessions: userSessions,
   options,
 }: {
   client: TreasureConnectClient;
   wallet: Wallet | undefined;
   chainId: number;
-  tdk: TDKAPI;
   sessions?: Session[];
   options: SessionOptions;
 }) => {
@@ -195,13 +190,24 @@ export const startUserSession = async ({
     return;
   }
 
-  const walletChainId = wallet?.getChain()?.id;
+  // Get user sessions if not provided
+  let sessions = userSessions;
+  if (!sessions && wallet) {
+    const address = wallet.getAccount()?.address;
+    if (!address) {
+      throw new Error(
+        "Wallet and connected account required for session lookup",
+      );
+    }
+
+    console.debug("[TDK] Fetching existing sessions");
+    sessions = await getUserSessions({ client, chainId, address });
+  }
 
   // Skip session creation if user has an active session already
-  const sessions = userSessions ?? (await tdk.user.getSessions({ chainId }));
   const hasActiveSession = validateSession({
     ...options,
-    sessions,
+    sessions: sessions ?? [],
   });
   if (hasActiveSession) {
     console.debug("[TDK] Using existing session");
@@ -214,7 +220,7 @@ export const startUserSession = async ({
   }
 
   // Switch chains if requested session chain is different
-  if (chainId !== walletChainId) {
+  if (chainId !== wallet.getChain()?.id) {
     console.debug("[TDK] Switching chains for session creation:", chainId);
     await wallet.switchChain(defineChain(chainId));
   }

@@ -104,7 +104,7 @@ export const usersRoutes =
           }),
           getUserSessions({
             client,
-            chain,
+            chainId: chain.id,
             address: userAddress,
           }),
         ]);
@@ -361,7 +361,7 @@ export const usersRoutes =
 
         const sessions = await getUserSessions({
           client,
-          chain,
+          chainId: chain.id,
           address: userAddress,
         });
 

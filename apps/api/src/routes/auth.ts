@@ -239,7 +239,7 @@ export const authRoutes =
           }),
           getUserSessions({
             client,
-            chain: req.chain,
+            chainId: req.chain.id,
             address,
           }),
         ]);
