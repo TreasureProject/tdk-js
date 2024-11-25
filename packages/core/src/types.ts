@@ -6,6 +6,10 @@ import type { TDKAPI } from "./api";
 export type EcosystemIdString = `ecosystem.${string}`;
 export type TreasureConnectClient = ThirdwebClient;
 
+export type AuthOptions = {
+  authTokenDurationSec?: number;
+};
+
 export type SessionOptions = {
   backendWallet: string;
   approvedTargets: string[];
@@ -17,6 +21,7 @@ export type SessionOptions = {
 export type ConnectConfig = {
   apiUri?: string;
   chainId?: number;
+  authOptions?: AuthOptions;
   sessionOptions?: SessionOptions;
 };
 

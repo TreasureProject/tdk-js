@@ -171,9 +171,11 @@ export const createTreasureConnectClient = ({
 export const authenticateWallet = async ({
   wallet,
   tdk,
+  authTokenDurationSec,
 }: {
   wallet: Wallet;
   tdk: TDKAPI;
+  authTokenDurationSec?: number;
 }) => {
   const account = wallet.getAccount();
   if (!account) {
@@ -195,7 +197,10 @@ export const authenticateWallet = async ({
 
   // Log in with signed payload
   console.debug("[TDK] Logging in with signed payload");
-  return tdk.auth.logIn(signedPayload);
+  return tdk.auth.logIn({
+    ...signedPayload,
+    authTokenDurationSec,
+  });
 };
 
 export const sendEmailVerificationCode = async ({
@@ -224,6 +229,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
     client,
     chainId = DEFAULT_TDK_CHAIN_ID,
     apiUri = DEFAULT_TDK_API_BASE_URI,
+    authOptions,
     sessionOptions,
     ...connectWalletParams
   } = params;
@@ -244,6 +250,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
   const { token, user } = await authenticateWallet({
     wallet,
     tdk,
+    authTokenDurationSec: authOptions?.authTokenDurationSec,
   });
 
   // Set auth token and wallet on TDK so they can be used in future requests

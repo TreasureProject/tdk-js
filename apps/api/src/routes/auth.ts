@@ -94,7 +94,17 @@ export const authRoutes =
         },
       },
       async (req, reply) => {
-        const verifiedPayload = await thirdwebAuth.verifyPayload(req.body);
+        const {
+          body: {
+            payload: unverifiedPayload,
+            signature,
+            authTokenDurationSec = 86_400, // 1 day
+          },
+        } = req;
+        const verifiedPayload = await thirdwebAuth.verifyPayload({
+          payload: unverifiedPayload,
+          signature,
+        });
         if (!verifiedPayload.valid) {
           return reply
             .code(400)
@@ -225,8 +235,10 @@ export const authRoutes =
         const [authTokenResult, userSessionsResult] = await Promise.allSettled([
           auth.generateJWT<UserContext>(address, {
             issuer: payload.domain,
-            issuedAt: new Date(payload.issued_at),
-            expiresAt: new Date(payload.expiration_time),
+            issuedAt: new Date(),
+            expiresAt: new Date(
+              new Date().getTime() + authTokenDurationSec * 1000,
+            ),
             context: {
               id: user.id,
               email: profile.email,

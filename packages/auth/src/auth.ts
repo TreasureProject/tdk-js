@@ -53,9 +53,11 @@ export const createAuth = ({
         aud: overrides?.audience ?? audience ?? "treasure.lol",
         sub: subject,
         iat: Math.floor((overrides?.issuedAt ?? new Date()).getTime() / 1000),
-        exp:
-          Math.floor((overrides?.expiresAt ?? new Date()).getTime() / 1000) +
-          expirationTimeSeconds,
+        exp: Math.floor(
+          overrides?.expiresAt
+            ? overrides.expiresAt.getTime() / 1000
+            : new Date().getTime() / 1000 + expirationTimeSeconds,
+        ),
         ctx: overrides?.context ?? {},
       };
       const message = `${JWT_HEADER}.${base64url(JSON.stringify(payload))}`;

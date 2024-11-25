@@ -1,6 +1,7 @@
 import type {
   AddressString,
   AppInfo,
+  AuthOptions,
   Contract,
   Device,
   EcosystemIdString,
@@ -44,11 +45,12 @@ export type Config = {
   clientId: string;
   ecosystemId?: EcosystemIdString;
   ecosystemPartnerId: string;
+  analyticsOptions?: AnalyticsOptions;
+  authOptions?: AuthOptions;
+  launcherOptions?: LauncherOptions;
   sessionOptions?: SessionOptions;
   autoConnectTimeout?: number;
   onConnect?: (user: User) => void;
-  launcherOptions?: LauncherOptions;
-  analyticsOptions?: AnalyticsOptions;
 };
 
 export type ContextValues = {

@@ -33,6 +33,13 @@ export const readLoginPayloadReplySchema = loginPayloadSchema;
 export const loginBodySchema = Type.Object({
   payload: loginPayloadSchema,
   signature: Type.String(),
+  authTokenDurationSec: Type.Optional(
+    Type.Integer({
+      minimum: 3_600, // 1 minute
+      maximum: 604_800, // 1 week
+      default: 86_400, // 1 day
+    }),
+  ),
 });
 
 export const loginReplySchema = Type.Object({

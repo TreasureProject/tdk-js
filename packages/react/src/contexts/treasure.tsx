@@ -77,11 +77,12 @@ const TreasureProviderInner = ({
   clientId,
   ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
   ecosystemPartnerId,
+  analyticsOptions,
+  authOptions,
+  launcherOptions,
   sessionOptions,
   autoConnectTimeout = 5_000,
   onConnect,
-  launcherOptions,
-  analyticsOptions,
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
@@ -245,6 +246,9 @@ const TreasureProviderInner = ({
       const result = await authenticateWallet({
         wallet,
         tdk,
+        authTokenDurationSec:
+          authOptions?.authTokenDurationSec ??
+          sessionOptions?.sessionDurationSec,
       });
       authToken = result.token;
       user = result.user;
