@@ -23,17 +23,17 @@ catalog:
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.40.0
   "@sinclair/typebox": ^0.34.9
-  "@storybook/addon-essentials": ^8.4.4
-  "@storybook/react": ^8.4.4
-  "@storybook/react-vite": ^8.4.4
+  "@storybook/addon-essentials": ^8.4.5
+  "@storybook/react": ^8.4.5
+  "@storybook/react-vite": ^8.4.5
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.16
   "@types/jsonwebtoken": ^9.0.7
-  "@types/node": ^22.9.1
+  "@types/node": ^22.10.0
   "@types/react": ^18.3.12
   "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
-  "@vitejs/plugin-react": ^4.3.3
+  "@vitejs/plugin-react": ^4.3.4
   "@wagmi/core": ^2.14.6
   abitype: ^1.0.6
   autoprefixer: ^10.4.20
@@ -47,13 +47,13 @@ catalog:
   express: ^4.21.0
   fastify: ^5.1.0
   husky: ^9.1.7
-  i18next: ^23.16.6
+  i18next: ^24.0.2
   "i18next-browser-languagedetector": ^8.0.0
   "input-otp": ^1.4.1
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
   "jwt-decode": ^4.0.0
-  knip: ^5.38.0
+  knip: ^5.38.1
   lint-staged: ^15.2.10
   pino: ^9.5.0
   pino-pretty: ^13.0.0
@@ -61,17 +61,17 @@ catalog:
   prisma: ^5.22.0
   react: ^18.2.0
   "react-dom": ^18.2.0
-  "react-i18next": ^15.1.1
-  storybook: ^8.4.4
+  "react-i18next": ^15.1.2
+  storybook: ^8.4.5
   tailwindcss: ^3.4.15
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
-  "tailwind-merge": ^2.5.4
-  thirdweb: ^5.70.0
+  "tailwind-merge": ^2.5.5
+  thirdweb: ^5.71.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   turbo: ^2.3.2
-  typescript: ^5.6.3
+  typescript: ^5.7.2
   uuid: ^11.0.3
   viem: 2.21.45 # matches Thirdweb version to satisfy getAwsKmsAccount types
-  vite: ^5.4.11
+  vite: ^6.0.0
   vitest: ^2.1.6
