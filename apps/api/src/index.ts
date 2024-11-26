@@ -50,7 +50,6 @@ const main = async () => {
       kmsKey: env.TREASURE_AUTH_KMS_KEY,
       issuer: env.TREASURE_AUTH_ISSUER,
       audience: env.TREASURE_AUTH_AUDIENCE,
-      expirationTimeSeconds: 86_400, // 1 day
     }),
     thirdwebAuth: createThirdwebAuth({
       domain: env.TREASURE_AUTH_ISSUER,
