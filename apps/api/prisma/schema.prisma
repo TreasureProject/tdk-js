@@ -31,6 +31,7 @@ model User {
   socialAccounts       UserSocialAccount[]
   notificationSettings UserNotificationSettings[]
   gemsSummary          GemsSummary?
+  gemsTx               GemsTx[]
   vouchers             Voucher[]
   quests               UserQuest[]
 
@@ -111,6 +112,7 @@ model UserProfile {
   legacySocialAccounts       UserSocialAccount[]
   legacyNotificationSettings UserNotificationSettings[]
   gemsSummary                GemsSummary?
+  gemsTx                     GemsTx[]
   vouchers                   Voucher[]
   quests                     UserQuest[]
 
@@ -259,8 +261,8 @@ model GemsTx {
   id String @id @default(cuid())
 
   // Fields
-  txId          String  @unique @map("tx_id")
-  legacyAddress String? @map("legacy_address")
+  txId          String  @map("tx_id")
+  legacyAddress String? @map("legacy_address") // Keep for historical documentation purposes.
   category      String
   amount        Int     @default(0)
   amountShards  Int     @default(0) @map("amount_shards")
@@ -269,12 +271,19 @@ model GemsTx {
 
   // Relations
   userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Migration
+  legacyUserProfileId String?      @map("legacy_user_profile_id")
+  legacyUserProfile   UserProfile? @relation(fields: [legacyUserProfileId], references: [id], onDelete: Cascade)
 
   // Computed
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
+  @@unique([legacyUserProfileId, txId])
+  @@unique([userId, txId])
   @@index([userId, createdAt])
-  @@index([legacyAddress, createdAt])
+  @@index([legacyUserProfileId, createdAt])
   @@map("gems_tx")
   @@schema("public")
 }
