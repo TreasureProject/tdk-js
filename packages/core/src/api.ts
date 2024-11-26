@@ -50,13 +50,14 @@ import type {
   SwapBody,
 } from "../../../apps/api/src/schema/magicswap";
 import { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
+import type { TreasureClient } from "./client";
 import { DEFAULT_TDK_API_BASE_URI, DEFAULT_TDK_CHAIN_ID } from "./constants";
 import {
   createAddLiquidityArgs,
   createRemoveLiquidityArgs,
   createSwapArgs,
 } from "./magicswap";
-import type { AddressString, TreasureConnectClient } from "./types";
+import type { AddressString } from "./types";
 
 // @ts-expect-error: Patch BigInt for JSON serialization
 BigInt.prototype.toJSON = function () {
@@ -93,7 +94,7 @@ export class TDKAPI {
   chainId: number;
   backendWallet?: string;
   authToken?: string;
-  client?: TreasureConnectClient;
+  client?: TreasureClient;
   activeWallet?: Wallet;
 
   constructor({
@@ -108,7 +109,7 @@ export class TDKAPI {
     chainId?: number;
     backendWallet?: string;
     authToken?: string;
-    client?: TreasureConnectClient;
+    client?: TreasureClient;
     activeWallet?: Wallet;
   }) {
     this.baseUri = baseUri;

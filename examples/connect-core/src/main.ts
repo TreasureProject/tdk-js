@@ -2,7 +2,7 @@ import {
   type SessionOptions,
   type TDKAPI,
   type User,
-  createTreasureConnectClient,
+  createTreasureClient,
   getContractAddress,
   getUserAddress,
   logIn,
@@ -11,7 +11,7 @@ import {
 
 import "./style.css";
 
-const client = createTreasureConnectClient({
+const client = createTreasureClient({
   clientId: import.meta.env.VITE_TDK_CLIENT_ID,
 });
 const ecosystemId = import.meta.env.VITE_TDK_ECOSYSTEM_ID;

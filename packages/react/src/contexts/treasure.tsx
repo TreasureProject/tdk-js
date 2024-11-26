@@ -12,7 +12,7 @@ import {
   type User,
   authenticateWallet,
   startUserSession as coreStartSession,
-  createTreasureConnectClient,
+  createTreasureClient,
   decodeAuthToken,
   getContractAddresses,
   getUserAddress,
@@ -85,7 +85,7 @@ const TreasureProviderInner = ({
   );
   const [el, setEl] = useState<ReactNode>(null);
   const client = useMemo(
-    () => createTreasureConnectClient({ apiUri, clientId }),
+    () => createTreasureClient({ apiUri, clientId }),
     [apiUri, clientId],
   );
   const activeWallet = useActiveWallet();

@@ -12,7 +12,8 @@ import {
 } from "thirdweb/extensions/erc4337";
 import type { Account, Wallet } from "thirdweb/wallets";
 
-import type { Session, SessionOptions, TreasureConnectClient } from "../types";
+import type { TreasureClient } from "../client";
+import type { Session, SessionOptions } from "../types";
 import {
   getDateHoursFromNow,
   getDateSecondsFromNow,
@@ -178,7 +179,7 @@ export const startUserSession = async ({
   sessions: userSessions,
   options,
 }: {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   wallet: Wallet | undefined;
   chainId: number;
   sessions?: Session[];

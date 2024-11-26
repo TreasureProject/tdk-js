@@ -17,29 +17,25 @@ import type {
   CreateTransactionReply,
   ReadTransactionReply,
 } from "../../../../apps/api/src/schema";
-import type {
-  ContractWriteTransaction,
-  TransactionOverrides,
-  TreasureConnectClient,
-} from "../types";
-import { tdkApiGet, tdkApiPost } from "./api";
+import type { TreasureClient } from "../client";
+import type { ContractWriteTransaction, TransactionOverrides } from "../types";
 
 const getBackendTransactionDetails = async ({
-  apiUri,
+  client,
   queueId,
 }: {
-  apiUri: string;
+  client: TreasureClient;
   queueId: string;
-}) => tdkApiGet<ReadTransactionReply>(`${apiUri}/transactions/${queueId}`);
+}) => client.api.get<ReadTransactionReply>(`/transactions/${queueId}`);
 
 const waitForBackendTransaction = async ({
-  apiUri,
+  client,
   queueId,
   maxRetries = 15,
   retryMs = 2_500,
   initialWaitMs = 4_000,
 }: {
-  apiUri: string;
+  client: TreasureClient;
   queueId: string;
   maxRetries?: number;
   retryMs?: number;
@@ -51,7 +47,7 @@ const waitForBackendTransaction = async ({
     await new Promise((r) =>
       setTimeout(r, retries === 0 ? initialWaitMs : retryMs),
     );
-    transaction = await getBackendTransactionDetails({ apiUri, queueId });
+    transaction = await getBackendTransactionDetails({ client, queueId });
     retries += 1;
   } while (
     retries < maxRetries &&
@@ -94,18 +90,16 @@ export const sendTransaction = async <
   TFunctionName extends ExtractAbiFunctionNames<TAbi, "nonpayable" | "payable">,
 >(
   params: {
+    client: TreasureClient;
     chainId: number;
     transaction: ContractWriteTransaction<TAbi, TFunctionName>;
   } & (
     | {
         // Active wallet options
-        client: TreasureConnectClient;
         wallet: Wallet<"smart">;
       }
     | {
         // Backend wallet options
-        apiUri: string;
-        authToken: string;
         backendWallet: string;
         includeAbi?: boolean;
         accountAddress?: string;
@@ -113,7 +107,8 @@ export const sendTransaction = async <
       }
   ),
 ) => {
-  const chain = defineChain(params.chainId);
+  const { client, chainId } = params;
+  const chain = defineChain(chainId);
   const isUsingActiveWallet = "wallet" in params;
 
   // TODO: remove ZK check when sessions are supported
@@ -123,16 +118,9 @@ export const sendTransaction = async <
 
   if (isUsingActiveWallet) {
     const {
-      client,
       wallet,
       transaction: { address, abi, functionName, args, overrides },
     } = params;
-
-    if (!client) {
-      throw new Error(
-        "Treasure Connect client must be provided to use active wallet",
-      );
-    }
 
     if (wallet.getChain()?.id !== chain.id) {
       await wallet.switchChain(chain);
@@ -181,20 +169,12 @@ export const sendTransaction = async <
     }
   }
 
-  const {
-    apiUri,
-    chainId,
-    authToken,
-    accountAddress,
-    accountSignature,
-    transaction,
-    includeAbi,
-  } = params;
-  const { queueId } = await tdkApiPost<
+  const { accountAddress, accountSignature, transaction, includeAbi } = params;
+  const { queueId } = await client.api.post<
     CreateTransactionBody,
     CreateTransactionReply
   >(
-    `${apiUri}/transactions`,
+    "/transactions",
     {
       ...transaction,
       // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
@@ -204,16 +184,16 @@ export const sendTransaction = async <
     },
     {
       chainId,
-      authToken,
       accountAddress,
       accountSignature,
     },
   );
-  return waitForBackendTransaction({ apiUri, queueId });
+  return waitForBackendTransaction({ client, queueId });
 };
 
 export const sendRawTransaction = async (
   params: {
+    client: TreasureClient;
     chainId: number;
     transaction: {
       to: string;
@@ -224,20 +204,18 @@ export const sendRawTransaction = async (
   } & (
     | {
         // Active wallet transaction params
-        client: TreasureConnectClient;
         wallet: Wallet<"smart">;
       }
     | {
         // Backend wallet transaction params
-        apiUri: string;
-        authToken: string;
         backendWallet: string;
         accountAddress?: string;
         accountSignature?: string;
       }
   ),
 ) => {
-  const chain = defineChain(params.chainId);
+  const { client, chainId } = params;
+  const chain = defineChain(chainId);
   const isUsingActiveWallet = "wallet" in params;
 
   // TODO: remove ZK check when sessions are supported
@@ -247,16 +225,9 @@ export const sendRawTransaction = async (
 
   if (isUsingActiveWallet) {
     const {
-      client,
       wallet,
       transaction: { to, data, value, overrides },
     } = params;
-
-    if (!client) {
-      throw new Error(
-        "Treasure Connect client must be provided to use active wallet",
-      );
-    }
 
     if (wallet.getChain()?.id !== chain.id) {
       await wallet.switchChain(chain);
@@ -296,29 +267,21 @@ export const sendRawTransaction = async (
     }
   }
 
-  const {
-    apiUri,
-    chainId,
-    authToken,
-    accountAddress,
-    accountSignature,
-    transaction,
-  } = params;
-  const { queueId } = await tdkApiPost<
+  const { accountAddress, accountSignature, transaction } = params;
+  const { queueId } = await client.api.post<
     CreateRawTransactionBody,
     CreateRawTransactionReply
   >(
-    `${apiUri}/transactions`,
+    "/transactions",
     {
       ...transaction,
       value: transaction.value?.toString(),
     },
     {
       chainId,
-      authToken,
       accountAddress,
       accountSignature,
     },
   );
-  return waitForBackendTransaction({ apiUri, queueId });
+  return waitForBackendTransaction({ client, queueId });
 };

@@ -1,8 +1,4 @@
-import {
-  type CreateThirdwebClientOptions,
-  createThirdwebClient,
-  defineChain,
-} from "thirdweb";
+import { defineChain } from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
 import {
   type Wallet,
@@ -14,17 +10,14 @@ import {
 import { hasStoredPasskey } from "thirdweb/wallets/in-app";
 
 import { TDKAPI } from "../api";
+import type { TreasureClient } from "../client";
 import {
   ACCOUNT_FACTORY_ADDRESS,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
 } from "../constants";
-import type {
-  ConnectConfig,
-  EcosystemIdString,
-  TreasureConnectClient,
-} from "../types";
+import type { ConnectConfig, EcosystemIdString } from "../types";
 import { startUserSession } from "./session";
 
 const SUPPORTED_SOCIAL_OPTIONS = [
@@ -55,7 +48,7 @@ export type ConnectMethod =
   | "auth_endpoint";
 
 type ConnectWalletConfig = {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   ecosystemId?: EcosystemIdString;
   ecosystemPartnerId: string;
   chainId?: number;
@@ -167,16 +160,6 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
   return smartWallet;
 };
 
-export const createTreasureConnectClient = ({
-  apiUri = DEFAULT_TDK_API_BASE_URI,
-  ...thirdwebClientOptions
-}: CreateThirdwebClientOptions & {
-  apiUri?: string;
-}): TreasureConnectClient => ({
-  ...createThirdwebClient(thirdwebClientOptions),
-  apiUri,
-});
-
 export const authenticateWallet = async ({
   wallet,
   tdk,
@@ -213,7 +196,7 @@ export const sendEmailVerificationCode = async ({
   ecosystemPartnerId,
   email,
 }: {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   ecosystemId?: EcosystemIdString;
   ecosystemPartnerId: string;
   email: string;

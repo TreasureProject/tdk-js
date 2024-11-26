@@ -7,7 +7,7 @@ import { createAuth } from "@treasure-dev/auth";
 import {
   TREASURE_CHAIN_DEFINITION,
   TREASURE_TOPAZ_CHAIN_DEFINITION,
-  createTreasureConnectClient,
+  createTreasureClient,
 } from "@treasure-dev/tdk-core";
 import { http, createConfig, fallback } from "@wagmi/core";
 import {
@@ -35,7 +35,7 @@ import { getEnv } from "./utils/env";
 
 const main = async () => {
   const env = await getEnv();
-  const client = createTreasureConnectClient({
+  const client = createTreasureClient({
     secretKey: env.THIRDWEB_SECRET_KEY,
   });
   const ctx: TdkApiContext = {

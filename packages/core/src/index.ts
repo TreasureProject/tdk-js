@@ -24,6 +24,7 @@ export { harvesterAbi } from "./abis/harvesterAbi";
 export { nftHandlerAbi } from "./abis/nftHandlerAbi";
 export { magicswapV2RouterAbi } from "./abis/magicswapV2RouterAbi";
 export { TDKAPI } from "./api";
+export { createTreasureClient, type TreasureClient } from "./client";
 export { sumArray } from "./utils/array";
 export {
   getContractAddress,
@@ -50,7 +51,6 @@ export {
   isSocialConnectMethod,
   connectEcosystemWallet,
   connectWallet,
-  createTreasureConnectClient,
   sendEmailVerificationCode,
   authenticateWallet,
   logIn,

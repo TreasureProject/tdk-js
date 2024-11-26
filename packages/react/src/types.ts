@@ -8,7 +8,7 @@ import type {
   PropertyValue,
   SessionOptions,
   TDKAPI,
-  TreasureConnectClient,
+  TreasureClient,
   User,
 } from "@treasure-dev/tdk-core";
 import type { ReactNode } from "react";
@@ -59,7 +59,7 @@ export type ContextValues = {
   chain: Chain;
   contractAddresses: Record<Contract, AddressString>;
   tdk: TDKAPI;
-  client: TreasureConnectClient;
+  client: TreasureClient;
   ecosystemId: EcosystemIdString;
   ecosystemPartnerId: string;
   isConnecting: boolean;

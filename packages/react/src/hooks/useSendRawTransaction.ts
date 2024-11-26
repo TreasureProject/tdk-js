@@ -1,5 +1,5 @@
 import {
-  type TreasureConnectClient,
+  type TreasureClient,
   isSmartWallet,
   sendRawTransaction,
 } from "@treasure-dev/tdk-core";
@@ -16,12 +16,10 @@ export const useSendRawTransaction = () => {
       transaction: Parameters<typeof sendRawTransaction>[0]["transaction"],
       options?: Partial<{
         chainId?: number;
-        client?: TreasureConnectClient;
+        client?: TreasureClient;
         // Active wallet options
         wallet: Wallet<"smart">;
         // Backend wallet options
-        apiUri?: string;
-        authToken?: string;
         backendWallet: string;
       }>,
     ) => {
@@ -30,17 +28,9 @@ export const useSendRawTransaction = () => {
 
       // Send transaction via backend if a backend wallet is provided
       if (options?.backendWallet) {
-        const authToken = options.authToken ?? treasure.authToken;
-        if (!authToken) {
-          throw new Error(
-            "Authenticated user required to send transaction with backend wallet",
-          );
-        }
-
         return sendRawTransaction({
+          client,
           chainId,
-          apiUri: options?.apiUri ?? client.apiUri,
-          authToken,
           backendWallet: options.backendWallet,
           transaction,
         });
@@ -53,8 +43,8 @@ export const useSendRawTransaction = () => {
       }
 
       return sendRawTransaction({
-        chainId,
         client,
+        chainId,
         wallet,
         transaction,
       });

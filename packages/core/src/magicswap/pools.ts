@@ -1,8 +1,8 @@
 import { defineChain, getContract, readContract, toUnits } from "thirdweb";
 
 import { uniswapV2PairAbi } from "../abis/uniswapV2PairAbi";
+import type { TreasureClient } from "../client";
 import { MAGICSWAPV2_API_URL } from "../constants";
-import type { TreasureConnectClient } from "../types";
 import { fetchCollections, fetchTokens } from "../utils/inventory";
 import { getPair, getPairs, getStats } from "./graph-queries";
 import type {
@@ -339,7 +339,7 @@ const buildPools = async ({
   inventoryApiUrl,
   inventoryApiKey,
 }: {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   chainId: number;
   pairs: Pair[];
   stats: Awaited<ReturnType<typeof fetchStats>>;
@@ -384,7 +384,7 @@ export const fetchPools = async ({
   inventoryApiUrl,
   inventoryApiKey,
 }: {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   chainId: number;
   inventoryApiUrl: string;
   inventoryApiKey: string;
@@ -411,7 +411,7 @@ export const fetchPool = async ({
   inventoryApiUrl,
   inventoryApiKey,
 }: {
-  client: TreasureConnectClient;
+  client: TreasureClient;
   chainId: number;
   pairId: string;
   inventoryApiUrl: string;
