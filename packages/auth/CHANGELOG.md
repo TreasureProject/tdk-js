@@ -1,5 +1,11 @@
 # @treasure-dev/auth
 
+## 1.0.4
+
+### Patch Changes
+
+- ecc2568: Fixed auth token expiration time calculation
+
 ## 1.0.3
 
 ### Patch Changes

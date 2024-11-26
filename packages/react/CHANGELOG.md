@@ -1,5 +1,18 @@
 # @treasure-dev/tdk-react
 
+## 3.8.0
+
+### Minor Changes
+
+- 95ac5b2: Allow full suite of props on connected account modal
+
+### Patch Changes
+
+- dcc4bc5: Updated `ConnectButton` to fall back to `Blobbie` avatar
+- ecc2568: Added ability to specify auth token duration with `authTokenDurationSec` config
+- Updated dependencies [ecc2568]
+  - @treasure-dev/tdk-core@3.8.0
+
 ## 3.7.1
 
 ### Patch Changes

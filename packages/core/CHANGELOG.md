@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.8.0
+
+### Patch Changes
+
+- ecc2568: Added ability to specify auth token duration with `authTokenDurationSec` config
+
 ## 3.7.1
 
 ### Patch Changes
