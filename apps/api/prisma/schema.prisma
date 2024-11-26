@@ -261,7 +261,7 @@ model GemsTx {
   id String @id @default(cuid())
 
   // Fields
-  txId          String  @unique @map("tx_id")
+  txId          String  @map("tx_id")
   legacyAddress String? @map("legacy_address") // Keep for historical documentation purposes.
   category      String
   amount        Int     @default(0)
