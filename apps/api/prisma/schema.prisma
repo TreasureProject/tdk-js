@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "smart_account"]
+  schemas  = ["public", "treasure_account"]
 }
 
 model User {
@@ -542,34 +542,56 @@ model QuestStat {
 }
 
 view Transaction {
-  id              String   @id
-  chainId         Int      @map("chain_id")
-  blockNumber     Decimal  @map("block_number") @db.Decimal
-  blockTimestamp  DateTime @map("block_timestamp")
-  transactionHash String   @map("transaction_hash")
-  fromAddress     String   @map("from_address")
-  toAddress       String   @map("to_address")
-  value           Decimal? @db.Decimal
+  id                       String   @id
+  chain                    String?
+  chainId                  Int      @map("chain_id")
+  fromAddress              String   @map("from_address")
+  toAddress                String   @map("to_address")
+  transactionHash          String   @map("transaction_hash")
+  blockTimestamp           DateTime @map("block_timestamp") @db.Timestamptz(6)
+  blockNumber              Decimal  @map("block_number") @db.Decimal
+  value                    Decimal? @db.Decimal
+  transactionIndex         Decimal? @map("transaction_index") @db.Decimal
+  gas                      Decimal? @db.Decimal
+  gasUsed                  Decimal? @map("gas_used") @db.Decimal
+  receiptStatus            Decimal? @map("receipt_status") @db.Decimal
+  receiptEffectiveGasPrice Decimal? @map("receipt_effective_gas_price") @db.Decimal
+  receiptGasUsed           Decimal? @map("receipt_gas_used") @db.Decimal
+  receiptCumulativeGasUsed Decimal? @map("receipt_cumulative_gas_used") @db.Decimal
 
   @@map("transactions")
-  @@schema("smart_account")
+  @@schema("treasure_account")
 }
 
-// Ignored models and views added here for diff parity
 model RawTransaction {
   key  String @id @map("_key")
   body Json
 
   @@map("transactions_jsonb")
   @@ignore
-  @@schema("smart_account")
+  @@schema("treasure_account")
+}
+
+view TreasureAccount {
+  id              String   @id
+  chain           String?
+  chainId         Int      @map("chain_id")
+  account         String
+  accountAdmin    String   @map("account_admin")
+  transactionHash String   @map("transaction_hash")
+  blockTimestamp  DateTime @map("block_timestamp") @db.Timestamptz(6)
+  blockNumber     Decimal  @map("block_number") @db.Decimal
+  logIndex        Decimal? @map("log_index") @db.Decimal
+
+  @@map("accounts")
+  @@schema("treasure_account")
 }
 
 model RawTreasureAccount {
   key  String @id @map("_key")
   body Json
 
-  @@map("treasure_accounts_jsonb")
+  @@map("accounts_jsonb")
   @@ignore
-  @@schema("smart_account")
+  @@schema("treasure_account")
 }
