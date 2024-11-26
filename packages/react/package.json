@@ -43,8 +43,9 @@
   "dependencies": {
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-visually-hidden": "catalog:",
-    "@treasure-dev/tdk-core": "workspace:*",
     "@treasure-dev/launcher": "workspace:*",
+    "@treasure-dev/tdk-core": "workspace:*",
+    "@uidotdev/usehooks": "^2.4.1",
     "abitype": "catalog:",
     "clsx": "catalog:",
     "i18next": "catalog:",

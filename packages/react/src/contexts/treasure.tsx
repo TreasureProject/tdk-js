@@ -17,6 +17,7 @@ import {
   getContractAddresses,
   getUserAddress,
 } from "@treasure-dev/tdk-core";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import {
   type PropsWithChildren,
   type ReactNode,
@@ -46,11 +47,6 @@ import {
   EVT_TREASURECONNECT_CONNECTED,
   EVT_TREASURECONNECT_DISCONNECTED,
 } from "../utils/defaultAnalytics";
-import {
-  clearStoredAuthToken,
-  getStoredAuthToken,
-  setStoredAuthToken,
-} from "../utils/store";
 
 const Context = createContext({} as ContextValues);
 
@@ -84,10 +80,13 @@ const TreasureProviderInner = ({
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
+  const [authToken, setAuthToken] = useLocalStorage<string | undefined>(
+    "tdk:authToken",
+  );
   const [el, setEl] = useState<ReactNode>(null);
   const client = useMemo(
-    () => createTreasureConnectClient({ clientId }),
-    [clientId],
+    () => createTreasureConnectClient({ apiUri, clientId }),
+    [apiUri, clientId],
   );
   const activeWallet = useActiveWallet();
   const activeWalletStatus = useActiveWalletConnectionStatus();
@@ -187,15 +186,14 @@ const TreasureProviderInner = ({
   );
 
   const onAuthTokenUpdated = useCallback(
-    (authToken: string) => {
-      tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
+    (nextAuthToken: string) => {
+      tdk.user.me({ overrideAuthToken: nextAuthToken }).then((user) => {
         setUser(user);
-        setStoredAuthToken(authToken);
-        tdk.setAuthToken(authToken);
+        setAuthToken(nextAuthToken);
         onConnect?.(user, startUserSession);
       });
     },
-    [tdk.user.me, tdk.setAuthToken, onConnect, startUserSession],
+    [tdk.user.me, setAuthToken, onConnect, startUserSession],
   );
 
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
@@ -212,9 +210,8 @@ const TreasureProviderInner = ({
       },
     });
     setUser(undefined);
-    tdk.clearAuthToken();
+    setAuthToken(undefined);
     tdk.clearActiveWallet();
-    clearStoredAuthToken();
     activeWallet?.disconnect();
   };
 
@@ -232,7 +229,6 @@ const TreasureProviderInner = ({
     let legacyProfiles: LegacyProfile[] = [];
 
     // Check for existing stored auth token
-    let authToken = getStoredAuthToken();
     if (authToken) {
       // Validate if it's expired before attempting to use it
       try {
@@ -256,18 +252,13 @@ const TreasureProviderInner = ({
         wallet,
         tdk,
       });
-      authToken = result.token;
+      setAuthToken(result.token);
       user = result.user;
       legacyProfiles = result.legacyProfiles;
     }
 
-    // Set auth token and wallet on TDK so they can be used in future requests
-    tdk.setAuthToken(authToken as string);
-    tdk.setActiveWallet(wallet);
-
     // Update user state
     setUser(user);
-    setStoredAuthToken(authToken as string);
 
     trackCustomEvent({
       name: EVT_TREASURECONNECT_CONNECTED,
@@ -315,16 +306,18 @@ const TreasureProviderInner = ({
           isAutoConnecting ||
           activeWalletStatus === "connecting" ||
           isAuthenticating,
-        ...(user
+        ...(user && authToken
           ? {
               isConnected: true,
               user,
               userAddress: userAddress ?? ZERO_ADDRESS, // should not reach here
+              authToken,
             }
           : {
               isConnected: false,
               user: undefined,
               userAddress: undefined,
+              authToken: undefined,
             }),
         isUsingTreasureLauncher,
         logIn,

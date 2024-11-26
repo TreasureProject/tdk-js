@@ -1,4 +1,8 @@
-import { createThirdwebClient, defineChain } from "thirdweb";
+import {
+  type CreateThirdwebClientOptions,
+  createThirdwebClient,
+  defineChain,
+} from "thirdweb";
 import { signLoginPayload } from "thirdweb/auth";
 import {
   type Wallet,
@@ -164,9 +168,14 @@ export const connectWallet = async (params: ConnectWalletConfig) => {
 };
 
 export const createTreasureConnectClient = ({
-  clientId,
-}: { clientId: string }): TreasureConnectClient =>
-  createThirdwebClient({ clientId });
+  apiUri = DEFAULT_TDK_API_BASE_URI,
+  ...thirdwebClientOptions
+}: CreateThirdwebClientOptions & {
+  apiUri?: string;
+}): TreasureConnectClient => ({
+  ...createThirdwebClient(thirdwebClientOptions),
+  apiUri,
+});
 
 export const authenticateWallet = async ({
   wallet,

@@ -80,10 +80,12 @@ export type ContextValues = {
       isConnected: false;
       user: undefined;
       userAddress: undefined;
+      authToken: undefined;
     }
   | {
       isConnected: true;
       user: User;
       userAddress: string;
+      authToken: string;
     }
 );

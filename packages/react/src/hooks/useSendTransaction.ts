@@ -11,7 +11,7 @@ import type { Wallet } from "thirdweb/wallets";
 import { useTreasure } from "../contexts/treasure";
 
 export const useSendTransaction = () => {
-  const { client, chain } = useTreasure();
+  const treasure = useTreasure();
   const activeWallet = useActiveWallet();
   return {
     sendTransaction: async <
@@ -22,20 +22,49 @@ export const useSendTransaction = () => {
       >,
     >(
       transaction: ContractWriteTransaction<TAbi, TFunctionName>,
-      overrides?: Partial<{
-        chainId: number;
-        client: TreasureConnectClient;
+      options?: Partial<{
+        chainId?: number;
+        client?: TreasureConnectClient;
+        // Active wallet options
         wallet: Wallet<"smart">;
+        // Backend wallet options
+        apiUri?: string;
+        authToken?: string;
+        backendWallet: string;
+        includeAbi?: boolean;
       }>,
     ) => {
-      const wallet = overrides?.wallet ?? activeWallet;
+      const client = options?.client ?? treasure.client;
+      const chainId = options?.chainId ?? treasure.chain.id;
+
+      // Send transaction via backend if a backend wallet is provided
+      if (options?.backendWallet) {
+        const authToken = options.authToken ?? treasure.authToken;
+        if (!authToken) {
+          throw new Error(
+            "Authenticated user required to send transaction with backend wallet",
+          );
+        }
+
+        return sendTransaction({
+          chainId,
+          apiUri: options?.apiUri ?? client.apiUri,
+          authToken,
+          backendWallet: options.backendWallet,
+          includeAbi: options.includeAbi,
+          transaction,
+        });
+      }
+
+      // Send transaction via active smart wallet
+      const wallet = options?.wallet ?? activeWallet;
       if (!wallet || !isSmartWallet(wallet)) {
         throw new Error("No smart wallet found");
       }
 
       return sendTransaction({
-        chainId: overrides?.chainId ?? chain.id,
-        client: overrides?.client ?? client,
+        chainId,
+        client,
         wallet,
         transaction,
       });

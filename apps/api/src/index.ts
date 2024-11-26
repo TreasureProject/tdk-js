@@ -7,6 +7,7 @@ import { createAuth } from "@treasure-dev/auth";
 import {
   TREASURE_CHAIN_DEFINITION,
   TREASURE_TOPAZ_CHAIN_DEFINITION,
+  createTreasureConnectClient,
 } from "@treasure-dev/tdk-core";
 import { http, createConfig, fallback } from "@wagmi/core";
 import {
@@ -15,7 +16,6 @@ import {
   mainnet,
   sepolia,
 } from "@wagmi/core/chains";
-import { createThirdwebClient } from "thirdweb";
 import { createAuth as createThirdwebAuth } from "thirdweb/auth";
 import { defineChain } from "viem";
 
@@ -35,7 +35,9 @@ import { getEnv } from "./utils/env";
 
 const main = async () => {
   const env = await getEnv();
-  const client = createThirdwebClient({ secretKey: env.THIRDWEB_SECRET_KEY });
+  const client = createTreasureConnectClient({
+    secretKey: env.THIRDWEB_SECRET_KEY,
+  });
   const ctx: TdkApiContext = {
     env,
     db: new PrismaClient({

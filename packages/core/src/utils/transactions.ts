@@ -98,12 +98,12 @@ export const sendTransaction = async <
     transaction: ContractWriteTransaction<TAbi, TFunctionName>;
   } & (
     | {
-        // Active wallet transaction params
+        // Active wallet options
         client: TreasureConnectClient;
         wallet: Wallet<"smart">;
       }
     | {
-        // Backend wallet transaction params
+        // Backend wallet options
         apiUri: string;
         authToken: string;
         backendWallet: string;
