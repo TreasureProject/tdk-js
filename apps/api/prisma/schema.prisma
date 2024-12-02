@@ -500,6 +500,7 @@ model UserQuest {
   completedAt     DateTime?   @map("completed_at") @db.Timestamptz(6)
   ackedAt         DateTime?   @map("acked_at") @db.Timestamptz(6)
   abandonedAt     DateTime?   @map("abandoned_at") @db.Timestamptz(6)
+  immortalizedAt  DateTime?   @map("immortalized_at") @db.Timestamptz(6)
   progressSummary Json?       @map("progress_summary")
   notificationId  String?     @map("notification_id")
 
