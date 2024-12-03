@@ -15,8 +15,7 @@ model User {
 
   // Fields
   // Identifiers
-  externalUserId        String? @unique @map("external_user_id")
-  externalWalletAddress String? @unique @map("external_wallet_address") @db.VarChar(42)
+  externalUserId String @unique @map("external_user_id") // Thirdweb user ID
 
   // Status
   lastLoginAt DateTime? @map("last_login_at")
@@ -48,10 +47,9 @@ model UserSmartAccount {
   id String @id @default(cuid())
 
   // Fields
-  chainId              Int     @map("chain_id")
-  address              String  @db.VarChar(42)
-  initialEmail         String? @map("initial_email") // Email address used to create the smart account, if applicable
-  initialWalletAddress String  @map("initial_wallet_address") @db.VarChar(42) // Wallet address used to create the smart account (either EOA or ecosystem wallet)
+  chainId                Int    @map("chain_id")
+  address                String @db.VarChar(42)
+  ecosystemWalletAddress String @map("ecosystem_wallet_address") @db.VarChar(42)
 
   // Relations
   userId String @map("user_id")

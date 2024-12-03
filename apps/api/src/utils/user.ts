@@ -1,22 +1,18 @@
 import type { PrismaClient, UserProfile } from "@prisma/client";
 import {
-  DEFAULT_TDK_ECOSYSTEM_ID,
-  type EcosystemIdString,
   USER_PROFILE_FREE_BANNER_URLS,
   fetchUserInventory,
   getContractAddress,
 } from "@treasure-dev/tdk-core";
-import { type GetUserResult, type ThirdwebClient, getUser } from "thirdweb";
-import { checksumAddress } from "thirdweb/utils";
-
+import type { GetUserResult } from "thirdweb";
 import { arbitrum } from "thirdweb/chains";
+
 import type { UpdateCurrentUserBody } from "../schema";
 import {
   USER_NOTIFICATION_SETTINGS_SELECT_FIELDS,
   USER_PROFILE_SELECT_FIELDS,
   USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "./db";
-import { log } from "./log";
 
 export const transformUserProfileResponseFields = (
   profile: Partial<UserProfile>,
@@ -28,70 +24,39 @@ export const transformUserProfileResponseFields = (
     profile.testnetFaucetLastUsedAt?.toISOString() ?? null,
 });
 
-export const getThirdwebUser = async ({
-  client,
-  ecosystemId = DEFAULT_TDK_ECOSYSTEM_ID,
-  ecosystemPartnerId,
-  walletAddress,
-}: {
-  client: ThirdwebClient;
-  ecosystemId?: EcosystemIdString;
-  ecosystemPartnerId: string;
-  walletAddress: string;
-}) => {
-  const checksumWalletAddress = checksumAddress(walletAddress);
-  try {
-    const ecosystemWalletUser = await getUser({
-      client,
-      ecosystem: {
-        id: ecosystemId,
-        partnerId: ecosystemPartnerId,
-      },
-      walletAddress: checksumWalletAddress,
-    });
-    if (ecosystemWalletUser) {
-      return ecosystemWalletUser;
-    }
-  } catch (err) {
-    // Ignore failures from the Thirdweb SDK, this info is "nice-to-have"
-    log.warn("Error fetching Thirdweb ecosystem wallets user:", err);
+export const parseThirdwebUserLinkedAccounts = (user: GetUserResult | null) => {
+  if (!user) {
+    return {
+      emailAddresses: [],
+      externalWalletAddresses: [],
+    };
   }
 
-  // Fall back to querying in-app wallets (no ecosystem ID)
-  try {
-    const inAppWalletUser = await getUser({
-      client,
-      walletAddress: checksumWalletAddress,
-    });
-    if (inAppWalletUser) {
-      return inAppWalletUser;
-    }
-  } catch (err) {
-    // Ignore failures from the Thirdweb SDK, this info is "nice-to-have"
-    log.warn("Error fetching Thirdweb in-app wallets user:", err);
-  }
+  const emailAddresses = new Set<string>();
+  const externalWalletAddresses = new Set<string>();
 
-  return undefined;
-};
-
-export const parseThirdwebUserEmail = (user: GetUserResult) => {
   if (user.email) {
-    return user.email;
-  }
-
-  const profileEmail = user.profiles.find(({ type }) => type === "email")
-    ?.details.email;
-  if (profileEmail) {
-    return profileEmail;
+    emailAddresses.add(user.email.toLowerCase());
   }
 
   for (const profile of user.profiles) {
     if (profile.details.email) {
-      return profile.details.email;
+      emailAddresses.add(profile.details.email.toLowerCase());
+    }
+
+    if (
+      // @ts-ignore: Thirdweb SDK has a type mismatch bug here as of v5.72.0
+      (profile.type === "wallet" || profile.type === "siwe") &&
+      profile.details.address
+    ) {
+      externalWalletAddresses.add(profile.details.address.toLowerCase());
     }
   }
 
-  return undefined;
+  return {
+    emailAddresses: [...emailAddresses],
+    externalWalletAddresses: [...externalWalletAddresses],
+  };
 };
 
 const isValidUserProfileBannerCollection = ({
@@ -165,27 +130,17 @@ export const createUserProfilePictureUrl = async ({
 export const checkCanMigrateLegacyUser = async ({
   db,
   userId,
+  emailAddresses,
+  externalWalletAddresses,
   legacyProfileId,
 }: {
   db: PrismaClient;
   userId: string;
+  emailAddresses: string[];
+  externalWalletAddresses: string[];
   legacyProfileId: string;
 }) => {
-  const [user, profile, legacyProfile] = await Promise.all([
-    db.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        externalWalletAddress: true,
-        smartAccounts: {
-          select: {
-            initialEmail: true,
-            initialWalletAddress: true,
-          },
-        },
-      },
-    }),
+  const [profile, legacyProfile] = await Promise.all([
     db.userProfile.findUnique({
       where: { userId },
       select: { id: true },
@@ -197,33 +152,21 @@ export const checkCanMigrateLegacyUser = async ({
     }),
   ]);
 
-  if (!user || !legacyProfile) {
-    return { canMigrate: false };
-  }
+  const externalWalletAddressMatch =
+    !!legacyProfile?.legacyAddress &&
+    externalWalletAddresses
+      .map((address) => address.toLowerCase())
+      .includes(legacyProfile.legacyAddress.toLowerCase());
+  const emailAddressMatch =
+    !!legacyProfile?.legacyEmail &&
+    !!legacyProfile.legacyEmailVerifiedAt &&
+    emailAddresses.includes(legacyProfile.legacyEmail.toLowerCase());
 
-  let canMigrate = false;
-
-  // Check if the current user is linked to this legacy profile via wallet address
-  if (legacyProfile.legacyAddress) {
-    const walletAddresses = user.smartAccounts
-      .map((smartAccount) => smartAccount.initialWalletAddress.toLowerCase())
-      .filter((walletAddress) => Boolean(walletAddress));
-    canMigrate = walletAddresses.includes(
-      legacyProfile.legacyAddress.toLowerCase(),
-    );
-  }
-
-  // Check if the current user is linked to this legacy profile via email address
-  if (legacyProfile.legacyEmail && legacyProfile.legacyEmailVerifiedAt) {
-    const emailAddresses = user.smartAccounts
-      .map((smartAccount) => smartAccount.initialEmail?.toLowerCase())
-      .filter((emailAddress) => Boolean(emailAddress)) as string[];
-    canMigrate = emailAddresses.includes(
-      legacyProfile.legacyEmail.toLowerCase(),
-    );
-  }
-
-  return { canMigrate, profile, legacyProfile };
+  return {
+    canMigrate: externalWalletAddressMatch || emailAddressMatch,
+    profile,
+    legacyProfile,
+  };
 };
 
 export const migrateLegacyUser = async ({

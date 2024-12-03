@@ -4,7 +4,7 @@ import {
   getUserSessions,
 } from "@treasure-dev/tdk-core";
 import type { FastifyPluginAsync } from "fastify";
-import { defineChain } from "thirdweb";
+import { type GetUserResult, defineChain } from "thirdweb";
 import { isZkSyncChain } from "thirdweb/utils";
 
 import "../middleware/chain";
@@ -35,9 +35,8 @@ import {
 import { throwUnauthorizedError, throwUserNotFoundError } from "../utils/error";
 import { log } from "../utils/log";
 import {
-  getThirdwebUser,
   migrateLegacyUser,
-  parseThirdwebUserEmail,
+  parseThirdwebUserLinkedAccounts,
   transformUserProfileResponseFields,
 } from "../utils/user";
 import { validateWanderersUser } from "../utils/wanderers";
@@ -55,6 +54,7 @@ export const authRoutes =
     env,
     client,
     engine,
+    getThirdwebUser,
   }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
@@ -116,8 +116,7 @@ export const authRoutes =
         const address = payload.address.toLowerCase();
         const chain = defineChain(chainId);
 
-        // Find user's smart account
-        let userSmartAccount = await db.userSmartAccount.findUnique({
+        const foundUserSmartAccount = await db.userSmartAccount.findUnique({
           where: {
             chainId_address: {
               chainId,
@@ -126,67 +125,85 @@ export const authRoutes =
           },
         });
 
-        // If no smart account exists, fetch user details and create it
-        if (!userSmartAccount) {
-          let initialWalletAddress: string | undefined;
+        let userId: string;
+        let thirdwebUser: GetUserResult;
+        if (foundUserSmartAccount) {
+          const thirdwebUserDetails = await getThirdwebUser({
+            ecosystemWalletAddress:
+              foundUserSmartAccount.ecosystemWalletAddress,
+          });
+
+          if (!thirdwebUserDetails) {
+            throwUnauthorizedError(
+              `No Thirdweb user found for ecosystem wallet ${foundUserSmartAccount.ecosystemWalletAddress}`,
+            );
+            return;
+          }
+
+          userId = foundUserSmartAccount.userId;
+          thirdwebUser = thirdwebUserDetails;
+        } else {
+          let adminWalletAddress: string | undefined;
 
           // On ZKsync chains, the smart account address is the same as the admin wallet address
           if (await isZkSyncChain(chain)) {
-            initialWalletAddress = address.toLowerCase();
+            adminWalletAddress = address.toLowerCase();
           } else {
             // Fetch admin wallets associated with this smart account address
             const { result } = await engine.account.getAllAdmins(
               chainId.toString(),
               address,
             );
-            initialWalletAddress = result[0]?.toLowerCase();
+            adminWalletAddress = result[0]?.toLowerCase();
           }
 
           // Smart accounts should never be orphaned, but checking anyway
-          if (!initialWalletAddress) {
+          if (!adminWalletAddress) {
             throwUnauthorizedError("No admin wallet found for smart account");
             return;
           }
 
-          // Fetch Thirdweb user details in case the initial wallet address is an ecosystem wallet
-          const thirdwebUser = await getThirdwebUser({
-            client,
-            ecosystemId: env.THIRDWEB_ECOSYSTEM_ID,
-            ecosystemPartnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
-            walletAddress: initialWalletAddress,
+          // Fetch Thirdweb user details by ecosystem wallet address
+          const thirdwebUserDetails = await getThirdwebUser({
+            ecosystemWalletAddress: adminWalletAddress,
           });
-          const initialEmail = thirdwebUser
-            ? parseThirdwebUserEmail(thirdwebUser)
-            : undefined;
 
-          const userData = thirdwebUser?.userId
-            ? {
-                externalUserId: thirdwebUser.userId,
-              }
-            : {
-                externalWalletAddress: initialWalletAddress,
-              };
+          if (!thirdwebUserDetails) {
+            throwUnauthorizedError(
+              `No Thirdweb user found for admin wallet ${adminWalletAddress}`,
+            );
+            return;
+          }
 
-          userSmartAccount = await db.userSmartAccount.create({
+          const newUserSmartAccount = await db.userSmartAccount.create({
             data: {
               chainId,
               address,
-              initialEmail,
-              initialWalletAddress,
+              ecosystemWalletAddress: adminWalletAddress,
+              // If Thirdweb user ID is present, look for existing user to connect. Otherwise create new user
               user: {
                 connectOrCreate: {
-                  where: userData,
-                  create: userData,
+                  where: {
+                    externalUserId: thirdwebUserDetails.userId,
+                  },
+                  create: {
+                    externalUserId: thirdwebUserDetails.userId,
+                  },
                 },
               },
             },
           });
+
+          userId = newUserSmartAccount.userId;
+          thirdwebUser = thirdwebUserDetails;
         }
 
+        const { emailAddresses, externalWalletAddresses } =
+          parseThirdwebUserLinkedAccounts(thirdwebUser);
         const [user, profile, legacyProfiles] = await Promise.all([
           // Fetch user
           db.user.findUnique({
-            where: { id: userSmartAccount.userId },
+            where: { id: userId },
             select: {
               ...USER_SELECT_FIELDS,
               smartAccounts: {
@@ -202,26 +219,26 @@ export const authRoutes =
           }),
           // Fetch or create user profile
           db.userProfile.upsert({
-            where: { userId: userSmartAccount.userId },
+            where: { userId: userId },
             update: {},
             create: {
-              userId: userSmartAccount.userId,
-              email: userSmartAccount.initialEmail,
+              userId: userId,
+              email: emailAddresses[0],
             },
             select: USER_PROFILE_SELECT_FIELDS,
           }),
           // Detect any migrations related to this user
-          userSmartAccount.initialEmail
+          emailAddresses[0]
             ? db.userProfile.findMany({
                 where: {
-                  legacyEmail: userSmartAccount.initialEmail,
+                  legacyEmail: emailAddresses[0],
                   legacyEmailVerifiedAt: { not: null },
                 },
               })
-            : userSmartAccount.initialWalletAddress
+            : externalWalletAddresses[0]
               ? db.userProfile.findMany({
                   where: {
-                    legacyAddress: userSmartAccount.initialWalletAddress,
+                    legacyAddress: externalWalletAddresses[0],
                   },
                 })
               : [],
@@ -243,7 +260,6 @@ export const authRoutes =
               id: user.id,
               email: profile.email,
               address,
-              externalWalletAddress: user.externalWalletAddress,
               tag: profile.tag,
               discriminant: profile.discriminant,
               smartAccounts: user.smartAccounts,

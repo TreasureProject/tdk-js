@@ -193,7 +193,7 @@ export const ConnectModal = ({
     // Handle connecting with wallet
     if (method === "wallet") {
       try {
-        wallet = await connectWeb3Wallet({
+        const web3Wallet = await connectWeb3Wallet({
           client,
           locale: getLocaleId(),
           wallets: SUPPORTED_WEB3_WALLETS,
@@ -201,13 +201,24 @@ export const ConnectModal = ({
             name: appName,
             logoUrl: appIconUri,
           },
-          accountAbstraction,
           size: "compact",
         });
+        const ecosystemWallet = await connectEcosystemWallet({
+          client,
+          ecosystemId,
+          ecosystemPartnerId,
+          chainId: chain.id,
+          method: "wallet",
+          wallet: web3Wallet,
+        });
+        wallet = await connect(ecosystemWallet);
       } catch (err) {
         // Error can be undefined if user closed the connect modal
         if (err) {
-          console.error("Error connecting Web3 wallet:", err);
+          console.error(
+            "Error connecting ecosystem wallet with Web3 wallet:",
+            err,
+          );
           setError(err);
           onConnectError?.(method, err);
         }

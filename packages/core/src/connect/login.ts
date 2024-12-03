@@ -67,6 +67,10 @@ type ConnectWalletConfig = {
       verificationCode: string;
     }
   | {
+      method: "wallet";
+      wallet: Wallet;
+    }
+  | {
       method: "passkey";
       passkeyName?: string;
       hasStoredPasskey?: boolean;
@@ -108,6 +112,14 @@ export const connectEcosystemWallet = async (params: ConnectWalletConfig) => {
       strategy: "email",
       email: email.toLowerCase(),
       verificationCode,
+    });
+  } else if (params.method === "wallet") {
+    // Connect with Web3 wallet
+    await wallet.connect({
+      client,
+      chain,
+      strategy: "wallet",
+      wallet: params.wallet,
     });
   } else if (params.method === "passkey") {
     // Connect with passkey

@@ -29,7 +29,6 @@ export type UserContext = {
   id: string;
   email: string | null;
   address: string;
-  externalWalletAddress: string | null;
   tag: string | null;
   discriminant: number | null;
   smartAccounts: {
