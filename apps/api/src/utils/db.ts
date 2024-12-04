@@ -30,6 +30,7 @@ export const USER_PROFILE_SELECT_FIELDS = {
 export const USER_SMART_ACCOUNT_SELECT_FIELDS = {
   chainId: true,
   address: true,
+  ecosystemWalletAddress: true,
 } as const satisfies Prisma.UserSmartAccountSelect;
 
 export const USER_SOCIAL_ACCOUNT_SELECT_FIELDS = {

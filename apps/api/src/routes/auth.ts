@@ -315,6 +315,7 @@ export const authRoutes =
             ...transformUserProfileResponseFields(finalProfile),
             address,
             sessions,
+            externalWalletAddresses,
           },
           legacyProfiles:
             env.USER_MIGRATION_ENABLED && legacyProfiles.length > 1

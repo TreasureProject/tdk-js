@@ -122,28 +122,32 @@ export const usersRoutes =
           return;
         }
 
-        const sessions = userSessions.map((session) => ({
-          ...session,
-          approvedTargets: session.approvedTargets.map((target) =>
-            target.toLowerCase(),
-          ),
-          nativeTokenLimitPerTransaction:
-            session.nativeTokenLimitPerTransaction.toString(),
-          startTimestamp: session.startTimestamp.toString(),
-          endTimestamp: session.endTimestamp.toString(),
-        }));
+        const userSmartAccount =
+          user.smartAccounts.find(
+            (smartAccount) => smartAccount.chainId === chain.id,
+          ) ?? user.smartAccounts[0];
+        const thirdwebUser = userSmartAccount
+          ? await getThirdwebUser({
+              ecosystemWalletAddress: userSmartAccount.ecosystemWalletAddress,
+            })
+          : null;
         const { profile, ...restUser } = user;
         reply.send({
           ...restUser,
           ...profile,
           ...transformUserProfileResponseFields(profile),
-          address:
-            restUser.smartAccounts.find(
-              (smartAccount) => smartAccount.chainId === chain.id,
-            )?.address ??
-            restUser.smartAccounts[0]?.address ??
-            ZERO_ADDRESS, // added for TypeScript, should not reach
-          sessions,
+          ...parseThirdwebUserLinkedAccounts(thirdwebUser),
+          address: userSmartAccount?.address ?? ZERO_ADDRESS, // fallback added for TypeScript, should not reach
+          sessions: userSessions.map((session) => ({
+            ...session,
+            approvedTargets: session.approvedTargets.map((target) =>
+              target.toLowerCase(),
+            ),
+            nativeTokenLimitPerTransaction:
+              session.nativeTokenLimitPerTransaction.toString(),
+            startTimestamp: session.startTimestamp.toString(),
+            endTimestamp: session.endTimestamp.toString(),
+          })),
         });
       },
     );

@@ -63,6 +63,13 @@ export const userSchema = Type.Object({
       }),
     }),
   ),
+  externalWalletAddresses: Type.Array(
+    Type.String({
+      description:
+        "External wallet addresses linked with this user's Treasure Account",
+      example: [EXAMPLE_WALLET_ADDRESS],
+    }),
+  ),
 });
 
 export const userPublicProfileSchema = Type.Object({
