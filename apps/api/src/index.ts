@@ -15,7 +15,7 @@ import {
   mainnet,
   sepolia,
 } from "@wagmi/core/chains";
-import { createThirdwebClient } from "thirdweb";
+import { createThirdwebClient, getUser } from "thirdweb";
 import { createAuth as createThirdwebAuth } from "thirdweb/auth";
 import { defineChain } from "viem";
 
@@ -107,6 +107,15 @@ const main = async () => {
         ]),
       },
     }),
+    getThirdwebUser: async ({ ecosystemWalletAddress }) =>
+      getUser({
+        client,
+        ecosystem: {
+          id: env.THIRDWEB_ECOSYSTEM_ID,
+          partnerId: env.THIRDWEB_ECOSYSTEM_PARTNER_ID,
+        },
+        walletAddress: ecosystemWalletAddress,
+      }),
   };
 
   // Middleware

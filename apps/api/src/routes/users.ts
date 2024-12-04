@@ -53,11 +53,12 @@ import {
   createUserProfileBannerUrl,
   createUserProfilePictureUrl,
   migrateLegacyUser,
+  parseThirdwebUserLinkedAccounts,
   transformUserProfileResponseFields,
 } from "../utils/user";
 
 export const usersRoutes =
-  ({ db, env, client }: TdkApiContext): FastifyPluginAsync =>
+  ({ db, env, client, getThirdwebUser }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     app.get<{
       Reply: ReadCurrentUserReply;
@@ -121,28 +122,32 @@ export const usersRoutes =
           return;
         }
 
-        const sessions = userSessions.map((session) => ({
-          ...session,
-          approvedTargets: session.approvedTargets.map((target) =>
-            target.toLowerCase(),
-          ),
-          nativeTokenLimitPerTransaction:
-            session.nativeTokenLimitPerTransaction.toString(),
-          startTimestamp: session.startTimestamp.toString(),
-          endTimestamp: session.endTimestamp.toString(),
-        }));
+        const userSmartAccount =
+          user.smartAccounts.find(
+            (smartAccount) => smartAccount.chainId === chain.id,
+          ) ?? user.smartAccounts[0];
+        const thirdwebUser = userSmartAccount
+          ? await getThirdwebUser({
+              ecosystemWalletAddress: userSmartAccount.ecosystemWalletAddress,
+            })
+          : null;
         const { profile, ...restUser } = user;
         reply.send({
           ...restUser,
           ...profile,
           ...transformUserProfileResponseFields(profile),
-          address:
-            restUser.smartAccounts.find(
-              (smartAccount) => smartAccount.chainId === chain.id,
-            )?.address ??
-            restUser.smartAccounts[0]?.address ??
-            ZERO_ADDRESS, // added for TypeScript, should not reach
-          sessions,
+          ...parseThirdwebUserLinkedAccounts(thirdwebUser),
+          address: userSmartAccount?.address ?? ZERO_ADDRESS, // fallback added for TypeScript, should not reach
+          sessions: userSessions.map((session) => ({
+            ...session,
+            approvedTargets: session.approvedTargets.map((target) =>
+              target.toLowerCase(),
+            ),
+            nativeTokenLimitPerTransaction:
+              session.nativeTokenLimitPerTransaction.toString(),
+            startTimestamp: session.startTimestamp.toString(),
+            endTimestamp: session.endTimestamp.toString(),
+          })),
         });
       },
     );
@@ -266,16 +271,45 @@ export const usersRoutes =
       async (req, reply) => {
         const {
           userId,
+          userAddress,
+          chain,
           authError,
           body: { id: legacyProfileId, rejected = false },
         } = req;
-        if (!userId || !env.USER_MIGRATION_ENABLED) {
+        if (!userId || !userAddress || !env.USER_MIGRATION_ENABLED) {
           throwUnauthorizedError(authError);
           return;
         }
 
+        const userSmartAccount = await db.userSmartAccount.findUnique({
+          where: {
+            chainId_address: {
+              chainId: chain.id,
+              address: userAddress,
+            },
+          },
+          select: {
+            ecosystemWalletAddress: true,
+          },
+        });
+
+        const thirdwebUser = userSmartAccount
+          ? await getThirdwebUser({
+              ecosystemWalletAddress: userSmartAccount.ecosystemWalletAddress,
+            })
+          : null;
+
+        const { emailAddresses, externalWalletAddresses } =
+          parseThirdwebUserLinkedAccounts(thirdwebUser);
+
         const { canMigrate, profile, legacyProfile } =
-          await checkCanMigrateLegacyUser({ db, userId, legacyProfileId });
+          await checkCanMigrateLegacyUser({
+            db,
+            userId,
+            emailAddresses,
+            externalWalletAddresses,
+            legacyProfileId,
+          });
         if (!canMigrate || !profile || !legacyProfile) {
           // User selected an unlinked profile and cannot migrate
           throw new TdkError({

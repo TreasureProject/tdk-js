@@ -10,6 +10,7 @@ import {
   useActiveWallet,
   useWalletDetailsModal,
 } from "thirdweb/react";
+import { ecosystemWallet } from "thirdweb/wallets";
 
 import {
   ConnectModal,
@@ -74,6 +75,7 @@ export const useConnect = (props?: Props) => {
     chain,
     client,
     ecosystemId,
+    ecosystemPartnerId,
     user,
     logIn,
     logOut,
@@ -137,7 +139,13 @@ export const useConnect = (props?: Props) => {
       theme: THEME,
       locale: getLocaleId(),
       connectOptions: {
-        hiddenWallets: ["inApp", ecosystemId],
+        chain,
+        wallets: [
+          ecosystemWallet(ecosystemId, {
+            partnerId: ecosystemPartnerId,
+          }),
+        ],
+        hiddenWallets: ["inApp"],
       },
       connectedAccountAvatarUrl: user?.pfp ?? undefined,
       connectedAccountName: user ? (

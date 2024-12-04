@@ -51,13 +51,6 @@ export const userSchema = Type.Object({
     description: "Treasure Account address for the requested chain",
     examples: [EXAMPLE_WALLET_ADDRESS],
   }),
-  externalWalletAddress: Type.Union([
-    Type.String({
-      description: "User wallet address",
-      examples: [EXAMPLE_WALLET_ADDRESS],
-    }),
-    Type.Null(),
-  ]),
   smartAccounts: Type.Array(
     Type.Object({
       chainId: Type.Number({
@@ -68,6 +61,13 @@ export const userSchema = Type.Object({
         description: "Treasure Account address for the given chain",
         examples: [EXAMPLE_WALLET_ADDRESS],
       }),
+    }),
+  ),
+  externalWalletAddresses: Type.Array(
+    Type.String({
+      description:
+        "External wallet addresses linked with this user's Treasure Account",
+      example: [EXAMPLE_WALLET_ADDRESS],
     }),
   ),
 });
