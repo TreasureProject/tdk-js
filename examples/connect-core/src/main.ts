@@ -254,7 +254,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
           ] as const,
           functionName: "mint",
           args: [
-            getUserAddress(user, chainId) ?? "",
+            (getUserAddress(user, chainId) ??
+              "0x0000000000000000000000000000000000000000") as `0x${string}`,
             1000000000000000000000n, // 1,000
           ],
         },
