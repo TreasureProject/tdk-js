@@ -79,10 +79,7 @@ export const ConnectMethodSelectionView = ({
         }}
       >
         <div className="tdk-space-y-1.5">
-          <label
-            className="tdk-block tdk-text-sm tdk-font-medium"
-            htmlFor="email"
-          >
+          <label className="tdk-block tdk-text-sm" htmlFor="email">
             {t("common.emailLabel")}
           </label>
           <input
@@ -94,11 +91,7 @@ export const ConnectMethodSelectionView = ({
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <Button
-          type="submit"
-          className="tdk-w-full tdk-font-medium"
-          isLoading={isLoading}
-        >
+        <Button type="submit" className="tdk-w-full" isLoading={isLoading}>
           {t("connect.action")}
         </Button>
       </form>
@@ -185,7 +178,7 @@ const ConnectMethodButton = ({
     <button
       type="button"
       className={cn(
-        "tdk-flex tdk-items-center tdk-justify-center tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-font-medium tdk-transition-colors tdk-rounded-lg",
+        "tdk-flex tdk-items-center tdk-justify-center tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-transition-colors tdk-rounded-lg",
         props.disabled
           ? "tdk-opacity-50 tdk-cursor-not-allowed"
           : "tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream hover:tdk-text-night-800",

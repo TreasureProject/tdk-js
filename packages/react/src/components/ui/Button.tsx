@@ -23,7 +23,7 @@ type Props = AsButtonProps | AsLinkProps;
 export const Button = (props: Props) => {
   const { variant = "primary", isLoading = false } = props;
   const className = cn(
-    "tdk-rounded-lg tdk-px-4 tdk-py-1 tdk-font-medium tdk-transition-colors tdk-text-sm tdk-border tdk-border-solid tdk-min-h-9",
+    "tdk-rounded-lg tdk-px-4 tdk-py-1 tdk-transition-colors tdk-text-sm tdk-border tdk-border-solid tdk-min-h-9",
     isLoading
       ? "tdk-flex tdk-items-center tdk-justify-center tdk-cursor-wait"
       : "tdk-cursor-pointer",
