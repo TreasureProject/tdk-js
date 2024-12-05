@@ -1,5 +1,17 @@
 # @treasure-dev/tdk-react
 
+## 3.9.0
+
+### Minor Changes
+
+- 5ef7963: Updated Web3 wallet login to use ecosystem wallets
+
+### Patch Changes
+
+- 037e6d2: Fix error where analytics failed to track event immediately on app start
+- Updated dependencies [5ef7963]
+  - @treasure-dev/tdk-core@3.9.0
+
 ## 3.8.0
 
 ### Minor Changes

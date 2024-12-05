@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.9.0
+
+### Minor Changes
+
+- 5ef7963: Updated Web3 wallet login to use ecosystem wallets
+
 ## 3.8.0
 
 ### Patch Changes
