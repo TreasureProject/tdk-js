@@ -1,5 +1,11 @@
 # @treasure-dev/tailwind-config
 
+## 4.1.0
+
+### Minor Changes
+
+- cd2d228: Updated styling to use variable font instead of fixed
+
 ## 4.0.0
 
 ### Major Changes
