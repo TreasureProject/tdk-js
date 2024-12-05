@@ -188,18 +188,20 @@ const TreasureProviderInner = ({
   });
 
   const logOut = () => {
-    trackCustomEvent({
-      name: EVT_TREASURECONNECT_DISCONNECTED,
-      properties: {
-        isUsingTreasureLauncher,
-      },
-    })
-      .then((eventId) => {
-        console.debug(`[TreasureProvider] tracked logout event: ${eventId}`);
+    if (analyticsOptions?.automaticTrackLogout !== false) {
+      trackCustomEvent({
+        name: EVT_TREASURECONNECT_DISCONNECTED,
+        properties: {
+          isUsingTreasureLauncher,
+        },
       })
-      .catch((err) => {
-        console.error(`[TreasureProvider] error tracking logout: ${err}`);
-      });
+        .then((eventId) => {
+          console.debug(`[TreasureProvider] tracked logout event: ${eventId}`);
+        })
+        .catch((err) => {
+          console.error(`[TreasureProvider] error tracking logout: ${err}`);
+        });
+    }
     setUser(undefined);
     tdk.clearAuthToken();
     tdk.clearActiveWallet();
@@ -275,18 +277,20 @@ const TreasureProviderInner = ({
     setUser(user);
     setStoredAuthToken(authToken as string);
 
-    trackCustomEvent({
-      name: EVT_TREASURECONNECT_CONNECTED,
-      properties: {
-        isUsingTreasureLauncher,
-      },
-    })
-      .then((eventId) => {
-        console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+    if (analyticsOptions?.automaticTrackLogin !== false) {
+      trackCustomEvent({
+        name: EVT_TREASURECONNECT_CONNECTED,
+        properties: {
+          isUsingTreasureLauncher,
+        },
       })
-      .catch((err) => {
-        console.error(`[TreasureProvider] error tracking login: ${err}`);
-      });
+        .then((eventId) => {
+          console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+        })
+        .catch((err) => {
+          console.error(`[TreasureProvider] error tracking login: ${err}`);
+        });
+    }
 
     // Trigger completion callback
     onConnect?.(user);

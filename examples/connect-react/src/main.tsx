@@ -35,6 +35,7 @@ if (root) {
             app_version: "1.0.0",
             app_environment: 0,
           },
+          automaticTrackLogin: false,
           cartridgeTag: "tdk-examples-connect-react",
         }}
       >
