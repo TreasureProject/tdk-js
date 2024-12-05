@@ -107,8 +107,6 @@ const TreasureProviderInner = ({
       }),
     [apiUri, chain.id, sessionOptions?.backendWallet, client],
   );
-  const [analyticsManager, setAnalyticsManager] =
-    useState<AnalyticsManager | null>(null);
 
   const contractAddresses = useMemo(
     () => getContractAddresses(chain.id),
@@ -121,7 +119,7 @@ const TreasureProviderInner = ({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: analyticsManager doesnt need to be a dependency
   useEffect(() => {
-    if (!analyticsOptions || analyticsManager) {
+    if (!analyticsOptions || AnalyticsManager.instance.initialized) {
       return;
     }
 
@@ -132,17 +130,12 @@ const TreasureProviderInner = ({
       cartridgeTag: analyticsOptions.cartridgeTag,
       device: analyticsOptions.device,
     });
-
-    setAnalyticsManager(AnalyticsManager.instance);
   }, [analyticsOptions]);
 
   const trackCustomEvent = useCallback(
-    async (event: AnalyticsEvent) => {
-      if (!analyticsManager) {
-        console.debug(
-          "[TreasureProvider] Cannot call trackCustomEvent because AnalyticsManager is not initialized",
-        );
-        return;
+    async (event: AnalyticsEvent): Promise<string | undefined> => {
+      if (!AnalyticsManager.instance.initialized) {
+        return undefined;
       }
 
       let address = event.address ?? userAddress;
@@ -171,9 +164,9 @@ const TreasureProviderInner = ({
         name: event.name,
         properties: event.properties ?? {},
       };
-      return analyticsManager.trackCustomEvent(trackableEvent);
+      return AnalyticsManager.instance.trackCustomEvent(trackableEvent);
     },
-    [analyticsManager, userAddress],
+    [userAddress],
   );
 
   const onAuthTokenUpdated = useCallback(
@@ -195,12 +188,20 @@ const TreasureProviderInner = ({
   });
 
   const logOut = () => {
-    trackCustomEvent({
-      name: EVT_TREASURECONNECT_DISCONNECTED,
-      properties: {
-        isUsingTreasureLauncher,
-      },
-    });
+    if (analyticsOptions?.automaticTrackLogout !== false) {
+      trackCustomEvent({
+        name: EVT_TREASURECONNECT_DISCONNECTED,
+        properties: {
+          isUsingTreasureLauncher,
+        },
+      })
+        .then((eventId) => {
+          console.debug(`[TreasureProvider] tracked logout event: ${eventId}`);
+        })
+        .catch((err) => {
+          console.error(`[TreasureProvider] error tracking logout: ${err}`);
+        });
+    }
     setUser(undefined);
     tdk.clearAuthToken();
     tdk.clearActiveWallet();
@@ -276,12 +277,20 @@ const TreasureProviderInner = ({
     setUser(user);
     setStoredAuthToken(authToken as string);
 
-    trackCustomEvent({
-      name: EVT_TREASURECONNECT_CONNECTED,
-      properties: {
-        isUsingTreasureLauncher,
-      },
-    });
+    if (analyticsOptions?.automaticTrackLogin !== false) {
+      trackCustomEvent({
+        name: EVT_TREASURECONNECT_CONNECTED,
+        properties: {
+          isUsingTreasureLauncher,
+        },
+      })
+        .then((eventId) => {
+          console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+        })
+        .catch((err) => {
+          console.error(`[TreasureProvider] error tracking login: ${err}`);
+        });
+    }
 
     // Trigger completion callback
     onConnect?.(user);

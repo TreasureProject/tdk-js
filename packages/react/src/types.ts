@@ -32,6 +32,8 @@ type AnalyticsOptions = {
   apiUri?: string;
   apiKey: string;
   appInfo: AppInfo;
+  automaticTrackLogin?: boolean;
+  automaticTrackLogout?: boolean;
   cartridgeTag: string;
   device?: Device;
 };

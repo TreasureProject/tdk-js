@@ -189,7 +189,7 @@ export const App = () => {
               address: nextUser
                 ? getUserAddress(nextUser, chain.id)
                 : undefined,
-              name: "wallet-connect",
+              name: "tc_connected",
               properties: {
                 method,
                 walletId: wallet.id,
