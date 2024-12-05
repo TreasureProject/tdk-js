@@ -1,4 +1,13 @@
 @font-face {
+  font-family: "Millik";
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+  src: url("./fonts/Millik.woff2") format("woff2"),
+    url("./fonts/Millik.woff") format("woff");
+}
+
+@font-face {
   font-family: "GroteskSemi";
   font-weight: 400;
   font-display: swap;
@@ -9,7 +18,7 @@
 
 @font-face {
   font-family: "GroteskSemi";
-  font-weight: 500;
+  font-weight: 600;
   font-display: swap;
   font-style: normal;
   src: url("./fonts/ABCMonumentGroteskSemi-Mono-Medium.woff2") format("woff2"),
