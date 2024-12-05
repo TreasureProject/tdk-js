@@ -67,7 +67,7 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.5
-  thirdweb: ^5.73.0
+  thirdweb: ^5.74.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   turbo: ^2.3.3
   typescript: ^5.7.2
