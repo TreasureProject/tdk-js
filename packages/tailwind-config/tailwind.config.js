@@ -3,11 +3,6 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   theme: {
-    fontWeight: {
-      regular: "400",
-      medium: "600",
-      bold: "700",
-    },
     extend: {
       fontFamily: {
         sans: ["Whyte", ...defaultTheme.fontFamily.sans],
