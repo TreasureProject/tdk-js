@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/tailwind-config",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Tailwind CSS configuration for the Treasure ecosystem",
   "keywords": [
     "treasure",

@@ -1,5 +1,11 @@
 # @treasure-dev/tailwind-config
 
+## 4.0.0
+
+### Major Changes
+
+- 07001a2: Change font file to woff/woff2 from otf
+
 ## 3.0.2
 
 ### Patch Changes
