@@ -37,11 +37,11 @@ const THEME = darkTheme({
   colors: {
     modalBg: "#131D2E",
     modalOverlayBg: "rgba(0, 0, 0, 0.3)",
-    borderColor: "#172135",
+    borderColor: "#1F2D45",
     separatorLine: "#19253A",
     danger: "#DC2626",
     success: "#4AE387",
-    accentText: "#E7E8E9",
+    accentText: "#586C8D",
     accentButtonBg: "#DC2626",
     accentButtonText: "#FFFCF5",
     primaryText: "#FFFCF5",
