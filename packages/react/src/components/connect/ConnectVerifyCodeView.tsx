@@ -60,10 +60,8 @@ export const ConnectVerifyCodeView = ({
         <p className="tdk-text-sm tdk-text-silver">
           <Trans i18nKey="connect.verify.description" values={{ recipient }}>
             We have sent a verification code to{" "}
-            <span className="tdk-text-silver-200 tdk-font-medium">
-              {recipient}
-            </span>
-            . You will be automatically logged in after entering your code.
+            <span className="tdk-text-silver-200">{recipient}</span>. You will
+            be automatically logged in after entering your code.
           </Trans>
         </p>
       </div>
@@ -101,7 +99,7 @@ export const ConnectVerifyCodeView = ({
         </div>
         <div className="tdk-space-y-3">
           <Button
-            className="tdk-w-full tdk-font-medium"
+            className="tdk-w-full"
             isLoading={isLoading}
             onClick={() => onConfirm(code)}
           >

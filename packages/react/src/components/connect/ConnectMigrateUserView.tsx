@@ -90,7 +90,7 @@ export const ConnectMigrateUserView = ({
                     </span>
                   </div>
                 ) : (
-                  <div className="tdk-text-silver-500 tdk-font-medium">
+                  <div className="tdk-text-silver-500">
                     {shortenAddress(legacyAddress ?? ZERO_ADDRESS)}
                   </div>
                 )}
