@@ -1,4 +1,13 @@
 @font-face {
+  font-family: "Millik";
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+  src: url("./fonts/Millik.woff2") format("woff2"),
+    url("./fonts/Millik.woff") format("woff");
+}
+
+@font-face {
   font-family: "GroteskSemi";
   font-weight: 400;
   font-display: swap;
@@ -9,7 +18,7 @@
 
 @font-face {
   font-family: "GroteskSemi";
-  font-weight: 500;
+  font-weight: 600;
   font-display: swap;
   font-style: normal;
   src: url("./fonts/ABCMonumentGroteskSemi-Mono-Medium.woff2") format("woff2"),
@@ -27,27 +36,9 @@
 
 @font-face {
   font-family: "Whyte";
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
   font-style: normal;
-  src: url("./fonts/ABCWhyte-Regular.woff2") format("woff2"),
-    url("./fonts/ABCWhyte-Regular.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Whyte";
-  font-weight: 500;
-  font-display: swap;
-  font-style: normal;
-  src: url("./fonts/ABCWhyte-Medium.woff2") format("woff2"),
-    url("./fonts/ABCWhyte-Medium.woff") format("woff");
-}
-
-@font-face {
-  font-family: "Whyte";
-  font-weight: 700;
-  font-display: swap;
-  font-style: normal;
-  src: url("./fonts/ABCWhyte-Bold.woff2") format("woff2"),
-    url("./fonts/ABCWhyte-Bold.woff") format("woff");
+  src: url("./fonts/ABCWhyteVariable.woff2") format("woff2"),
+    url("./fonts/ABCWhyteVariable.woff") format("woff");
 }
