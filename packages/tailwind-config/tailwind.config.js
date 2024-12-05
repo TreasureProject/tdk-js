@@ -5,10 +5,8 @@ module.exports = {
   theme: {
     fontWeight: {
       regular: "400",
-      medium: "500",
-      bold: "600",
-      heavy: "700",
-      black: "800",
+      medium: "600",
+      bold: "700",
     },
     extend: {
       fontFamily: {
