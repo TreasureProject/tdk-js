@@ -61,6 +61,10 @@ export const userSchema = Type.Object({
         description: "Treasure Account address for the given chain",
         examples: [EXAMPLE_WALLET_ADDRESS],
       }),
+      ecosystemWalletAddress: Type.String({
+        description: "Ecosystem wallet address powering the Treasure Account",
+        examples: [EXAMPLE_WALLET_ADDRESS],
+      }),
     }),
   ),
   externalWalletAddresses: Type.Array(
