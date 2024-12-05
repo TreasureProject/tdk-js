@@ -154,7 +154,7 @@ export const useConnect = (props?: Props) => {
       networkSelector: {
         onSwitch: (nextChain) => {
           if (activeWallet) {
-            logIn(activeWallet, nextChain.id);
+            logIn(activeWallet, nextChain.id, true);
           }
         },
       },

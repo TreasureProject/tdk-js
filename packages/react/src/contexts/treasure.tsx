@@ -117,7 +117,6 @@ const TreasureProviderInner = ({
     ? (getUserAddress(user, chain.id) ?? user.smartAccounts[0]?.address)
     : undefined;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: analyticsManager doesnt need to be a dependency
   useEffect(() => {
     if (!analyticsOptions || AnalyticsManager.instance.initialized) {
       return;
@@ -212,6 +211,7 @@ const TreasureProviderInner = ({
   const logIn = async (
     wallet: Wallet,
     chainId?: number,
+    skipCurrentUser = false,
   ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
     if (isUsingTreasureLauncher) {
       console.debug(
@@ -222,10 +222,10 @@ const TreasureProviderInner = ({
 
     let user: User | undefined;
     let legacyProfiles: LegacyProfile[] = [];
+    let authToken = getStoredAuthToken();
 
     // Check for existing stored auth token
-    let authToken = getStoredAuthToken();
-    if (authToken) {
+    if (authToken && !skipCurrentUser) {
       // Validate if it's expired before attempting to use it
       try {
         const { exp: authTokenExpirationDate } = decodeAuthToken(authToken);
@@ -240,6 +240,10 @@ const TreasureProviderInner = ({
         );
         // Ignore errors and proceed with login
       }
+    }
+
+    if (chainId) {
+      tdk.chainId = chainId;
     }
 
     if (!user) {

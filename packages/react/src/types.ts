@@ -69,6 +69,7 @@ export type ContextValues = {
   logIn: (
     wallet: Wallet,
     chainId?: number,
+    skipCurrentUser?: boolean,
   ) => Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }>;
   logOut: () => void;
   updateUser: (user: Partial<User>) => void;
