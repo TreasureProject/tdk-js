@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.9.2
+
+### Patch Changes
+
+- 2380371: Update switchChain and smartAccount types
+- Updated dependencies [2380371]
+  - @treasure-dev/tdk-core@3.9.2
+
 ## 3.9.1
 
 ### Patch Changes
