@@ -42,7 +42,6 @@ import {
 import { validateWanderersUser } from "../utils/wanderers";
 
 type LoginCustomPayload = {
-  wanderersCookie?: string;
   wanderersToken?: string;
 };
 
@@ -346,11 +345,11 @@ export const authRoutes =
           log.error("Error parsing custom login payload:", err);
         }
 
-        if (payload?.wanderersCookie || payload?.wanderersToken) {
-          const user = await validateWanderersUser(
-            payload.wanderersCookie,
-            payload.wanderersToken,
-          );
+        if (env.WANDERERS_JWKS_URI && payload?.wanderersToken) {
+          const user = await validateWanderersUser({
+            jwksUri: env.WANDERERS_JWKS_URI,
+            token: payload.wanderersToken,
+          });
           return reply.send(user);
         }
 

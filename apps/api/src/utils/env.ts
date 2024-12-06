@@ -41,6 +41,7 @@ const envSchema = Type.Object({
   TREASURE_AUTH_KMS_KEY: Type.String(),
   TREASURE_AUTH_ISSUER: Type.String(),
   TREASURE_AUTH_AUDIENCE: Type.String(),
+  WANDERERS_JWKS_URI: Type.Optional(Type.String()),
   // Trove API
   TROVE_API_URL: Type.String({ default: "https://trove-api.treasure.lol" }),
   TROVE_API_KEY: Type.String(),

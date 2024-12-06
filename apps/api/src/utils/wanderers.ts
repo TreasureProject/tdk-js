@@ -1,35 +1,45 @@
+import jwt from "jsonwebtoken";
+import jwksClient from "jwks-rsa";
+
 import type { LoginCustomReply } from "../schema";
 
-const WANDERERS_API_URL = "https://id.wanderers.ai/sessions/whoami";
-
-type WanderersSession = {
-  active: boolean;
-  expires_at: string;
-  identity: {
-    id: string;
-    traits: {
-      email: string;
-    };
-  };
+type WanderersData = {
+  email: string;
+  exp: number;
+  sub: string;
 };
 
-export const validateWanderersUser = async (
-  cookie?: string,
-  token?: string,
-): Promise<LoginCustomReply | undefined> => {
-  const response = await fetch(WANDERERS_API_URL, {
-    headers: cookie ? { Cookie: cookie } : { "X-Session-Token": token ?? "" },
+export const validateWanderersUser = async ({
+  jwksUri,
+  token,
+}: {
+  jwksUri: string;
+  token: string;
+}): Promise<LoginCustomReply | undefined> => {
+  const client = jwksClient({
+    jwksUri,
   });
 
-  const session: WanderersSession = await response.json();
-  const expiresAt = new Date(session.expires_at).getTime();
-  if (!session.active || expiresAt < Date.now()) {
-    return undefined;
-  }
+  const result = (await new Promise<jwt.JwtPayload>((resolve, reject) => {
+    jwt.verify(
+      token,
+      async (header, callback) => {
+        const key = await client.getSigningKey(header.kid);
+        callback(null, key.getPublicKey());
+      },
+      (err, decoded) => {
+        if (err || !decoded || typeof decoded === "string") {
+          reject(err);
+        } else {
+          resolve(decoded);
+        }
+      },
+    );
+  })) as WanderersData;
 
   return {
-    userId: session.identity.id,
-    email: session.identity.traits.email,
-    exp: Math.floor(expiresAt / 1000),
+    userId: result.sub,
+    email: result.email,
+    exp: result.exp,
   };
 };

@@ -30,12 +30,15 @@
     "abitype": "catalog:",
     "dotenv": "catalog:",
     "fastify": "catalog:",
+    "jwks-rsa": "catalog:",
+    "jsonwebtoken": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "thirdweb": "catalog:",
     "viem": "catalog:"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "catalog:",
     "dotenv-cli": "catalog:",
     "prisma": "catalog:",
     "tsup": "catalog:",
