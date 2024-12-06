@@ -34,6 +34,7 @@ export type UserContext = {
   smartAccounts: {
     chainId: number;
     address: string;
+    ecosystemWalletAddress: string;
   }[];
 };
 
