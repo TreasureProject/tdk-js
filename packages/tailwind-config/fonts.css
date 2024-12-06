@@ -3,8 +3,8 @@
   font-weight: 700;
   font-display: swap;
   font-style: normal;
-  src: url("./fonts/Millik-Bold.woff2") format("woff2"),
-    url("./fonts/Millik-Bold.woff") format("woff");
+  src: url("./fonts/Millik.woff2") format("woff2"),
+    url("./fonts/Millik.woff") format("woff");
 }
 
 @font-face {
