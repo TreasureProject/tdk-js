@@ -7,6 +7,7 @@ module.exports = {
       fontFamily: {
         sans: ["Whyte", ...defaultTheme.fontFamily.sans],
         mono: ["GroteskSemi", ...defaultTheme.fontFamily.mono],
+        millik: ["Millik", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         ruby: {
