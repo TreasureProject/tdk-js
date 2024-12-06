@@ -69,12 +69,12 @@ export type ContextValues = {
   logIn: (
     wallet: Wallet,
     chainId?: number,
-    skipCurrentUser?: boolean,
+    skipCurrentUser?: boolean
   ) => Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }>;
   logOut: () => void;
   updateUser: (user: Partial<User>) => void;
   startUserSession: (options: SessionOptions) => void;
-  switchChain: (chainId: number) => void;
+  switchChain: (chainId: number) => Promise<void>;
   setRootElement: (el: ReactNode) => void;
   openLauncherAccountModal: (size?: "lg" | "xl" | "2xl" | "3xl") => void;
   trackCustomEvent: (event: AnalyticsEvent) => Promise<string | undefined>;
