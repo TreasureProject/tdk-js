@@ -2,6 +2,8 @@
 
 Example showing how vanilla JS/TS front-ends can interact with the Treasure Development Kit's Treasure Connect feature, powering login flows and account abstraction.
 
+[Live Demo](https://tdk-core-demo.spellcaster.lol)
+
 ## Prerequisites
 
 - [>= Node 22.12.0](https://nodejs.org/en)

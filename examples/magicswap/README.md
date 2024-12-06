@@ -2,7 +2,7 @@
 
 Example showing how front-ends can interact with the Treasure Development Kit's Magicswap feature, powering swaps, routing, and liquidity operations.
 
-[Live Demo](https://tdk-examples-magicswap.vercel.app)
+[Live Demo](https://tdk-magicswap-demo.spellcaster.lol)
 
 ## Prerequisites
 

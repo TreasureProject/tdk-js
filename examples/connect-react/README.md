@@ -2,7 +2,7 @@
 
 Example showing how React-based front-ends can interact with the Treasure Development Kit's Treasure Connect feature, powering login flows and account abstraction.
 
-[Live Demo](https://tdk-examples-connect.vercel.app)
+[Live Demo](https://tdk-react-demo.spellcaster.lol)
 
 ## Prerequisites
 
