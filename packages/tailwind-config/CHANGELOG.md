@@ -1,5 +1,11 @@
 # @treasure-dev/tailwind-config
 
+## 4.2.0
+
+### Minor Changes
+
+- f8f4178: Add millik font to tailwind and fix font medium for grotesk
+
 ## 4.1.0
 
 ### Minor Changes
