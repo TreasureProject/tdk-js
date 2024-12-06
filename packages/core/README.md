@@ -4,7 +4,7 @@ Treasure Development Kit for TypeScript/JavaScript-based projects
 
 ## Prerequisites
 
-- [>= Node 20.11.0](https://nodejs.org/en)
+- [>= Node 22.12.0](https://nodejs.org/en)
 
 ## Installation
 

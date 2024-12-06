@@ -4,7 +4,7 @@ Example showing how Electron-based apps can interact with the Treasure Developme
 
 ## Prerequisites
 
-- [>= Node 20.11.0](https://nodejs.org/en)
+- [>= Node 22.12.0](https://nodejs.org/en)
 - Running [TDK API](../../apps/api)
 
 ## Development

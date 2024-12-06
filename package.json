@@ -40,5 +40,5 @@
     "@esbuild/linux-x64": "catalog:",
     "@rollup/rollup-linux-x64-gnu": "catalog:"
   },
-  "packageManager": "pnpm@9.14.2"
+  "packageManager": "pnpm@9.14.4"
 }

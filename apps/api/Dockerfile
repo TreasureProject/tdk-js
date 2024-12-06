@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1
-FROM --platform=linux/amd64 node:20-alpine as base
+FROM --platform=linux/amd64 node:22-alpine as base
 # Set working directory
 WORKDIR /app
 

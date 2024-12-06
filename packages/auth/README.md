@@ -4,7 +4,7 @@ Authentication token utilities for the Treasure ecosystem
 
 ## Prerequisites
 
-- [>= Node 20.11.0](https://nodejs.org/en)
+- [>= Node 22.12.0](https://nodejs.org/en)
 
 ## Installation
 

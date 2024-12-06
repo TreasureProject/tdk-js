@@ -4,7 +4,7 @@ Treasure Launcher utilities for the Treasure ecosystem
 
 ## Prerequisites
 
-- [>= Node 20.11.0](https://nodejs.org/en)
+- [>= Node 22.12.0](https://nodejs.org/en)
 
 ## Installation
 
@@ -38,11 +38,11 @@ const usingLauncher = isUsingTreasureLauncher();
 import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 
 await startUserSessionViaLauncher({
-    backendWallet: "0x...",
-    approvedTargets: ["0x..."],
-    nativeTokenLimitPerTransaction: 100,
-    sessionDurationSec: 60 * 60 * 24 * 7,
-    sessionMinDurationLeftSec: 60 * 60 * 24 * 3,
+  backendWallet: "0x...",
+  approvedTargets: ["0x..."],
+  nativeTokenLimitPerTransaction: 100,
+  sessionDurationSec: 60 * 60 * 24 * 7,
+  sessionMinDurationLeftSec: 60 * 60 * 24 * 3,
 });
 ```
 
@@ -72,7 +72,7 @@ const { startUserSession } = useTreasure();
 import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
 
 ipcMain.on("get-auth-token", (event, _arg) => {
-    event.returnValue = getTreasureLauncherAuthToken();
+  event.returnValue = getTreasureLauncherAuthToken();
 });
 ```
 

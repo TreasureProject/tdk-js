@@ -4,7 +4,7 @@ Backend server powering the Treasure Development Kit
 
 ## Prerequisites
 
-- [>= Node 20.11.0](https://nodejs.org/en)
+- [>= Node 22.12.0](https://nodejs.org/en)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - AWS credentials set up for Secrets Manager and Key Management Service access
 

@@ -22,7 +22,7 @@ catalog:
   "@radix-ui/react-visually-hidden": ^1.1.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.42.0
-  "@sinclair/typebox": ^0.34.10
+  "@sinclair/typebox": ^0.34.11
   "@storybook/addon-essentials": ^8.4.6
   "@storybook/react": ^8.4.6
   "@storybook/react-vite": ^8.4.6
@@ -74,5 +74,5 @@ catalog:
   typescript: ^5.7.2
   uuid: ^11.0.3
   viem: 2.21.53 # matches Thirdweb version to satisfy getAwsKmsAccount types
-  vite: ^6.0.2
+  vite: ^6.0.3
   vitest: ^2.1.8
