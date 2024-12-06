@@ -1,6 +1,5 @@
 import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import {
-  ACCOUNT_FACTORY_ADDRESS,
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
@@ -311,11 +310,6 @@ const TreasureProviderInner = ({
         partnerId: ecosystemPartnerId,
       }),
     ],
-    accountAbstraction: {
-      chain,
-      factoryAddress: ACCOUNT_FACTORY_ADDRESS,
-      sponsorGas: true,
-    },
     timeout: autoConnectTimeout,
     onConnect: logIn,
   });

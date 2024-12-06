@@ -1,6 +1,5 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import {
-  ACCOUNT_FACTORY_ADDRESS,
   type ConnectMethod,
   DEFAULT_TDK_APP_ICON_URI,
   type LegacyProfile,
@@ -77,11 +76,6 @@ export const ConnectModal = ({
     logOut,
     updateUser,
   } = useTreasure();
-  const accountAbstraction = {
-    chain,
-    factoryAddress: ACCOUNT_FACTORY_ADDRESS,
-    sponsorGas: true,
-  };
   const [{ email, legacyProfiles, isLoading, error }, setState] = useState<{
     email: string;
     legacyProfiles: LegacyProfile[];
@@ -90,7 +84,6 @@ export const ConnectModal = ({
   }>(DEFAULT_STATE);
   const { connect } = useConnect({
     client,
-    accountAbstraction,
   });
   const { connect: connectWeb3Wallet } = useConnectModal();
 

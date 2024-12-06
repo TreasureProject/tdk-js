@@ -3,7 +3,6 @@ import { signLoginPayload } from "thirdweb/auth";
 import {
   type Wallet,
   ecosystemWallet as createEcosystemWallet,
-  smartWallet as createSmartWallet,
   createWallet,
   preAuthenticate,
 } from "thirdweb/wallets";
@@ -11,7 +10,6 @@ import { hasStoredPasskey } from "thirdweb/wallets/in-app";
 
 import { TDKAPI } from "../api";
 import {
-  ACCOUNT_FACTORY_ADDRESS,
   DEFAULT_TDK_API_BASE_URI,
   DEFAULT_TDK_CHAIN_ID,
   DEFAULT_TDK_ECOSYSTEM_ID,
@@ -153,28 +151,6 @@ export const connectEcosystemWallet = async (params: ConnectWalletConfig) => {
   return wallet;
 };
 
-export const connectWallet = async (params: ConnectWalletConfig) => {
-  const ecosystemWallet = await connectEcosystemWallet(params);
-  const account = await ecosystemWallet.getAccount();
-  if (!account) {
-    throw new Error("Ecosystem wallet account not found");
-  }
-
-  const chain = defineChain(params.chainId ?? DEFAULT_TDK_CHAIN_ID);
-  const smartWallet = createSmartWallet({
-    chain,
-    factoryAddress: ACCOUNT_FACTORY_ADDRESS,
-    sponsorGas: true,
-  });
-
-  await smartWallet.connect({
-    client: params.client,
-    personalAccount: account,
-  });
-
-  return smartWallet;
-};
-
 export const createTreasureConnectClient = ({
   clientId,
 }: { clientId: string }): TreasureConnectClient =>
@@ -246,7 +222,7 @@ export const logIn = async (params: ConnectWalletConfig & ConnectConfig) => {
     ...connectWalletParams
   } = params;
 
-  const wallet = await connectWallet({
+  const wallet = await connectEcosystemWallet({
     client,
     chainId,
     ...connectWalletParams,
