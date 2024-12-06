@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.9.1
+
+### Patch Changes
+
+- 047dbbe: Fixed double account abstraction wrapping of ecosystem wallets
+
 ## 3.9.0
 
 ### Minor Changes
