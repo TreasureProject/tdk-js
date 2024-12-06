@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.9.2
+
+### Patch Changes
+
+- 2380371: Update switchChain and smartAccount types
+
 ## 3.9.1
 
 ### Patch Changes
