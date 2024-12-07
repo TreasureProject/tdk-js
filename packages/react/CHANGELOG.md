@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.9.3
+
+### Patch Changes
+
+- 34f6153: Updated Tailwind CSS configs to use TypeScript
+- e91b0e2: Fixed smart account not created when using `switchChain` to a new chain
+  - @treasure-dev/tdk-core@3.9.3
+
 ## 3.9.2
 
 ### Patch Changes

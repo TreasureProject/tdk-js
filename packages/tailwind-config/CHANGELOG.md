@@ -1,5 +1,11 @@
 # @treasure-dev/tailwind-config
 
+## 4.3.0
+
+### Minor Changes
+
+- 34f6153: Updated Tailwind CSS configs to use TypeScript
+
 ## 4.2.0
 
 ### Minor Changes
