@@ -302,6 +302,13 @@ const TreasureProviderInner = ({
     return { user, legacyProfiles };
   };
 
+  const switchChain = async (chainId: number) => {
+    if (activeWallet) {
+      await switchActiveWalletChain(defineChain(chainId));
+      await logIn(activeWallet, chainId, true);
+    }
+  };
+
   // Attempt an automatic background connection
   useAutoConnect({
     client,
@@ -355,8 +362,7 @@ const TreasureProviderInner = ({
                 tdk,
                 options,
               }),
-        switchChain: (chainId: number) =>
-          switchActiveWalletChain(defineChain(chainId)),
+        switchChain,
         setRootElement: setEl,
         openLauncherAccountModal,
         trackCustomEvent,
