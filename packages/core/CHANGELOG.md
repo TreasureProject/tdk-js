@@ -1,5 +1,7 @@
 # @treasure-dev/tdk-core
 
+## 3.9.3
+
 ## 3.9.2
 
 ### Patch Changes
