@@ -1,8 +1,11 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import treasurePreset from "@treasure-dev/tailwind-config";
+import type { Config } from "tailwindcss";
+import animatePlugin from "tailwindcss-animate";
+
+export default {
   prefix: "tdk-",
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
-  presets: [require("@treasure-dev/tailwind-config")],
+  presets: [treasurePreset],
   theme: {
     extend: {
       keyframes: {
@@ -16,8 +19,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animatePlugin],
   corePlugins: {
     preflight: false,
   },
-};
+} satisfies Config;
