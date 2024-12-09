@@ -374,10 +374,10 @@ export const migrateLegacyUser = async ({
       data: {
         userId,
         legacyProfileMigratedAt: new Date(),
-        // Clear legacy profile data so migration is not triggered again
-        legacyAddress: null,
-        legacyEmail: null,
-        legacyEmailVerifiedAt: null,
+        // // Preserve legacy info for historical purposes.
+        // legacyAddress: null,
+        // legacyEmail: null,
+        // legacyEmailVerifiedAt: null,
       },
       select: USER_PROFILE_SELECT_FIELDS,
     });
