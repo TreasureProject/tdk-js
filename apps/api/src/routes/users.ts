@@ -321,7 +321,6 @@ export const usersRoutes =
         }
 
         if (rejected) {
-          await clearLegacyUser({ db, legacyProfile });
           const [profile, socialAccounts, notificationSettings] =
             await Promise.all([
               db.userProfile.upsert({

@@ -374,32 +374,10 @@ export const migrateLegacyUser = async ({
       data: {
         userId,
         legacyProfileMigratedAt: new Date(),
-        // // Preserve legacy info for historical purposes.
-        // legacyAddress: null,
-        // legacyEmail: null,
-        // legacyEmailVerifiedAt: null,
       },
       select: USER_PROFILE_SELECT_FIELDS,
     });
   }
-
-  // Delete any other legacy records that weren't migrated
-  await db.$transaction([
-    db.userProfile.deleteMany({
-      where: {
-        legacyAddress: legacyProfile.legacyAddress,
-      },
-    }),
-    ...(legacyProfile.email
-      ? []
-      : [
-          db.userProfile.deleteMany({
-            where: {
-              legacyEmail: legacyProfile.legacyEmail,
-            },
-          }),
-        ]),
-  ]);
 
   return {
     updatedProfile,
