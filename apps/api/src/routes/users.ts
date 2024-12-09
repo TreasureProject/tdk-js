@@ -49,7 +49,6 @@ import {
 } from "../utils/error";
 import {
   checkCanMigrateLegacyUser,
-  clearLegacyUser,
   createUserProfileBannerUrl,
   createUserProfilePictureUrl,
   migrateLegacyUser,

@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   checkCanMigrateLegacyUser,
-  clearLegacyUser,
   migrateLegacyUser,
   parseThirdwebUserLinkedAccounts,
 } from "./user";
@@ -149,23 +148,6 @@ describe("user migration utils", () => {
     return legacyProfile;
   };
 
-  const expectLegacyProfileCleared = async (id: string) => {
-    const legacyProfile = await db.userProfile.findUnique({
-      where: { id },
-    });
-    expect(!legacyProfile);
-
-    const notificationSettings = await db.userNotificationSettings.findMany({
-      where: { legacyUserProfileId: id },
-    });
-    expect(notificationSettings.length).toBe(0);
-
-    const socialAccounts = await db.userSocialAccount.findMany({
-      where: { legacyUserProfileId: id },
-    });
-    expect(socialAccounts.length).toBe(0);
-  };
-
   beforeEach(async () => {
     await truncateTables();
   });
@@ -179,9 +161,6 @@ describe("user migration utils", () => {
       },
     });
     const legacyProfile = await createLegacyUserProfile();
-    const legacyProfile2 = await createLegacyUserProfile({
-      legacyAddress: EXTERNAL_WALLET_ADDRESS2,
-    });
 
     const canMigrateResult = await checkCanMigrateLegacyUser({
       db,
@@ -204,16 +183,11 @@ describe("user migration utils", () => {
     expect(migrateResult.updatedProfile.tag).toBe("rappzulaLegacy");
     expect(migrateResult.updatedSocialAccounts.length).not.toBe(0);
     expect(migrateResult.updatedNotificationSettings.length).not.toBe(0);
-    expectLegacyProfileCleared(legacyProfile.id);
-    expectLegacyProfileCleared(legacyProfile2.id);
   });
 
   it("should connect legacy profile to user", async () => {
     const user = await createEcosystemWalletUser();
     const legacyProfile = await createLegacyUserProfile();
-    const legacyProfile2 = await createLegacyUserProfile({
-      legacyAddress: EXTERNAL_WALLET_ADDRESS2,
-    });
 
     const canMigrateResult = await checkCanMigrateLegacyUser({
       db,
@@ -235,28 +209,6 @@ describe("user migration utils", () => {
     expect(migrateResult.updatedProfile.tag).toBe("rappzulaLegacy");
     expect(migrateResult.updatedSocialAccounts.length).not.toBe(0);
     expect(migrateResult.updatedNotificationSettings.length).not.toBe(0);
-    expectLegacyProfileCleared(legacyProfile2.id);
-  });
-
-  it("should clear legacy profile", async () => {
-    const user = await createEcosystemWalletUser();
-    const legacyProfile = await createLegacyUserProfile();
-    const legacyProfile2 = await createLegacyUserProfile({
-      legacyAddress: EXTERNAL_WALLET_ADDRESS2,
-    });
-
-    const canMigrateResult = await checkCanMigrateLegacyUser({
-      db,
-      userId: user.id,
-      emailAddresses: [],
-      externalWalletAddresses: [EXTERNAL_WALLET_ADDRESS],
-      legacyProfileId: legacyProfile.id,
-    });
-    expect(canMigrateResult.canMigrate).toBe(true);
-
-    await clearLegacyUser({ db, legacyProfile });
-    expectLegacyProfileCleared(legacyProfile.id);
-    expectLegacyProfileCleared(legacyProfile2.id);
   });
 
   it("should not migrate legacy profile", async () => {

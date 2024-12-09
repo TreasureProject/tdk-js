@@ -322,7 +322,9 @@ export const authRoutes =
           },
           legacyProfiles:
             // Include the legacy profiles if a legacy migration has not occurred.
-            env.USER_MIGRATION_ENABLED && legacyProfiles.length > 1 && !finalProfile.legacyProfileMigratedAt
+            env.USER_MIGRATION_ENABLED &&
+            legacyProfiles.length > 1 &&
+            !finalProfile.legacyProfileMigratedAt
               ? legacyProfiles
               : [],
         });
