@@ -239,6 +239,91 @@ export const migrateLegacyUser = async ({
       ]),
     ]);
 
+  await Promise.all([
+    // Migrate gems summary
+    db.$transaction([
+      // Delete current gems summary
+      db.gemsSummary.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect gems summary to user
+      db.gemsSummary.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+    // Migrate gems txs
+    db.$transaction([
+      // Delete current gems txs
+      db.gemsTx.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect gems txs to user
+      db.gemsTx.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+  ]);
+  await Promise.all([
+    // Migrate vouchers
+    db.$transaction([
+      // Delete current vouchers
+      db.voucher.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect vouchers to user
+      db.voucher.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+    // Migrate user quests
+    db.$transaction([
+      // Delete current user quests
+      db.userQuest.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect user quests to user
+      db.userQuest.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+  ]);
+
   let updatedProfile: Pick<
     UserProfile,
     keyof typeof USER_PROFILE_SELECT_FIELDS
