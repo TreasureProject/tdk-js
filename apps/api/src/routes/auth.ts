@@ -232,12 +232,16 @@ export const authRoutes =
                 where: {
                   legacyEmail: emailAddresses[0],
                   legacyEmailVerifiedAt: { not: null },
+                  // Skip already-migrated profiles
+                  legacyProfileMigratedAt: null,
                 },
               })
             : externalWalletAddresses[0]
               ? db.userProfile.findMany({
                   where: {
                     legacyAddress: externalWalletAddresses[0],
+                    // Skip already-migrated profiles
+                    legacyProfileMigratedAt: null,
                   },
                 })
               : [],
@@ -317,7 +321,10 @@ export const authRoutes =
             externalWalletAddresses,
           },
           legacyProfiles:
-            env.USER_MIGRATION_ENABLED && legacyProfiles.length > 1
+            // Include the legacy profiles if a legacy migration has not occurred.
+            env.USER_MIGRATION_ENABLED &&
+            legacyProfiles.length > 1 &&
+            !finalProfile.legacyProfileMigratedAt
               ? legacyProfiles
               : [],
         });

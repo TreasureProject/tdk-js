@@ -239,6 +239,91 @@ export const migrateLegacyUser = async ({
       ]),
     ]);
 
+  await Promise.all([
+    // Migrate gems summary
+    db.$transaction([
+      // Delete current gems summary
+      db.gemsSummary.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect gems summary to user
+      db.gemsSummary.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+    // Migrate gems txs
+    db.$transaction([
+      // Delete current gems txs
+      db.gemsTx.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect gems txs to user
+      db.gemsTx.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+  ]);
+  await Promise.all([
+    // Migrate vouchers
+    db.$transaction([
+      // Delete current vouchers
+      db.voucher.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect vouchers to user
+      db.voucher.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+    // Migrate user quests
+    db.$transaction([
+      // Delete current user quests
+      db.userQuest.deleteMany({
+        where: {
+          userId,
+        },
+      }),
+      // Connect user quests to user
+      db.userQuest.updateMany({
+        where: {
+          legacyUserProfileId: legacyProfile.id,
+        },
+        data: {
+          userId,
+          // Clear legacy profile data so migration is not triggered again
+          legacyUserProfileId: null,
+        },
+      }),
+    ]),
+  ]);
+
   let updatedProfile: Pick<
     UserProfile,
     keyof typeof USER_PROFILE_SELECT_FIELDS
@@ -289,32 +374,10 @@ export const migrateLegacyUser = async ({
       data: {
         userId,
         legacyProfileMigratedAt: new Date(),
-        // Clear legacy profile data so migration is not triggered again
-        legacyAddress: null,
-        legacyEmail: null,
-        legacyEmailVerifiedAt: null,
       },
       select: USER_PROFILE_SELECT_FIELDS,
     });
   }
-
-  // Delete any other legacy records that weren't migrated
-  await db.$transaction([
-    db.userProfile.deleteMany({
-      where: {
-        legacyAddress: legacyProfile.legacyAddress,
-      },
-    }),
-    ...(legacyProfile.email
-      ? []
-      : [
-          db.userProfile.deleteMany({
-            where: {
-              legacyEmail: legacyProfile.legacyEmail,
-            },
-          }),
-        ]),
-  ]);
 
   return {
     updatedProfile,
@@ -322,42 +385,3 @@ export const migrateLegacyUser = async ({
     updatedNotificationSettings,
   };
 };
-
-export const clearLegacyUser = async ({
-  db,
-  legacyProfile,
-}: {
-  db: PrismaClient;
-  legacyProfile: UserProfile;
-}) =>
-  Promise.all([
-    // Delete social accounts associated with this legacy profile
-    db.userSocialAccount.deleteMany({
-      where: {
-        legacyUserProfileId: legacyProfile.id,
-      },
-    }),
-    // Delete notification settings associated with this legacy profile
-    db.userNotificationSettings.deleteMany({
-      where: {
-        legacyUserProfileId: legacyProfile.id,
-      },
-    }),
-    // Delete all legacy records
-    db.$transaction([
-      db.userProfile.deleteMany({
-        where: {
-          legacyAddress: legacyProfile.legacyAddress,
-        },
-      }),
-      ...(legacyProfile.email
-        ? []
-        : [
-            db.userProfile.deleteMany({
-              where: {
-                legacyEmail: legacyProfile.legacyEmail,
-              },
-            }),
-          ]),
-    ]),
-  ]);
