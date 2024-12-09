@@ -25,6 +25,7 @@ export const USER_PROFILE_SELECT_FIELDS = {
   showEthBalance: true,
   showGemsBalance: true,
   testnetFaucetLastUsedAt: true,
+  legacyProfileMigratedAt: true,
 } as const satisfies Prisma.UserProfileSelect;
 
 export const USER_SMART_ACCOUNT_SELECT_FIELDS = {
