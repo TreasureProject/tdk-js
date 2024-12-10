@@ -247,16 +247,21 @@ const TreasureProviderInner = ({
 
     if (!user) {
       setIsAuthenticating(true);
-      const result = await authenticateWallet({
-        wallet,
-        tdk,
-        authTokenDurationSec:
-          authOptions?.authTokenDurationSec ??
-          sessionOptions?.sessionDurationSec,
-      });
-      authToken = result.token;
-      user = result.user;
-      legacyProfiles = result.legacyProfiles;
+      try {
+        const result = await authenticateWallet({
+          wallet,
+          tdk,
+          authTokenDurationSec:
+            authOptions?.authTokenDurationSec ??
+            sessionOptions?.sessionDurationSec,
+        });
+        authToken = result.token;
+        user = result.user;
+        legacyProfiles = result.legacyProfiles;
+      } catch (err) {
+        setIsAuthenticating(false);
+        throw err;
+      }
     }
 
     // Set auth token and wallet on TDK so they can be used in future requests
@@ -266,14 +271,19 @@ const TreasureProviderInner = ({
     // Start user session if configured
     if (sessionOptions) {
       setIsAuthenticating(true);
-      await startUserSession({
-        client,
-        wallet,
-        chainId: chainId ?? chain.id,
-        tdk,
-        sessions: user.sessions,
-        options: sessionOptions,
-      });
+      try {
+        await startUserSession({
+          client,
+          wallet,
+          chainId: chainId ?? chain.id,
+          tdk,
+          sessions: user.sessions,
+          options: sessionOptions,
+        });
+      } catch (err) {
+        setIsAuthenticating(false);
+        throw err;
+      }
     }
 
     // Update user state
