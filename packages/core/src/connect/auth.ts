@@ -22,9 +22,10 @@ export const generateAccountSignature = async ({
   const backendWalletAccount = await getAwsKmsAccount(kmsOptions);
   const expirationTime = Math.floor((Date.now() + 1000 * 60 * 15) / 1000); // 15 minutes
   return {
+    backendWallet: backendWalletAccount.address,
     signature: await backendWalletAccount.signMessage({
       message: JSON.stringify({
-        accountAddress: accountAddress.toLowerCase,
+        accountAddress: accountAddress.toLowerCase(),
         expirationTime,
       }),
     }),
@@ -73,6 +74,7 @@ export const generateBackendWalletSignature = async ({
 
   const expirationTime = Math.floor((Date.now() + 1000 * 60 * 15) / 1000); // 15 minutes
   return {
+    backendWallet: account.address,
     signature: await account.signMessage({
       message: JSON.stringify({
         expirationTime,

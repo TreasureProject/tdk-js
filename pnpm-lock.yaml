@@ -204,6 +204,9 @@ catalogs:
     tsup:
       specifier: 8.3.0
       version: 8.3.0
+    tsx:
+      specifier: ^4.19.2
+      version: 4.19.2
     turbo:
       specifier: ^2.3.3
       version: 2.3.3
@@ -349,6 +352,25 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 2.1.8(@types/node@22.10.1)(jsdom@25.0.1)
+
+  examples/backend-to-backend:
+    dependencies:
+      '@treasure-dev/tdk-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      dotenv:
+        specifier: 'catalog:'
+        version: 16.4.7
+      thirdweb:
+        specifier: 'catalog:'
+        version: 5.74.0(@aws-sdk/client-kms@3.699.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+    devDependencies:
+      tsx:
+        specifier: 'catalog:'
+        version: 4.19.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.2
 
   examples/connect-core:
     dependencies:
@@ -4149,10 +4171,6 @@ packages:
 
   dotenv-expand@5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
-
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
-    engines: {node: '>=12'}
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
@@ -11098,7 +11116,7 @@ snapshots:
       config-file-ts: 0.2.8-rc1
       debug: 4.3.7
       dmg-builder: 25.1.7(electron-builder-squirrel-windows@24.13.3)
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 11.0.6
       ejs: 3.1.10
       electron-builder-squirrel-windows: 24.13.3(dmg-builder@25.1.7)
@@ -11839,11 +11857,9 @@ snapshots:
 
   dotenv-expand@11.0.6:
     dependencies:
-      dotenv: 16.4.5
+      dotenv: 16.4.7
 
   dotenv-expand@5.1.0: {}
-
-  dotenv@16.4.5: {}
 
   dotenv@16.4.7: {}
 
@@ -12448,7 +12464,6 @@ snapshots:
   get-tsconfig@4.8.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
-    optional: true
 
   glob-parent@5.1.2:
     dependencies:
@@ -14131,8 +14146,7 @@ snapshots:
       http-errors: 1.6.3
       path-is-absolute: 1.0.1
 
-  resolve-pkg-maps@1.0.0:
-    optional: true
+  resolve-pkg-maps@1.0.0: {}
 
   resolve@1.22.8:
     dependencies:
@@ -14798,7 +14812,6 @@ snapshots:
       get-tsconfig: 4.8.1
     optionalDependencies:
       fsevents: 2.3.3
-    optional: true
 
   turbo-darwin-64@2.3.3:
     optional: true
