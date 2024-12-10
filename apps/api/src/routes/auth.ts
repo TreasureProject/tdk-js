@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import {
   DEFAULT_TDK_CHAIN_ID,
   type UserContext,
@@ -196,6 +197,11 @@ export const authRoutes =
           userId = newUserSmartAccount.userId;
           thirdwebUser = thirdwebUserDetails;
         }
+
+        Sentry.setUser({
+          id: userId,
+          username: address,
+        });
 
         const { emailAddresses, externalWalletAddresses } =
           parseThirdwebUserLinkedAccounts(thirdwebUser);
