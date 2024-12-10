@@ -1,76 +1,126 @@
 import * as Sentry from "@sentry/node";
 import {
-  type AddressString,
   type UserContext,
   verifyAccountSignature,
+  verifyBackendWalletSignature,
 } from "@treasure-dev/tdk-core";
+import { type Address, isAddress, isHex } from "thirdweb";
 
-import { type Hex, isHex } from "thirdweb";
 import type { TdkApiContext } from "../types";
 import type { App } from "../utils/app";
-import { throwUnauthorizedError } from "../utils/error";
+import { createUnauthorizedError } from "../utils/error";
 
 declare module "fastify" {
   interface FastifyRequest {
-    userId: string | undefined;
-    userAddress: AddressString | undefined;
-    backendUserAddress: AddressString | undefined;
-    backendWallet: AddressString | undefined;
-    authError: string | undefined;
+    isAuthenticated: boolean;
+    authenticatedUserId: string | undefined;
+    authenticatedUserAddress: Address | undefined;
+    authenticationError: string | undefined;
+    isBackendRequest: boolean;
+    verifiedBackendWallet: Address | undefined;
+    verifiedBackendUserAddress: Address | undefined;
   }
 }
 
-export const withAuth = (app: App, { auth }: TdkApiContext) => {
-  app.decorateRequest("userId", undefined);
-  app.decorateRequest("userAddress", undefined);
-  app.decorateRequest("backendUserAddress", undefined);
-  app.decorateRequest("backendWallet", undefined);
-  app.decorateRequest("authError", undefined);
+export const withAuth = (app: App, { auth, client }: TdkApiContext) => {
+  app.decorateRequest("isAuthenticated", false);
+  app.decorateRequest("authenticatedUserId", undefined);
+  app.decorateRequest("authenticatedUserAddress", undefined);
+  app.decorateRequest("authenticationError", undefined);
+  app.decorateRequest("isBackendRequest", false);
+  app.decorateRequest("verifiedBackendWallet", undefined);
+  app.decorateRequest("verifiedBackendUserAddress", undefined);
   app.addHook("onRequest", async (req) => {
     // Check for explicit setting of user address and recover backend wallet address from signature
     if (req.headers["x-account-address"]) {
       const accountAddress = req.headers["x-account-address"].toString();
-      const signature = req.headers["x-account-signature"]?.toString();
-      if (!isHex(accountAddress) || !isHex(signature)) {
-        throwUnauthorizedError("Invalid account address or signature");
+      if (!isAddress(accountAddress)) {
+        throw createUnauthorizedError("Invalid account address");
+      }
+
+      const accountSignature = req.headers["x-account-signature"]?.toString();
+      if (!isHex(accountSignature)) {
+        throw createUnauthorizedError("Invalid account signature");
+      }
+
+      const expirationTime = Number(
+        req.headers["x-account-signature-expiration"],
+      );
+      if (Number.isNaN(expirationTime)) {
+        throw createUnauthorizedError("Invalid account signature expiration");
       }
 
       const backendWallet = await verifyAccountSignature({
         accountAddress,
-        signature: signature as Hex,
+        signature: accountSignature,
+        expirationTime,
       });
-      if (!backendWallet) {
-        throwUnauthorizedError("Invalid backend wallet address");
-      }
 
-      req.backendUserAddress = accountAddress as AddressString;
-      req.backendWallet = backendWallet as AddressString;
-      Sentry.setUser({ username: req.backendUserAddress });
+      req.isBackendRequest = true;
+      req.verifiedBackendWallet = backendWallet as Address;
+      req.verifiedBackendUserAddress = accountAddress;
+      Sentry.setUser({ username: req.verifiedBackendUserAddress });
       return;
     }
 
-    // All other auth methods require an Authorization header
-    if (!req.headers.authorization) {
+    // Check for explicit setting of backend wallet and recover address from signature
+    if (req.headers["x-backend-wallet-signature"]) {
+      const backendWallet = req.headers["x-backend-wallet"]?.toString();
+      if (!backendWallet || !isAddress(backendWallet)) {
+        throw createUnauthorizedError("Invalid backend wallet address");
+      }
+
+      const backendWalletSignature =
+        req.headers["x-backend-wallet-signature"]?.toString();
+      if (!isHex(backendWalletSignature)) {
+        throw createUnauthorizedError("Invalid backend wallet signature");
+      }
+
+      const expirationTime = Number(
+        req.headers["x-backend-wallet-signature-expiration"],
+      );
+      if (Number.isNaN(expirationTime)) {
+        throw createUnauthorizedError(
+          "Invalid backend wallet signature expiration",
+        );
+      }
+
+      const verifiedBackendWallet = await verifyBackendWalletSignature({
+        client,
+        chainId: req.chain.id,
+        backendWallet,
+        signature: backendWalletSignature,
+        expirationTime,
+      });
+
+      req.isBackendRequest = true;
+      req.verifiedBackendWallet =
+        verifiedBackendWallet.toLowerCase() as Address;
       return;
     }
 
     // Check for user address via JWT header
-    try {
-      const decoded = await auth.verifyJWT<UserContext>(
-        req.headers.authorization.replace("Bearer ", ""),
-      );
-      req.userId = decoded.ctx.id;
-      req.userAddress = (decoded.ctx.smartAccounts.find(
-        ({ chainId }) => chainId === req.chain.id,
-      )?.address ??
-        decoded.ctx.address ??
-        decoded.sub) as AddressString;
-      Sentry.setUser({
-        id: req.userId,
-        username: req.userAddress,
-      });
-    } catch (err) {
-      req.authError = err instanceof Error ? err.message : "Unknown error";
+    if (req.headers.authorization) {
+      try {
+        const decoded = await auth.verifyJWT<UserContext>(
+          req.headers.authorization.replace("Bearer ", ""),
+        );
+        const smartAccount = decoded.ctx.smartAccounts.find(
+          (account) => account.chainId === req.chain.id,
+        );
+        req.isAuthenticated = true;
+        req.authenticatedUserId = decoded.ctx.id;
+        req.authenticatedUserAddress = (smartAccount?.address ??
+          decoded.ctx.address ??
+          decoded.sub) as Address;
+        Sentry.setUser({
+          id: req.authenticatedUserId,
+          username: req.authenticatedUserAddress,
+        });
+      } catch (err) {
+        req.authenticationError =
+          err instanceof Error ? err.message : "Unknown error";
+      }
     }
   });
 };

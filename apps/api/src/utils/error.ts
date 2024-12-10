@@ -93,28 +93,30 @@ export const parseEngineErrorMessage = (err: unknown) => {
   return message ? normalizeEngineErrorMessage(message) : "Unknown error";
 };
 
-export const throwUnauthorizedError = (message = "Unauthorized") => {
-  throw new TdkError({
+export const createUnauthorizedError = (
+  message = "Unauthorized",
+  data?: object,
+) =>
+  new TdkError({
     name: TDK_ERROR_NAMES.AuthError,
     code: TDK_ERROR_CODES.AUTH_UNAUTHORIZED,
     message,
+    statusCode: 401,
+    data,
   });
-};
 
-export const throwUserNotFoundError = () => {
-  throw new TdkError({
+export const createUserNotFoundError = () =>
+  new TdkError({
     name: TDK_ERROR_NAMES.UserError,
     code: TDK_ERROR_CODES.USER_NOT_FOUND,
     statusCode: 404,
     message: "User not found",
   });
-};
 
-export const throwForbiddenBackendWalletError = () => {
-  throw new TdkError({
+export const createForbiddenBackendWalletError = () =>
+  new TdkError({
     name: TDK_ERROR_NAMES.BackendWalletError,
     code: TDK_ERROR_CODES.BACKEND_WALLET_FORBIDDEN,
     statusCode: 403,
     message: "Backend wallet is forbidden",
   });
-};

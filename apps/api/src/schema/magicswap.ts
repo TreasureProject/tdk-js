@@ -220,7 +220,7 @@ export const swapArgsBodySchema = Type.Object({
 export const swapBodySchema = Type.Intersect([
   swapArgsBodySchema,
   Type.Object({
-    backendWallet: Type.Optional(Type.String()),
+    backendWallet: Type.String(),
     simulateTransaction: Type.Optional(Type.Boolean()),
   }),
 ]);
@@ -248,7 +248,7 @@ export const addLiquidityArgsBodySchema = Type.Object({
 export const addLiquidityBodySchema = Type.Intersect([
   addLiquidityArgsBodySchema,
   Type.Object({
-    backendWallet: Type.Optional(Type.String()),
+    backendWallet: Type.String(),
     simulateTransaction: Type.Optional(Type.Boolean()),
   }),
 ]);
@@ -277,7 +277,7 @@ export const removeLiquidityArgsBodySchema = Type.Object({
 export const removeLiquidityBodySchema = Type.Intersect([
   removeLiquidityArgsBodySchema,
   Type.Object({
-    backendWallet: Type.Optional(Type.String()),
+    backendWallet: Type.String(),
     simulateTransaction: Type.Optional(Type.Boolean()),
   }),
 ]);
