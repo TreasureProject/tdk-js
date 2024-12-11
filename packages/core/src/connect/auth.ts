@@ -26,7 +26,8 @@ export const generateAccountSignature = async ({
     signature: await backendWalletAccount.signMessage({
       message: JSON.stringify({
         accountAddress: accountAddress.toLowerCase(),
-        expirationTime,
+        // TODO: include expirationTime when partners can adopt it
+        // expirationTime,
       }),
     }),
     expirationTime,
@@ -37,8 +38,12 @@ export const verifyAccountSignature = async ({
   accountAddress,
   signature,
   expirationTime,
-}: { accountAddress: string; signature: Hex; expirationTime: number }) => {
-  if (Date.now() > expirationTime * 1000) {
+}: { accountAddress: string; signature: Hex; expirationTime?: number }) => {
+  if (
+    expirationTime &&
+    !Number.isNaN(expirationTime) &&
+    Date.now() > expirationTime * 1000
+  ) {
     throw new Error("Account signature expired");
   }
 
@@ -46,7 +51,7 @@ export const verifyAccountSignature = async ({
     hash: hashMessage(
       JSON.stringify({
         accountAddress: accountAddress.toLowerCase(),
-        expirationTime,
+        // expirationTime,
       }),
     ),
     signature,
