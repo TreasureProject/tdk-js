@@ -333,6 +333,9 @@ importers:
       thirdweb:
         specifier: 'catalog:'
         version: 5.74.0(@aws-sdk/client-kms@3.699.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+      uuid:
+        specifier: 'catalog:'
+        version: 11.0.3
       viem:
         specifier: 'catalog:'
         version: 2.21.53(typescript@5.7.2)(zod@3.23.8)

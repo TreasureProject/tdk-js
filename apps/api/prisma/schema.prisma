@@ -72,7 +72,7 @@ model UserProfile {
 
   // Fields
   // Contact
-  email String? @unique
+  email String?
 
   // TreasureTag
   tag          String?

@@ -7,6 +7,7 @@ import {
 import type { FastifyPluginAsync } from "fastify";
 import { type GetUserResult, defineChain } from "thirdweb";
 import { isZkSyncChain } from "thirdweb/utils";
+import { v4 as uuidv4 } from "uuid";
 
 import "../middleware/chain";
 import "../middleware/swagger";
@@ -129,16 +130,17 @@ export const authRoutes =
         });
 
         let userId: string;
-        let thirdwebUser: GetUserResult;
+        let thirdwebUser: GetUserResult | null;
         if (foundUserSmartAccount) {
           const thirdwebUserDetails = await getThirdwebUser({
             ecosystemWalletAddress:
               foundUserSmartAccount.ecosystemWalletAddress,
           });
 
+          // TODO: switch to throwing an error when Thirdweb issues are resolved
           if (!thirdwebUserDetails) {
-            throw createUnauthorizedError(
-              `No Thirdweb user found for ecosystem wallet ${foundUserSmartAccount.ecosystemWalletAddress}`,
+            console.warn(
+              `No user details found for ecosystem wallet ${foundUserSmartAccount.ecosystemWalletAddress}`,
             );
           }
 
@@ -171,25 +173,29 @@ export const authRoutes =
             ecosystemWalletAddress: adminWalletAddress,
           });
 
+          // TODO: switch to throwing an error when Thirdweb issues are resolved
           if (!thirdwebUserDetails) {
-            throw createUnauthorizedError(
-              `No Thirdweb user found for admin wallet ${adminWalletAddress}`,
+            console.warn(
+              `No user details found for admin wallet ${adminWalletAddress}`,
             );
           }
+
+          const externalUserId =
+            thirdwebUserDetails?.userId ?? `temp-${uuidv4()}`;
 
           const newUserSmartAccount = await db.userSmartAccount.create({
             data: {
               chainId,
               address,
               ecosystemWalletAddress: adminWalletAddress,
-              // If Thirdweb user ID is present, look for existing user to connect. Otherwise create new user
+              // Look for existing user to connect, otherwise create a new user
               user: {
                 connectOrCreate: {
                   where: {
-                    externalUserId: thirdwebUserDetails.userId,
+                    externalUserId,
                   },
                   create: {
-                    externalUserId: thirdwebUserDetails.userId,
+                    externalUserId,
                   },
                 },
               },
