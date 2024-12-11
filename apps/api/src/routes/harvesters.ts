@@ -43,7 +43,7 @@ export const harvestersRoutes =
         const {
           chain,
           params: { id },
-          userAddress,
+          authenticatedUserAddress,
         } = req;
 
         const harvesterAddress = id as AddressString;
@@ -62,11 +62,11 @@ export const harvestersRoutes =
           });
         }
 
-        const harvesterUserInfo = userAddress
+        const harvesterUserInfo = authenticatedUserAddress
           ? await getHarvesterUserInfo({
               chainId: chain.id,
               harvesterInfo,
-              userAddress,
+              userAddress: authenticatedUserAddress,
               inventoryApiUrl: env.TROVE_API_URL,
               inventoryApiKey: env.TROVE_API_KEY,
               wagmiConfig,

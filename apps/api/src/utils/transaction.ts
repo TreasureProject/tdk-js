@@ -7,7 +7,12 @@ import type {
   ExtractAbiFunctionNames,
 } from "abitype";
 
+import type { FastifyRequest } from "fastify";
 import type { TransactionArguments, TransactionOverrides } from "../schema";
+import {
+  createForbiddenBackendWalletError,
+  createUnauthorizedError,
+} from "./error";
 
 export const parseTxOverrides = (
   txOverrides?: TransactionOverrides,
@@ -29,6 +34,35 @@ export const parseTxOverrides = (
     };
   }
   return undefined;
+};
+
+export const parseTransactionRequest = (
+  req: FastifyRequest<{ Body: { backendWallet: string } }>,
+) => {
+  let backendWallet: string | undefined;
+  let accountAddress: string | undefined;
+
+  // Backend requests use verified values from the request headers
+  if (req.isBackendRequest) {
+    backendWallet = req.verifiedBackendWallet;
+    accountAddress = req.verifiedBackendUserAddress;
+  } else {
+    // Non-backend requests require an authenticated user
+    if (!req.isAuthenticated) {
+      throw createUnauthorizedError("Unauthorized", {
+        error: req.authenticationError,
+      });
+    }
+
+    backendWallet = req.body.backendWallet;
+    accountAddress = req.authenticatedUserAddress;
+  }
+
+  if (!backendWallet) {
+    throw createForbiddenBackendWalletError();
+  }
+
+  return { backendWallet, accountAddress };
 };
 
 export const writeTransaction = async <

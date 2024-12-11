@@ -40,6 +40,8 @@ export { fetchUserInventory } from "./utils/inventory";
 export {
   generateAccountSignature,
   verifyAccountSignature,
+  generateBackendWalletSignature,
+  verifyBackendWalletSignature,
 } from "./connect/auth";
 export { decodeAuthToken } from "./connect/jwt";
 export {

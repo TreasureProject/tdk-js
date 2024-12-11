@@ -34,7 +34,10 @@ import {
   USER_SMART_ACCOUNT_SELECT_FIELDS,
   USER_SOCIAL_ACCOUNT_SELECT_FIELDS,
 } from "../utils/db";
-import { throwUnauthorizedError, throwUserNotFoundError } from "../utils/error";
+import {
+  createUnauthorizedError,
+  createUserNotFoundError,
+} from "../utils/error";
 import { log } from "../utils/log";
 import {
   migrateLegacyUser,
@@ -160,8 +163,9 @@ export const authRoutes =
 
           // Smart accounts should never be orphaned, but checking anyway
           if (!adminWalletAddress) {
-            throwUnauthorizedError("No admin wallet found for smart account");
-            return;
+            throw createUnauthorizedError(
+              "No admin wallet found for smart account",
+            );
           }
 
           // Fetch Thirdweb user details by ecosystem wallet address
@@ -258,8 +262,7 @@ export const authRoutes =
         ]);
 
         if (!user) {
-          throwUserNotFoundError();
-          return;
+          throw createUserNotFoundError();
         }
 
         const [authTokenResult, userSessionsResult] = await Promise.allSettled([
@@ -370,7 +373,7 @@ export const authRoutes =
           return reply.send(user);
         }
 
-        throwUnauthorizedError("Invalid request");
+        throw createUnauthorizedError("Invalid request");
       },
     );
   };

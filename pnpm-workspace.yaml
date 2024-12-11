@@ -70,6 +70,7 @@ catalog:
   "tailwind-merge": ^2.5.5
   thirdweb: ^5.74.0
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
+  tsx: ^4.19.2
   turbo: ^2.3.3
   typescript: ^5.7.2
   uuid: ^11.0.3

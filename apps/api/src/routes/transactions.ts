@@ -26,10 +26,11 @@ import {
   TdkError,
   normalizeEngineErrorMessage,
   parseEngineErrorMessage,
-  throwForbiddenBackendWalletError,
-  throwUnauthorizedError,
 } from "../utils/error";
-import { parseTxOverrides } from "../utils/transaction";
+import {
+  parseTransactionRequest,
+  parseTxOverrides,
+} from "../utils/transaction";
 
 export const transactionsRoutes =
   ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
@@ -64,29 +65,15 @@ export const transactionsRoutes =
       async (req, reply) => {
         checkMaintenanceMode();
 
+        const { backendWallet, accountAddress } = parseTransactionRequest(req);
         const {
-          chain,
-          authError,
-          body: {
-            address,
-            abi,
-            functionName,
-            args,
-            txOverrides,
-            backendWallet = req.backendWallet,
-            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-          },
-        } = req;
-        const userAddress = req.backendUserAddress ?? req.userAddress;
-        if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
-        }
-
-        if (!backendWallet) {
-          throwForbiddenBackendWalletError();
-          return;
-        }
+          address,
+          abi,
+          functionName,
+          args,
+          txOverrides,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+        } = req.body;
 
         try {
           const transactionAbi =
@@ -110,21 +97,19 @@ export const transactionsRoutes =
             ),
           );
 
-          const parsedTxOverrides = parseTxOverrides(txOverrides);
-
           const { result } = await engine.contract.write(
-            chain.id.toString(),
+            req.chain.id.toString(),
             address,
             backendWallet,
             {
               abi: transactionAbi,
               functionName,
               args,
-              txOverrides: parsedTxOverrides,
+              txOverrides: parseTxOverrides(txOverrides),
             },
             simulateTransaction,
             undefined,
-            userAddress,
+            accountAddress,
             ACCOUNT_FACTORY_ADDRESS,
           );
           reply.send(result);
@@ -158,45 +143,29 @@ export const transactionsRoutes =
       async (req, reply) => {
         checkMaintenanceMode();
 
+        const { backendWallet, accountAddress } = parseTransactionRequest(req);
         const {
-          chain,
-          authError,
-          body: {
-            to,
-            value = "0x00",
-            data,
-            txOverrides,
-            backendWallet = req.backendWallet,
-            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-          },
-        } = req;
-        const userAddress = req.backendUserAddress ?? req.userAddress;
-        if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
-        }
-
-        if (!backendWallet) {
-          throwForbiddenBackendWalletError();
-          return;
-        }
-
-        const parsedTxOverrides = parseTxOverrides(txOverrides);
+          to,
+          value = "0x00",
+          data,
+          txOverrides,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+        } = req.body;
 
         try {
           Sentry.setExtra("transaction", { to, value, data });
           const { result } = await engine.backendWallet.sendTransaction(
-            chain.id.toString(),
+            req.chain.id.toString(),
             backendWallet,
             {
               toAddress: to,
               value: value,
               data,
-              txOverrides: parsedTxOverrides,
+              txOverrides: parseTxOverrides(txOverrides),
             },
             simulateTransaction,
             undefined,
-            userAddress,
+            accountAddress,
             ACCOUNT_FACTORY_ADDRESS,
           );
           reply.send(result);

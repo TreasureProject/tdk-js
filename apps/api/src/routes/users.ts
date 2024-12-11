@@ -44,8 +44,8 @@ import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
-  throwUnauthorizedError,
-  throwUserNotFoundError,
+  createUnauthorizedError,
+  createUserNotFoundError,
 } from "../utils/error";
 import {
   checkCanMigrateLegacyUser,
@@ -75,10 +75,16 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { chain, userId, userAddress, authError } = req;
+        const {
+          chain,
+          authenticatedUserId: userId,
+          authenticatedUserAddress: userAddress,
+          authenticationError,
+        } = req;
         if (!userId || !userAddress) {
-          throwUnauthorizedError(authError);
-          return;
+          throw createUnauthorizedError("Unauthorized", {
+            error: authenticationError,
+          });
         }
 
         const [userResult, userSessionsResult] = await Promise.allSettled([
@@ -117,8 +123,7 @@ export const usersRoutes =
             : [];
 
         if (!user || !user.profile) {
-          throwUserNotFoundError();
-          return;
+          throw createUserNotFoundError();
         }
 
         const userSmartAccount =
@@ -169,10 +174,15 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { userId, userAddress, authError } = req;
+        const {
+          authenticatedUserId: userId,
+          authenticatedUserAddress: userAddress,
+          authenticationError,
+        } = req;
         if (!userId || !userAddress) {
-          throwUnauthorizedError(authError);
-          return;
+          throw createUnauthorizedError("Unauthorized", {
+            error: authenticationError,
+          });
         }
 
         const {
@@ -269,15 +279,16 @@ export const usersRoutes =
       },
       async (req, reply) => {
         const {
-          userId,
-          userAddress,
+          authenticatedUserId: userId,
+          authenticatedUserAddress: userAddress,
+          authenticationError,
           chain,
-          authError,
           body: { id: legacyProfileId, rejected = false },
         } = req;
         if (!userId || !userAddress || !env.USER_MIGRATION_ENABLED) {
-          throwUnauthorizedError(authError);
-          return;
+          throw createUnauthorizedError("Unauthorized", {
+            error: authenticationError,
+          });
         }
 
         const userSmartAccount = await db.userSmartAccount.findUnique({
@@ -385,10 +396,15 @@ export const usersRoutes =
         },
       },
       async (req, reply) => {
-        const { chain, userAddress, authError } = req;
+        const {
+          chain,
+          authenticatedUserAddress: userAddress,
+          authenticationError,
+        } = req;
         if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
+          throw createUnauthorizedError("Unauthorized", {
+            error: authenticationError,
+          });
         }
 
         const sessions = await getUserSessions({
@@ -446,8 +462,7 @@ export const usersRoutes =
         ]);
 
         if (!publicProfile) {
-          throwUserNotFoundError();
-          return;
+          throw createUserNotFoundError();
         }
 
         reply.send({
