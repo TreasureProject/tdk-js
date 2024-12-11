@@ -35,6 +35,7 @@
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "thirdweb": "catalog:",
+    "uuid": "catalog:",
     "viem": "catalog:"
   },
   "devDependencies": {
