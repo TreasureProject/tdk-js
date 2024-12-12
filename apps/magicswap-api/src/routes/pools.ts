@@ -2,7 +2,7 @@ import { Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/swagger";
-import { type Pool, poolSchema } from "../schema/magicswap";
+import { type Pool, poolSchema } from "../schema/pools";
 import { type ErrorReply, notFoundReplySchema } from "../schema/shared";
 import type { Context } from "../types";
 import { getChainSlug } from "../utils/chain";

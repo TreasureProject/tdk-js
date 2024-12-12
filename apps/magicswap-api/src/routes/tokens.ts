@@ -2,8 +2,8 @@ import { Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
 
 import "../middleware/swagger";
-import { type Token, tokenSchema } from "../schema/magicswap";
 import { type ErrorReply, notFoundReplySchema } from "../schema/shared";
+import { type Token, tokenSchema } from "../schema/tokens";
 import type { Context } from "../types";
 import { getChainSlug } from "../utils/chain";
 import { hexStringToUint8Array } from "../utils/hex";
