@@ -1,0 +1,252 @@
+name: magicswap-dev-aggregated
+apiVersion: 3
+sources:
+  arbitrum_sepolia.collection:
+    name: collection
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.day_data:
+    name: day_data
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.factory:
+    name: factory
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.global:
+    name: global
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.hour_data:
+    name: hour_data
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.incentive:
+    name: incentive
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.liquidity_position:
+    name: liquidity_position
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.pair:
+    name: pair
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.pair_day_data:
+    name: pair_day_data
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.pair_hour_data:
+    name: pair_hour_data
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.token:
+    name: token
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.transaction:
+    name: transaction
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.transaction_item:
+    name: transaction_item
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.user:
+    name: user
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.user_incentive:
+    name: user_incentive
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.user_incentive_claim:
+    name: user_incentive_claim
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.user_stake:
+    name: user_stake
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.vault_collection:
+    name: vault_collection
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+  arbitrum_sepolia.vault_reserve_item:
+    name: vault_reserve_item
+    subgraphs:
+      - name: magicswap-dev
+        version: v2.1.1
+    type: subgraph_entity
+transforms: {}
+sinks:
+  postgres_arbitrum_sepolia_collection:
+    type: postgres
+    table: collection
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.collection"
+    from: arbitrum_sepolia.collection
+  postgres_arbitrum_sepolia_day_data:
+    type: postgres
+    table: day_data
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.day_data"
+    from: arbitrum_sepolia.day_data
+  postgres_arbitrum_sepolia_factory:
+    type: postgres
+    table: factory
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.factory"
+    from: arbitrum_sepolia.factory
+  postgres_arbitrum_sepolia_global:
+    type: postgres
+    table: global
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.global"
+    from: arbitrum_sepolia.global
+  postgres_arbitrum_sepolia_hour_data:
+    type: postgres
+    table: hour_data
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.hour_data"
+    from: arbitrum_sepolia.hour_data
+  postgres_arbitrum_sepolia_incentive:
+    type: postgres
+    table: incentive
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.incentive"
+    from: arbitrum_sepolia.incentive
+  postgres_arbitrum_sepolia_liquidity_position:
+    type: postgres
+    table: liquidity_position
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.liquidity_position"
+    from: arbitrum_sepolia.liquidity_position
+  postgres_arbitrum_sepolia_pair:
+    type: postgres
+    table: pair
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.pair"
+    from: arbitrum_sepolia.pair
+  postgres_arbitrum_sepolia_pair_day_data:
+    type: postgres
+    table: pair_day_data
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.pair_day_data"
+    from: arbitrum_sepolia.pair_day_data
+  postgres_arbitrum_sepolia_pair_hour_data:
+    type: postgres
+    table: pair_hour_data
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.pair_hour_data"
+    from: arbitrum_sepolia.pair_hour_data
+  postgres_arbitrum_sepolia_token:
+    type: postgres
+    table: token
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.token"
+    from: arbitrum_sepolia.token
+  postgres_arbitrum_sepolia_transaction:
+    type: postgres
+    table: transaction
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.transaction"
+    from: arbitrum_sepolia.transaction
+  postgres_arbitrum_sepolia_transaction_item:
+    type: postgres
+    table: transaction_item
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.transaction_item"
+    from: arbitrum_sepolia.transaction_item
+  postgres_arbitrum_sepolia_user:
+    type: postgres
+    table: user
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.user"
+    from: arbitrum_sepolia.user
+  postgres_arbitrum_sepolia_user_incentive:
+    type: postgres
+    table: user_incentive
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.user_incentive"
+    from: arbitrum_sepolia.user_incentive
+  postgres_arbitrum_sepolia_user_incentive_claim:
+    type: postgres
+    table: user_incentive_claim
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.user_incentive_claim"
+    from: arbitrum_sepolia.user_incentive_claim
+  postgres_arbitrum_sepolia_user_stake:
+    type: postgres
+    table: user_stake
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.user_stake"
+    from: arbitrum_sepolia.user_stake
+  postgres_arbitrum_sepolia_vault_collection:
+    type: postgres
+    table: vault_collection
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.vault_collection"
+    from: arbitrum_sepolia.vault_collection
+  postgres_arbitrum_sepolia_vault_reserve_item:
+    type: postgres
+    table: vault_reserve_item
+    schema: public
+    secret_name: MAGICSWAP_DB_SECRET
+    description: "Postgres sink for: arbitrum_sepolia.vault_reserve_item"
+    from: arbitrum_sepolia.vault_reserve_item

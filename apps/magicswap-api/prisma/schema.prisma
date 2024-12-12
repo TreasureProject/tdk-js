@@ -1,0 +1,357 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["tracing"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Global {
+  id        String  @id @map("_gs_gid")
+  chain     String  @unique @map("_gs_chain")
+  userCount Decimal @map("user_count") @db.Decimal
+  magicUsd  Decimal @map("magic_usd") @db.Decimal
+
+  @@map("global")
+}
+
+model Factory {
+  id                     String  @id @map("_gs_gid")
+  chain                  String  @map("_gs_chain")
+  address                Bytes
+  version                String
+  pairCount              Decimal @map("pair_count") @db.Decimal
+  volumeUsd              Decimal @map("volume_usd") @db.Decimal
+  reserveNft             Decimal @map("reserve_nft") @db.Decimal
+  reserveUsd             Decimal @map("reserve_usd") @db.Decimal
+  txCount                Decimal @map("tx_count") @db.Decimal
+  lpFee                  Decimal @map("lp_fee") @db.Decimal
+  protocolFee            Decimal @map("protocol_fee") @db.Decimal
+  protocolFeeBeneficiary Bytes?  @map("protocol_fee_beneficiary")
+
+  // Relations
+  pairs Pair[]
+
+  @@unique([chain, address])
+  @@map("factory")
+}
+
+model Collection {
+  id      String @id @map("_gs_gid")
+  chain   String @map("_gs_chain")
+  address Bytes  @map("id")
+  type    String
+
+  // Relations
+  vaultCollections  VaultCollection[]
+  vaultReserveItems VaultReserveItem[]
+  transactionItems  TransactionItem[]
+
+  @@unique([chain, address])
+  @@map("collection")
+}
+
+model VaultCollection {
+  id       String    @id @map("_gs_gid")
+  chain    String    @map("_gs_chain")
+  tokenIds Decimal[] @map("token_ids") @db.Decimal
+
+  // Relations
+  vaultAddress      Bytes      @map("vault")
+  vault             Token      @relation(fields: [chain, vaultAddress], references: [chain, address])
+  collectionAddress Bytes      @map("collection")
+  collection        Collection @relation(fields: [chain, collectionAddress], references: [chain, address])
+
+  @@map("vault_collection")
+}
+
+model VaultReserveItem {
+  id      String  @id @map("_gs_gid")
+  chain   String  @map("_gs_chain")
+  tokenId Decimal @map("token_id") @db.Decimal
+  amount  Int
+
+  // Relations
+  vaultAddress      Bytes      @map("vault")
+  vault             Token      @relation(fields: [chain, vaultAddress], references: [chain, address])
+  collectionAddress Bytes      @map("collection")
+  collection        Collection @relation(fields: [chain, collectionAddress], references: [chain, address])
+
+  @@unique([chain, vaultAddress, collectionAddress, tokenId])
+  @@map("vault_reserve_item")
+}
+
+model Token {
+  id             String  @id @map("_gs_gid")
+  chain          String  @map("_gs_chain")
+  address        Bytes   @map("id")
+  name           String
+  symbol         String
+  totalSupply    Decimal @map("total_supply") @db.Decimal
+  decimals       Decimal @db.Decimal
+  decimalDivisor Decimal @map("decimal_divisor") @db.Decimal
+  isNft          Boolean @map("is_nft")
+  isMagic        Boolean @map("is_magic")
+  isEth          Boolean @map("is_eth")
+  volume         Decimal @db.Decimal
+  volumeUsd      Decimal @map("volume_usd") @db.Decimal
+  txCount        Decimal @map("tx_count") @db.Decimal
+  derivedMagic   Decimal @map("derived_magic") @db.Decimal
+
+  // Relations
+  vaultCollections  VaultCollection[]
+  vaultReserveItems VaultReserveItem[]
+  token0Pairs       Pair[]             @relation("token0")
+  token1Pairs       Pair[]             @relation("token1")
+  incentives        Incentive[]
+  transactionItems  TransactionItem[]
+
+  @@unique([chain, address])
+  @@map("token")
+}
+
+model Pair {
+  id                   String  @id @map("_gs_gid")
+  chain                String  @map("_gs_chain")
+  address              Bytes   @map("id")
+  version              String
+  reserve0             Decimal @map("reserve_0") @db.Decimal
+  reserve1             Decimal @map("reserve_1") @db.Decimal
+  reserveUsd           Decimal @map("reserve_usd") @db.Decimal
+  totalSupply          Decimal @map("total_supply") @db.Decimal
+  volume0              Decimal @map("volume_0") @db.Decimal
+  volume1              Decimal @map("volume_1") @db.Decimal
+  volumeUsd            Decimal @map("volume_usd") @db.Decimal
+  txCount              Decimal @map("tx_count") @db.Decimal
+  lpFee                Decimal @map("lp_fee") @db.Decimal
+  protocolFee          Decimal @map("protocol_fee") @db.Decimal
+  royaltiesFee         Decimal @map("royalties_fee") @db.Decimal
+  royaltiesBeneficiary Bytes?  @map("royalties_beneficiary")
+  totalFee             Decimal @map("total_fee") @db.Decimal
+
+  // Relations
+  factoryAddress     Bytes               @map("factory")
+  factory            Factory             @relation(fields: [chain, factoryAddress], references: [chain, address])
+  token0Address      Bytes               @map("token_0")
+  token0             Token               @relation(name: "token0", fields: [chain, token0Address], references: [chain, address])
+  token1Address      Bytes               @map("token_1")
+  token1             Token               @relation(name: "token1", fields: [chain, token1Address], references: [chain, address])
+  liquidityPositions LiquidityPosition[]
+  dayDatas           PairDayData[]
+  hourDatas          PairHourData[]
+  transactions       Transaction[]
+  userStakes         UserStake[]
+
+  @@unique([chain, address])
+  @@map("pair")
+}
+
+model DayData {
+  id         String  @id @map("_gs_gid")
+  chain      String  @map("_gs_chain")
+  date       Decimal @db.Decimal
+  reserveUsd Decimal @map("reserve_usd") @db.Decimal
+  reserveNft Decimal @map("reserve_nft") @db.Decimal
+  volumeUsd  Decimal @map("volume_usd") @db.Decimal
+  txCount    Decimal @map("tx_count") @db.Decimal
+
+  @@unique([chain, date])
+  @@map("day_data")
+}
+
+model HourData {
+  id         String  @id @map("_gs_gid")
+  chain      String  @map("_gs_chain")
+  date       Decimal @db.Decimal
+  reserveUsd Decimal @map("reserve_usd") @db.Decimal
+  reserveNft Decimal @map("reserve_nft") @db.Decimal
+  volumeUsd  Decimal @map("volume_usd") @db.Decimal
+  txCount    Decimal @map("tx_count") @db.Decimal
+
+  @@unique([chain, date])
+  @@map("hour_data")
+}
+
+model Incentive {
+  id                    String  @id @map("_gs_gid")
+  chain                 String  @map("_gs_chain")
+  incentiveId           Bytes   @map("id")
+  index                 Decimal @map("incentive_id") @db.Decimal
+  pair                  Bytes
+  creator               Bytes
+  rewardAmount          Decimal @map("reward_amount") @db.Decimal
+  isRewardRounded       Boolean @map("is_reward_rounded")
+  startTime             Decimal @map("start_time") @db.Decimal
+  endTime               Decimal @map("end_time") @db.Decimal
+  remainingRewardAmount Decimal @map("remaining_reward_amount") @db.Decimal
+
+  // Relations
+  rewardTokenAddress Bytes           @map("reward_token_address")
+  rewardToken        Token?          @relation(fields: [chain, rewardTokenAddress], references: [chain, address])
+  userIncentives     UserIncentive[]
+
+  @@unique([chain, incentiveId])
+  @@unique([chain, index])
+  @@map("incentive")
+}
+
+model LiquidityPosition {
+  id      String  @id @map("_gs_gid")
+  chain   String  @map("_gs_chain")
+  balance Decimal @db.Decimal
+
+  // Relations
+  pairAddress Bytes @map("pair")
+  pair        Pair  @relation(fields: [chain, pairAddress], references: [chain, address])
+  userAddress Bytes @map("user")
+  user        User  @relation(fields: [chain, userAddress], references: [chain, address])
+
+  @@unique([chain, pairAddress, userAddress])
+  @@map("liquidity_position")
+}
+
+model PairDayData {
+  id          String  @id @map("_gs_gid")
+  chain       String  @map("_gs_chain")
+  date        Decimal @db.Decimal
+  reserve0    Decimal @map("reserve_0") @db.Decimal
+  reserve1    Decimal @map("reserve_1") @db.Decimal
+  reserveUsd  Decimal @map("reserve_usd") @db.Decimal
+  totalSupply Decimal @map("total_supply") @db.Decimal
+  volume0     Decimal @map("volume_0") @db.Decimal
+  volume1     Decimal @map("volume_1") @db.Decimal
+  volumeUsd   Decimal @map("volume_usd") @db.Decimal
+  txCount     Decimal @map("tx_count") @db.Decimal
+
+  // Relations
+  pairAddress Bytes @map("pair")
+  pair        Pair  @relation(fields: [chain, pairAddress], references: [chain, address])
+
+  @@unique([chain, pairAddress, date])
+}
+
+model PairHourData {
+  id          String  @id @map("_gs_gid")
+  chain       String  @map("_gs_chain")
+  date        Decimal @db.Decimal
+  reserve0    Decimal @map("reserve_0") @db.Decimal
+  reserve1    Decimal @map("reserve_1") @db.Decimal
+  reserveUsd  Decimal @map("reserve_usd") @db.Decimal
+  totalSupply Decimal @map("total_supply") @db.Decimal
+  volume0     Decimal @map("volume_0") @db.Decimal
+  volume1     Decimal @map("volume_1") @db.Decimal
+  volumeUsd   Decimal @map("volume_usd") @db.Decimal
+  txCount     Decimal @map("tx_count") @db.Decimal
+
+  // Relations
+  pairAddress Bytes @map("pair")
+  pair        Pair  @relation(fields: [chain, pairAddress], references: [chain, address])
+
+  @@unique([chain, pairAddress, date])
+  @@map("pair_hour_data")
+}
+
+model Transaction {
+  id            String   @id @map("_gs_gid")
+  chain         String   @map("_gs_chain")
+  transactionId Bytes    @map("id")
+  hash          Bytes
+  timestamp     Decimal  @db.Decimal
+  type          String?
+  amount0       Decimal  @map("amount_0") @db.Decimal
+  amount1       Decimal  @map("amount_1") @db.Decimal
+  amountUsd     Decimal  @map("amount_usd") @db.Decimal
+  isAmount1Out  Boolean? @map("is_amount_1_out")
+
+  // Relations
+  userAddress      Bytes?            @map("user")
+  user             User?             @relation(fields: [chain, userAddress], references: [chain, address])
+  pairAddress      Bytes?            @map("pair")
+  pair             Pair?             @relation(fields: [chain, pairAddress], references: [chain, address])
+  transactionItems TransactionItem[]
+
+  @@unique([chain, transactionId])
+  @@unique([chain, hash])
+  @@map("transaction")
+}
+
+model TransactionItem {
+  id      String  @id @map("_gs_gid")
+  chain   String  @map("_gs_chain")
+  tokenId Decimal @map("token_id") @db.Decimal
+  amount  Int
+
+  // Relations
+  transactioId      Bytes       @map("transaction")
+  transaction       Transaction @relation(fields: [chain, transactioId], references: [chain, transactionId])
+  vaultAddress      Bytes       @map("vault")
+  vault             Token       @relation(fields: [chain, vaultAddress], references: [chain, address])
+  collectionAddress Bytes       @map("collection")
+  collection        Collection  @relation(fields: [chain, collectionAddress], references: [chain, address])
+
+  @@map("transaction_item")
+}
+
+model User {
+  id                     String  @id @map("_gs_gid")
+  chain                  String  @map("_gs_chain")
+  address                Bytes   @map("id")
+  liquidityPositionCount Decimal @map("liquidity_position_count") @db.Decimal
+
+  // Relations
+  liquidityPositions LiquidityPosition[]
+  transactions       Transaction[]
+  incentives         UserIncentive[]
+  stakes             UserStake[]
+
+  @@unique([chain, address])
+  @@map("user")
+}
+
+model UserIncentive {
+  id              String  @id @map("_gs_gid")
+  chain           String  @map("_gs_chain")
+  userIncentiveId Bytes   @map("id")
+  isSubscribed    Boolean @map("is_subscribed")
+
+  // Relations
+  userAddress Bytes                @map("user")
+  user        User                 @relation(fields: [chain, userAddress], references: [chain, address])
+  incentiveId Bytes                @map("incentive")
+  incentive   Incentive            @relation(fields: [chain, incentiveId], references: [chain, incentiveId])
+  claims      UserIncentiveClaim[]
+
+  @@unique([chain, userIncentiveId])
+  @@unique([chain, userAddress, incentiveId])
+  @@map("user_incentive")
+}
+
+model UserIncentiveClaim {
+  id        String  @id @map("_gs_gid")
+  chain     String  @map("_gs_chain")
+  timestamp Decimal @db.Decimal
+  amount    Decimal @db.Decimal
+
+  // Relations
+  userIncentiveId Bytes         @map("user_incentive")
+  userIncentive   UserIncentive @relation(fields: [chain, userIncentiveId], references: [chain, userIncentiveId])
+
+  @@map("user_incentive_claim")
+}
+
+model UserStake {
+  id     String  @id @map("_gs_gid")
+  chain  String  @map("_gs_chain")
+  amount Decimal @db.Decimal
+
+  // Relations
+  userAddress Bytes @map("user")
+  user        User  @relation(fields: [chain, userAddress], references: [chain, address])
+  pairAddress Bytes @map("pair")
+  pair        Pair  @relation(fields: [chain, pairAddress], references: [chain, address])
+
+  @@unique([chain, userAddress, pairAddress])
+  @@map("user_stake")
+}

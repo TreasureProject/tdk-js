@@ -1,0 +1,38 @@
+{
+  "name": "@treasure-dev/magicswap-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "prisma generate",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm db:start:test && dotenv -e .env.test -- vitest run",
+    "dev": "tsup --watch --onSuccess 'pnpm start'",
+    "build": "tsup",
+    "start": "node ./dist/index.js",
+    "db:start:dev": "docker-compose up -d --wait",
+    "db:start:test": "docker-compose --env-file .env.test -f docker-compose.test.yml up -d --wait"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "catalog:",
+    "@fastify/cors": "catalog:",
+    "@fastify/swagger": "catalog:",
+    "@fastify/swagger-ui": "catalog:",
+    "@fastify/type-provider-typebox": "catalog:",
+    "@prisma/client": "catalog:",
+    "@sentry/node": "catalog:",
+    "@sinclair/typebox": "catalog:",
+    "dotenv": "catalog:",
+    "fastify": "catalog:",
+    "pino": "catalog:",
+    "pino-pretty": "catalog:"
+  },
+  "devDependencies": {
+    "dotenv-cli": "catalog:",
+    "prisma": "catalog:",
+    "tsup": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
