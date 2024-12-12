@@ -12,6 +12,29 @@ export const tokensRoutes =
   ({ db }: Context): FastifyPluginAsync =>
   async (app) => {
     app.get<{
+      Reply: {
+        tokens: Token[];
+      };
+    }>(
+      "/tokens",
+      {
+        schema: {
+          summary: "List tokens",
+          description: "List tokens available for swapping",
+          response: {
+            200: Type.Object({
+              tokens: Type.Array(tokenSchema),
+            }),
+          },
+        },
+      },
+      async (_, reply) => {
+        const tokens = await db.token.findMany();
+        reply.send({ tokens });
+      },
+    );
+
+    app.get<{
       Params: {
         chainId: number;
         address: string;
