@@ -12,6 +12,9 @@ export const tokensRoutes =
   ({ db }: Context): FastifyPluginAsync =>
   async (app) => {
     app.get<{
+      Querystring: Partial<{
+        chainId: number;
+      }>;
       Reply: {
         tokens: Token[];
       };
@@ -21,6 +24,11 @@ export const tokensRoutes =
         schema: {
           summary: "List tokens",
           description: "List tokens available for swapping",
+          querystring: Type.Partial(
+            Type.Object({
+              chainId: Type.Integer(),
+            }),
+          ),
           response: {
             200: Type.Object({
               tokens: Type.Array(tokenSchema),
@@ -28,8 +36,14 @@ export const tokensRoutes =
           },
         },
       },
-      async (_, reply) => {
-        const tokens = await db.token.findMany();
+      async (req, reply) => {
+        const tokens = await db.token.findMany({
+          where: {
+            chain: req.query.chainId
+              ? getChainSlug(req.query.chainId)
+              : undefined,
+          },
+        });
         reply.send({ tokens });
       },
     );

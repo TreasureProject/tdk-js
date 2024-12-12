@@ -12,6 +12,9 @@ export const poolsRoutes =
   ({ db }: Context): FastifyPluginAsync =>
   async (app) => {
     app.get<{
+      Querystring: Partial<{
+        chainId: number;
+      }>;
       Reply: {
         pools: Pool[];
       };
@@ -21,6 +24,11 @@ export const poolsRoutes =
         schema: {
           summary: "List pools",
           description: "List available liquidity pools",
+          querystring: Type.Partial(
+            Type.Object({
+              chainId: Type.Integer(),
+            }),
+          ),
           response: {
             200: Type.Object({
               pools: Type.Array(poolSchema),
@@ -28,8 +36,13 @@ export const poolsRoutes =
           },
         },
       },
-      async (_, reply) => {
+      async (req, reply) => {
         const pools = await db.pair.findMany({
+          where: {
+            chain: req.query.chainId
+              ? getChainSlug(req.query.chainId)
+              : undefined,
+          },
           include: {
             token0: true,
             token1: true,
