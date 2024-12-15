@@ -1,5 +1,11 @@
 import { defineChain } from "thirdweb";
-import { arbitrum, arbitrumSepolia, sepolia } from "thirdweb/chains";
+import {
+  arbitrum,
+  arbitrumSepolia,
+  base,
+  baseSepolia,
+  sepolia,
+} from "thirdweb/chains";
 
 import type { AddressString, Contract } from "./types";
 
@@ -79,6 +85,10 @@ export const MAGICSWAPV2_API_URL = {
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-topaz/live/gn",
   [sepolia.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-sepolia/live/gn",
+  [base.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-base/live/gn",
+  [baseSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-base-sepolia/live/gn",
 } as const;
 
 // Tokens
