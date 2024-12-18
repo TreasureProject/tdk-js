@@ -1,5 +1,12 @@
 # @treasure-dev/tdk-react
 
+## 3.9.5
+
+### Patch Changes
+
+- b5b9265: Fixed active wallet missing from TDK API client
+  - @treasure-dev/tdk-core@3.9.5
+
 ## 3.9.4
 
 ### Patch Changes
