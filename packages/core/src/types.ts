@@ -46,6 +46,7 @@ export type Contract =
   // Tokens
   | "MAGIC"
   | "VEE"
+  | "CRV"
   // Bridgeworld
   | "Middleman"
   | "BalancerCrystals"

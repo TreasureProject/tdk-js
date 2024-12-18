@@ -4,6 +4,7 @@ import {
   arbitrumSepolia,
   base,
   baseSepolia,
+  mainnet,
   sepolia,
 } from "thirdweb/chains";
 
@@ -141,6 +142,11 @@ export const CONTRACT_ADDRESSES: Record<
     BulkTransferHelper: "0x0000000000c2d145a2526bd8c716263bfebe1a72",
     TreasureConduit: "0x74c4ed7e3bcbdf8e32b56d4d11d2cbd34ad4dc0b",
     TreasureBanners: "0x023083def4855918dea65f1dea351fcdabb1e073",
+  },
+  [mainnet.id]: {
+    // Tokens
+    MAGIC: "0xb0c7a3ba49c7a6eaba6cd4a96c55a1391070ac9a",
+    CRV: "0xD533a949740bb3306d119CC777fa900bA034cd52",
   },
   [sepolia.id]: {
     // Tokens
