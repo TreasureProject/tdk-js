@@ -328,9 +328,23 @@ export const ConnectModal = ({
 
   // Reset modal state when it's opened
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
     if (open) {
+      // Pushing the change to the end of the call stack
+      timer = setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 0);
+
       setState(DEFAULT_STATE);
+    } else {
+      document.body.style.pointerEvents = "auto";
     }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [open]);
 
   return (

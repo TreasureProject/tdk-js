@@ -1,23 +1,40 @@
-// Copied from https://github.com/thirdweb-dev/engine/blob/main/src/server/utils/wallets/getAwsKmsAccount.ts
+// Ported from https://github.com/thirdweb-dev/engine/blob/main/src/server/utils/wallets/getAwsKmsAccount.ts
 // TODO: remove when getAwsKmsAccount is ported to thirdweb package
 import type { KMSClientConfig } from "@aws-sdk/client-kms";
 import { KmsSigner } from "aws-kms-signer";
+import type * as ox__TransactionEnvelopeEip2930 from "ox/TransactionEnvelopeEip2930";
+import * as ox__TypedData from "ox/TypedData";
 import type { Hex } from "thirdweb";
 import { type Address, keccak256 } from "thirdweb";
 import { serializeTransaction } from "thirdweb/transaction";
 import { hashMessage } from "thirdweb/utils";
 import type { Account } from "thirdweb/wallets";
-import type {
-  SignableMessage,
-  TransactionSerializable,
-  TypedData,
-  TypedDataDefinition,
-} from "viem";
-import { hashTypedData } from "viem";
+import type { SignableMessage } from "viem";
 
 type Options = {
   kmsKey: string;
   kmsClientConfig?: KMSClientConfig;
+};
+
+type SerializableTransaction = {
+  type?: string | undefined;
+  r?: Hex | bigint;
+  s?: Hex | bigint;
+  v?: bigint | number;
+  yParity?: bigint | number;
+  accessList?:
+    | ox__TransactionEnvelopeEip2930.TransactionEnvelopeEip2930["accessList"]
+    | undefined;
+  chainId?: number | undefined;
+  gasPrice?: bigint | undefined;
+  maxFeePerGas?: bigint | undefined;
+  maxPriorityFeePerGas?: bigint | undefined;
+  data?: Hex | undefined;
+  to?: string | null | undefined; // Must allow null for backwards compatibility
+  nonce?: number | bigint | undefined;
+  value?: bigint | undefined;
+  gas?: bigint | undefined;
+  gasLimit?: bigint | undefined;
 };
 
 export const getAwsKmsAccount = async ({
@@ -30,7 +47,7 @@ export const getAwsKmsAccount = async ({
   const addressUnprefixed = await signer.getAddress();
   const address = `0x${addressUnprefixed}` as Address;
 
-  async function signTransaction(tx: TransactionSerializable): Promise<Hex> {
+  async function signTransaction(tx: SerializableTransaction): Promise<Hex> {
     const serializedTx = serializeTransaction({ transaction: tx });
     const txHash = keccak256(serializedTx);
     const signature = await signer.sign(Buffer.from(txHash.slice(2), "hex"));
@@ -72,13 +89,13 @@ export const getAwsKmsAccount = async ({
   }
 
   async function signTypedData<
-    const typedData extends TypedData | Record<string, unknown>,
+    const typedData extends ox__TypedData.TypedData | Record<string, unknown>,
     primaryType extends keyof typedData | "EIP712Domain" = keyof typedData,
-  >(_typedData: TypedDataDefinition<typedData, primaryType>): Promise<Hex> {
-    const typedDataHash = hashTypedData(_typedData);
-    const signature = await signer.sign(
-      Buffer.from(typedDataHash.slice(2), "hex"),
-    );
+  >(
+    _typedData: ox__TypedData.Definition<typedData, primaryType>,
+  ): Promise<Hex> {
+    const payload = ox__TypedData.getSignPayload(_typedData);
+    const signature = await signer.sign(Buffer.from(payload.slice(2), "hex"));
     return `0x${signature.toString()}`;
   }
 

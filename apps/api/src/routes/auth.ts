@@ -102,22 +102,34 @@ export const authRoutes =
           body: {
             payload: unverifiedPayload,
             signature,
+            adminAccountSignature,
             authTokenDurationSec = 86_400, // 1 day
           },
         } = req;
-        const verifiedPayload = await thirdwebAuth.verifyPayload({
-          payload: unverifiedPayload,
-          signature,
-        });
-        if (!verifiedPayload.valid) {
+        const [verifyPayloadResult, verifyAdminAccountPayloadResult] =
+          await Promise.all([
+            thirdwebAuth.verifyPayload({
+              payload: unverifiedPayload,
+              signature,
+            }),
+            adminAccountSignature
+              ? thirdwebAuth.verifyPayload({
+                  payload: unverifiedPayload,
+                  signature: adminAccountSignature,
+                })
+              : undefined,
+          ]);
+        if (!verifyPayloadResult.valid) {
           return reply
             .code(400)
-            .send({ error: `Login failed: ${verifiedPayload.error}` });
+            .send({ error: `Login failed: ${verifyPayloadResult.error}` });
         }
 
-        const { payload } = verifiedPayload;
-        const chainId = Number(payload.chain_id ?? DEFAULT_TDK_CHAIN_ID);
-        const address = payload.address.toLowerCase();
+        const verifiedPayload = verifyPayloadResult.payload;
+        const chainId = Number(
+          verifiedPayload.chain_id ?? DEFAULT_TDK_CHAIN_ID,
+        );
+        const address = verifiedPayload.address.toLowerCase();
         const chain = defineChain(chainId);
 
         const foundUserSmartAccount = await db.userSmartAccount.findUnique({
@@ -152,13 +164,20 @@ export const authRoutes =
           // On ZKsync chains, the smart account address is the same as the admin wallet address
           if (await isZkSyncChain(chain)) {
             adminWalletAddress = address.toLowerCase();
+          } else if (verifyAdminAccountPayloadResult?.valid) {
+            adminWalletAddress =
+              verifyAdminAccountPayloadResult.payload.address;
           } else {
-            // Fetch admin wallets associated with this smart account address
-            const { result } = await engine.account.getAllAdmins(
-              chainId.toString(),
-              address,
-            );
-            adminWalletAddress = result[0]?.toLowerCase();
+            try {
+              // Fetch admin wallets associated with this smart account address
+              const { result } = await engine.account.getAllAdmins(
+                chainId.toString(),
+                address,
+              );
+              adminWalletAddress = result[0]?.toLowerCase();
+            } catch (err) {
+              log.error(`Error fetching admin wallets: ${err}`);
+            }
           }
 
           // Smart accounts should never be orphaned, but checking anyway
@@ -267,7 +286,7 @@ export const authRoutes =
 
         const [authTokenResult, userSessionsResult] = await Promise.allSettled([
           auth.generateJWT<UserContext>(address, {
-            issuer: payload.domain,
+            issuer: verifiedPayload.domain,
             issuedAt: new Date(),
             expiresAt: new Date(
               new Date().getTime() + authTokenDurationSec * 1000,

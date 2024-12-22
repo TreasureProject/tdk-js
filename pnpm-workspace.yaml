@@ -8,7 +8,7 @@ catalog:
   "@aws-sdk/client-secrets-manager": ^3.699.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
-  "@changesets/cli": ^2.27.10
+  "@changesets/cli": ^2.27.11
   "@electron-toolkit/preload": ^3.0.1
   "@electron-toolkit/tsconfig": ^1.0.1
   "@electron-toolkit/utils": ^3.0.0
@@ -29,7 +29,7 @@ catalog:
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.16
   "@types/jsonwebtoken": ^9.0.7
-  "@types/node": ^22.10.1
+  "@types/node": ^22.10.2
   "@types/react": ^18.3.13
   "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
@@ -54,8 +54,9 @@ catalog:
   jsonwebtoken: ^9.0.2
   "jwks-rsa": ^3.1.0
   "jwt-decode": ^4.0.0
-  knip: ^5.39.2
-  lint-staged: ^15.2.10
+  knip: ^5.41.1
+  lint-staged: ^15.2.11
+  ox: 0.4.2 # matches Thirdweb version to satisfy getAwsKmsAccount types
   pino: ^9.5.0
   pino-pretty: ^13.0.0
   postcss: ^8.4.49
@@ -68,12 +69,12 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.5.5
-  thirdweb: ^5.74.0
+  thirdweb: ^5.80.0 # check ox and viem versions if upgradings
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   tsx: ^4.19.2
   turbo: ^2.3.3
   typescript: ^5.7.2
   uuid: ^11.0.3
-  viem: 2.21.53 # matches Thirdweb version to satisfy getAwsKmsAccount types
-  vite: ^6.0.3
+  viem: 2.21.55 # matches Thirdweb version to satisfy getAwsKmsAccount types
+  vite: ^6.0.5
   vitest: ^2.1.8
