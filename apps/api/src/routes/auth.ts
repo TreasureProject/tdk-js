@@ -102,7 +102,7 @@ export const authRoutes =
           body: {
             payload: unverifiedPayload,
             signature,
-            adminAccountSignature,
+            adminAccount: adminAccountData,
             authTokenDurationSec = 86_400, // 1 day
           },
         } = req;
@@ -112,10 +112,10 @@ export const authRoutes =
               payload: unverifiedPayload,
               signature,
             }),
-            adminAccountSignature
+            adminAccountData
               ? thirdwebAuth.verifyPayload({
-                  payload: unverifiedPayload,
-                  signature: adminAccountSignature,
+                  payload: adminAccountData.payload,
+                  signature: adminAccountData.signature,
                 })
               : undefined,
           ]);

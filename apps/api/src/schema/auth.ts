@@ -33,7 +33,10 @@ export const readLoginPayloadReplySchema = loginPayloadSchema;
 export const loginBodySchema = Type.Object({
   payload: loginPayloadSchema,
   signature: Type.String(),
-  adminAccountSignature: Type.Optional(Type.String()),
+  adminAccount: Type.Optional(Type.Object({
+    payload: loginPayloadSchema,
+    signature: Type.String(),
+  })),
   authTokenDurationSec: Type.Optional(
     Type.Integer({
       minimum: 3_600, // 1 minute

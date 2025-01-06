@@ -183,14 +183,17 @@ export const authenticateWallet = async ({
       account,
     }),
     adminAccount
-      ? signLoginPayload({ payload, account: adminAccount })
+      ? signLoginPayload({ payload: {
+        ...payload,
+        address: adminAccount.address,
+      }, account: adminAccount })
       : undefined,
   ]);
 
   // Log in with signed payload
   return tdk.auth.logIn({
     ...signedPayload,
-    adminAccountSignature: signedAdminAccountPayload?.signature,
+    adminAccount: signedAdminAccountPayload,
     authTokenDurationSec,
   });
 };
