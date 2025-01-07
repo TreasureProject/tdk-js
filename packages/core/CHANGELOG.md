@@ -1,5 +1,11 @@
 # @treasure-dev/tdk-core
 
+## 3.10.0
+
+### Minor Changes
+
+- e1154ae: Added utilities for generating and verifying backend wallet signatures
+
 ## 3.9.5
 
 ## 3.9.4
