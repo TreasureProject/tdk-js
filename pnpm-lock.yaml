@@ -46,8 +46,8 @@ catalogs:
       specifier: ^5.1.0
       version: 5.1.0
     '@prisma/client':
-      specifier: ^6.1.0
-      version: 6.1.0
+      specifier: ^6.2.0
+      version: 6.2.0
     '@radix-ui/react-dialog':
       specifier: ^1.1.4
       version: 1.1.4
@@ -175,8 +175,8 @@ catalogs:
       specifier: ^8.4.49
       version: 8.4.49
     prisma:
-      specifier: ^6.1.0
-      version: 6.1.0
+      specifier: ^6.2.0
+      version: 6.2.0
     react:
       specifier: ^18.2.0
       version: 18.3.1
@@ -202,8 +202,8 @@ catalogs:
       specifier: ^1.0.7
       version: 1.0.7
     thirdweb:
-      specifier: ^5.81.0
-      version: 5.81.0
+      specifier: 5.82.0
+      version: 5.82.0
     tsup:
       specifier: 8.3.0
       version: 8.3.0
@@ -293,7 +293,7 @@ importers:
         version: 5.1.0(@sinclair/typebox@0.34.13)
       '@prisma/client':
         specifier: 'catalog:'
-        version: 6.1.0(prisma@6.1.0)
+        version: 6.2.0(prisma@6.2.0)
       '@sentry/node':
         specifier: 'catalog:'
         version: 8.47.0
@@ -335,7 +335,7 @@ importers:
         version: 13.0.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
       uuid:
         specifier: 'catalog:'
         version: 11.0.4
@@ -351,7 +351,7 @@ importers:
         version: 8.0.0
       prisma:
         specifier: 'catalog:'
-        version: 6.1.0
+        version: 6.2.0
       tsup:
         specifier: 'catalog:'
         version: 8.3.0(jiti@2.4.0)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1)
@@ -369,7 +369,7 @@ importers:
         version: 16.4.7
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       tsx:
         specifier: 'catalog:'
@@ -410,7 +410,7 @@ importers:
         version: 4.21.2
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       '@electron-toolkit/tsconfig':
         specifier: 'catalog:'
@@ -465,7 +465,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -508,7 +508,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -582,7 +582,7 @@ importers:
         version: 0.4.2(typescript@5.7.2)(zod@3.23.8)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
       uuid:
         specifier: 'catalog:'
         version: 11.0.4
@@ -607,7 +607,7 @@ importers:
     dependencies:
       '@treasure-dev/tdk-core':
         specifier: '*'
-        version: 2.7.1(@tanstack/query-core@5.62.7)(@types/react@18.3.13)(react@18.3.1)(thirdweb@5.81.0(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8))(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)
+        version: 2.7.1(@tanstack/query-core@5.62.7)(@types/react@18.3.13)(react@18.3.1)(thirdweb@5.82.0(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8))(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)
     devDependencies:
       tsup:
         specifier: 'catalog:'
@@ -653,7 +653,7 @@ importers:
         version: 2.6.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+        version: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
     devDependencies:
       '@storybook/addon-essentials':
         specifier: 'catalog:'
@@ -2362,8 +2362,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@prisma/client@6.1.0':
-    resolution: {integrity: sha512-AbQYc5+EJKm1Ydfq3KxwcGiy7wIbm4/QbjCKWWoNROtvy7d6a3gmAGkKjK0iUCzh+rHV8xDhD5Cge8ke/kiy5Q==}
+  '@prisma/client@6.2.0':
+    resolution: {integrity: sha512-tmEgej4OR+Wqk8MwZQcu58JzA1iFPmi/z7VPEmjTuTIQDLqHQZ6+MDRLL4wgNJXJkMHUKD9yMD5AkwYH0/0hKA==}
     engines: {node: '>=18.18'}
     peerDependencies:
       prisma: '*'
@@ -2371,20 +2371,20 @@ packages:
       prisma:
         optional: true
 
-  '@prisma/debug@6.1.0':
-    resolution: {integrity: sha512-0himsvcM4DGBTtvXkd2Tggv6sl2JyUYLzEGXXleFY+7Kp6rZeSS3hiTW9mwtUlXrwYbJP6pwlVNB7jYElrjWUg==}
+  '@prisma/debug@6.2.0':
+    resolution: {integrity: sha512-Q96rqZVivmEtt29h1hhALceJTqggHDsr3RAWpeSJZOppQu6vcv5PyiY4XxyTf04gZw4Ue+kkqtaRcRms1zC8aQ==}
 
-  '@prisma/engines-version@6.1.0-21.11f085a2012c0f4778414c8db2651556ee0ef959':
-    resolution: {integrity: sha512-PdJqmYM2Fd8K0weOOtQThWylwjsDlTig+8Pcg47/jszMuLL9iLIaygC3cjWJLda69siRW4STlCTMSgOjZzvKPQ==}
+  '@prisma/engines-version@6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69':
+    resolution: {integrity: sha512-7tw1qs/9GWSX6qbZs4He09TOTg1ff3gYsB3ubaVNN0Pp1zLm9NC5C5MZShtkz7TyQjx7blhpknB7HwEhlG+PrQ==}
 
-  '@prisma/engines@6.1.0':
-    resolution: {integrity: sha512-GnYJbCiep3Vyr1P/415ReYrgJUjP79fBNc1wCo7NP6Eia0CzL2Ot9vK7Infczv3oK7JLrCcawOSAxFxNFsAERQ==}
+  '@prisma/engines@6.2.0':
+    resolution: {integrity: sha512-Od7fH2gH+4n0E/XIhhAfO3OaKKNRzD0s1LY8umyvDQXlFmiDYF8kNJydcfWLvU3XNNV40wM2T0jOU+4ua1Zp3A==}
 
-  '@prisma/fetch-engine@6.1.0':
-    resolution: {integrity: sha512-asdFi7TvPlEZ8CzSZ/+Du5wZ27q6OJbRSXh+S8ISZguu+S9KtS/gP7NeXceZyb1Jv1SM1S5YfiCv+STDsG6rrg==}
+  '@prisma/fetch-engine@6.2.0':
+    resolution: {integrity: sha512-zz0HmZ2Npsthnh+1cj7aFPRWs57GS4CNlM9uXpVeQm2/YN0LMRNeuI5/zpqRhHrZUXdKde0jltJnvIM1Xz/mPQ==}
 
-  '@prisma/get-platform@6.1.0':
-    resolution: {integrity: sha512-ia8bNjboBoHkmKGGaWtqtlgQOhCi7+f85aOkPJKgNwWvYrT6l78KgojLekE8zMhVk0R9lWcifV0Pf8l3/15V0Q==}
+  '@prisma/get-platform@6.2.0':
+    resolution: {integrity: sha512-Nnk2fcjiRB9E0uRKCMl+EmBC1Vs6kXqaHa2E108pDrEXAgxj0Ns/YQSeZE0o4QJiK5m1PGmImA9/FFUAgCUTHA==}
 
   '@prisma/instrumentation@5.22.0':
     resolution: {integrity: sha512-LxccF392NN37ISGxIurUljZSh1YWnphO34V5a0+T7FVQG2u9bhAXRTJpgmQ3483woVhkraQZFF7cbRrpbw/F4Q==}
@@ -5050,12 +5050,6 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  input-otp@1.4.1:
-    resolution: {integrity: sha512-+yvpmKYKHi9jIGngxagY9oWiiblPB7+nEO75F2l2o4vs+6vpPZZmUl4tBNYuTCvQjhvEIbdNeJu70bhfYP2nbw==}
-    peerDependencies:
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
-
   input-otp@1.4.2:
     resolution: {integrity: sha512-l3jWwYNvrEa6NTCt7BECfCm48GvwuZzkoeG3gBL2w4CHeOXW3eKFmf9UNYkNfYc3mxMrthMnxjIE07MT0zLBQA==}
     peerDependencies:
@@ -6178,8 +6172,8 @@ packages:
     resolution: {integrity: sha512-4yf0QO/sllf/1zbZWYnvWw3NxCQwLXKzIj0G849LSufP15BXKM0rbD2Z3wVnkMfjdn/CB0Dpp444gYAACdsplg==}
     engines: {node: '>=18'}
 
-  prisma@6.1.0:
-    resolution: {integrity: sha512-aFI3Yi+ApUxkwCJJwyQSwpyzUX7YX3ihzuHNHOyv4GJg3X5tQsmRaJEnZ+ZyfHpMtnyahhmXVfbTZ+lS8ZtfKw==}
+  prisma@6.2.0:
+    resolution: {integrity: sha512-3bnAPqtWXbyA9QEKYEstPcsQMxoQ97rjC0E1OZ+QVKuNNpzRDdIgdCpTVpHvqj/9UaWpqaEiENYqS2At8DtESA==}
     engines: {node: '>=18.18'}
     hasBin: true
 
@@ -6300,16 +6294,6 @@ packages:
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
     engines: {node: '>=0.10.0'}
-
-  react-remove-scroll-bar@2.3.6:
-    resolution: {integrity: sha512-DtSYaao4mBmX+HDo5YWYdBWQwYIQQshUV/dVxFxK+KM26Wjwp1gZ6rv6OC3oujI6Bfu6Xyg3TwK533AQutsn/g==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -6877,8 +6861,8 @@ packages:
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
 
-  thirdweb@5.81.0:
-    resolution: {integrity: sha512-AKKLCbLiZG1OhHPGlOw+/gRG01fWA68gXwbW78XTRvC/UFYspPWLbpkiuIDt3TH8usBjtms80dRddeRDKTmytQ==}
+  thirdweb@5.82.0:
+    resolution: {integrity: sha512-VB2+TK5BKTBZLkQkXHMS2JMA5RNDaZbjlSTOOYJxLNhcoJfXUloMufvrkeiKbZzrW0h87bdDMy79nLMODFHlDA==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -7229,16 +7213,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  use-callback-ref@1.3.2:
-    resolution: {integrity: sha512-elOQwe6Q8gqZgDA8mrh44qRTQqpIHDcZ3hXTLjBe1i4ph8XpNJnO+aQf3NaG+lriLopI4HMx9VjQLfPQ6vhnoA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   use-callback-ref@1.3.3:
     resolution: {integrity: sha512-jQL3lRnocaFtu3V00JToYz/4QkNWswxijDaCVNZRiRTO3HQDLsdu1ZtmIUvV4yPp+rvWm5j0y0TG/S61cuijTg==}
@@ -9710,30 +9684,30 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@prisma/client@6.1.0(prisma@6.1.0)':
+  '@prisma/client@6.2.0(prisma@6.2.0)':
     optionalDependencies:
-      prisma: 6.1.0
+      prisma: 6.2.0
 
-  '@prisma/debug@6.1.0': {}
+  '@prisma/debug@6.2.0': {}
 
-  '@prisma/engines-version@6.1.0-21.11f085a2012c0f4778414c8db2651556ee0ef959': {}
+  '@prisma/engines-version@6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69': {}
 
-  '@prisma/engines@6.1.0':
+  '@prisma/engines@6.2.0':
     dependencies:
-      '@prisma/debug': 6.1.0
-      '@prisma/engines-version': 6.1.0-21.11f085a2012c0f4778414c8db2651556ee0ef959
-      '@prisma/fetch-engine': 6.1.0
-      '@prisma/get-platform': 6.1.0
+      '@prisma/debug': 6.2.0
+      '@prisma/engines-version': 6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69
+      '@prisma/fetch-engine': 6.2.0
+      '@prisma/get-platform': 6.2.0
 
-  '@prisma/fetch-engine@6.1.0':
+  '@prisma/fetch-engine@6.2.0':
     dependencies:
-      '@prisma/debug': 6.1.0
-      '@prisma/engines-version': 6.1.0-21.11f085a2012c0f4778414c8db2651556ee0ef959
-      '@prisma/get-platform': 6.1.0
+      '@prisma/debug': 6.2.0
+      '@prisma/engines-version': 6.2.0-14.4123509d24aa4dede1e864b46351bf2790323b69
+      '@prisma/get-platform': 6.2.0
 
-  '@prisma/get-platform@6.1.0':
+  '@prisma/get-platform@6.2.0':
     dependencies:
-      '@prisma/debug': 6.1.0
+      '@prisma/debug': 6.2.0
 
   '@prisma/instrumentation@5.22.0':
     dependencies:
@@ -10760,13 +10734,13 @@ snapshots:
 
   '@tootallnate/once@2.0.0': {}
 
-  '@treasure-dev/tdk-core@2.7.1(@tanstack/query-core@5.62.7)(@types/react@18.3.13)(react@18.3.1)(thirdweb@5.81.0(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8))(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)':
+  '@treasure-dev/tdk-core@2.7.1(@tanstack/query-core@5.62.7)(@types/react@18.3.13)(react@18.3.1)(thirdweb@5.82.0(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8))(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(zod@3.23.8)':
     dependencies:
       '@sushiswap/tines': 1.0.11(viem@2.21.53(typescript@5.7.2)(zod@3.23.8))(zod@3.23.8)
       '@wagmi/core': 2.14.6(@tanstack/query-core@5.62.7)(@types/react@18.3.13)(react@18.3.1)(typescript@5.7.2)(use-sync-external-store@1.2.0(react@18.3.1))(viem@2.21.53(typescript@5.7.2)(zod@3.23.8))
       abitype: 1.0.7(typescript@5.7.2)(zod@3.23.8)
       jwt-decode: 4.0.0
-      thirdweb: 5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
+      thirdweb: 5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8)
       viem: 2.21.53(typescript@5.7.2)(zod@3.23.8)
     transitivePeerDependencies:
       - '@tanstack/query-core'
@@ -13185,11 +13159,6 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  input-otp@1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
   input-otp@1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -14333,9 +14302,9 @@ snapshots:
     dependencies:
       parse-ms: 4.0.0
 
-  prisma@6.1.0:
+  prisma@6.2.0:
     dependencies:
-      '@prisma/engines': 6.1.0
+      '@prisma/engines': 6.2.0
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -14449,14 +14418,6 @@ snapshots:
 
   react-refresh@0.14.2: {}
 
-  react-remove-scroll-bar@2.3.6(@types/react@18.3.13)(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-style-singleton: 2.2.1(@types/react@18.3.13)(react@18.3.1)
-      tslib: 2.7.0
-    optionalDependencies:
-      '@types/react': 18.3.13
-
   react-remove-scroll-bar@2.3.8(@types/react@18.3.13)(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -14468,10 +14429,10 @@ snapshots:
   react-remove-scroll@2.6.0(@types/react@18.3.13)(react@18.3.1):
     dependencies:
       react: 18.3.1
-      react-remove-scroll-bar: 2.3.6(@types/react@18.3.13)(react@18.3.1)
-      react-style-singleton: 2.2.1(@types/react@18.3.13)(react@18.3.1)
+      react-remove-scroll-bar: 2.3.8(@types/react@18.3.13)(react@18.3.1)
+      react-style-singleton: 2.2.3(@types/react@18.3.13)(react@18.3.1)
       tslib: 2.7.0
-      use-callback-ref: 1.3.2(@types/react@18.3.13)(react@18.3.1)
+      use-callback-ref: 1.3.3(@types/react@18.3.13)(react@18.3.1)
       use-sidecar: 1.1.2(@types/react@18.3.13)(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.3.13
@@ -15111,7 +15072,7 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  thirdweb@5.81.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8):
+  thirdweb@5.82.0(@aws-sdk/client-kms@3.723.0)(@types/react-dom@18.3.1)(@types/react@18.3.13)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)(zod@3.23.8):
     dependencies:
       '@coinbase/wallet-sdk': 4.2.4
       '@emotion/react': 11.14.0(@types/react@18.3.13)(react@18.3.1)
@@ -15130,7 +15091,7 @@ snapshots:
       abitype: 1.0.7(typescript@5.7.2)(zod@3.23.8)
       cross-spawn: 7.0.6
       fuse.js: 7.0.0
-      input-otp: 1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      input-otp: 1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mipd: 0.0.7(typescript@5.7.2)
       ox: 0.4.2(typescript@5.7.2)(zod@3.23.8)
       uqr: 0.1.2
@@ -15398,13 +15359,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-callback-ref@1.3.2(@types/react@18.3.13)(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      tslib: 2.7.0
-    optionalDependencies:
-      '@types/react': 18.3.13
 
   use-callback-ref@1.3.3(@types/react@18.3.13)(react@18.3.1):
     dependencies:
