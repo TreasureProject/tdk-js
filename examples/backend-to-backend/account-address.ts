@@ -7,8 +7,10 @@ import "dotenv/config";
 
 const chainId = 421614;
 
+// smart account that has already created an on-chain session
+const accountAddress = process.env.TDK_ACCOUNT_ADDRESS as `0x${string}`;
+
 (async () => {
-  const accountAddress = process.env.TDK_ACCOUNT_ADDRESS as `0x${string}`; // smart account that has already created an on-chain session
   const { backendWallet, signature, expirationTime } =
     await generateAccountSignature({
       accountAddress,
