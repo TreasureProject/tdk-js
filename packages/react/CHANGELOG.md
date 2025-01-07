@@ -1,5 +1,21 @@
 # @treasure-dev/tdk-react
 
+## 3.9.5
+
+### Patch Changes
+
+- b5b9265: Fixed active wallet missing from TDK API client
+  - @treasure-dev/tdk-core@3.9.5
+
+## 3.9.4
+
+### Patch Changes
+
+- a03f52e: Fixed `ConnectButton` not resetting state when encountering auth error
+- 767178d: Added CRV to View Funds section of connected account modal
+- Updated dependencies [767178d]
+  - @treasure-dev/tdk-core@3.9.4
+
 ## 3.9.3
 
 ### Patch Changes

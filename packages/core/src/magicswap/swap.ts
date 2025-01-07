@@ -169,7 +169,7 @@ export const createSwapArgs = ({
     const quantitiesOut = nftsOut.map(({ quantity }) => BigInt(quantity));
 
     // ETH-NFT
-    if (tokenOut.isETH) {
+    if (tokenIn.isETH) {
       return {
         address: magicSwapV2RouterAddress,
         functionName: "swapETHForNft",

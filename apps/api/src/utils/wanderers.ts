@@ -38,7 +38,7 @@ export const validateWanderersUser = async ({
   })) as WanderersData;
 
   return {
-    userId: `wanderers-${result.sub}`,
+    userId: `wanderersv2-${result.sub}`,
     email: result.email,
     exp: result.exp,
   };

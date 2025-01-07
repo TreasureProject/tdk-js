@@ -36,6 +36,7 @@ import {
   useIsAutoConnecting,
   useSwitchActiveWalletChain,
 } from "thirdweb/react";
+import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
 import { useLauncher } from "../hooks/useLauncher";
@@ -85,6 +86,7 @@ const TreasureProviderInner = ({
 }: Props) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [user, setUser] = useState<User | undefined>();
+  const [authToken, setAuthToken] = useState<string | undefined>();
   const [el, setEl] = useState<ReactNode>(null);
   const client = useMemo(
     () => createTreasureConnectClient({ clientId }),
@@ -103,9 +105,18 @@ const TreasureProviderInner = ({
         baseUri: apiUri,
         chainId: chain.id,
         backendWallet: sessionOptions?.backendWallet,
+        authToken,
         client,
+        activeWallet,
       }),
-    [apiUri, chain.id, sessionOptions?.backendWallet, client],
+    [
+      apiUri,
+      chain.id,
+      sessionOptions?.backendWallet,
+      authToken,
+      client,
+      activeWallet,
+    ],
   );
 
   const contractAddresses = useMemo(
@@ -172,12 +183,12 @@ const TreasureProviderInner = ({
     (authToken: string) => {
       tdk.user.me({ overrideAuthToken: authToken }).then((user) => {
         setUser(user);
+        setAuthToken(authToken);
         setStoredAuthToken(authToken);
-        tdk.setAuthToken(authToken);
         onConnect?.(user);
       });
     },
-    [tdk.user.me, tdk.setAuthToken, onConnect],
+    [tdk.user.me, onConnect],
   );
 
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
@@ -202,8 +213,7 @@ const TreasureProviderInner = ({
         });
     }
     setUser(undefined);
-    tdk.clearAuthToken();
-    tdk.clearActiveWallet();
+    setAuthToken(undefined);
     clearStoredAuthToken();
     activeWallet?.disconnect();
   };
@@ -220,33 +230,40 @@ const TreasureProviderInner = ({
       return { user: undefined, legacyProfiles: [] };
     }
 
-    let user: User | undefined;
-    let legacyProfiles: LegacyProfile[] = [];
-    let authToken = getStoredAuthToken();
-
-    // Check for existing stored auth token
-    if (authToken && !skipCurrentUser) {
-      // Validate if it's expired before attempting to use it
-      try {
-        const { exp: authTokenExpirationDate } = decodeAuthToken(authToken);
-        if (authTokenExpirationDate > Date.now() / 1000) {
-          setIsAuthenticating(true);
-          user = await tdk.user.me({ overrideAuthToken: authToken });
-        }
-      } catch (err) {
-        console.debug(
-          "[TreasureProvider] Error fetching user with stored auth token:",
-          err,
-        );
-        // Ignore errors and proceed with login
-      }
-    }
-
     if (chainId) {
       tdk.chainId = chainId;
     }
 
-    if (!user) {
+    let nextUser: User | undefined;
+    let nextAuthToken: string | undefined;
+    let legacyProfiles: LegacyProfile[] = [];
+
+    // Check for existing stored auth token
+    if (!skipCurrentUser) {
+      const storedAuthToken = getStoredAuthToken();
+      if (storedAuthToken) {
+        // Validate if it's expired before attempting to use it
+        try {
+          const { exp: authTokenExpirationDate } =
+            decodeAuthToken(storedAuthToken);
+          if (authTokenExpirationDate > Date.now() / 1000) {
+            setIsAuthenticating(true);
+            nextUser = await tdk.user.me({
+              overrideAuthToken: storedAuthToken,
+            });
+            nextAuthToken = storedAuthToken;
+          }
+        } catch (err) {
+          console.debug(
+            "[TreasureProvider] Error fetching user with stored auth token:",
+            err,
+          );
+          // Ignore errors and proceed with login
+        }
+      }
+    }
+
+    if (!nextUser) {
       setIsAuthenticating(true);
       try {
         const result = await authenticateWallet({
@@ -256,8 +273,8 @@ const TreasureProviderInner = ({
             authOptions?.authTokenDurationSec ??
             sessionOptions?.sessionDurationSec,
         });
-        authToken = result.token;
-        user = result.user;
+        nextAuthToken = result.token;
+        nextUser = result.user;
         legacyProfiles = result.legacyProfiles;
       } catch (err) {
         setIsAuthenticating(false);
@@ -265,12 +282,18 @@ const TreasureProviderInner = ({
       }
     }
 
-    // Set auth token and wallet on TDK so they can be used in future requests
-    tdk.setAuthToken(authToken as string);
-    tdk.setActiveWallet(wallet);
+    if (!nextUser || !nextAuthToken) {
+      throw new Error("An unknown error occurred during login");
+    }
 
-    // Start user session if configured
-    if (sessionOptions) {
+    // Set auth token on this instance of the TDK for the next request
+    tdk.setAuthToken(nextAuthToken);
+
+    // Start user session if configured and not on ZKsync chain
+    if (
+      sessionOptions &&
+      !(await isZkSyncChain(chainId ? defineChain(chainId) : chain))
+    ) {
       setIsAuthenticating(true);
       try {
         await startUserSession({
@@ -278,7 +301,7 @@ const TreasureProviderInner = ({
           wallet,
           chainId: chainId ?? chain.id,
           tdk,
-          sessions: user.sessions,
+          sessions: nextUser.sessions,
           options: sessionOptions,
         });
       } catch (err) {
@@ -288,8 +311,9 @@ const TreasureProviderInner = ({
     }
 
     // Update user state
-    setUser(user);
-    setStoredAuthToken(authToken as string);
+    setUser(nextUser);
+    setAuthToken(nextAuthToken);
+    setStoredAuthToken(nextAuthToken);
 
     if (analyticsOptions?.automaticTrackLogin !== false) {
       trackCustomEvent({
@@ -307,10 +331,10 @@ const TreasureProviderInner = ({
     }
 
     // Trigger completion callback
-    onConnect?.(user);
+    onConnect?.(nextUser);
 
     setIsAuthenticating(false);
-    return { user, legacyProfiles };
+    return { user: nextUser, legacyProfiles };
   };
 
   const switchChain = async (chainId: number) => {
@@ -323,6 +347,7 @@ const TreasureProviderInner = ({
   // Attempt an automatic background connection
   useAutoConnect({
     client,
+    chain,
     wallets: [
       ecosystemWallet(ecosystemId, {
         partnerId: ecosystemPartnerId,

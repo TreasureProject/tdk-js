@@ -8,7 +8,7 @@ ENV NODE_ENV="production"
 
 # Install packages needed to build node modules
 RUN apk update && \
-    apk add --no-cache build-base pkgconfig python3 py3-pip
+    apk add --no-cache build-base openssl pkgconfig python3 py3-pip
 # Copy application code
 COPY . .
 

@@ -12,6 +12,8 @@ import { http, createConfig, fallback } from "@wagmi/core";
 import {
   arbitrum,
   arbitrumSepolia,
+  base,
+  baseSepolia,
   mainnet,
   sepolia,
 } from "@wagmi/core/chains";
@@ -65,6 +67,8 @@ const main = async () => {
         arbitrumSepolia,
         mainnet,
         sepolia,
+        base,
+        baseSepolia,
         defineChain(TREASURE_CHAIN_DEFINITION),
         defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION),
       ],
@@ -90,6 +94,16 @@ const main = async () => {
         [sepolia.id]: fallback([
           http(
             `https://${sepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+          ),
+          http(),
+        ]),
+        [base.id]: fallback([
+          http(`https://${base.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`),
+          http(),
+        ]),
+        [baseSepolia.id]: fallback([
+          http(
+            `https://${baseSepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
           ),
           http(),
         ]),

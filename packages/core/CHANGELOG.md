@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-core
 
+## 3.9.5
+
+## 3.9.4
+
+### Patch Changes
+
+- 767178d: Added Ethereum mainnet token contract addresses
+
 ## 3.9.3
 
 ## 3.9.2
