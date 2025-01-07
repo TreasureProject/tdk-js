@@ -42,6 +42,7 @@
     "abitype": "catalog:",
     "aws-kms-signer": "catalog:",
     "jwt-decode": "catalog:",
+    "ox": "catalog:",
     "thirdweb": "catalog:",
     "uuid": "catalog:",
     "viem": "catalog:"

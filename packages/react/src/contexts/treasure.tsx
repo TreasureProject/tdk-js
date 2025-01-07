@@ -97,7 +97,8 @@ const TreasureProviderInner = ({
   const activeWalletChain = useActiveWalletChain();
   const switchActiveWalletChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
-  const chain = activeWalletChain ?? defineChain(defaultChainId);
+  const chain =
+    (user ? activeWalletChain : undefined) ?? defineChain(defaultChainId);
   const tdk = useMemo(
     () =>
       new TDKAPI({

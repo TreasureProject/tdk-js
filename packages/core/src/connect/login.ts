@@ -171,22 +171,32 @@ export const authenticateWallet = async ({
   }
 
   // Generate login payload for user
-  console.debug("[TDK] Generating login payload");
   const payload = await tdk.auth.getLoginPayload({
     address: account.address,
   });
 
-  // Sign generated payload
-  console.debug("[TDK] Signing login payload");
-  const signedPayload = await signLoginPayload({
-    payload,
-    account,
-  });
+  // Sign generated payload with smart wallet and admin wallet
+  const adminAccount = wallet.getAdminAccount?.();
+  const [signedPayload, signedAdminAccountPayload] = await Promise.all([
+    signLoginPayload({
+      payload,
+      account,
+    }),
+    adminAccount
+      ? signLoginPayload({
+          payload: {
+            ...payload,
+            address: adminAccount.address,
+          },
+          account: adminAccount,
+        })
+      : undefined,
+  ]);
 
   // Log in with signed payload
-  console.debug("[TDK] Logging in with signed payload");
   return tdk.auth.logIn({
     ...signedPayload,
+    adminAccount: signedAdminAccountPayload,
     authTokenDurationSec,
   });
 };

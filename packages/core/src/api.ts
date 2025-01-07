@@ -72,6 +72,9 @@ type SendTransactionOptions = Partial<{
   skipWaitForCompletion: boolean;
   accountAddress: string;
   accountSignature: string;
+  accountSignatureExpiration: number;
+  backendWalletSignature: string;
+  backendWalletSignatureExpiration: number;
   useActiveWallet: boolean;
 }>;
 
@@ -238,7 +241,11 @@ export class TDKAPI {
         "nonpayable" | "payable"
       >,
     >(
-      params: Omit<CreateTransactionBody, "abi" | "functionName" | "args"> & {
+      params: Omit<
+        CreateTransactionBody,
+        "backendWallet" | "abi" | "functionName" | "args"
+      > & {
+        backendWallet?: string;
         abi: TAbi;
         functionName:
           | TFunctionName
@@ -296,6 +303,11 @@ export class TDKAPI {
         };
       }
 
+      const backendWallet = params.backendWallet ?? this.backendWallet;
+      if (!backendWallet) {
+        throw new Error("Backend wallet is required");
+      }
+
       const result = await this.post<
         CreateTransactionBody,
         CreateTransactionReply
@@ -307,7 +319,7 @@ export class TDKAPI {
           ...(options?.includeAbi ? { abi: params.abi as any } : {}),
           // biome-ignore lint/suspicious/noExplicitAny: abitype and the API schema don't play well
           args: params.args as any,
-          backendWallet: params.backendWallet ?? this.backendWallet,
+          backendWallet,
         },
         {
           headers: {
@@ -316,6 +328,22 @@ export class TDKAPI {
               : {}),
             ...(options?.accountSignature
               ? { "x-account-signature": options.accountSignature }
+              : {}),
+            ...(options?.accountSignatureExpiration
+              ? {
+                  "x-account-signature-expiration":
+                    options.accountSignatureExpiration.toString(),
+                }
+              : {}),
+            "x-backend-wallet": backendWallet,
+            ...(options?.backendWalletSignature
+              ? { "x-backend-wallet-signature": options.backendWalletSignature }
+              : {}),
+            ...(options?.backendWalletSignatureExpiration
+              ? {
+                  "x-backend-wallet-signature-expiration":
+                    options.backendWalletSignatureExpiration.toString(),
+                }
               : {}),
           },
         },
@@ -326,7 +354,8 @@ export class TDKAPI {
         : this.transaction.wait(result.queueId);
     },
     sendRaw: async (
-      params: Omit<CreateRawTransactionBody, "value"> & {
+      params: Omit<CreateRawTransactionBody, "backendWallet" | "value"> & {
+        backendWallet?: string;
         value?: bigint | string;
       },
       options?: SendTransactionOptions,
@@ -370,6 +399,11 @@ export class TDKAPI {
         };
       }
 
+      const backendWallet = params.backendWallet ?? this.backendWallet;
+      if (!backendWallet) {
+        throw new Error("Backend wallet is required");
+      }
+
       const result = await this.post<
         CreateRawTransactionBody,
         CreateRawTransactionReply
@@ -378,7 +412,7 @@ export class TDKAPI {
         {
           ...params,
           value: params.value ? toHex(BigInt(params.value)) : undefined,
-          backendWallet: params.backendWallet ?? this.backendWallet,
+          backendWallet,
         },
         {
           headers: {
@@ -387,6 +421,22 @@ export class TDKAPI {
               : {}),
             ...(options?.accountSignature
               ? { "x-account-signature": options.accountSignature }
+              : {}),
+            ...(options?.accountSignatureExpiration
+              ? {
+                  "x-account-signature-expiration":
+                    options.accountSignatureExpiration.toString(),
+                }
+              : {}),
+            "x-backend-wallet": backendWallet,
+            ...(options?.backendWalletSignature
+              ? { "x-backend-wallet-signature": options.backendWalletSignature }
+              : {}),
+            ...(options?.backendWalletSignatureExpiration
+              ? {
+                  "x-backend-wallet-signature-expiration":
+                    options.backendWalletSignatureExpiration.toString(),
+                }
               : {}),
           },
         },

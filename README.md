@@ -20,6 +20,7 @@ SDK for the Treasure ecosystem
 - [Treasure Connect (React)](./examples/connect-react) - [Live Demo](https://tdk-react-demo.spellcaster.lol)
 - [Treasure Connect (Electron)](./examples/connect-electron)
 - [Magicswap](./examples/magicswap) - [Live Demo](https://tdk-magicswap-demo.spellcaster.lol)
+- [Backend-to-Backend](./examples/backend-to-backend)
 
 ## Development
 

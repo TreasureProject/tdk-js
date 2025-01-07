@@ -16,7 +16,6 @@ import type { Address } from "thirdweb";
 import "../middleware/auth";
 import "../middleware/chain";
 import "../middleware/swagger";
-
 import {
   type CreateTransactionReply,
   type ErrorReply,
@@ -52,11 +51,13 @@ import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
+  createUnauthorizedError,
   parseEngineErrorMessage,
-  throwForbiddenBackendWalletError,
-  throwUnauthorizedError,
 } from "../utils/error";
-import { writeTransaction } from "../utils/transaction";
+import {
+  parseTransactionRequest,
+  writeTransaction,
+} from "../utils/transaction";
 
 export const magicswapRoutes =
   ({ client, env, engine }: TdkApiContext): FastifyPluginAsync =>
@@ -190,7 +191,7 @@ export const magicswapRoutes =
             nftsOut,
             isExactOut,
             slippage,
-            toAddress = req.userAddress,
+            toAddress = req.authenticatedUserAddress,
           },
           chain,
         } = req;
@@ -256,38 +257,27 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
+        const { backendWallet, accountAddress } = parseTransactionRequest(req);
+        if (!accountAddress) {
+          throw createUnauthorizedError();
+        }
+
         const {
-          authError,
-          body: {
-            tokenInId,
-            tokenOutId,
-            amountIn,
-            amountOut,
-            path,
-            nftsIn,
-            nftsOut,
-            isExactOut,
-            slippage,
-            toAddress,
-            backendWallet = req.backendWallet,
-            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-          },
-          chain,
-        } = req;
-        const userAddress = req.backendUserAddress ?? req.userAddress;
-
-        if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
-        }
-
-        if (!backendWallet) {
-          throwForbiddenBackendWalletError();
-          return;
-        }
+          tokenInId,
+          tokenOutId,
+          amountIn,
+          amountOut,
+          path,
+          nftsIn,
+          nftsOut,
+          isExactOut,
+          slippage,
+          toAddress,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+        } = req.body;
 
         const pools = await fetchPoolsForSwap({
-          chainId: chain.id,
+          chainId: req.chain.id,
         });
         const poolTokens = pools
           .flatMap(({ token0, token1 }) => [token0, token1])
@@ -314,8 +304,8 @@ export const magicswapRoutes =
           args,
           value,
         } = createSwapArgs({
-          chainId: chain.id,
-          toAddress: (toAddress as Address | undefined) ?? userAddress,
+          chainId: req.chain.id,
+          toAddress: (toAddress ?? accountAddress) as Address,
           tokenIn,
           tokenOut,
           nftsIn,
@@ -330,10 +320,10 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId: chain.id,
+            chainId: req.chain.id,
             contractAddress,
             backendWallet,
-            smartAccountAddress: userAddress,
+            smartAccountAddress: accountAddress,
             abi: magicswapV2RouterAbi,
             functionName,
             args,
@@ -381,7 +371,7 @@ export const magicswapRoutes =
             amount1Min,
             nfts0,
             nfts1,
-            toAddress = req.userAddress,
+            toAddress = req.authenticatedUserAddress,
           },
           chain,
           params,
@@ -443,37 +433,25 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
+        const { backendWallet, accountAddress } = parseTransactionRequest(req);
+        if (!accountAddress) {
+          throw createUnauthorizedError();
+        }
+
         const {
-          authError,
-          body: {
-            amount0,
-            amount1,
-            amount0Min,
-            amount1Min,
-            nfts0,
-            nfts1,
-            toAddress,
-            backendWallet = req.backendWallet,
-            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-          },
-          chain,
-          params,
-        } = req;
-        const userAddress = req.backendUserAddress ?? req.userAddress;
-
-        if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
-        }
-
-        if (!backendWallet) {
-          throwForbiddenBackendWalletError();
-          return;
-        }
+          amount0,
+          amount1,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          toAddress,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+        } = req.body;
 
         const pool = await fetchPoolForLiquidity({
-          chainId: chain.id,
-          pairId: params.id,
+          chainId: req.chain.id,
+          pairId: req.params.id,
         });
 
         if (!pool) {
@@ -491,8 +469,8 @@ export const magicswapRoutes =
           args,
           value,
         } = createAddLiquidityArgs({
-          chainId: chain.id,
-          toAddress: (toAddress as Address | undefined) ?? userAddress,
+          chainId: req.chain.id,
+          toAddress: (toAddress ?? accountAddress) as Address,
           amount0: amount0 ? BigInt(amount0) : undefined,
           amount1: amount1 ? BigInt(amount1) : undefined,
           amount0Min: amount0Min ? BigInt(amount0Min) : undefined,
@@ -505,10 +483,10 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId: chain.id,
+            chainId: req.chain.id,
             contractAddress,
             backendWallet,
-            smartAccountAddress: userAddress,
+            smartAccountAddress: accountAddress,
             abi: magicswapV2RouterAbi,
             functionName,
             args,
@@ -556,7 +534,7 @@ export const magicswapRoutes =
             nfts0,
             nfts1,
             swapLeftover = true,
-            toAddress = req.userAddress,
+            toAddress = req.authenticatedUserAddress,
           },
           chain,
           params,
@@ -618,37 +596,25 @@ export const magicswapRoutes =
         },
       },
       async (req, reply) => {
+        const { backendWallet, accountAddress } = parseTransactionRequest(req);
+        if (!accountAddress) {
+          throw createUnauthorizedError();
+        }
+
         const {
-          authError,
-          body: {
-            amountLP,
-            amount0Min,
-            amount1Min,
-            nfts0,
-            nfts1,
-            swapLeftover = true,
-            toAddress,
-            backendWallet = req.backendWallet,
-            simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
-          },
-          chain,
-          params,
-        } = req;
-        const userAddress = req.backendUserAddress ?? req.userAddress;
-
-        if (!userAddress) {
-          throwUnauthorizedError(authError);
-          return;
-        }
-
-        if (!backendWallet) {
-          throwForbiddenBackendWalletError();
-          return;
-        }
+          amountLP,
+          amount0Min,
+          amount1Min,
+          nfts0,
+          nfts1,
+          swapLeftover = true,
+          toAddress,
+          simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+        } = req.body;
 
         const pool = await fetchPoolForLiquidity({
-          chainId: chain.id,
-          pairId: params.id,
+          chainId: req.chain.id,
+          pairId: req.params.id,
         });
 
         if (!pool) {
@@ -666,8 +632,8 @@ export const magicswapRoutes =
           args,
           value,
         } = createRemoveLiquidityArgs({
-          chainId: chain.id,
-          toAddress: (toAddress as Address | undefined) ?? userAddress,
+          chainId: req.chain.id,
+          toAddress: (toAddress ?? accountAddress) as Address,
           amountLP: BigInt(amountLP),
           amount0Min: BigInt(amount0Min),
           amount1Min: BigInt(amount1Min),
@@ -680,10 +646,10 @@ export const magicswapRoutes =
         try {
           const result = await writeTransaction({
             engine,
-            chainId: chain.id,
+            chainId: req.chain.id,
             contractAddress,
             backendWallet,
-            smartAccountAddress: userAddress,
+            smartAccountAddress: accountAddress,
             abi: magicswapV2RouterAbi,
             functionName,
             args,

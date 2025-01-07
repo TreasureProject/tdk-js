@@ -1,0 +1,18 @@
+{
+  "name": "@treasure-dev/tdk-examples-backend-to-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:backend-wallet": "tsx ./backend-wallet.ts",
+    "start:account-address": "tsx ./account-address.ts"
+  },
+  "dependencies": {
+    "@treasure-dev/tdk-core": "workspace:*",
+    "dotenv": "catalog:",
+    "thirdweb": "catalog:"
+  },
+  "devDependencies": {
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}
