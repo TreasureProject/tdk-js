@@ -183,10 +183,13 @@ export const authenticateWallet = async ({
       account,
     }),
     adminAccount
-      ? signLoginPayload({ payload: {
-        ...payload,
-        address: adminAccount.address,
-      }, account: adminAccount })
+      ? signLoginPayload({
+          payload: {
+            ...payload,
+            address: adminAccount.address,
+          },
+          account: adminAccount,
+        })
       : undefined,
   ]);
 
