@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.10.0
+
+### Patch Changes
+
+- e1154ae: Ensure initial user login occurs on provided default chain
+- Updated dependencies [e1154ae]
+  - @treasure-dev/tdk-core@3.10.0
+
 ## 3.9.5
 
 ### Patch Changes
