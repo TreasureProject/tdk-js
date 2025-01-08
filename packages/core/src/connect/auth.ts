@@ -26,8 +26,7 @@ export const generateAccountSignature = async ({
     signature: await backendWalletAccount.signMessage({
       message: JSON.stringify({
         accountAddress: accountAddress.toLowerCase(),
-        // TODO: include expirationTime when partners can adopt it
-        // expirationTime,
+        expirationTime,
       }),
     }),
     expirationTime,
@@ -51,7 +50,7 @@ export const verifyAccountSignature = async ({
     hash: hashMessage(
       JSON.stringify({
         accountAddress: accountAddress.toLowerCase(),
-        // expirationTime,
+        expirationTime,
       }),
     ),
     signature,
