@@ -161,6 +161,14 @@ export const CONTRACT_ADDRESSES: Record<
     // Treasure Misc
     TopazNFT: "0x0df42db01ff1992fbd2acff3b7a9010cf59b6f80",
   },
+  [base.id]: {
+    // Magicswap
+    MagicswapV2Router: "0xb740D5804eA2061432469119cfa40cbb4586dd17",
+  },
+  [baseSepolia.id]: {
+    // Magicswap
+    MagicswapV2Router: "0x4043b1c99838945555341c0d5e101e75f143a660",
+  },
 };
 
 export const TREASURE_CONDUIT_KEYS: Record<number, AddressString> = {
