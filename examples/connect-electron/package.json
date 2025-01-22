@@ -2,7 +2,8 @@
   "name": "@treasure-dev/tdk-examples-connect-electron",
   "private": true,
   "version": "0.0.0",
-  "main": "./out/app/dist/main/index.js",
+  "main": "./out/app/dist/main/index.cjs",
+  "type": "module",
   "scripts": {
     "install:electron": "node ./node_modules/electron/install.js",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",

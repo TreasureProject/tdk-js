@@ -11,6 +11,11 @@ export default defineConfig({
     },
     build: {
       outDir: "out/app/dist/main",
+      rollupOptions: {
+        output: {
+          format: "cjs",
+        },
+      },
     },
   },
   preload: {
@@ -20,6 +25,14 @@ export default defineConfig({
     },
     build: {
       outDir: "out/app/dist/preload",
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, "src/preload/index.ts"),
+        },
+        output: {
+          format: "cjs",
+        },
+      },
     },
   },
   renderer: {

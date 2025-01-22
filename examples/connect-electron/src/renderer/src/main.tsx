@@ -11,7 +11,7 @@ import App from "./App";
 import icon from "./assets/electron.svg";
 
 const getAuthToken = () =>
-  window.electron.ipcRenderer.sendSync("get-auth-token");
+  window.electron?.ipcRenderer.sendSync("get-auth-token");
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
