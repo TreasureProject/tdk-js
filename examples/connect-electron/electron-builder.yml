@@ -29,6 +29,7 @@ mac:
   forceCodeSigning: false
   gatekeeperAssess: false
   hardenedRuntime: true
+  type: distribution
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
@@ -36,6 +37,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
 dmg:
+  sign: false
   artifactName: "${productName}-${version}.${ext}"
 linux:
   target:

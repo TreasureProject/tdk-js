@@ -3,9 +3,16 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import react from "@vitejs/plugin-react";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 
+const externalizedDependenciesExcludeList = ["electron-app-package-json"];
+
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin(), nodeResolve()],
+    plugins: [
+      externalizeDepsPlugin({
+        exclude: externalizedDependenciesExcludeList,
+      }),
+      nodeResolve(),
+    ],
     optimizeDeps: {
       force: true, // TODO: vite cache is not working with monorepo deps updates
     },
@@ -19,7 +26,11 @@ export default defineConfig({
     },
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [
+      externalizeDepsPlugin({
+        exclude: externalizedDependenciesExcludeList,
+      }),
+    ],
     optimizeDeps: {
       force: true, // TODO: vite cache is not working with monorepo deps updates
     },

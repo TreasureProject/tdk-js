@@ -11,6 +11,7 @@
     "express": "catalog:",
     "@electron-toolkit/preload": "catalog:",
     "@electron-toolkit/utils": "catalog:",
+    "@treasure-dev/launcher": "workspace:*",
     "thirdweb": "catalog:"
   }
 }
