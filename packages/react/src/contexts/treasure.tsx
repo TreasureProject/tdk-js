@@ -39,6 +39,7 @@ import {
 import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
+import type { WalletComponents } from "@treasure-dev/launcher/src/types";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
@@ -191,10 +192,28 @@ const TreasureProviderInner = ({
     [tdk.user.me, onConnect],
   );
 
+  const onWalletComponentsUpdated = useCallback(
+    (walletComponents: WalletComponents) => {
+      if (activeWallet) {
+        console.debug(
+          "[TreasureProvider] There is already an active wallet, skipping updating with launcher wallet components",
+        );
+        return;
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.set("walletId", walletComponents.walletId);
+      url.searchParams.set("authProvider", walletComponents.authProvider);
+      url.searchParams.set("authCookie", walletComponents.authCookie);
+      window.history.pushState({}, "", url);
+    },
+    [activeWallet],
+  );
+
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
     getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
     setRootElement: setEl,
     onAuthTokenUpdated,
+    onWalletComponentsUpdated,
   });
 
   const logOut = () => {
