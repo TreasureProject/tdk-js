@@ -1,7 +1,10 @@
 appId: lol.treasure.tdk-examples-connect-electron
 productName: connect-electron
+artifactName: "${productName}-${arch}.${ext}"
 directories:
-  buildResources: build
+  app: out/app
+  buildResources: resources
+  output: out/build
 files:
   - "!**/.vscode/*"
   - "!src/*"
@@ -9,6 +12,8 @@ files:
   - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
   - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+  - "!**/.turbo"
+asar: true
 asarUnpack:
   - resources/**
 win:
@@ -19,7 +24,11 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
-  entitlementsInherit: build/entitlements.mac.plist
+  entitlements: entitlements.mac.plist
+  entitlementsInherit: entitlements.mac.plist
+  forceCodeSigning: false
+  gatekeeperAssess: false
+  hardenedRuntime: true
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
@@ -27,7 +36,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
 dmg:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: "${productName}-${version}.${ext}"
 linux:
   target:
     - AppImage
@@ -36,5 +45,6 @@ linux:
   maintainer: electronjs.org
   category: Utility
 appImage:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: "${productName}-${version}.${ext}"
 npmRebuild: false
+publish: null

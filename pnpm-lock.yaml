@@ -54,6 +54,9 @@ catalogs:
     '@radix-ui/react-visually-hidden':
       specifier: ^1.1.1
       version: 1.1.1
+    '@rollup/plugin-node-resolve':
+      specifier: ^16.0.0
+      version: 16.0.0
     '@rollup/rollup-linux-x64-gnu':
       specifier: ^4.24.0
       version: 4.24.0
@@ -415,6 +418,9 @@ importers:
       '@electron-toolkit/tsconfig':
         specifier: 'catalog:'
         version: 1.0.1(@types/node@22.10.5)
+      '@rollup/plugin-node-resolve':
+        specifier: 'catalog:'
+        version: 16.0.0(rollup@4.27.3)
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.13
@@ -2655,6 +2661,15 @@ packages:
   '@radix-ui/rect@1.1.0':
     resolution: {integrity: sha512-A9+lCBZoaMJlVKcRBz2YByCG+Cp2t6nAnMnNba+XiWxnj6r4JUFqfsgwocMBZU9LPtdxC6wB56ySYpc7LQIoJg==}
 
+  '@rollup/plugin-node-resolve@16.0.0':
+    resolution: {integrity: sha512-0FPvAeVUT/zdWoO0jnb/V5BlBsUSNfkIOtFHzMO4H9MOklrmQFY6FduVHKucNb/aTFxvnGhj4MNj/T1oNdDfNg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.78.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
   '@rollup/pluginutils@5.1.2':
     resolution: {integrity: sha512-/FIdS3PyZ39bjZlwqFnWqCOVnW7o963LtKMwQOD0NhQqw22gSr2YY1afu3FxRip4ZCZNsD5jq6Aaz6QV3D/Njw==}
     engines: {node: '>=14.0.0'}
@@ -3381,6 +3396,9 @@ packages:
 
   '@types/react@18.3.13':
     resolution: {integrity: sha512-ii/gswMmOievxAJed4PAHT949bpYjPKXvXo1v6cRB/kqc2ZR4n+SgyCyvyc5Fec5ez8VnUumI1Vk7j6fRyRogg==}
+
+  '@types/resolve@1.20.2':
+    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
   '@types/resolve@1.20.6':
     resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
@@ -4262,6 +4280,10 @@ packages:
   deep-equal@1.0.1:
     resolution: {integrity: sha512-bHtC0iYvWhyaTzvV3CZgPeZQqCOBGyGsVV7v4eevpdkLHfiSrXUdBG+qAuSz4RI70sszvjQ1QSZ98An1yNwpSw==}
 
+  deepmerge@4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
+
   defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
 
@@ -5142,6 +5164,9 @@ packages:
 
   is-lambda@1.0.1:
     resolution: {integrity: sha512-z7CMFGNrENq5iFB9Bqo64Xk6Y9sg+epq1myIcdHaGnbMTYOxvzsEtdYqQUylB7LxfkvgrrjP32T6Ywciio9UIQ==}
+
+  is-module@1.0.0:
+    resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==}
 
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
@@ -9963,6 +9988,16 @@ snapshots:
 
   '@radix-ui/rect@1.1.0': {}
 
+  '@rollup/plugin-node-resolve@16.0.0(rollup@4.27.3)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.2(rollup@4.27.3)
+      '@types/resolve': 1.20.2
+      deepmerge: 4.3.1
+      is-module: 1.0.0
+      resolve: 1.22.8
+    optionalDependencies:
+      rollup: 4.27.3
+
   '@rollup/pluginutils@5.1.2(rollup@4.27.3)':
     dependencies:
       '@types/estree': 1.0.6
@@ -10888,6 +10923,8 @@ snapshots:
     dependencies:
       '@types/prop-types': 15.7.13
       csstype: 3.1.3
+
+  '@types/resolve@1.20.2': {}
 
   '@types/resolve@1.20.6': {}
 
@@ -12118,6 +12155,8 @@ snapshots:
 
   deep-equal@1.0.1: {}
 
+  deepmerge@4.3.1: {}
+
   defaults@1.0.4:
     dependencies:
       clone: 1.0.4
@@ -13229,6 +13268,8 @@ snapshots:
   is-interactive@1.0.0: {}
 
   is-lambda@1.0.1: {}
+
+  is-module@1.0.0: {}
 
   is-number@7.0.0: {}
 

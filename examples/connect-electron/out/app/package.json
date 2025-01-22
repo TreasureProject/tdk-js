@@ -1,0 +1,15 @@
+{
+  "name": "@treasure-dev/tdk-examples-connect-electron",
+  "private": true,
+  "version": "0.0.0",
+  "main": "./dist/main/index.js",
+  "exports": {
+    ".": "./package.json"
+  },
+  "dependencies": {
+    "express": "catalog:",
+    "@electron-toolkit/preload": "catalog:",
+    "@electron-toolkit/utils": "catalog:",
+    "thirdweb": "catalog:"
+  }
+}

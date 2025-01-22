@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         appName="Electron App"
         appIconUri={icon}
         apiUri={import.meta.env.VITE_TDK_API_URL}
-        defaultChainId={421614}
+        defaultChainId={978658}
         clientId={import.meta.env.VITE_TDK_CLIENT_ID}
         ecosystemId={import.meta.env.VITE_TDK_ECOSYSTEM_ID}
         ecosystemPartnerId={import.meta.env.VITE_TDK_ECOSYSTEM_PARTNER_ID}

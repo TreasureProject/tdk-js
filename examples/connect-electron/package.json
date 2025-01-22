@@ -2,7 +2,7 @@
   "name": "@treasure-dev/tdk-examples-connect-electron",
   "private": true,
   "version": "0.0.0",
-  "main": "./out/main/index.js",
+  "main": "./out/app/dist/main/index.js",
   "scripts": {
     "install:electron": "node ./node_modules/electron/install.js",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
@@ -18,15 +18,16 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
-    "express": "catalog:",
     "@electron-toolkit/preload": "catalog:",
     "@electron-toolkit/utils": "catalog:",
-    "@treasure-dev/tdk-react": "workspace:*",
     "@treasure-dev/launcher": "workspace:*",
+    "@treasure-dev/tdk-react": "workspace:*",
+    "express": "catalog:",
     "thirdweb": "catalog:"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "catalog:",
+    "@rollup/plugin-node-resolve": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
@@ -36,7 +37,11 @@
     "electron-vite": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "vite": "catalog:",
-    "typescript": "catalog:"
-  }
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "files": [
+    "!out/app/dist",
+    "!out/build"
+  ]
 }

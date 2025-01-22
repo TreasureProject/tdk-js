@@ -20,6 +20,7 @@ catalog:
   "@prisma/client": ^6.2.0
   "@radix-ui/react-dialog": ^1.1.4
   "@radix-ui/react-visually-hidden": ^1.1.1
+  "@rollup/plugin-node-resolve": ^16.0.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.47.0
   "@sinclair/typebox": ^0.34.13
