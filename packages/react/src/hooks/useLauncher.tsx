@@ -1,6 +1,8 @@
-import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
-import type { WalletComponents } from "@treasure-dev/launcher/src/types";
-import { getTreasureLauncherWalletComponents } from "@treasure-dev/launcher/src/utils";
+import {
+  type WalletComponents,
+  getTreasureLauncherAuthToken,
+  getTreasureLauncherWalletComponents,
+} from "@treasure-dev/launcher";
 import { type ReactNode, useEffect } from "react";
 import { AccountModal } from "../components/launcher/AccountModal";
 

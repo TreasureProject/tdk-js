@@ -1,4 +1,7 @@
-import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
+import {
+  type WalletComponents,
+  startUserSessionViaLauncher,
+} from "@treasure-dev/launcher";
 import {
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
@@ -39,7 +42,6 @@ import {
 import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
-import type { WalletComponents } from "@treasure-dev/launcher/src/types";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
