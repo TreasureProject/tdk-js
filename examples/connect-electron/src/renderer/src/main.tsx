@@ -10,8 +10,10 @@ import { toWei } from "thirdweb";
 import App from "./App";
 import icon from "./assets/electron.svg";
 
-// const getAuthToken = () =>
-//   window.electron?.ipcRenderer.sendSync("get-auth-token");
+const getAuthToken = () =>
+  window.electron?.ipcRenderer.sendSync("get-auth-token");
+const getWalletComponents = () =>
+  window.electron?.ipcRenderer.sendSync("get-wallet-components");
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -34,9 +36,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           ],
           nativeTokenLimitPerTransaction: toWei("1"),
         }}
-        // launcherOptions={{
-        //   getAuthTokenOverride: getAuthToken,
-        // }}
+        launcherOptions={{
+          getAuthTokenOverride: getAuthToken,
+          getWalletComponentsOverride: getWalletComponents,
+        }}
       >
         <App />
       </TreasureProvider>

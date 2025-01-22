@@ -1,6 +1,9 @@
 import { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
-// import { getTreasureLauncherAuthToken } from "@treasure-dev/launcher";
+import {
+  getTreasureLauncherAuthToken,
+  getTreasureLauncherWalletComponents,
+} from "@treasure-dev/launcher";
 import { BrowserWindow, app, ipcMain, shell } from "electron";
 import icon from "../../resources/icon.png?asset";
 import { startRedirectApp } from "./app";
@@ -67,9 +70,12 @@ app.whenReady().then(() => {
   startRedirectApp(mainWindow);
 });
 
-// ipcMain.on("get-auth-token", (event, _arg) => {
-//   event.returnValue = getTreasureLauncherAuthToken();
-// });
+ipcMain.on("get-auth-token", (event, _arg) => {
+  event.returnValue = getTreasureLauncherAuthToken();
+});
+ipcMain.on("get-wallet-components", (event, _arg) => {
+  event.returnValue = getTreasureLauncherWalletComponents();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

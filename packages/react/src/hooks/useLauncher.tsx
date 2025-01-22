@@ -8,6 +8,7 @@ import { AccountModal } from "../components/launcher/AccountModal";
 
 type Props = {
   getAuthTokenOverride?: () => string | undefined;
+  getWalletComponentsOverride?: () => WalletComponents | undefined;
   setRootElement: (el: ReactNode) => void;
   onAuthTokenUpdated: (authToken: string) => void;
   onWalletComponentsUpdated: (walletComponents: WalletComponents) => void;
@@ -15,6 +16,7 @@ type Props = {
 
 export const useLauncher = ({
   getAuthTokenOverride,
+  getWalletComponentsOverride,
   setRootElement,
   onAuthTokenUpdated,
   onWalletComponentsUpdated,
@@ -23,7 +25,7 @@ export const useLauncher = ({
   const isUsingTreasureLauncher =
     authToken !== undefined && authToken.length > 0;
   const walletComponents: WalletComponents | undefined =
-    getTreasureLauncherWalletComponents();
+    getWalletComponentsOverride?.() ?? getTreasureLauncherWalletComponents();
 
   const openLauncherAccountModal = (size?: "lg" | "xl" | "2xl" | "3xl") => {
     if (!isUsingTreasureLauncher) {

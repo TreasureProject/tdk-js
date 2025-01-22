@@ -1,3 +1,4 @@
+import type { WalletComponents } from "@treasure-dev/launcher";
 import type {
   AddressString,
   AppInfo,
@@ -26,6 +27,7 @@ export type AnalyticsEvent = {
 
 type LauncherOptions = {
   getAuthTokenOverride?: () => string | undefined;
+  getWalletComponentsOverride?: () => WalletComponents | undefined;
 };
 
 type AnalyticsOptions = {

@@ -202,6 +202,9 @@ const TreasureProviderInner = ({
         );
         return;
       }
+      console.debug(
+        "[TreasureProvider] Updating wallet with launcher wallet components",
+      );
       const url = new URL(window.location.href);
       url.searchParams.set("walletId", walletComponents.walletId);
       url.searchParams.set("authProvider", walletComponents.authProvider);
@@ -213,6 +216,7 @@ const TreasureProviderInner = ({
 
   const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
     getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
+    getWalletComponentsOverride: launcherOptions?.getWalletComponentsOverride,
     setRootElement: setEl,
     onAuthTokenUpdated,
     onWalletComponentsUpdated,
