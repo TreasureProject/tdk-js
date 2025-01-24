@@ -68,6 +68,7 @@ export type ContextValues = {
   ecosystemPartnerId: string;
   isConnecting: boolean;
   isUsingTreasureLauncher: boolean;
+  isUsingLauncherAuthToken: boolean;
   logIn: (
     wallet: Wallet,
     chainId?: number,

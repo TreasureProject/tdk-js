@@ -70,7 +70,7 @@ catalog:
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
   "tailwind-merge": ^2.6.0
-  thirdweb: 5.82.0 # check ox and viem versions if upgrading
+  thirdweb: 5.86.2 # check ox and viem versions if upgrading
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   tsx: ^4.19.2
   turbo: ^2.3.3

@@ -1,14 +1,92 @@
 import { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
-import {
-  getTreasureLauncherAuthToken,
-  getTreasureLauncherWalletComponents,
-} from "@treasure-dev/launcher";
-import { BrowserWindow, app, ipcMain, shell } from "electron";
+import { BrowserWindow, app, ipcMain, session, shell } from "electron";
 import icon from "../../resources/icon.png?asset";
 import { startRedirectApp } from "./app";
 
 let mainWindow: BrowserWindow;
+
+export function getTreasureLauncherAuthToken(): string | undefined {
+  let args: string[] | undefined;
+
+  if (typeof process !== "undefined" && Array.isArray(process.argv)) {
+    args = process.argv;
+  } else if (
+    typeof window !== "undefined" &&
+    window.process &&
+    Array.isArray(window.process.argv)
+  ) {
+    args = window.process.argv;
+  } else {
+    return undefined;
+  }
+
+  const arg = args.find((arg) => arg.startsWith("--tdk-auth-token="));
+  return arg ? arg.split("=")[1] : undefined;
+}
+
+export function getTreasureLauncherWalletComponents():
+  | { walletId: string; authProvider: string; authCookie: string }
+  | undefined {
+  let args: string[] | undefined;
+
+  if (typeof process !== "undefined" && Array.isArray(process.argv)) {
+    args = process.argv;
+  } else if (
+    typeof window !== "undefined" &&
+    window.process &&
+    Array.isArray(window.process.argv)
+  ) {
+    args = window.process.argv;
+  } else {
+    return undefined;
+  }
+
+  let walletId: string | undefined = args.find((arg) =>
+    arg.startsWith("--tdk-wallet-id="),
+  );
+  if (walletId) {
+    walletId = walletId.split("=")[1];
+  }
+
+  let authProvider: string | undefined = args.find((arg) =>
+    arg.startsWith("--tdk-auth-provider="),
+  );
+  if (authProvider) {
+    authProvider = authProvider.split("=")[1];
+  }
+
+  let authCookie: string | undefined = args.find((arg) =>
+    arg.startsWith("--tdk-auth-cookie="),
+  );
+  if (authCookie) {
+    authCookie = authCookie.split("=")[1];
+  }
+
+  if (!walletId || !authProvider || !authCookie) {
+    return undefined;
+  }
+
+  return {
+    walletId,
+    authProvider,
+    authCookie,
+  };
+}
+
+function initThirdwebBundleHeader() {
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    {
+      urls: ["https://*.thirdweb.com/*"],
+    },
+    (details, callback) => {
+      // TODO: should be updated to actual bundle id once signing is done
+      details.requestHeaders["x-bundle-id"] =
+        "lol.treasure.tdk-examples-connect-electron";
+      callback({ cancel: false, requestHeaders: details.requestHeaders });
+    },
+  );
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -58,6 +136,8 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on("ping", () => console.log("pong"));
+
+  initThirdwebBundleHeader();
 
   createWindow();
 

@@ -42,6 +42,7 @@ export const useConnect = (options?: Options) => {
     logOut,
     setRootElement,
     isUsingTreasureLauncher,
+    isUsingLauncherAuthToken,
     openLauncherAccountModal,
     trackCustomEvent,
   } = useTreasure();
@@ -60,13 +61,6 @@ export const useConnect = (options?: Options) => {
       : [chain];
 
   const openConnectModal = () => {
-    if (isUsingTreasureLauncher) {
-      console.debug(
-        "[useConnect] openConnectModal cannot be used when Treasure Launcher is being used",
-      );
-      return;
-    }
-
     trackCustomEvent({
       name: EVT_TREASURECONNECT_UI_LOGIN,
     });
@@ -89,7 +83,7 @@ export const useConnect = (options?: Options) => {
       },
     });
 
-    if (isUsingTreasureLauncher) {
+    if (isUsingLauncherAuthToken) {
       openLauncherAccountModal(connectModalSize);
       return;
     }

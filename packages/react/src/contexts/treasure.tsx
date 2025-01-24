@@ -1,7 +1,4 @@
-import {
-  type WalletComponents,
-  startUserSessionViaLauncher,
-} from "@treasure-dev/launcher";
+import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import {
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
@@ -42,6 +39,7 @@ import {
 import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
+import type { AuthStoredTokenWithCookieReturnType } from "thirdweb/dist/types/wallets/in-app/core/authentication/types";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
@@ -70,6 +68,8 @@ export const useTreasure = () => {
 };
 
 type Props = PropsWithChildren<Config>;
+
+let hasSetUrlParams = false;
 
 const TreasureProviderInner = ({
   children,
@@ -195,26 +195,43 @@ const TreasureProviderInner = ({
   );
 
   const onWalletComponentsUpdated = useCallback(
-    (walletComponents: WalletComponents) => {
+    async (
+      authResult: AuthStoredTokenWithCookieReturnType,
+      authProvider: string,
+      walletId: string,
+      authCookie: string,
+    ) => {
       if (activeWallet) {
         console.debug(
           "[TreasureProvider] There is already an active wallet, skipping updating with launcher wallet components",
         );
         return;
       }
+      if (hasSetUrlParams) {
+        return;
+      }
+      hasSetUrlParams = true;
       console.debug(
         "[TreasureProvider] Updating wallet with launcher wallet components",
       );
+
+      authResult.storedToken.cookieString = authCookie;
+      const encoded = encodeURIComponent(JSON.stringify(authResult));
       const url = new URL(window.location.href);
-      url.searchParams.set("walletId", walletComponents.walletId);
-      url.searchParams.set("authProvider", walletComponents.authProvider);
-      url.searchParams.set("authCookie", walletComponents.authCookie);
-      window.history.pushState({}, "", url);
+      url.searchParams.set("authResult", encoded);
+      url.searchParams.set("authProvider", authProvider);
+      url.searchParams.set("walletId", walletId);
+      url.searchParams.set("authCookie", authCookie);
+      window.history.pushState({}, "", url.toString());
     },
     [activeWallet],
   );
 
-  const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
+  const {
+    isUsingTreasureLauncher,
+    isUsingLauncherAuthToken,
+    openLauncherAccountModal,
+  } = useLauncher({
     getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
     getWalletComponentsOverride: launcherOptions?.getWalletComponentsOverride,
     setRootElement: setEl,
@@ -228,6 +245,7 @@ const TreasureProviderInner = ({
         name: EVT_TREASURECONNECT_DISCONNECTED,
         properties: {
           isUsingTreasureLauncher,
+          isUsingLauncherAuthToken,
         },
       })
         .then((eventId) => {
@@ -248,7 +266,7 @@ const TreasureProviderInner = ({
     chainId?: number,
     skipCurrentUser = false,
   ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
-    if (isUsingTreasureLauncher) {
+    if (isUsingLauncherAuthToken) {
       console.debug(
         "[TreasureProvider] Skipping login because launcher is being used",
       );
@@ -345,6 +363,7 @@ const TreasureProviderInner = ({
         name: EVT_TREASURECONNECT_CONNECTED,
         properties: {
           isUsingTreasureLauncher,
+          isUsingLauncherAuthToken,
         },
       })
         .then((eventId) => {
@@ -409,6 +428,7 @@ const TreasureProviderInner = ({
               userAddress: undefined,
             }),
         isUsingTreasureLauncher,
+        isUsingLauncherAuthToken,
         logIn,
         logOut,
         updateUser: (partialUser) =>

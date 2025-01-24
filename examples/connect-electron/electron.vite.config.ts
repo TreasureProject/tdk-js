@@ -58,6 +58,21 @@ export default defineConfig({
     },
     build: {
       outDir: "out/app/dist/renderer",
+      rollupOptions: {
+        input: {
+          launcher: resolve(__dirname, "src/renderer/index.html"),
+          authComplete: resolve(__dirname, "src/renderer/auth/index.html"),
+        },
+        output: {
+          entryFileNames: (chunkInfo) => {
+            if (chunkInfo.name === "authComplete") {
+              return "auth/auth-bundle.js";
+            }
+            return "assets/[name].js";
+          },
+          assetFileNames: () => "public/[name][extname]",
+        },
+      },
     },
   },
 });
