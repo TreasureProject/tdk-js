@@ -43,14 +43,11 @@ export const withAuth = (app: App, { auth, client }: TdkApiContext) => {
         throw createUnauthorizedError("Invalid account signature");
       }
 
-      const expirationTime = Number(
-        req.headers["x-account-signature-expiration"],
-      );
-
+      const expirationTime = req.headers["x-account-signature-expiration"];
       const backendWallet = await verifyAccountSignature({
         accountAddress,
         signature: accountSignature,
-        expirationTime,
+        expirationTime: expirationTime ? Number(expirationTime) : undefined,
       });
 
       req.isBackendRequest = true;
