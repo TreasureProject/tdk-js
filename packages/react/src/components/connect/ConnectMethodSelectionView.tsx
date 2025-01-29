@@ -10,7 +10,6 @@ import { AppleIcon } from "../../icons/AppleIcon";
 import { DiscordIcon } from "../../icons/DiscordIcon";
 import { GoogleIcon } from "../../icons/GoogleIcon";
 import { PasskeyIcon } from "../../icons/PasskeyIcon";
-import { TelegramIcon } from "../../icons/TelegramIcon";
 import { WalletIcon } from "../../icons/WalletIcon";
 import { XIcon } from "../../icons/XIcon";
 import { cn } from "../../utils/classnames";
@@ -101,9 +100,8 @@ export const ConnectMethodSelectionView = ({
           {t("common.or")}
         </span>
       </div>
-      <div className="tdk-grid tdk-gap-2 tdk-grid-cols-6 md:tdk-grid-cols-5">
+      <div className="tdk-grid tdk-gap-2 tdk-grid-cols-2 md:tdk-grid-cols-4">
         <ConnectMethodButton
-          className="tdk-col-span-2 md:tdk-col-span-1"
           title={t("connect.option.google")}
           onClick={() => onConnect("google")}
           disabled={isLoading}
@@ -111,7 +109,6 @@ export const ConnectMethodSelectionView = ({
           <GoogleIcon className="tdk-w-7 tdk-h-7" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-col-span-2 md:tdk-col-span-1"
           title={t("connect.option.x")}
           onClick={() => onConnect("x")}
           disabled={isLoading}
@@ -119,16 +116,6 @@ export const ConnectMethodSelectionView = ({
           <XIcon className="tdk-w-5 tdk-h-5" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-col-span-2 md:tdk-col-span-1"
-          title={t("connect.option.telegram")}
-          onClick={() => onConnect("telegram")}
-          disabled={isLoading}
-        >
-          <TelegramIcon className="tdk-w-6 tdk-h-6" />
-        </ConnectMethodButton>
-        <span className="md:tdk-hidden" />
-        <ConnectMethodButton
-          className="tdk-col-span-2 md:tdk-col-span-1"
           title={t("connect.option.discord")}
           onClick={() => onConnect("discord")}
           disabled={isLoading}
@@ -136,14 +123,12 @@ export const ConnectMethodSelectionView = ({
           <DiscordIcon className="tdk-w-6 tdk-h-6" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          className="tdk-col-span-2 md:tdk-col-span-1"
           title={t("connect.option.apple")}
           onClick={() => onConnect("apple")}
           disabled={isLoading}
         >
           <AppleIcon className="tdk-w-5 tdk-h-5" />
         </ConnectMethodButton>
-        <span className="md:tdk-hidden" />
         {!disablePasskey ? (
           <ConnectMethodButton
             className="tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-full"
