@@ -14,7 +14,6 @@ export const ja = {
         discord: "Discord",
         google: "Google",
         passkey: "パスキー",
-        telegram: "Telegram",
         wallet: "ウォレット",
         x: "X",
       },

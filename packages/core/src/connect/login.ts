@@ -21,13 +21,7 @@ import type {
 } from "../types";
 import { startUserSession } from "./session";
 
-const SUPPORTED_SOCIAL_OPTIONS = [
-  "google",
-  "apple",
-  "discord",
-  "telegram",
-  "x",
-] as const;
+const SUPPORTED_SOCIAL_OPTIONS = ["google", "apple", "discord", "x"] as const;
 
 export const SUPPORTED_WEB3_WALLETS: Wallet[] = [
   createWallet("io.metamask"),

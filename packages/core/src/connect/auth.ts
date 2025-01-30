@@ -40,8 +40,7 @@ export const verifyAccountSignature = async ({
 }: { accountAddress: string; signature: Hex; expirationTime?: number }) => {
   if (
     expirationTime &&
-    !Number.isNaN(expirationTime) &&
-    Date.now() > expirationTime * 1000
+    (Number.isNaN(expirationTime) || Date.now() > expirationTime * 1000)
   ) {
     throw new Error("Account signature expired");
   }
@@ -50,7 +49,7 @@ export const verifyAccountSignature = async ({
     hash: hashMessage(
       JSON.stringify({
         accountAddress: accountAddress.toLowerCase(),
-        expirationTime,
+        ...(expirationTime ? { expirationTime } : {}),
       }),
     ),
     signature,

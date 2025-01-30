@@ -14,7 +14,6 @@ export const es = {
         discord: "Discord",
         google: "Google",
         passkey: "Clave de paso",
-        telegram: "Telegram",
         wallet: "Cartera",
         x: "X",
       },
