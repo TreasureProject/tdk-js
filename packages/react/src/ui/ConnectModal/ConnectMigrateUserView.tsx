@@ -1,12 +1,12 @@
 import type { LegacyProfile } from "@treasure-dev/tdk-core";
 import clsx from "clsx";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { ZERO_ADDRESS } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 
-import { TreasureSparklesIcon } from "../../icons/TreasureSparklesIcon";
-import { Button } from "../ui/Button";
+import { Button } from "../components/Button";
+import { useTranslation } from "../hooks/useTranslation";
+import { TreasureSparklesIcon } from "../icons/TreasureSparklesIcon";
 
 type Props = {
   legacyProfiles: Pick<
@@ -38,10 +38,10 @@ export const ConnectMigrateUserView = ({
           className="tdk-text-lg tdk-font-semibold tdk-text-white tdk-m-0"
           aria-hidden="true"
         >
-          {t("connect.migrate.header")}
+          {t.connect.migrate.header}
         </h2>
         <p className="tdk-text-sm tdk-text-silver">
-          {t("connect.migrate.description")}
+          {t.connect.migrate.description}
         </p>
       </div>
       <div className="tdk-flex tdk-items-center tdk-gap-3 tdk-flex-wrap">
@@ -113,7 +113,7 @@ export const ConnectMigrateUserView = ({
               selectedProfileId ? () => onApprove(selectedProfileId) : undefined
             }
           >
-            {t("connect.migrate.approve")}
+            {t.connect.migrate.approve}
           </Button>
           <Button
             variant="secondary"
@@ -122,11 +122,11 @@ export const ConnectMigrateUserView = ({
               selectedProfileId ? () => onReject(selectedProfileId) : undefined
             }
           >
-            {t("connect.migrate.reject")}
+            {t.connect.migrate.reject}
           </Button>
         </div>
         <p className="tdk-text-xs tdk-text-silver-600">
-          {t("connect.migrate.disclaimer")}
+          {t.connect.migrate.disclaimer}
         </p>
       </div>
     </div>

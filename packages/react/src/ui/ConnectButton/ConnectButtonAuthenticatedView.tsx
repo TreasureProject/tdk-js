@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 
-import { UserAvatar } from "../user/UserAvatar";
-import { UserDisplayName } from "../user/UserDisplayName";
+import { UserAvatar } from "../User/UserAvatar";
+import { UserDisplayName } from "../User/UserDisplayName";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   address: string;

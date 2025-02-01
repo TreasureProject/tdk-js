@@ -5,15 +5,15 @@ import {
 } from "@treasure-dev/tdk-core";
 import clsx from "clsx";
 import { type ButtonHTMLAttributes, useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
 
-import { AppleIcon } from "../../icons/AppleIcon";
-import { DiscordIcon } from "../../icons/DiscordIcon";
-import { GoogleIcon } from "../../icons/GoogleIcon";
-import { PasskeyIcon } from "../../icons/PasskeyIcon";
-import { WalletIcon } from "../../icons/WalletIcon";
-import { XIcon } from "../../icons/XIcon";
-import { Button } from "../ui/Button";
+import { Button } from "../components/Button";
+import { useTranslation } from "../hooks/useTranslation";
+import { AppleIcon } from "../icons/AppleIcon";
+import { DiscordIcon } from "../icons/DiscordIcon";
+import { GoogleIcon } from "../icons/GoogleIcon";
+import { PasskeyIcon } from "../icons/PasskeyIcon";
+import { WalletIcon } from "../icons/WalletIcon";
+import { XIcon } from "../icons/XIcon";
 import { ConnectFooter } from "./ConnectFooter";
 
 export type Options = {
@@ -49,15 +49,13 @@ export const ConnectMethodSelectionView = ({
         </div>
         {/* Screen reader title is in ConnectModal */}
         <div aria-hidden="true" className="tdk-text-silver-400 tdk-text-sm">
-          <Trans
-            i18nKey="connect.header"
-            values={{ appName: appName || DEFAULT_TDK_APP_NAME }}
-          >
-            Connect to
-            <span className="tdk-text-lg tdk-block tdk-font-semibold tdk-text-silver-100">
-              {appName}
-            </span>
-          </Trans>
+          {t.connect.header({
+            appName: (
+              <span className="tdk-text-lg tdk-block tdk-font-semibold tdk-text-silver-100">
+                {appName || DEFAULT_TDK_APP_NAME}
+              </span>
+            ),
+          })}
         </div>
       </div>
       {error ? (
@@ -79,7 +77,7 @@ export const ConnectMethodSelectionView = ({
       >
         <div className="tdk-space-y-1.5">
           <label className="tdk-block tdk-text-sm" htmlFor="email">
-            {t("common.emailLabel")}
+            {t.connect.option.email}
           </label>
           <input
             ref={emailInputRef}
@@ -91,39 +89,39 @@ export const ConnectMethodSelectionView = ({
           />
         </div>
         <Button type="submit" className="tdk-w-full" isLoading={isLoading}>
-          {t("connect.action")}
+          {t.connect.action}
         </Button>
       </form>
       <div className="tdk-relative tdk-flex tdk-items-center tdk-justify-center">
         <div className="tdk-h-[1px] tdk-bg-night-500 tdk-absolute tdk-left-0 tdk-right-0 tdk-z-0" />
         <span className="tdk-text-sm tdk-text-silver-600 tdk-px-4 tdk-uppercase tdk-bg-night tdk-z-10">
-          {t("common.or")}
+          {t.connect.option.or}
         </span>
       </div>
       <div className="tdk-grid tdk-gap-2 tdk-grid-cols-2 md:tdk-grid-cols-4">
         <ConnectMethodButton
-          title={t("connect.option.google")}
+          title={t.connect.option.google}
           onClick={() => onConnect("google")}
           disabled={isLoading}
         >
           <GoogleIcon className="tdk-w-7 tdk-h-7" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          title={t("connect.option.x")}
+          title={t.connect.option.x}
           onClick={() => onConnect("x")}
           disabled={isLoading}
         >
           <XIcon className="tdk-w-5 tdk-h-5" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          title={t("connect.option.discord")}
+          title={t.connect.option.discord}
           onClick={() => onConnect("discord")}
           disabled={isLoading}
         >
           <DiscordIcon className="tdk-w-6 tdk-h-6" />
         </ConnectMethodButton>
         <ConnectMethodButton
-          title={t("connect.option.apple")}
+          title={t.connect.option.apple}
           onClick={() => onConnect("apple")}
           disabled={isLoading}
         >
@@ -136,7 +134,7 @@ export const ConnectMethodSelectionView = ({
             disabled={isLoading}
           >
             <PasskeyIcon className="tdk-w-6 tdk-h-6" />
-            <span className="tdk-block">{t("connect.option.passkey")}</span>
+            <span className="tdk-block">{t.connect.option.passkey}</span>
           </ConnectMethodButton>
         ) : null}
         {!disableWallet ? (
@@ -146,7 +144,7 @@ export const ConnectMethodSelectionView = ({
             disabled={isLoading}
           >
             <WalletIcon className="tdk-w-6 tdk-h-6" />
-            {t("connect.option.wallet")}
+            {t.connect.option.wallet}
           </ConnectMethodButton>
         ) : null}
       </div>

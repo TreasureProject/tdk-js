@@ -1,12 +1,11 @@
-import { useTranslation } from "react-i18next";
-
-import { useTreasure } from "../../contexts/treasure";
+import { useTreasure } from "../../providers/treasure";
+import { Button } from "../components/Button";
 import {
   type Options as UseConnectOptions,
   useConnect,
-} from "../../hooks/useConnect";
-import { TreasureIcon } from "../../icons/TreasureIcon";
-import { Button } from "../ui/Button";
+} from "../hooks/useConnect";
+import { useTranslation } from "../hooks/useTranslation";
+import { TreasureIcon } from "../icons/TreasureIcon";
 import { ConnectButtonAuthenticatedView } from "./ConnectButtonAuthenticatedView";
 
 type Props = UseConnectOptions;
@@ -34,7 +33,7 @@ export const ConnectButton = (props?: Props) => {
             className="tdk-w-5 tdk-h-5 tdk-text-cream"
             starsFill="#C62222"
           />
-          <span>{t("connect.action")}</span>
+          <span>{t.connect.action}</span>
         </Button>
       )}
     </>

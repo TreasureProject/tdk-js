@@ -1,9 +1,9 @@
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRef, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
 
-import { Button } from "../ui/Button";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/InputOTP";
+import { Button } from "../components/Button";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../components/InputOTP";
+import { useTranslation } from "../hooks/useTranslation";
 import { ConnectFooter } from "./ConnectFooter";
 
 type Props = {
@@ -55,14 +55,12 @@ export const ConnectVerifyCodeView = ({
           className="tdk-text-lg tdk-font-semibold tdk-text-white tdk-m-0"
           aria-hidden="true"
         >
-          {t("connect.verify.header")}
+          {t.connect.verify.header}
         </h2>
         <p className="tdk-text-sm tdk-text-silver">
-          <Trans i18nKey="connect.verify.description" values={{ recipient }}>
-            We have sent a verification code to{" "}
-            <span className="tdk-text-silver-200">{recipient}</span>. You will
-            be automatically logged in after entering your code.
-          </Trans>
+          {t.connect.verify.description({
+            recipient: <span className="tdk-text-silver-200">{recipient}</span>,
+          })}
         </p>
       </div>
       <div className="tdk-h-[1px] tdk-bg-night-500" />
@@ -74,7 +72,7 @@ export const ConnectVerifyCodeView = ({
       <div className="tdk-space-y-6">
         <div>
           <h3 className="tdk-text-sm tdk-font-normal tdk-text-silver-200 tdk-mt-0 tdk-mb-2">
-            {t("connect.verify.inputLabel")}
+            {t.connect.verify.inputLabel}
           </h3>
           <InputOTP
             maxLength={OTP_CODE_LENGTH}
@@ -103,13 +101,15 @@ export const ConnectVerifyCodeView = ({
             isLoading={isLoading}
             onClick={() => onConfirm(code)}
           >
-            {t("connect.verify.action")}
+            {t.connect.verify.action}
           </Button>
           <p className="tdk-text-silver-600 tdk-text-sm tdk-text-center">
-            {t("connect.verify.resend.prompt")}{" "}
+            {t.connect.verify.resend.prompt}{" "}
             {resendAvailableInSec > 0 ? (
               <span className="tdk-text-silver-100">
-                {t("connect.verify.resend.countdown", { resendAvailableInSec })}
+                {t.connect.verify.resend.countdown({
+                  seconds: resendAvailableInSec,
+                })}
               </span>
             ) : (
               <button
@@ -117,7 +117,7 @@ export const ConnectVerifyCodeView = ({
                 className="tdk-text-silver-100 hover:tdk-underline tdk-bg-transparent tdk-border-none tdk-p-0 tdk-cursor-pointer"
                 onClick={handleResend}
               >
-                {t("connect.verify.resend.action")}
+                {t.connect.verify.resend.action}
               </button>
             )}
           </p>

@@ -15,7 +15,7 @@ import type {
 import type { ReactNode } from "react";
 import type { Chain } from "thirdweb";
 import type { Wallet } from "thirdweb/dist/types/exports/wallets";
-import type { SupportedLanguage } from "./i18n";
+import type { Language } from "./ui/hooks/useTranslation";
 
 export type AnalyticsEvent = {
   name: string;
@@ -39,7 +39,7 @@ type AnalyticsOptions = {
 };
 
 export type Config = {
-  language?: SupportedLanguage;
+  language?: Language;
   appName: string;
   appIconUri?: string;
   apiUri?: string;
@@ -56,6 +56,7 @@ export type Config = {
 };
 
 export type ContextValues = {
+  language?: Language;
   appName: string;
   appIconUri?: string;
   chain: Chain;

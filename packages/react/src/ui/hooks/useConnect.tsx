@@ -7,23 +7,23 @@ import {
 } from "thirdweb/react";
 import { ecosystemWallet } from "thirdweb/wallets";
 
+import { useTreasure } from "../../providers/treasure";
+import {
+  EVT_TREASURECONNECT_UI_ACCOUNT,
+  EVT_TREASURECONNECT_UI_LOGIN,
+} from "../../utils/defaultAnalytics";
 import {
   ConnectModal,
   type Options as ConnectModalOptions,
   type Props as ConnectModalProps,
-} from "../components/connect/ConnectModal";
-import { UserDisplayName } from "../components/user/UserDisplayName";
-import { useTreasure } from "../contexts/treasure";
-import { getLocaleId } from "../i18n";
-import {
-  EVT_TREASURECONNECT_UI_ACCOUNT,
-  EVT_TREASURECONNECT_UI_LOGIN,
-} from "../utils/defaultAnalytics";
+} from "../ConnectModal/ConnectModal";
+import { UserDisplayName } from "../User/UserDisplayName";
 
 import {
   CONNECT_MODAL_SUPPORTED_TOKENS,
   CONNECT_MODAL_THEME,
-} from "../constants";
+} from "../../constants";
+import { useTranslation } from "./useTranslation";
 
 export type Options = ConnectModalOptions & {
   supportedChainIds?: number[];
@@ -45,6 +45,7 @@ export const useConnect = (options?: Options) => {
     openLauncherAccountModal,
     trackCustomEvent,
   } = useTreasure();
+  const { thirdwebLocale } = useTranslation();
   const activeWallet = useActiveWallet();
   const { open: openWalletDetailsModal } = useWalletDetailsModal();
   const {
@@ -98,7 +99,7 @@ export const useConnect = (options?: Options) => {
       client,
       chains,
       theme: CONNECT_MODAL_THEME,
-      locale: getLocaleId(),
+      locale: thirdwebLocale,
       connectOptions: {
         chain,
         wallets: [

@@ -3,7 +3,7 @@ import type { Preview } from "@storybook/react";
 import React from "react";
 import { ThirdwebProvider } from "thirdweb/react";
 
-import { TreasureProvider } from "../src/contexts/treasure";
+import { TreasureProvider } from "../src/providers/treasure";
 
 import "../src/globals.css";
 

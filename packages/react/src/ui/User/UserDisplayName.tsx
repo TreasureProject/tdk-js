@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { shortenAddress } from "thirdweb/utils";
 
-import { TreasureSparklesIcon } from "../../icons/TreasureSparklesIcon";
+import { TreasureSparklesIcon } from "../icons/TreasureSparklesIcon";
 
 type Props = {
   address: string;
