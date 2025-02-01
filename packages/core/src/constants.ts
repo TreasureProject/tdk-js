@@ -1,5 +1,6 @@
 import { defineChain } from "thirdweb";
 import {
+  abstract,
   arbitrum,
   arbitrumSepolia,
   base,
@@ -78,20 +79,22 @@ export const BRIDGEWORLD_API_URL = {
 } as const;
 
 export const MAGICSWAPV2_API_URL = {
+  [abstract.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-abstract/live/gn",
   [arbitrum.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
   [arbitrumSepolia.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2-dev/live/gn",
+  [base.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-base/live/gn",
+  [baseSepolia.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-base-sepolia/live/gn",
   [treasure.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-treasure/live/gn",
   [treasureTopaz.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-topaz/live/gn",
   [sepolia.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-sepolia/live/gn",
-  [base.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-base/live/gn",
-  [baseSepolia.id]:
-    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-base-sepolia/live/gn",
 } as const;
 
 // Tokens
@@ -168,6 +171,10 @@ export const CONTRACT_ADDRESSES: Record<
   [baseSepolia.id]: {
     // Magicswap
     MagicswapV2Router: "0x4043b1c99838945555341c0d5e101e75f143a660",
+  },
+  [abstract.id]: {
+    // Magicswap
+    MagicswapV2Router: "0x3193b4e0e6c0417682f5916c26138ee86917efa1",
   },
 };
 
