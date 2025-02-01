@@ -1,18 +1,15 @@
+import clsx from "clsx";
 import { OTPInput, OTPInputContext } from "input-otp";
 import * as React from "react";
-import { cn } from "../../utils/classnames";
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>
->(({ className, containerClassName, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <OTPInput
     ref={ref}
-    containerClassName={cn(
-      "tdk-flex tdk-items-center tdk-gap-2 has-[:disabled]:tdk-opacity-50",
-      containerClassName,
-    )}
-    className={cn("disabled:tdk-cursor-not-allowed", className)}
+    containerClassName="tdk-flex tdk-items-center tdk-gap-2 has-[:disabled]:tdk-opacity-50"
+    className={clsx("disabled:tdk-cursor-not-allowed", className)}
     {...props}
   />
 ));
@@ -24,7 +21,7 @@ const InputOTPGroup = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("tdk-flex tdk-items-center tdk-gap-3", className)}
+    className={clsx("tdk-flex tdk-items-center tdk-gap-3", className)}
     {...props}
   />
 ));
@@ -40,7 +37,7 @@ const InputOTPSlot = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn(
+      className={clsx(
         "tdk-relative tdk-flex tdk-h-14 tdk-w-14 tdk-items-center tdk-justify-center tdk-text-lg tdk-font-semibold tdk-bg-[#0C1420] tdk-border tdk-border-solid tdk-border-night-500 tdk-text-cream tdk-transition-all tdk-rounded-md",
         isActive && "tdk-z-10 tdk-ring-2 tdk-ring-night-300",
         className,

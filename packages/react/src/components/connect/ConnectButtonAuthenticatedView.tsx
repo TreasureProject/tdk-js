@@ -1,7 +1,6 @@
+import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 
-import { cn } from "../../utils/classnames";
-import { Button } from "../ui/Button";
 import { UserAvatar } from "../user/UserAvatar";
 import { UserDisplayName } from "../user/UserDisplayName";
 
@@ -19,22 +18,20 @@ export const ConnectButtonAuthenticatedView = ({
   ...buttonProps
 }: Props) => {
   return (
-    <Button
-      variant="tertiary"
-      className={cn(
-        "tdk-px-2 tdk-flex tdk-items-center tdk-gap-1.5 tdk-bg-night-700 tdk-border tdk-border-night-500",
+    <button
+      type="button"
+      className={clsx(
+        "tdk-min-h-9 tdk-flex tdk-items-center tdk-gap-1.5 tdk-px-2 tdk-py-1 tdk-rounded-lg tdk-text-sm tdk-text-cream tdk-bg-night-700 tdk-border tdk-border-solid tdk-border-night-500 hover:tdk-border-night-200 hover:tdk-bg-night-300 active:tdk-border-night-400 active:tdk-bg-night-600 tdk-transition-colors",
         className,
       )}
       {...buttonProps}
     >
-      <span className="tdk-flex tdk-items-center tdk-gap-1.5">
-        <UserAvatar
-          address={address}
-          pfp={pfp}
-          className="tdk-w-6 tdk-h-6 tdk-rounded-lg"
-        />
-        <UserDisplayName address={address} tag={tag} />
-      </span>
-    </Button>
+      <UserAvatar
+        address={address}
+        pfp={pfp}
+        className="tdk-w-6 tdk-h-6 tdk-rounded-lg"
+      />
+      <UserDisplayName address={address} tag={tag} />
+    </button>
   );
 };

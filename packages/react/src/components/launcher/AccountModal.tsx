@@ -1,10 +1,11 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { DEFAULT_TDK_APP_ICON_URI } from "@treasure-dev/tdk-core";
+import clsx from "clsx";
 import { Trans } from "react-i18next";
 import { MediaRenderer, useWalletImage } from "thirdweb/react";
 import { shortenAddress } from "thirdweb/utils";
+
 import { useTreasure } from "../../contexts/treasure";
-import { cn } from "../../utils/classnames";
 import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
 
 type Props = {
@@ -34,7 +35,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
+        className={clsx(
           size === "lg" && "tdk-max-w-lg",
           size === "xl" && "tdk-max-w-xl",
           size === "2xl" && "tdk-max-w-2xl",

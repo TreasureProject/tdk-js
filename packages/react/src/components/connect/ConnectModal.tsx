@@ -10,6 +10,7 @@ import {
   isSocialConnectMethod,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
 import { type Wallet, authenticateWithRedirect } from "thirdweb/wallets";
@@ -17,7 +18,6 @@ import { type Wallet, authenticateWithRedirect } from "thirdweb/wallets";
 import { Trans, useTranslation } from "react-i18next";
 import { useTreasure } from "../../contexts/treasure";
 import { getLocaleId } from "../../i18n";
-import { cn } from "../../utils/classnames";
 import { getErrorMessage } from "../../utils/error";
 import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
 import {
@@ -350,7 +350,7 @@ export const ConnectModal = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
+        className={clsx(
           size === "lg" && "tdk-max-w-lg",
           size === "xl" && "tdk-max-w-xl",
           size === "2xl" && "tdk-max-w-2xl",

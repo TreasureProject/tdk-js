@@ -1,11 +1,11 @@
 import type { LegacyProfile } from "@treasure-dev/tdk-core";
+import clsx from "clsx";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ZERO_ADDRESS } from "thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 
 import { TreasureSparklesIcon } from "../../icons/TreasureSparklesIcon";
-import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 
 type Props = {
@@ -50,10 +50,11 @@ export const ConnectMigrateUserView = ({
             <button
               key={id}
               type="button"
-              className={cn(
-                "tdk-relative tdk-px-4 tdk-py-2.5 tdk-rounded-lg tdk-overflow-hidden tdk-cursor-pointer tdk-bg-night-500 tdk-border-2 tdk-border-solid tdk-border-night-200 hover:tdk-border-night-100 tdk-text-left",
-                id === selectedProfileId &&
-                  "tdk-border-ruby-500/60 hover:tdk-border-ruby-500/60 tdk-shadow",
+              className={clsx(
+                "tdk-relative tdk-px-4 tdk-py-2.5 tdk-rounded-lg tdk-overflow-hidden tdk-cursor-pointer tdk-bg-night-500 tdk-border-2 tdk-border-solid tdk-text-left",
+                id === selectedProfileId
+                  ? "tdk-border-ruby-500/60 hover:tdk-border-ruby-500/60 tdk-shadow"
+                  : "tdk-border-night-200 hover:tdk-border-night-100",
               )}
               onClick={() => setSelectedProfileId(id)}
             >
@@ -74,7 +75,7 @@ export const ConnectMigrateUserView = ({
                     "https://images.treasure.lol/tdk/login/treasure_icon.png"
                   }
                   alt=""
-                  className={cn(
+                  className={clsx(
                     "tdk-w-12 tdk-h-12 tdk-rounded-md tdk-border tdk-border-solid tdk-border-night-200",
                     !pfp && "tdk-opacity-60",
                   )}

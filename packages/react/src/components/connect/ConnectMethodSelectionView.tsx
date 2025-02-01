@@ -3,16 +3,16 @@ import {
   DEFAULT_TDK_APP_ICON_URI,
   DEFAULT_TDK_APP_NAME,
 } from "@treasure-dev/tdk-core";
+import clsx from "clsx";
 import { type ButtonHTMLAttributes, useRef, useState } from "react";
-
 import { Trans, useTranslation } from "react-i18next";
+
 import { AppleIcon } from "../../icons/AppleIcon";
 import { DiscordIcon } from "../../icons/DiscordIcon";
 import { GoogleIcon } from "../../icons/GoogleIcon";
 import { PasskeyIcon } from "../../icons/PasskeyIcon";
 import { WalletIcon } from "../../icons/WalletIcon";
 import { XIcon } from "../../icons/XIcon";
-import { cn } from "../../utils/classnames";
 import { Button } from "../ui/Button";
 import { ConnectFooter } from "./ConnectFooter";
 
@@ -131,7 +131,7 @@ export const ConnectMethodSelectionView = ({
         </ConnectMethodButton>
         {!disablePasskey ? (
           <ConnectMethodButton
-            className="tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-full"
+            className="tdk-py-2 tdk-col-span-full"
             onClick={() => onConnect("passkey")}
             disabled={isLoading}
           >
@@ -141,7 +141,7 @@ export const ConnectMethodSelectionView = ({
         ) : null}
         {!disableWallet ? (
           <ConnectMethodButton
-            className="tdk-flex tdk-items-center tdk-gap-1 tdk-justify-center tdk-py-2 tdk-col-span-full"
+            className="tdk-py-2 tdk-col-span-full"
             onClick={() => onConnect("wallet")}
             disabled={isLoading}
           >
@@ -162,8 +162,8 @@ const ConnectMethodButton = ({
   return (
     <button
       type="button"
-      className={cn(
-        "tdk-flex tdk-items-center tdk-justify-center tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-transition-colors tdk-rounded-lg",
+      className={clsx(
+        "tdk-flex tdk-items-center tdk-justify-center tdk-gap-1 tdk-bg-night-500 tdk-border tdk-border-solid tdk-border-night-400 tdk-p-3 tdk-text-xs tdk-text-silver-100 tdk-transition-colors tdk-rounded-lg",
         props.disabled
           ? "tdk-opacity-50 tdk-cursor-not-allowed"
           : "tdk-cursor-pointer hover:tdk-bg-cream hover:tdk-border-cream hover:tdk-text-night-800",

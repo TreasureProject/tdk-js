@@ -31,9 +31,3 @@ export const Secondary: Story = {
     variant: "secondary",
   },
 };
-
-export const Tertiary: Story = {
-  args: {
-    variant: "tertiary",
-  },
-};

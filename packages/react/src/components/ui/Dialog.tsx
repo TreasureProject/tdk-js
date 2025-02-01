@@ -1,9 +1,9 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import clsx from "clsx";
 import * as React from "react";
-
 import { useTranslation } from "react-i18next";
+
 import { CloseIcon } from "../../icons/CloseIcon";
-import { cn } from "../../utils/classnames";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -17,10 +17,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn(
-      "tdk-fixed tdk-inset-0 tdk-z-50 tdk-bg-black/30 tdk-backdrop-blur-sm data-[state=open]:tdk-animate-in data-[state=closed]:tdk-animate-out data-[state=closed]:tdk-fade-out-0 data-[state=open]:tdk-fade-in-0",
-      className,
-    )}
+    className="tdk-fixed tdk-inset-0 tdk-z-50 tdk-bg-black/30 tdk-backdrop-blur-sm data-[state=open]:tdk-animate-in data-[state=closed]:tdk-animate-out data-[state=closed]:tdk-fade-out-0 data-[state=open]:tdk-fade-in-0"
     {...props}
   />
 ));
@@ -36,7 +33,7 @@ const DialogContent = React.forwardRef<
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
-        className={cn(
+        className={clsx(
           "tdk-fixed tdk-max-h-screen tdk-p-4 sm:tdk-px-6 tdk-overflow-y-auto tdk-left-1/2 tdk-top-1/2 tdk-z-50 tdk-w-full -tdk-translate-x-1/2 -tdk-translate-y-1/2 tdk-shadow-none tdk-drop-shadow-xl data-[state=open]:tdk-animate-in data-[state=closed]:tdk-animate-out data-[state=closed]:tdk-fade-out-0 data-[state=open]:tdk-fade-in-0 data-[state=closed]:tdk-zoom-out-95 data-[state=open]:tdk-zoom-in-95 data-[state=closed]:tdk-slide-out-to-left-1/2 data-[state=closed]:tdk-slide-out-to-top-[48%] data-[state=open]:tdk-slide-in-from-left-1/2 data-[state=open]:tdk-slide-in-from-top-[48%] tdk-outline-none focus:tdk-outline-none focus:tdk-ring-0",
           className,
         )}
