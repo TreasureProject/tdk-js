@@ -7,6 +7,7 @@ import { createAuth } from "@treasure-dev/auth";
 import { http, type Transport, createConfig, fallback } from "@wagmi/core";
 import {
   abstract,
+  abstractTestnet,
   arbitrum,
   arbitrumSepolia,
   base,
@@ -35,6 +36,7 @@ import { getEnv } from "./utils/env";
 
 const WAGMI_CONFIG_CHAINS = [
   abstract,
+  abstractTestnet,
   arbitrum,
   arbitrumSepolia,
   base,

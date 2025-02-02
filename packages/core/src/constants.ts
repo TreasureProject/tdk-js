@@ -1,6 +1,7 @@
 import { defineChain } from "thirdweb";
 import {
   abstract,
+  abstractTestnet,
   arbitrum,
   arbitrumSepolia,
   base,
@@ -81,6 +82,8 @@ export const BRIDGEWORLD_API_URL = {
 export const MAGICSWAPV2_API_URL = {
   [abstract.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-abstract/live/gn",
+  [abstractTestnet.id]:
+    "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswap-dev-abstract-testnet/live/gn",
   [arbitrum.id]:
     "https://api.goldsky.com/api/public/project_clrm53zqegpoi01x18coz2fb5/subgraphs/magicswapv2/live/gn",
   [arbitrumSepolia.id]:
@@ -175,6 +178,10 @@ export const CONTRACT_ADDRESSES: Record<
   [abstract.id]: {
     // Magicswap
     MagicswapV2Router: "0x3193b4e0e6c0417682f5916c26138ee86917efa1",
+  },
+  [abstractTestnet.id]: {
+    // Magicswap
+    MagicswapV2Router: "0xa314ca85f158776847ad0a9dbb6c41fd3da5f953",
   },
 };
 
