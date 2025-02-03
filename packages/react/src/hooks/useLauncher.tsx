@@ -3,9 +3,7 @@ import {
   getTreasureLauncherAuthToken,
   getTreasureLauncherWalletComponents,
 } from "@treasure-dev/launcher";
-import { jwtDecode } from "jwt-decode";
 import { type ReactNode, useEffect, useState } from "react";
-import type { AuthStoredTokenWithCookieReturnType } from "thirdweb/dist/types/wallets/in-app/core/authentication/types";
 import { AccountModal } from "../components/launcher/AccountModal";
 
 type Props = {
@@ -14,7 +12,6 @@ type Props = {
   setRootElement: (el: ReactNode) => void;
   onAuthTokenUpdated: (authToken: string) => void;
   onWalletComponentsUpdated: (
-    authResult: AuthStoredTokenWithCookieReturnType,
     authProvider: string,
     walletId: string,
     authCookie: string,
@@ -56,11 +53,7 @@ export const useLauncher = ({
   useEffect(() => {
     if (walletComponents) {
       console.debug("[useLauncher] Using launcher wallet components");
-      const authResult: AuthStoredTokenWithCookieReturnType = jwtDecode(
-        walletComponents.authCookie,
-      );
       onWalletComponentsUpdated(
-        authResult,
         walletComponents.authProvider,
         walletComponents.walletId,
         walletComponents.authCookie,

@@ -39,7 +39,6 @@ import {
 import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
-import type { AuthStoredTokenWithCookieReturnType } from "thirdweb/dist/types/wallets/in-app/core/authentication/types";
 import { useLauncher } from "../hooks/useLauncher";
 import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
@@ -195,12 +194,7 @@ const TreasureProviderInner = ({
   );
 
   const onWalletComponentsUpdated = useCallback(
-    async (
-      authResult: AuthStoredTokenWithCookieReturnType,
-      authProvider: string,
-      walletId: string,
-      authCookie: string,
-    ) => {
+    async (authProvider: string, walletId: string, authCookie: string) => {
       if (activeWallet) {
         console.debug(
           "[TreasureProvider] There is already an active wallet, skipping updating with launcher wallet components",
@@ -215,10 +209,7 @@ const TreasureProviderInner = ({
         "[TreasureProvider] Updating wallet with launcher wallet components",
       );
 
-      authResult.storedToken.cookieString = authCookie;
-      const encoded = encodeURIComponent(JSON.stringify(authResult));
       const url = new URL(window.location.href);
-      url.searchParams.set("authResult", encoded);
       url.searchParams.set("authProvider", authProvider);
       url.searchParams.set("walletId", walletId);
       url.searchParams.set("authCookie", authCookie);
@@ -367,7 +358,9 @@ const TreasureProviderInner = ({
         },
       })
         .then((eventId) => {
-          console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+          if (eventId) {
+            console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+          }
         })
         .catch((err) => {
           console.error(`[TreasureProvider] error tracking login: ${err}`);
