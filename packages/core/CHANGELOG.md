@@ -1,5 +1,18 @@
 # @treasure-dev/tdk-core
 
+## 3.11.0
+
+### Minor Changes
+
+- 6b155cb: Removed Telegram connect method
+- 5f751cb: Expect account signature expiration time in verify payload
+
+### Patch Changes
+
+- f9d4f9e: Added MagicswapV2Router address for Abstract Testnet chain
+- 0b6a789: Added MagicswapV2Router address for Abstract chain
+- 40ee34c: Added MagicswapV2Router address for Base and Base Sepolia chains
+
 ## 3.10.0
 
 ### Minor Changes
