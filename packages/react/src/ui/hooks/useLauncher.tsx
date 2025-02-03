@@ -3,8 +3,15 @@ import {
   getTreasureLauncherAuthToken,
   getTreasureLauncherWalletComponents,
 } from "@treasure-dev/launcher";
-import { type ReactNode, useEffect, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
+import { useActiveWallet } from "thirdweb/dist/types/exports/react";
 import { AccountModal } from "../AccountModal";
 
 type Props = {
@@ -12,11 +19,6 @@ type Props = {
   getWalletComponentsOverride?: () => WalletComponents | undefined;
   setRootElement: (el: ReactNode) => void;
   onAuthTokenUpdated: (authToken: string) => void;
-  onWalletComponentsUpdated: (
-    authProvider: string,
-    walletId: string,
-    authCookie: string,
-  ) => Promise<void>;
 };
 
 export const useLauncher = ({
@@ -24,8 +26,10 @@ export const useLauncher = ({
   getWalletComponentsOverride,
   setRootElement,
   onAuthTokenUpdated,
-  onWalletComponentsUpdated,
 }: Props) => {
+  const activeWallet = useActiveWallet();
+  const hasSetUrlParams = useRef(false);
+
   const [isUsingTreasureLauncher, setIsUsingTreasureLauncher] = useState(false);
   const [isUsingLauncherAuthToken, setIsUserLauncherAuthToken] =
     useState(false);
@@ -46,6 +50,22 @@ export const useLauncher = ({
       />,
     );
   };
+
+  const onWalletComponentsUpdated = useCallback(
+    async (authProvider: string, walletId: string, authCookie: string) => {
+      if (activeWallet || hasSetUrlParams.current) {
+        return;
+      }
+      hasSetUrlParams.current = true;
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("authProvider", authProvider);
+      url.searchParams.set("walletId", walletId);
+      url.searchParams.set("authCookie", authCookie);
+      window.history.pushState({}, "", url.toString());
+    },
+    [activeWallet],
+  );
 
   useEffect(() => {
     const authToken =

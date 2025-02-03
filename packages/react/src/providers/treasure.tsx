@@ -66,8 +66,6 @@ export const useTreasure = () => {
 
 type Props = PropsWithChildren<Config>;
 
-let hasSetUrlParams = false;
-
 export const TreasureProvider = ({
   children,
   language,
@@ -192,22 +190,6 @@ export const TreasureProvider = ({
     [tdk.user.me, onConnect],
   );
 
-  const onWalletComponentsUpdated = useCallback(
-    async (authProvider: string, walletId: string, authCookie: string) => {
-      if (activeWallet || hasSetUrlParams) {
-        return;
-      }
-      hasSetUrlParams = true;
-
-      const url = new URL(window.location.href);
-      url.searchParams.set("authProvider", authProvider);
-      url.searchParams.set("walletId", walletId);
-      url.searchParams.set("authCookie", authCookie);
-      window.history.pushState({}, "", url.toString());
-    },
-    [activeWallet],
-  );
-
   const {
     isUsingTreasureLauncher,
     isUsingLauncherAuthToken,
@@ -217,7 +199,6 @@ export const TreasureProvider = ({
     getWalletComponentsOverride: launcherOptions?.getWalletComponentsOverride,
     setRootElement: setEl,
     onAuthTokenUpdated,
-    onWalletComponentsUpdated,
   });
 
   const logOut = () => {
