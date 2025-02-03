@@ -194,19 +194,10 @@ export const TreasureProvider = ({
 
   const onWalletComponentsUpdated = useCallback(
     async (authProvider: string, walletId: string, authCookie: string) => {
-      if (activeWallet) {
-        console.debug(
-          "[TreasureProvider] There is already an active wallet, skipping updating with launcher wallet components",
-        );
-        return;
-      }
-      if (hasSetUrlParams) {
+      if (activeWallet || hasSetUrlParams) {
         return;
       }
       hasSetUrlParams = true;
-      console.debug(
-        "[TreasureProvider] Updating wallet with launcher wallet components",
-      );
 
       const url = new URL(window.location.href);
       url.searchParams.set("authProvider", authProvider);

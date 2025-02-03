@@ -26,10 +26,6 @@ export const useLauncher = ({
   onAuthTokenUpdated,
   onWalletComponentsUpdated,
 }: Props) => {
-  const authToken = getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
-  const walletComponents: WalletComponents | undefined =
-    getWalletComponentsOverride?.() ?? getTreasureLauncherWalletComponents();
-
   const [isUsingTreasureLauncher, setIsUsingTreasureLauncher] = useState(false);
   const [isUsingLauncherAuthToken, setIsUserLauncherAuthToken] =
     useState(false);
@@ -52,8 +48,12 @@ export const useLauncher = ({
   };
 
   useEffect(() => {
+    const authToken =
+      getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
+    const walletComponents: WalletComponents | undefined =
+      getWalletComponentsOverride?.() ?? getTreasureLauncherWalletComponents();
+
     if (walletComponents) {
-      console.debug("[useLauncher] Using launcher wallet components");
       onWalletComponentsUpdated(
         walletComponents.authProvider,
         walletComponents.walletId,
@@ -63,7 +63,6 @@ export const useLauncher = ({
       return;
     }
     if (authToken) {
-      console.debug("[useLauncher] Using launcher auth token");
       setIsUsingTreasureLauncher(true);
       setIsUserLauncherAuthToken(true);
       onAuthTokenUpdated(authToken);
@@ -71,9 +70,9 @@ export const useLauncher = ({
     }
     setIsUsingTreasureLauncher(false);
   }, [
-    authToken,
+    getAuthTokenOverride,
+    getWalletComponentsOverride,
     onAuthTokenUpdated,
-    walletComponents,
     onWalletComponentsUpdated,
   ]);
 
