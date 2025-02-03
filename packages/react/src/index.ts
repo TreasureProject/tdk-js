@@ -2,11 +2,11 @@ import "./globals.css";
 
 export type * from "@treasure-dev/tdk-core";
 
-export { ConnectButton } from "./components/connect/ConnectButton";
-export { ConnectModal } from "./components/connect/ConnectModal";
-export { Button } from "./components/ui/Button";
-export { TreasureProvider, useTreasure } from "./contexts/treasure";
-export { useConnect } from "./hooks/useConnect";
+export { ConnectButton } from "./ui/ConnectButton/ConnectButton";
+export { ConnectModal } from "./ui/ConnectModal/ConnectModal";
+export { Button } from "./ui/components/Button";
+export { TreasureProvider, useTreasure } from "./providers/treasure";
+export { useConnect } from "./ui/hooks/useConnect";
 export {
   useContractAddress,
   useContractAddresses,

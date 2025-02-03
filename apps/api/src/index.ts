@@ -4,22 +4,21 @@ import { PrismaClient } from "@prisma/client";
 import * as Sentry from "@sentry/node";
 import { Engine } from "@thirdweb-dev/engine";
 import { createAuth } from "@treasure-dev/auth";
+import { http, type Transport, createConfig, fallback } from "@wagmi/core";
 import {
-  TREASURE_CHAIN_DEFINITION,
-  TREASURE_TOPAZ_CHAIN_DEFINITION,
-} from "@treasure-dev/tdk-core";
-import { http, createConfig, fallback } from "@wagmi/core";
-import {
+  abstract,
+  abstractTestnet,
   arbitrum,
   arbitrumSepolia,
   base,
   baseSepolia,
   mainnet,
   sepolia,
+  treasure,
+  treasureTopaz,
 } from "@wagmi/core/chains";
 import { createThirdwebClient, getUser } from "thirdweb";
 import { createAuth as createThirdwebAuth } from "thirdweb/auth";
-import { defineChain } from "viem";
 
 import { withAuth } from "./middleware/auth";
 import { withChain } from "./middleware/chain";
@@ -34,6 +33,19 @@ import { usersRoutes } from "./routes/users";
 import type { TdkApiContext } from "./types";
 import { app } from "./utils/app";
 import { getEnv } from "./utils/env";
+
+const WAGMI_CONFIG_CHAINS = [
+  abstract,
+  abstractTestnet,
+  arbitrum,
+  arbitrumSepolia,
+  base,
+  baseSepolia,
+  mainnet,
+  sepolia,
+  treasure,
+  treasureTopaz,
+] as const;
 
 const main = async () => {
   const env = await getEnv();
@@ -62,64 +74,20 @@ const main = async () => {
       accessToken: env.THIRDWEB_ENGINE_ACCESS_TOKEN,
     }),
     wagmiConfig: createConfig({
-      chains: [
-        arbitrum,
-        arbitrumSepolia,
-        mainnet,
-        sepolia,
-        base,
-        baseSepolia,
-        defineChain(TREASURE_CHAIN_DEFINITION),
-        defineChain(TREASURE_TOPAZ_CHAIN_DEFINITION),
-      ],
-      transports: {
-        [arbitrum.id]: fallback([
-          http(
-            `https://${arbitrum.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [arbitrumSepolia.id]: fallback([
-          http(
-            `https://${arbitrumSepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [mainnet.id]: fallback([
-          http(
-            `https://${mainnet.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [sepolia.id]: fallback([
-          http(
-            `https://${sepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [base.id]: fallback([
-          http(`https://${base.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`),
-          http(),
-        ]),
-        [baseSepolia.id]: fallback([
-          http(
-            `https://${baseSepolia.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [TREASURE_CHAIN_DEFINITION.id]: fallback([
-          http(
-            `https://${TREASURE_CHAIN_DEFINITION.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-        [TREASURE_TOPAZ_CHAIN_DEFINITION.id]: fallback([
-          http(
-            `https://${TREASURE_TOPAZ_CHAIN_DEFINITION.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
-          ),
-          http(),
-        ]),
-      },
+      chains: WAGMI_CONFIG_CHAINS,
+      transports: WAGMI_CONFIG_CHAINS.reduce(
+        (acc, chain) => {
+          acc[chain.id] = fallback([
+            http(
+              `https://${chain.id}.rpc.thirdweb.com/${env.THIRDWEB_CLIENT_ID}`,
+              { batch: true },
+            ),
+            http(undefined, { batch: true }),
+          ]);
+          return acc;
+        },
+        {} as Record<keyof typeof WAGMI_CONFIG_CHAINS, Transport>,
+      ),
     }),
     getThirdwebUser: async ({ ecosystemWalletAddress }) =>
       getUser({

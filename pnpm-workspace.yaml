@@ -24,9 +24,9 @@ catalog:
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.52.0
   "@sinclair/typebox": ^0.34.14
-  "@storybook/addon-essentials": ^8.5.2
-  "@storybook/react": ^8.5.2
-  "@storybook/react-vite": ^8.5.2
+  "@storybook/addon-essentials": ^8.5.3
+  "@storybook/react": ^8.5.3
+  "@storybook/react-vite": ^8.5.3
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.17
   "@types/jsonwebtoken": ^9.0.8
@@ -39,6 +39,7 @@ catalog:
   abitype: ^1.0.8
   autoprefixer: ^10.4.20
   "aws-kms-signer": ^0.5.3
+  "class-variance-authority": ^0.7.1
   clsx: ^2.1.1
   dotenv: ^16.4.7
   "dotenv-cli": ^8.0.0
@@ -48,8 +49,6 @@ catalog:
   express: ^4.21.2
   fastify: ^5.2.1
   husky: ^9.1.7
-  i18next: ^24.2.2
-  "i18next-browser-languagedetector": ^8.0.2
   "input-otp": ^1.4.2
   jsdom: ^25.0.1
   jsonwebtoken: ^9.0.2
@@ -64,16 +63,14 @@ catalog:
   prisma: ^6.3.0
   react: ^18.2.0
   "react-dom": ^18.2.0
-  "react-i18next": ^15.4.0
-  storybook: ^8.5.2
+  storybook: ^8.5.3
   tailwindcss: ^3.4.17
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
-  "tailwind-merge": ^2.6.0
   thirdweb: 5.87.2 # check ox and viem versions if upgrading
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   tsx: ^4.19.2
-  turbo: ^2.3.4
+  turbo: ^2.4.0
   typescript: ^5.7.3
   uuid: ^11.0.5
   viem: 2.22.17 # matches Thirdweb version to satisfy getAwsKmsAccount types

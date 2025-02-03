@@ -1,11 +1,12 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { DEFAULT_TDK_APP_ICON_URI } from "@treasure-dev/tdk-core";
-import { Trans } from "react-i18next";
+import clsx from "clsx";
 import { MediaRenderer, useWalletImage } from "thirdweb/react";
 import { shortenAddress } from "thirdweb/utils";
-import { useTreasure } from "../../contexts/treasure";
-import { cn } from "../../utils/classnames";
-import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
+
+import { useTreasure } from "../providers/treasure";
+import { Dialog, DialogContent, DialogTitle } from "./components/Dialog";
+import { useTranslation } from "./hooks/useTranslation";
 
 type Props = {
   open: boolean;
@@ -22,6 +23,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
     ecosystemId,
   } = useTreasure();
+  const { t } = useTranslation();
 
   const { data: walletImage } = useWalletImage(ecosystemId);
 
@@ -34,7 +36,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
+        className={clsx(
           size === "lg" && "tdk-max-w-lg",
           size === "xl" && "tdk-max-w-xl",
           size === "2xl" && "tdk-max-w-2xl",
@@ -43,12 +45,7 @@ export const AccountModal = ({ open, size = "lg", onOpenChange }: Props) => {
         aria-describedby={undefined}
       >
         <VisuallyHidden.Root>
-          <DialogTitle>
-            <Trans i18nKey="connect.header" values={{ appName }}>
-              <span>Connect to</span>
-              <span>{appName}</span>
-            </Trans>
-          </DialogTitle>
+          <DialogTitle>{t.connect.header({ appName })}</DialogTitle>
         </VisuallyHidden.Root>
         <div className="tdk-rounded-lg tdk-overflow-hidden tdk-bg-night tdk-border tdk-border-night-600">
           <div className="tdk-p-6 tdk-flex tdk-flex-col tdk-items-center">

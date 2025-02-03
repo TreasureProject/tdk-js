@@ -4,7 +4,8 @@ import {
   getTreasureLauncherWalletComponents,
 } from "@treasure-dev/launcher";
 import { type ReactNode, useEffect, useState } from "react";
-import { AccountModal } from "../components/launcher/AccountModal";
+
+import { AccountModal } from "../AccountModal";
 
 type Props = {
   getAuthTokenOverride?: () => string | undefined;

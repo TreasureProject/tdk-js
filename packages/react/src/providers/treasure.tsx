@@ -26,7 +26,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { I18nextProvider } from "react-i18next";
 import { ZERO_ADDRESS, defineChain } from "thirdweb";
 import {
   useActiveWallet,
@@ -39,9 +38,8 @@ import {
 import { isZkSyncChain } from "thirdweb/utils";
 import { type Wallet, ecosystemWallet } from "thirdweb/wallets";
 
-import { useLauncher } from "../hooks/useLauncher";
-import { i18n } from "../i18n";
 import type { AnalyticsEvent, Config, ContextValues } from "../types";
+import { useLauncher } from "../ui/hooks/useLauncher";
 import {
   EVT_TREASURECONNECT_CONNECTED,
   EVT_TREASURECONNECT_DISCONNECTED,
@@ -70,8 +68,9 @@ type Props = PropsWithChildren<Config>;
 
 let hasSetUrlParams = false;
 
-const TreasureProviderInner = ({
+export const TreasureProvider = ({
   children,
+  language,
   appName,
   appIconUri,
   apiUri = DEFAULT_TDK_API_BASE_URI,
@@ -397,6 +396,7 @@ const TreasureProviderInner = ({
   return (
     <Context.Provider
       value={{
+        language,
         appName,
         appIconUri,
         chain,
@@ -445,19 +445,5 @@ const TreasureProviderInner = ({
       {children}
       {el}
     </Context.Provider>
-  );
-};
-
-export const TreasureProvider = (props: Props) => {
-  useEffect(() => {
-    if (props.language) {
-      i18n.changeLanguage(props.language);
-    }
-  }, [props.language]);
-
-  return (
-    <I18nextProvider i18n={i18n}>
-      <TreasureProviderInner {...props} />
-    </I18nextProvider>
   );
 };

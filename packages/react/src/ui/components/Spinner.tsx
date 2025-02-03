@@ -1,8 +1,8 @@
-import { cn } from "../../utils/classnames";
+import clsx from "clsx";
 
 export const Spinner = ({ className }: { className?: string }) => (
   <svg
-    className={cn("tdk-animate-spin", className)}
+    className={clsx("tdk-animate-spin", className)}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"

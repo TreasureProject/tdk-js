@@ -2,4 +2,4 @@
 "@treasure-dev/tdk-core": patch
 ---
 
-Added MagicswapV2Router contract addresses for Base chains
+Added MagicswapV2Router address for Base and Base Sepolia chains

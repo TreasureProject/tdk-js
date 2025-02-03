@@ -3,7 +3,8 @@ import {
   getContractAddress,
   getContractAddresses,
 } from "@treasure-dev/tdk-core";
-import { useTreasure } from "../contexts/treasure";
+
+import { useTreasure } from "../providers/treasure";
 
 export const useContractAddress = ({
   chainId,

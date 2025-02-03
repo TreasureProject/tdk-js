@@ -10,16 +10,15 @@ import {
   isSocialConnectMethod,
   sendEmailVerificationCode,
 } from "@treasure-dev/tdk-core";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useConnect, useConnectModal } from "thirdweb/react";
 import { type Wallet, authenticateWithRedirect } from "thirdweb/wallets";
 
-import { Trans, useTranslation } from "react-i18next";
-import { useTreasure } from "../../contexts/treasure";
-import { getLocaleId } from "../../i18n";
-import { cn } from "../../utils/classnames";
+import { useTreasure } from "../../providers/treasure";
 import { getErrorMessage } from "../../utils/error";
-import { Dialog, DialogContent, DialogTitle } from "../ui/Dialog";
+import { Dialog, DialogContent, DialogTitle } from "../components/Dialog";
+import { useTranslation } from "../hooks/useTranslation";
 import {
   type Options as ConnectMethodSelectionOptions,
   ConnectMethodSelectionView,
@@ -63,7 +62,7 @@ export const ConnectModal = ({
   onConnectError,
   ...methodSelectionProps
 }: Props) => {
-  const { t } = useTranslation();
+  const { t, thirdwebLocale } = useTranslation();
   const {
     appName,
     appIconUri = DEFAULT_TDK_APP_ICON_URI,
@@ -188,7 +187,7 @@ export const ConnectModal = ({
       try {
         const web3Wallet = await connectWeb3Wallet({
           client,
-          locale: getLocaleId(),
+          locale: thirdwebLocale,
           wallets: SUPPORTED_WEB3_WALLETS,
           appMetadata: {
             name: appName,
@@ -350,7 +349,7 @@ export const ConnectModal = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
+        className={clsx(
           size === "lg" && "tdk-max-w-lg",
           size === "xl" && "tdk-max-w-xl",
           size === "2xl" && "tdk-max-w-2xl",
@@ -360,16 +359,11 @@ export const ConnectModal = ({
       >
         <VisuallyHidden.Root>
           <DialogTitle>
-            {isMigrating ? (
-              t("connect.migrate.header")
-            ) : email ? (
-              t("connect.verify.header")
-            ) : (
-              <Trans i18nKey="connect.header" values={{ appName }}>
-                <span>Connect to</span>
-                <span>{appName}</span>
-              </Trans>
-            )}
+            {isMigrating
+              ? t.connect.migrate.header
+              : email
+                ? t.connect.verify.header
+                : t.connect.header({ appName })}
           </DialogTitle>
         </VisuallyHidden.Root>
         <div className="tdk-rounded-lg tdk-overflow-hidden tdk-bg-night tdk-border tdk-border-night-600">

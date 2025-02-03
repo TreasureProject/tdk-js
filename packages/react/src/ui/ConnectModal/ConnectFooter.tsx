@@ -1,7 +1,8 @@
-import { Trans } from "react-i18next";
-import { ThirdwebTextIcon } from "../../icons/ThirdwebTextIcon";
+import { useTranslation } from "../hooks/useTranslation";
+import { ThirdwebTextIcon } from "../icons/ThirdwebTextIcon";
 
 export const ConnectFooter = () => {
+  const { t } = useTranslation();
   return (
     <div className="tdk-flex tdk-items-center tdk-justify-center">
       <a
@@ -10,12 +11,7 @@ export const ConnectFooter = () => {
         rel="noopener noreferrer"
         className="tdk-inline-flex tdk-items-center tdk-gap-1 tdk-text-silver tdk-font-semibold hover:tdk-text-white tdk-transition-colors tdk-text-xs tdk-no-underline hover:tdk-no-underline"
       >
-        <Trans
-          i18nKey="connect.footer"
-          components={{
-            ThirdwebTextIcon: <ThirdwebTextIcon height={13} />,
-          }}
-        />
+        {t.connect.footer({ thirdweb: <ThirdwebTextIcon height={13} /> })}
       </a>
     </div>
   );
