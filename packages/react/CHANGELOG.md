@@ -1,5 +1,25 @@
 # @treasure-dev/tdk-react
 
+## 3.11.0
+
+### Minor Changes
+
+- 010c5f4: Removed `tailwind-merge` dependency for ~7Kb savings in gzipped package
+- 6b155cb: Removed Telegram connect method
+- 59ab83b: Removed `react-i18n` dependency for ~20Kb savings in gzipped package
+
+### Patch Changes
+
+- 669d3eb: Support for launcher passing wallet
+- Updated dependencies [6b155cb]
+- Updated dependencies [f9d4f9e]
+- Updated dependencies [0b6a789]
+- Updated dependencies [669d3eb]
+- Updated dependencies [5f751cb]
+- Updated dependencies [40ee34c]
+  - @treasure-dev/tdk-core@3.11.0
+  - @treasure-dev/launcher@1.0.2
+
 ## 3.10.0
 
 ### Patch Changes
