@@ -1,7 +1,9 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "examples/*"
+  - apps/**
+  - packages/**
+  - examples/**
+  - '!examples/connect-electron/out/app/dist/**'
+  - '!examples/connect-electron/out/build/**'
 
 catalog:
   "@aws-sdk/client-kms": ^3.734.0
@@ -76,3 +78,4 @@ catalog:
   viem: 2.22.17 # matches Thirdweb version to satisfy getAwsKmsAccount types
   vite: ^6.0.11
   vitest: ^3.0.4
+  "vite-tsconfig-paths": ^5.1.4

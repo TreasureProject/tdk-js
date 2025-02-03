@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 
-import { useActiveWallet } from "thirdweb/dist/types/exports/react";
+import { useActiveWallet } from "thirdweb/react";
 import { AccountModal } from "../AccountModal";
 
 type Props = {

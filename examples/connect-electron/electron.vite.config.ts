@@ -1,18 +1,12 @@
 import { resolve } from "node:path";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import react from "@vitejs/plugin-react";
-import { defineConfig, externalizeDepsPlugin } from "electron-vite";
-
-const externalizedDependenciesExcludeList = ["electron-app-package-json"];
+import { defineConfig } from "electron-vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   main: {
-    plugins: [
-      externalizeDepsPlugin({
-        exclude: externalizedDependenciesExcludeList,
-      }),
-      nodeResolve(),
-    ],
+    plugins: [tsconfigPaths(), nodeResolve()],
     optimizeDeps: {
       force: true, // TODO: vite cache is not working with monorepo deps updates
     },
@@ -22,15 +16,12 @@ export default defineConfig({
         output: {
           format: "cjs",
         },
+        preserveSymlinks: true,
       },
     },
   },
   preload: {
-    plugins: [
-      externalizeDepsPlugin({
-        exclude: externalizedDependenciesExcludeList,
-      }),
-    ],
+    plugins: [tsconfigPaths()],
     optimizeDeps: {
       force: true, // TODO: vite cache is not working with monorepo deps updates
     },
@@ -40,6 +31,7 @@ export default defineConfig({
         input: {
           index: resolve(__dirname, "src/preload/index.ts"),
         },
+        preserveSymlinks: true,
         output: {
           format: "cjs",
         },
