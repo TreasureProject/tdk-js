@@ -78,7 +78,7 @@ ipcMain.on("get-auth-token", (event, _arg) => {
 
 ```ts Main.tsx
 const getAuthToken = () =>
-  window.electron.ipcRenderer.sendSync("get-auth-token");
+  window.electron?.ipcRenderer.sendSync("get-auth-token");
 
 <TreasureProvider
  ...

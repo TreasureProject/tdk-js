@@ -3,6 +3,10 @@
   "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*"],
   "compilerOptions": {
     "composite": true,
-    "types": ["electron-vite/node"]
+    "baseUrl": ".",
+    "paths": {
+      "@electron-app-package-json": ["./out/app/package.json"]
+    },
+    "types": ["electron-vite/node", "vite/client.d.ts"]
   }
 }

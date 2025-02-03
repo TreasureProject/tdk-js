@@ -190,8 +190,13 @@ export const TreasureProvider = ({
     [tdk.user.me, onConnect],
   );
 
-  const { isUsingTreasureLauncher, openLauncherAccountModal } = useLauncher({
+  const {
+    isUsingTreasureLauncher,
+    isUsingLauncherAuthToken,
+    openLauncherAccountModal,
+  } = useLauncher({
     getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
+    getWalletComponentsOverride: launcherOptions?.getWalletComponentsOverride,
     setRootElement: setEl,
     onAuthTokenUpdated,
   });
@@ -202,10 +207,15 @@ export const TreasureProvider = ({
         name: EVT_TREASURECONNECT_DISCONNECTED,
         properties: {
           isUsingTreasureLauncher,
+          isUsingLauncherAuthToken,
         },
       })
         .then((eventId) => {
-          console.debug(`[TreasureProvider] tracked logout event: ${eventId}`);
+          if (eventId) {
+            console.debug(
+              `[TreasureProvider] tracked logout event: ${eventId}`,
+            );
+          }
         })
         .catch((err) => {
           console.error(`[TreasureProvider] error tracking logout: ${err}`);
@@ -222,7 +232,7 @@ export const TreasureProvider = ({
     chainId?: number,
     skipCurrentUser = false,
   ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
-    if (isUsingTreasureLauncher) {
+    if (isUsingLauncherAuthToken) {
       console.debug(
         "[TreasureProvider] Skipping login because launcher is being used",
       );
@@ -319,10 +329,13 @@ export const TreasureProvider = ({
         name: EVT_TREASURECONNECT_CONNECTED,
         properties: {
           isUsingTreasureLauncher,
+          isUsingLauncherAuthToken,
         },
       })
         .then((eventId) => {
-          console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+          if (eventId) {
+            console.debug(`[TreasureProvider] tracked login event: ${eventId}`);
+          }
         })
         .catch((err) => {
           console.error(`[TreasureProvider] error tracking login: ${err}`);
@@ -384,6 +397,7 @@ export const TreasureProvider = ({
               userAddress: undefined,
             }),
         isUsingTreasureLauncher,
+        isUsingLauncherAuthToken,
         logIn,
         logOut,
         updateUser: (partialUser) =>

@@ -29,14 +29,17 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsup",
+    "test": "vitest run",
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@treasure-dev/tdk-core": "*"
+    "@treasure-dev/tdk-core": "workspace:*",
+    "thirdweb": "catalog:"
   },
   "devDependencies": {
     "tsup": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=14.0.0"

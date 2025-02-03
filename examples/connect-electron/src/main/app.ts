@@ -1,4 +1,5 @@
 import http from "node:http";
+import path from "node:path";
 import type { BrowserWindow } from "electron";
 import express from "express";
 
@@ -32,6 +33,10 @@ export default class RedirectApp {
       );
       next();
     });
+
+    this.app.use("/auth", [
+      express.static(path.resolve(__dirname, "../renderer/auth/")),
+    ]);
 
     this.app.post("/auth", (req, res) => {
       const { searchParams }: { searchParams: string } = req.body;
