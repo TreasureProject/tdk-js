@@ -230,7 +230,11 @@ export const TreasureProvider = ({
         },
       })
         .then((eventId) => {
-          console.debug(`[TreasureProvider] tracked logout event: ${eventId}`);
+          if (eventId) {
+            console.debug(
+              `[TreasureProvider] tracked logout event: ${eventId}`,
+            );
+          }
         })
         .catch((err) => {
           console.error(`[TreasureProvider] error tracking logout: ${err}`);
