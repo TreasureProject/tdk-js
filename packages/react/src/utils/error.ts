@@ -1,5 +1,21 @@
 export const getErrorMessage = (err: unknown) => {
-  const message = err instanceof Error ? err.message : String(err);
+  let message = err instanceof Error ? err.message : String(err);
+
+  // Handle wallet connect errors in the format
+  // {code: 5000, message: '{"code":4001,"message":"User rejected the request."}'}
+  if (err instanceof Object) {
+    const outerMessage = (err as { message: string }).message;
+    if (outerMessage) {
+      try {
+        const parsed = JSON.parse(outerMessage);
+        if (parsed.message) {
+          message = parsed.message;
+        }
+      } catch (_err) {
+        message = outerMessage;
+      }
+    }
+  }
 
   // Skip displaying certain error messages
   if (

@@ -16,12 +16,29 @@ function initThirdwebBundleHeader() {
       urls: ["https://*.thirdweb.com/*"],
     },
     (details, callback) => {
-      // TODO: should be updated to actual bundle id once signing is done
-      details.requestHeaders["x-bundle-id"] =
-        "lol.treasure.tdk-examples-connect-electron";
+      if (details.url.includes("thirdweb.com")) {
+        details.requestHeaders["x-bundle-id"] =
+          "lol.treasure.tdk-examples-connect-electron";
+      }
       callback({ cancel: false, requestHeaders: details.requestHeaders });
     },
   );
+}
+
+function interceptWalletConnect() {
+  session.defaultSession.webRequest.onBeforeRequest((req, callback) => {
+    if (req.url.includes("walletconnect.org")) {
+      const shouldRedirect = req.url.includes("file://");
+      if (shouldRedirect) {
+        callback({
+          cancel: false,
+          redirectURL: req.url.replace("file://", "https://app.treasure.lol"),
+        });
+        return;
+      }
+    }
+    callback({ cancel: false });
+  });
 }
 
 function createWindow(): void {
@@ -73,6 +90,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on("ping", () => console.log("pong"));
 
+  interceptWalletConnect();
   initThirdwebBundleHeader();
 
   createWindow();
