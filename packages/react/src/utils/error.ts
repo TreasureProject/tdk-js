@@ -14,6 +14,8 @@ export const getErrorMessage = (err: unknown) => {
       } catch (_err) {
         message = outerMessage;
       }
+    } else {
+      message = JSON.stringify(err);
     }
   }
 
