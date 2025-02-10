@@ -25,22 +25,6 @@ function initThirdwebBundleHeader() {
   );
 }
 
-function interceptWalletConnect() {
-  session.defaultSession.webRequest.onBeforeRequest((req, callback) => {
-    if (req.url.includes("walletconnect.org")) {
-      const shouldRedirect = req.url.includes("file://");
-      if (shouldRedirect) {
-        callback({
-          cancel: false,
-          redirectURL: req.url.replace("file://", "https://app.treasure.lol"),
-        });
-        return;
-      }
-    }
-    callback({ cancel: false });
-  });
-}
-
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -90,7 +74,6 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on("ping", () => console.log("pong"));
 
-  interceptWalletConnect();
   initThirdwebBundleHeader();
 
   createWindow();
