@@ -21,7 +21,7 @@ describe("error utils", () => {
         message: '{"code":4001,"message":"test"}',
       }),
     ).toBe("test");
-    expect(getErrorMessage({})).toBe("[object Object]");
+    expect(getErrorMessage({})).toBe("{}");
     expect(getErrorMessage(7)).toBe("7");
   });
 });
