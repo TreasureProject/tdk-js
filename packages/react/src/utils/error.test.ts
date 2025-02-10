@@ -14,5 +14,14 @@ describe("error utils", () => {
     expect(getErrorMessage(new Error("test"))).toBe("test");
     expect(getErrorMessage("test")).toBe("test");
     expect(getErrorMessage(new MockCustomError("test"))).toBe("test");
+    expect(getErrorMessage({ message: "test" })).toBe("test");
+    expect(
+      getErrorMessage({
+        code: 5000,
+        message: '{"code":4001,"message":"test"}',
+      }),
+    ).toBe("test");
+    expect(getErrorMessage({})).toBe("[object Object]");
+    expect(getErrorMessage(7)).toBe("7");
   });
 });

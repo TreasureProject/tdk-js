@@ -16,9 +16,10 @@ function initThirdwebBundleHeader() {
       urls: ["https://*.thirdweb.com/*"],
     },
     (details, callback) => {
-      // TODO: should be updated to actual bundle id once signing is done
-      details.requestHeaders["x-bundle-id"] =
-        "lol.treasure.tdk-examples-connect-electron";
+      if (details.url.includes("thirdweb.com")) {
+        details.requestHeaders["x-bundle-id"] =
+          "lol.treasure.tdk-examples-connect-electron";
+      }
       callback({ cancel: false, requestHeaders: details.requestHeaders });
     },
   );
