@@ -1,5 +1,5 @@
 import type { SessionOptions } from "@treasure-dev/tdk-core";
-import { isUsingTreasureLauncher } from "./utils";
+import { getTreasureLauncherPort, isUsingTreasureLauncher } from "./utils";
 
 export function startUserSessionViaLauncher({
   backendWallet,
@@ -16,7 +16,9 @@ export function startUserSessionViaLauncher({
     );
   }
 
-  return fetch("http://localhost:16001/tdk-start-session", {
+  const port = getTreasureLauncherPort();
+
+  return fetch(`http://localhost:${port}/tdk-start-session`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

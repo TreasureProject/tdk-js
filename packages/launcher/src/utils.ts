@@ -71,3 +71,31 @@ export function getTreasureLauncherWalletComponents():
     authCookie,
   };
 }
+
+export function getTreasureLauncherPort(): number {
+  let args: string[] | undefined;
+
+  if (typeof process !== "undefined" && Array.isArray(process.argv)) {
+    args = process.argv;
+  } else if (
+    typeof window !== "undefined" &&
+    window.process &&
+    Array.isArray(window.process.argv)
+  ) {
+    args = window.process.argv;
+  } else {
+    return 16001;
+  }
+
+  let serverPort: string | undefined = args.find((arg) =>
+    arg.startsWith("--server-port="),
+  );
+  if (serverPort) {
+    serverPort = serverPort.split("=")[1];
+  }
+
+  if (!serverPort) {
+    return 16001;
+  }
+  return Number.parseInt(serverPort, 10);
+}
