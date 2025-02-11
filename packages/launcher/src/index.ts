@@ -4,4 +4,4 @@ export {
   getTreasureLauncherWalletComponents,
 } from "./utils";
 export { startUserSessionViaLauncher } from "./session";
-export type { WalletComponents } from "./types";
+export type { WalletComponents, LauncherOptions } from "./types";

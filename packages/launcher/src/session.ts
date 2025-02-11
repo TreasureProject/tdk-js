@@ -1,13 +1,13 @@
 import type { SessionOptions } from "@treasure-dev/tdk-core";
 import { getTreasureLauncherPort, isUsingTreasureLauncher } from "./utils";
 
-export function startUserSessionViaLauncher({
-  backendWallet,
-  approvedTargets,
-  nativeTokenLimitPerTransaction,
-  sessionDurationSec,
-  sessionMinDurationLeftSec,
-}: SessionOptions): Promise<void> {
+export async function startUserSessionViaLauncher({
+  sessionOptions,
+  getPort,
+}: {
+  sessionOptions: SessionOptions;
+  getPort?: () => number;
+}): Promise<void> {
   if (!isUsingTreasureLauncher()) {
     return Promise.reject(
       new Error(
@@ -16,9 +16,17 @@ export function startUserSessionViaLauncher({
     );
   }
 
-  const port = getTreasureLauncherPort();
+  const {
+    backendWallet,
+    approvedTargets,
+    nativeTokenLimitPerTransaction,
+    sessionDurationSec,
+    sessionMinDurationLeftSec,
+  } = sessionOptions;
 
-  return fetch(`http://localhost:${port}/tdk-start-session`, {
+  const port = getPort?.() ?? getTreasureLauncherPort();
+
+  const response = await fetch(`http://localhost:${port}/tdk-start-session`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,9 +38,8 @@ export function startUserSessionViaLauncher({
       sessionDurationSec,
       sessionMinDurationLeftSec,
     }),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to start session");
-    }
   });
+  if (!response.ok) {
+    throw new Error("Failed to start session");
+  }
 }

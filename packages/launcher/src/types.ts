@@ -3,3 +3,9 @@ export type WalletComponents = {
   authProvider: string;
   authCookie: string;
 };
+
+export type LauncherOptions = {
+  getAuthTokenOverride?: () => string | undefined;
+  getWalletComponentsOverride?: () => WalletComponents | undefined;
+  getPort?: () => number;
+};
