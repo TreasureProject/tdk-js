@@ -14,6 +14,7 @@ const getAuthToken = () =>
   window.electron?.ipcRenderer.sendSync("get-auth-token");
 const getWalletComponents = () =>
   window.electron?.ipcRenderer.sendSync("get-wallet-components");
+const getPort = () => window.electron?.ipcRenderer.sendSync("get-port");
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -39,6 +40,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         launcherOptions={{
           getAuthTokenOverride: getAuthToken,
           getWalletComponentsOverride: getWalletComponents,
+          getPortOverride: getPort,
         }}
       >
         <App />

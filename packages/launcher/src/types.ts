@@ -7,5 +7,5 @@ export type WalletComponents = {
 export type LauncherOptions = {
   getAuthTokenOverride?: () => string | undefined;
   getWalletComponentsOverride?: () => WalletComponents | undefined;
-  getPort?: () => number;
+  getPortOverride?: () => number;
 };

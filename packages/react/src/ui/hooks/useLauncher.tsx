@@ -72,10 +72,10 @@ export const useLauncher = ({
     (sessionOptions: SessionOptions) => {
       return startUserSessionViaLauncher({
         sessionOptions,
-        getPort: launcherOptions?.getPort,
+        getPort: launcherOptions?.getPortOverride,
       });
     },
-    [launcherOptions?.getPort],
+    [launcherOptions?.getPortOverride],
   );
 
   useEffect(() => {

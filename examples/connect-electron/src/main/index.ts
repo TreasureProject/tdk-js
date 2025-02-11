@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
   getTreasureLauncherAuthToken,
+  getTreasureLauncherPort,
   getTreasureLauncherWalletComponents,
 } from "@treasure-dev/launcher";
 import { BrowserWindow, app, ipcMain, session, shell } from "electron";
@@ -92,6 +93,9 @@ ipcMain.on("get-auth-token", (event, _arg) => {
 });
 ipcMain.on("get-wallet-components", (event, _arg) => {
   event.returnValue = getTreasureLauncherWalletComponents();
+});
+ipcMain.on("get-port", (event, _arg) => {
+  event.returnValue = getTreasureLauncherPort();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
