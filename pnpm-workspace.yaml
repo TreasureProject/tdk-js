@@ -6,8 +6,8 @@ packages:
   - '!examples/connect-electron/out/build/**'
 
 catalog:
-  "@aws-sdk/client-kms": ^3.734.0
-  "@aws-sdk/client-secrets-manager": ^3.734.0
+  "@aws-sdk/client-kms": ^3.744.0
+  "@aws-sdk/client-secrets-manager": ^3.744.0
   "@biomejs/biome": ^1.9.4
   "@biomejs/cli-linux-x64": ^1.9.4
   "@changesets/cli": ^2.27.12
@@ -19,25 +19,25 @@ catalog:
   "@fastify/swagger": ^9.4.2
   "@fastify/swagger-ui": ^5.2.1
   "@fastify/type-provider-typebox": ^5.1.0
-  "@prisma/client": ^6.3.0
-  "@radix-ui/react-dialog": ^1.1.5
+  "@prisma/client": ^6.3.1
+  "@radix-ui/react-dialog": ^1.1.6
   "@radix-ui/react-visually-hidden": ^1.1.1
   "@rollup/plugin-node-resolve": ^16.0.0
   "@rollup/rollup-linux-x64-gnu": ^4.24.0
   "@sentry/node": ^8.52.0
-  "@sinclair/typebox": ^0.34.14
-  "@storybook/addon-essentials": ^8.5.3
-  "@storybook/react": ^8.5.3
-  "@storybook/react-vite": ^8.5.3
+  "@sinclair/typebox": ^0.34.21
+  "@storybook/addon-essentials": ^8.5.5
+  "@storybook/react": ^8.5.5
+  "@storybook/react-vite": ^8.5.5
   "@sushiswap/tines": ^1.0.11
   "@thirdweb-dev/engine": ^0.0.17
   "@types/jsonwebtoken": ^9.0.8
-  "@types/node": ^22.12.0
+  "@types/node": ^22.13.3
   "@types/react": ^18.3.13
   "@types/react-dom": ^18.3.1
   "@types/uuid": "^10.0.0"
   "@vitejs/plugin-react": ^4.3.4
-  "@wagmi/core": ^2.16.3
+  "@wagmi/core": ^2.16.4
   abitype: ^1.0.8
   autoprefixer: ^10.4.20
   "aws-kms-signer": ^0.5.3
@@ -56,26 +56,26 @@ catalog:
   jsonwebtoken: ^9.0.2
   "jwks-rsa": ^3.1.0
   "jwt-decode": ^4.0.0
-  knip: ^5.43.6
+  knip: ^5.44.1
   lint-staged: ^15.4.3
   ox: 0.6.9 # matches Thirdweb version to satisfy getAwsKmsAccount types
   pino: ^9.6.0
   pino-pretty: ^13.0.0
-  postcss: ^8.5.1
-  prisma: ^6.3.0
+  postcss: ^8.5.2
+  prisma: ^6.3.1
   react: ^18.2.0
   "react-dom": ^18.2.0
-  storybook: ^8.5.3
+  storybook: ^8.5.5
   tailwindcss: ^3.4.17
   "tailwind-config-viewer": ^2.0.4
   "tailwindcss-animate": ^1.0.7
-  thirdweb: 5.87.2 # check ox and viem versions if upgrading
+  thirdweb: 5.88.4 # check ox and viem versions if upgrading
   tsup: 8.3.0 # --watch mode broken with Fastify in later versions
   tsx: ^4.19.2
-  turbo: ^2.4.0
+  turbo: ^2.4.2
   typescript: ^5.7.3
   uuid: ^11.0.5
   viem: 2.22.17 # matches Thirdweb version to satisfy getAwsKmsAccount types
-  vite: ^6.0.11
+  vite: ^6.1.0
   vitest: ^3.0.4
   "vite-tsconfig-paths": ^5.1.4
