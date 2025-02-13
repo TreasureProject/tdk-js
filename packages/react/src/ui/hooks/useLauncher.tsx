@@ -1,7 +1,9 @@
 import {
+  type LauncherOptions,
   type WalletComponents,
   getTreasureLauncherAuthToken,
   getTreasureLauncherWalletComponents,
+  startUserSessionViaLauncher,
 } from "@treasure-dev/launcher";
 import {
   type ReactNode,
@@ -11,19 +13,18 @@ import {
   useState,
 } from "react";
 
+import type { SessionOptions } from "@treasure-dev/tdk-core";
 import { useActiveWallet } from "thirdweb/react";
 import { AccountModal } from "../AccountModal";
 
 type Props = {
-  getAuthTokenOverride?: () => string | undefined;
-  getWalletComponentsOverride?: () => WalletComponents | undefined;
+  launcherOptions?: LauncherOptions;
   setRootElement: (el: ReactNode) => void;
   onAuthTokenUpdated: (authToken: string) => void;
 };
 
 export const useLauncher = ({
-  getAuthTokenOverride,
-  getWalletComponentsOverride,
+  launcherOptions,
   setRootElement,
   onAuthTokenUpdated,
 }: Props) => {
@@ -67,11 +68,23 @@ export const useLauncher = ({
     [activeWallet],
   );
 
+  const startUserSession = useCallback(
+    (sessionOptions: SessionOptions) => {
+      return startUserSessionViaLauncher({
+        sessionOptions,
+        getPort: launcherOptions?.getPortOverride,
+      });
+    },
+    [launcherOptions?.getPortOverride],
+  );
+
   useEffect(() => {
     const authToken =
-      getAuthTokenOverride?.() ?? getTreasureLauncherAuthToken();
+      launcherOptions?.getAuthTokenOverride?.() ??
+      getTreasureLauncherAuthToken();
     const walletComponents: WalletComponents | undefined =
-      getWalletComponentsOverride?.() ?? getTreasureLauncherWalletComponents();
+      launcherOptions?.getWalletComponentsOverride?.() ??
+      getTreasureLauncherWalletComponents();
 
     if (walletComponents) {
       onWalletComponentsUpdated(
@@ -90,8 +103,8 @@ export const useLauncher = ({
     }
     setIsUsingTreasureLauncher(false);
   }, [
-    getAuthTokenOverride,
-    getWalletComponentsOverride,
+    launcherOptions?.getAuthTokenOverride,
+    launcherOptions?.getWalletComponentsOverride,
     onAuthTokenUpdated,
     onWalletComponentsUpdated,
   ]);
@@ -100,5 +113,6 @@ export const useLauncher = ({
     isUsingTreasureLauncher,
     isUsingLauncherAuthToken,
     openLauncherAccountModal,
+    startUserSession,
   };
 };

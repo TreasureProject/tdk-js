@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   getTreasureLauncherAuthToken,
+  getTreasureLauncherPort,
   getTreasureLauncherWalletComponents,
   isUsingTreasureLauncher,
 } from "./utils";
@@ -119,5 +120,42 @@ describe("getTreasureLauncherWalletComponents", () => {
       authProvider: "providerX",
       authCookie: "cookieABC",
     });
+  });
+});
+
+describe("getTreasureLauncherPort", () => {
+  let originalArgv: string[];
+
+  beforeEach(() => {
+    originalArgv = process.argv;
+  });
+
+  afterEach(() => {
+    process.argv = originalArgv;
+  });
+
+  it("returns 16001 when no arguments are provided", () => {
+    process.argv = ["node", "script.js"];
+    expect(getTreasureLauncherPort()).toBe(16001);
+  });
+
+  it("returns 16001 when --server-port is missing", () => {
+    process.argv = ["node", "script.js", "--some-other-arg=value"];
+    expect(getTreasureLauncherPort()).toBe(16001);
+  });
+
+  it("returns the correct port when provided", () => {
+    process.argv = ["node", "script.js", "--server-port=1234"];
+    expect(getTreasureLauncherPort()).toBe(1234);
+  });
+
+  it("ignores unrelated arguments", () => {
+    process.argv = [
+      "node",
+      "script.js",
+      "--server-port=1234",
+      "--other-flag=true",
+    ];
+    expect(getTreasureLauncherPort()).toBe(1234);
   });
 });

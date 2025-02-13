@@ -1,4 +1,3 @@
-import { startUserSessionViaLauncher } from "@treasure-dev/launcher";
 import {
   AnalyticsManager,
   DEFAULT_TDK_API_BASE_URI,
@@ -194,9 +193,9 @@ export const TreasureProvider = ({
     isUsingTreasureLauncher,
     isUsingLauncherAuthToken,
     openLauncherAccountModal,
+    startUserSession: startUserSessionViaLauncher,
   } = useLauncher({
-    getAuthTokenOverride: launcherOptions?.getAuthTokenOverride,
-    getWalletComponentsOverride: launcherOptions?.getWalletComponentsOverride,
+    launcherOptions,
     setRootElement: setEl,
     onAuthTokenUpdated,
   });
