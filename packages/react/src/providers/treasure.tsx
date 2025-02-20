@@ -175,7 +175,7 @@ export const TreasureProvider = ({
       const properties = event.properties ?? {};
       properties.authentication = {
         method: authMethod ?? null,
-        email: event.email ?? null,
+        email: event.email ?? user?.email ?? null,
         external_wallet_addresses: event.externalWalletAddresses ?? [],
       };
 
@@ -186,7 +186,7 @@ export const TreasureProvider = ({
       };
       return AnalyticsManager.instance.trackCustomEvent(trackableEvent);
     },
-    [userAddress],
+    [userAddress, user],
   );
 
   const onAuthTokenUpdated = useCallback(
