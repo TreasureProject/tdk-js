@@ -1,5 +1,5 @@
 ---
-"@treasure-dev/tdk-react": patch
+"@treasure-dev/tdk-react": minor
 ---
 
 Analytics tracks auth method
