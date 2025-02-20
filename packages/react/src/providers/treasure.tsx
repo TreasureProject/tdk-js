@@ -326,6 +326,7 @@ export const TreasureProvider = ({
     if (analyticsOptions?.automaticTrackLogin !== false) {
       trackCustomEvent({
         name: EVT_TREASURECONNECT_CONNECTED,
+        address: nextUser.address,
         properties: {
           isUsingTreasureLauncher,
           isUsingLauncherAuthToken,
