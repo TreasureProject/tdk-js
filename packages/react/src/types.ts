@@ -22,6 +22,8 @@ export type AnalyticsEvent = {
   name: string;
   userId?: string;
   address?: string;
+  email?: string | null;
+  externalWalletAddresses?: string[];
   properties?: { [key: string]: PropertyValue | PropertyValue[] };
 };
 
@@ -68,6 +70,7 @@ export type ContextValues = {
   logIn: (
     wallet: Wallet,
     chainId?: number,
+    authMethod?: string,
     skipCurrentUser?: boolean,
   ) => Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }>;
   logOut: () => void;

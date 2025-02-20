@@ -44,8 +44,11 @@ import {
   EVT_TREASURECONNECT_DISCONNECTED,
 } from "../utils/defaultAnalytics";
 import {
+  clearStoredAuthMethod,
   clearStoredAuthToken,
+  getStoredAuthMethod,
   getStoredAuthToken,
+  setStoredAuthMethod,
   setStoredAuthToken,
 } from "../utils/store";
 
@@ -153,6 +156,8 @@ export const TreasureProvider = ({
         event.userId = "";
       }
 
+      const authMethod = getStoredAuthMethod();
+
       // After the previous check one must be non-null so this works
       const playerId = {
         smart_account: address,
@@ -166,6 +171,13 @@ export const TreasureProvider = ({
             smart_account: string;
             user_id?: string;
           };
+
+      const properties = event.properties ?? {};
+      properties.authentication = {
+        method: authMethod ?? null,
+        email: event.email ?? null,
+        external_wallet_addresses: event.externalWalletAddresses ?? [],
+      };
 
       const trackableEvent: TrackableEvent = {
         ...playerId,
@@ -223,12 +235,14 @@ export const TreasureProvider = ({
     setUser(undefined);
     setAuthToken(undefined);
     clearStoredAuthToken();
+    clearStoredAuthMethod();
     activeWallet?.disconnect();
   };
 
   const logIn = async (
     wallet: Wallet,
     chainId?: number,
+    authMethod?: string,
     skipCurrentUser = false,
   ): Promise<{ user: User | undefined; legacyProfiles: LegacyProfile[] }> => {
     if (isUsingLauncherAuthToken) {
@@ -318,6 +332,10 @@ export const TreasureProvider = ({
       }
     }
 
+    if (authMethod) {
+      setStoredAuthMethod(authMethod);
+    }
+
     // Update user state
     setUser(nextUser);
     setAuthToken(nextAuthToken);
@@ -326,6 +344,8 @@ export const TreasureProvider = ({
     if (analyticsOptions?.automaticTrackLogin !== false) {
       trackCustomEvent({
         name: EVT_TREASURECONNECT_CONNECTED,
+        email: nextUser.email,
+        externalWalletAddresses: nextUser.externalWalletAddresses,
         address: nextUser.address,
         properties: {
           isUsingTreasureLauncher,
@@ -352,7 +372,7 @@ export const TreasureProvider = ({
   const switchChain = async (chainId: number) => {
     if (activeWallet) {
       await switchActiveWalletChain(defineChain(chainId));
-      await logIn(activeWallet, chainId, true);
+      await logIn(activeWallet, chainId, undefined, true);
     }
   };
 

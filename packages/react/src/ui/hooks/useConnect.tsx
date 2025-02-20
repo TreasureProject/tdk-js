@@ -110,7 +110,7 @@ export const useConnect = (options?: Options) => {
       networkSelector: {
         onSwitch: (nextChain) => {
           if (activeWallet) {
-            logIn(activeWallet, nextChain.id, true);
+            logIn(activeWallet, nextChain.id, undefined, true);
           }
         },
       },
