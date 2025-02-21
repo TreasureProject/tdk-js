@@ -1,5 +1,19 @@
 # @treasure-dev/tdk-react
 
+## 3.12.0
+
+### Minor Changes
+
+- dedeeac: Analytics tracks auth method
+
+### Patch Changes
+
+- d3a0eb7: Use dynamic port for launcher
+- 64868a0: Improve error message formatting
+- Updated dependencies [d3a0eb7]
+  - @treasure-dev/launcher@1.1.0
+  - @treasure-dev/tdk-core@3.12.0
+
 ## 3.11.0
 
 ### Minor Changes

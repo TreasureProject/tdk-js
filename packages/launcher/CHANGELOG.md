@@ -1,5 +1,15 @@
 # @treasure-dev/launcher
 
+## 1.1.0
+
+### Minor Changes
+
+- d3a0eb7: Use dynamic port for launcher
+
+### Patch Changes
+
+- @treasure-dev/tdk-core@3.12.0
+
 ## 1.0.2
 
 ### Patch Changes
