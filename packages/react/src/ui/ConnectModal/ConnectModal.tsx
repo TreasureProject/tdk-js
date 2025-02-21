@@ -127,7 +127,11 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        const { user, legacyProfiles } = await logIn(wallet);
+        const { user, legacyProfiles } = await logIn(
+          wallet,
+          undefined,
+          "email",
+        );
         if (legacyProfiles.length > 1) {
           // User has a legacy profile migration choice
           setState((curr) => ({ ...curr, isLoading: false, legacyProfiles }));
@@ -149,6 +153,8 @@ export const ConnectModal = ({
   };
 
   const handleConnect = async (method: ConnectMethod, nextEmail?: string) => {
+    let authMethod: string = method;
+
     // Handle connecting with email
     if (method === "email") {
       if (!nextEmail) {
@@ -195,6 +201,7 @@ export const ConnectModal = ({
           },
           size: "compact",
         });
+        authMethod = web3Wallet.id;
         const ecosystemWallet = await connectEcosystemWallet({
           client,
           ecosystemId,
@@ -269,7 +276,11 @@ export const ConnectModal = ({
 
     if (wallet) {
       try {
-        const { user, legacyProfiles } = await logIn(wallet);
+        const { user, legacyProfiles } = await logIn(
+          wallet,
+          undefined,
+          authMethod,
+        );
         if (legacyProfiles.length > 1) {
           // User has a legacy profile migration choice
           setState((curr) => ({ ...curr, isLoading: false, legacyProfiles }));
