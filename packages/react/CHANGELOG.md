@@ -1,5 +1,20 @@
 # @treasure-dev/tdk-react
 
+## 3.13.0
+
+### Minor Changes
+
+- 8941d71: Upgraded to Thirdweb SDK v5.89.1
+
+### Patch Changes
+
+- bb3551b: Added more supported tokens to View Funds dialog
+- Updated dependencies [bb3551b]
+- Updated dependencies [8941d71]
+- Updated dependencies [d2527db]
+  - @treasure-dev/tdk-core@3.13.0
+  - @treasure-dev/launcher@1.1.1
+
 ## 3.12.0
 
 ### Minor Changes
