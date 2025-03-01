@@ -2,14 +2,14 @@ import {
   TDKAPI,
   createTreasureConnectClient,
   generateBackendWalletSignature,
-  getContractAddress,
+  treasureTopaz,
 } from "@treasure-dev/tdk-core";
 import "dotenv/config";
 
 const client = createTreasureConnectClient({
   clientId: process.env.TDK_CLIENT_ID ?? "",
 });
-const chainId = 421614;
+const chainId = treasureTopaz.id;
 
 (async () => {
   const { backendWallet, signature, expirationTime } =
@@ -27,32 +27,29 @@ const chainId = 421614;
 
   const transaction = await tdk.transaction.create(
     {
-      address: getContractAddress(chainId, "MAGIC"),
+      address: "0x99B9ED17bB37768bb1a3Cb6d91B15834EB7c2185",
       abi: [
         {
           inputs: [
             {
               internalType: "address",
-              name: "_to",
+              name: "to",
               type: "address",
             },
             {
               internalType: "uint256",
-              name: "_amount",
+              name: "amount",
               type: "uint256",
             },
           ],
-          name: "mint",
+          name: "mintTo",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
       ] as const,
-      functionName: "mint",
-      args: [
-        backendWallet as `0x${string}`,
-        1000000000000000000000n, // 1,000
-      ],
+      functionName: "mintTo",
+      args: [backendWallet as `0x${string}`, 1000000000000000000n],
     },
     {
       includeAbi: true,
