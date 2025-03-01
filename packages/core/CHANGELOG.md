@@ -1,5 +1,7 @@
 # @treasure-dev/tdk-core
 
+## 3.13.1
+
 ## 3.13.0
 
 ### Minor Changes
