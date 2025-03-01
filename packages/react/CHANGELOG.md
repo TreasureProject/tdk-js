@@ -1,5 +1,13 @@
 # @treasure-dev/tdk-react
 
+## 3.13.1
+
+### Patch Changes
+
+- fe2654b: Updated React peer dependency to v19+
+  - @treasure-dev/tdk-core@3.13.1
+  - @treasure-dev/launcher@1.1.2
+
 ## 3.13.0
 
 ### Minor Changes

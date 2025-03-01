@@ -1,6 +1,6 @@
 {
   "name": "@treasure-dev/launcher",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Treasure Launcher utilities for the Treasure ecosystem",
   "keywords": [
     "treasure"
