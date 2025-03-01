@@ -1,5 +1,14 @@
 # @treasure-dev/launcher
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [bb3551b]
+- Updated dependencies [8941d71]
+- Updated dependencies [d2527db]
+  - @treasure-dev/tdk-core@3.13.0
+
 ## 1.1.0
 
 ### Minor Changes

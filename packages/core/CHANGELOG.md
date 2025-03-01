@@ -1,5 +1,16 @@
 # @treasure-dev/tdk-core
 
+## 3.13.0
+
+### Minor Changes
+
+- 8941d71: Upgraded to Thirdweb SDK v5.89.1
+
+### Patch Changes
+
+- bb3551b: Added more token contract addresses
+- d2527db: Enabled backend wallet requests for ZKsync chains
+
 ## 3.12.0
 
 ## 3.11.0
