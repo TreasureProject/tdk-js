@@ -120,7 +120,9 @@ export const CONTRACT_ADDRESSES: Record<
   [arbitrum.id]: {
     // Tokens
     MAGIC: "0x539bde0d7dbd336b79148aa742883198bbf60342",
+    SMOL: "0x9e64d3b9e8ec387a9a58ced80b71ed815f8d82b5",
     VEE: "0x0caadd427a6feb5b5fc1137eb05aa7ddd9c08ce9",
+    USDC: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
     // Bridgeworld
     Middleman: "0x3ea9ceaebdeb702fcbc576710084c464431584c8",
     BalancerCrystals: "0xbfeba04384cecfaf0240b49163ed418f82e43d3a",
@@ -154,6 +156,7 @@ export const CONTRACT_ADDRESSES: Record<
   [mainnet.id]: {
     // Tokens
     MAGIC: "0xb0c7a3ba49c7a6eaba6cd4a96c55a1391070ac9a",
+    USDC: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     CRV: "0xD533a949740bb3306d119CC777fa900bA034cd52",
   },
   [sepolia.id]: {
@@ -161,7 +164,19 @@ export const CONTRACT_ADDRESSES: Record<
     MAGIC: "0x013cb2854daad8203c6686682f5d876e5d3de4a2",
     VEE: "0x3398ddf47c19f20e7d048727ea7989e0a71d8cde",
   },
+  [treasure.id]: {
+    // Tokens
+    ETH: "0x650be505c391d396a1e0b1f2337eae77f064ff7f",
+    WMAGIC: "0x263d8f36bb8d0d9526255e205868c26690b04b88",
+    SMOL: "0xb73e4f558f7d4436d77a18f56e4ee9d01764c641",
+    // Magicswap
+    MagicswapV2Router: "0xd38f4a9baeb461b124c1b462653363aafe0b3405",
+  },
   [treasureTopaz.id]: {
+    // Tokens
+    ETH: "0x6f3c48377311cf258b92a0d2974085934ca3cc70",
+    WMAGIC: "0x095ded714d42cbd5fb2e84a0ffbfb140e38dc9e1",
+    USDC: "0x99b9ed17bb37768bb1a3cb6d91b15834eb7c2185",
     // Magicswap
     MagicswapV2Router: "0xad781ed13b5966e7c620b896b6340abb4dd2ca86",
     // Treasure Misc

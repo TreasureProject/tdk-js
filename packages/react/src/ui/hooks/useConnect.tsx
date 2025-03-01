@@ -1,5 +1,6 @@
 import { getContractAddress } from "@treasure-dev/tdk-core";
 import { defineChain } from "thirdweb";
+import { treasure } from "thirdweb/chains";
 import {
   type UseWalletDetailsModalOptions,
   useActiveWallet,
@@ -125,6 +126,11 @@ export const useConnect = (options?: Options) => {
         },
         {} as Record<number, string>,
       ),
+      payOptions: {
+        prefillBuy: {
+          chain: treasure,
+        },
+      },
       supportedTokens: CONNECT_MODAL_SUPPORTED_TOKENS,
       showTestnetFaucet: true,
       onDisconnect: () => {

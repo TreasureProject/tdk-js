@@ -44,8 +44,12 @@ export type AddressString = `0x${string}`;
 // Contracts
 export type Contract =
   // Tokens
+  | "ETH"
   | "MAGIC"
+  | "WMAGIC"
+  | "SMOL"
   | "VEE"
+  | "USDC"
   | "CRV"
   // Bridgeworld
   | "Middleman"

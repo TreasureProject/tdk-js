@@ -1,5 +1,12 @@
 import { getContractAddresses } from "@treasure-dev/tdk-core";
-import { arbitrum, arbitrumSepolia, mainnet, sepolia } from "thirdweb/chains";
+import {
+  arbitrum,
+  arbitrumSepolia,
+  mainnet,
+  sepolia,
+  treasure,
+  treasureTopaz,
+} from "thirdweb/chains";
 import { type SupportedTokens, darkTheme } from "thirdweb/react";
 
 export const CONNECT_MODAL_THEME = darkTheme({
@@ -26,22 +33,42 @@ export const CONNECT_MODAL_THEME = darkTheme({
   },
 });
 
+const ETH_TOKEN = {
+  symbol: "ETH",
+  name: "Ethereum",
+  icon: "https://images.treasure.lol/tokens/eth.png",
+};
+
 const MAGIC_TOKEN = {
   symbol: "MAGIC",
   name: "MAGIC",
-  icon: "https://images.treasure.lol/tdk/login/magic.png",
+  icon: "https://images.treasure.lol/tokens/magic.png",
+} as const;
+
+const WMAGIC_TOKEN = {
+  symbol: "WMAGIC",
+  name: "Wrapped MAGIC",
+  icon: "https://images.treasure.lol/tokens/wmagic.png",
 } as const;
 
 const VEE_TOKEN = {
   symbol: "VEE",
   name: "VEE",
-  icon: "https://images.treasure.lol/tdk/login/vee.png",
+  icon: "https://images.treasure.lol/tokens/vee.png",
+};
+
+const USDC_TOKEN = {
+  symbol: "USDC",
+  name: "USD Coin",
+  icon: "https://images.treasure.lol/tokens/usdc.png",
 };
 
 const arbitrumContracts = getContractAddresses(arbitrum.id);
 const arbitrumSepoliaContracts = getContractAddresses(arbitrumSepolia.id);
 const mainnetContracts = getContractAddresses(mainnet.id);
 const sepoliaContracts = getContractAddresses(sepolia.id);
+const treasureContracts = getContractAddresses(treasure.id);
+const treasureTopazContracts = getContractAddresses(treasureTopaz.id);
 
 export const CONNECT_MODAL_SUPPORTED_TOKENS: SupportedTokens = {
   [arbitrum.id]: [
@@ -50,8 +77,18 @@ export const CONNECT_MODAL_SUPPORTED_TOKENS: SupportedTokens = {
       address: arbitrumContracts.MAGIC,
     },
     {
+      symbol: "SMOL",
+      name: "SMOL",
+      icon: "https://images.treasure.lol/tokens/smol.png",
+      address: arbitrumContracts.SMOL,
+    },
+    {
       ...VEE_TOKEN,
       address: arbitrumContracts.VEE,
+    },
+    {
+      ...USDC_TOKEN,
+      address: arbitrumContracts.USDC,
     },
   ],
   [arbitrumSepolia.id]: [
@@ -70,6 +107,10 @@ export const CONNECT_MODAL_SUPPORTED_TOKENS: SupportedTokens = {
       address: mainnetContracts.MAGIC,
     },
     {
+      ...USDC_TOKEN,
+      address: mainnetContracts.USDC,
+    },
+    {
       symbol: "CRV",
       name: "Curve DAO Token",
       icon: "https://etherscan.io/token/images/Curvefi_32.png",
@@ -84,6 +125,32 @@ export const CONNECT_MODAL_SUPPORTED_TOKENS: SupportedTokens = {
     {
       ...VEE_TOKEN,
       address: sepoliaContracts.VEE,
+    },
+  ],
+  [treasure.id]: [
+    {
+      ...WMAGIC_TOKEN,
+      address: treasureContracts.WMAGIC,
+    },
+    {
+      ...ETH_TOKEN,
+      address: treasureContracts.ETH,
+    },
+    {
+      symbol: "SMOL",
+      name: "SMOL",
+      icon: "https://images.treasure.lol/tokens/smolv2.png",
+      address: treasureContracts.SMOL,
+    },
+  ],
+  [treasureTopaz.id]: [
+    {
+      ...WMAGIC_TOKEN,
+      address: treasureTopazContracts.WMAGIC,
+    },
+    {
+      ...ETH_TOKEN,
+      address: treasureTopazContracts.ETH,
     },
   ],
 };
