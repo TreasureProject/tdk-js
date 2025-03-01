@@ -196,8 +196,8 @@ catalogs:
       specifier: ^1.0.7
       version: 1.0.7
     thirdweb:
-      specifier: 5.89.1
-      version: 5.89.1
+      specifier: 5.90.0
+      version: 5.90.0
     tsup:
       specifier: 8.3.0
       version: 8.3.0
@@ -344,7 +344,7 @@ importers:
         version: 13.0.0
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
@@ -378,7 +378,7 @@ importers:
         version: 16.4.7
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       tsx:
         specifier: 'catalog:'
@@ -419,7 +419,7 @@ importers:
         version: 4.21.2
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       '@electron-toolkit/tsconfig':
         specifier: 'catalog:'
@@ -477,7 +477,7 @@ importers:
         version: 4.21.2
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
 
   examples/connect-react:
     dependencies:
@@ -495,7 +495,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -538,7 +538,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       '@treasure-dev/tailwind-config':
         specifier: workspace:*
@@ -612,7 +612,7 @@ importers:
         version: 0.6.9(typescript@5.7.3)(zod@3.24.2)
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
@@ -640,7 +640,7 @@ importers:
         version: link:../core
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       tsup:
         specifier: 'catalog:'
@@ -680,7 +680,7 @@ importers:
         version: 18.3.1
       thirdweb:
         specifier: 'catalog:'
-        version: 5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
+        version: 5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2)
     devDependencies:
       '@storybook/addon-essentials':
         specifier: 'catalog:'
@@ -6329,8 +6329,8 @@ packages:
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
 
-  thirdweb@5.89.1:
-    resolution: {integrity: sha512-o2Leh+ySMF5lKjRMcprLUZHLu4YgptRd3To/QqRUPEOtKUK19M9wRuN+F5sD713NAwc47867dj8li0Ij4dstlA==}
+  thirdweb@5.90.0:
+    resolution: {integrity: sha512-fywfjQbV7RFl8oVO+h4fkRfs3PsyEpJb/lqv7AwITeETAvZ22xzf/YpzDDHgHAB4c1qSwhdbusxTPBwA6w16dQ==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -6755,6 +6755,14 @@ packages:
 
   viem@2.22.17:
     resolution: {integrity: sha512-eqNhlPGgRLR29XEVUT2uuaoEyMiaQZEKx63xT1py9OYsE+ZwlVgjnfrqbXad7Flg2iJ0Bs5Hh7o0FfRWUJGHvg==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  viem@2.23.5:
+    resolution: {integrity: sha512-cUfBHdFQHmBlPW0loFXda0uZcoU+uJw3NRYQRwYgkrpH6PgovH8iuVqDn6t1jZk82zny4wQL54c9dCX2W9kLMg==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -14022,7 +14030,7 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  thirdweb@5.89.1(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2):
+  thirdweb@5.90.0(@aws-sdk/client-kms@3.758.0)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@19.0.0(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2):
     dependencies:
       '@coinbase/wallet-sdk': 4.3.0
       '@emotion/react': 11.14.0(@types/react@18.3.18)(react@18.3.1)
@@ -14045,7 +14053,7 @@ snapshots:
       mipd: 0.0.7(typescript@5.7.3)
       ox: 0.6.9(typescript@5.7.3)(zod@3.24.2)
       uqr: 0.1.2
-      viem: 2.22.17(typescript@5.7.3)(zod@3.24.2)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     optionalDependencies:
       '@aws-sdk/client-kms': 3.758.0
       react: 18.3.1
@@ -14077,7 +14085,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  thirdweb@5.89.1(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2):
+  thirdweb@5.90.0(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)(zod@3.24.2):
     dependencies:
       '@coinbase/wallet-sdk': 4.3.0
       '@emotion/react': 11.14.0(@types/react@18.3.18)(react@18.3.1)
@@ -14100,7 +14108,7 @@ snapshots:
       mipd: 0.0.7(typescript@5.7.3)
       ox: 0.6.9(typescript@5.7.3)(zod@3.24.2)
       uqr: 0.1.2
-      viem: 2.22.17(typescript@5.7.3)(zod@3.24.2)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     optionalDependencies:
       react: 18.3.1
       typescript: 5.7.3
@@ -14408,6 +14416,23 @@ snapshots:
     optional: true
 
   viem@2.22.17(typescript@5.7.3)(zod@3.24.2):
+    dependencies:
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
+      '@scure/bip32': 1.6.2
+      '@scure/bip39': 1.5.4
+      abitype: 1.0.8(typescript@5.7.3)(zod@3.24.2)
+      isows: 1.0.6(ws@8.18.0)
+      ox: 0.6.7(typescript@5.7.3)(zod@3.24.2)
+      ws: 8.18.0
+    optionalDependencies:
+      typescript: 5.7.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+
+  viem@2.23.5(typescript@5.7.3)(zod@3.24.2):
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1

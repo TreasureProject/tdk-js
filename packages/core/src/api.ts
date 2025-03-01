@@ -258,8 +258,13 @@ export class TDKAPI {
       options?: SendTransactionOptions,
     ) => {
       const chain = defineChain(this.chainId);
-      // TODO: remove ZK check when sessions are supported
-      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+      const isZkSync = await isZkSyncChain(chain); // TODO: remove ZK check when sessions are supported
+      const usesActiveWallet =
+        options?.useActiveWallet ||
+        (isZkSync &&
+          (!options?.backendWalletSignature ||
+            !options.backendWalletSignatureExpiration));
+      if (usesActiveWallet) {
         if (!this.client) {
           throw new Error("No Treasure Connect client set");
         }
@@ -361,8 +366,13 @@ export class TDKAPI {
       options?: SendTransactionOptions,
     ) => {
       const chain = defineChain(this.chainId);
-      // TODO: remove ZK check when sessions are supported
-      if (options?.useActiveWallet || (await isZkSyncChain(chain))) {
+      const isZkSync = await isZkSyncChain(chain); // TODO: remove ZK check when sessions are supported
+      const usesActiveWallet =
+        options?.useActiveWallet ||
+        (isZkSync &&
+          (!options?.backendWalletSignature ||
+            !options.backendWalletSignatureExpiration));
+      if (usesActiveWallet) {
         if (!this.client) {
           throw new Error("No Treasure Connect client set");
         }

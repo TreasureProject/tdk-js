@@ -1,6 +1,6 @@
 import type { KMSClientConfig } from "@aws-sdk/client-kms";
 import { type Address, type Hex, defineChain } from "thirdweb";
-import { verifyContractWalletSignature } from "thirdweb/auth";
+import { verifySignature } from "thirdweb/auth";
 import { smartWallet } from "thirdweb/wallets";
 import { DEFAULT_ACCOUNT_FACTORY_V0_7 } from "thirdweb/wallets/smart";
 import { hashMessage, recoverAddress } from "viem";
@@ -104,7 +104,7 @@ export const verifyBackendWalletSignature = async ({
     throw new Error("Backend wallet signature expired");
   }
 
-  const isValid = await verifyContractWalletSignature({
+  const isValid = await verifySignature({
     client,
     chain: defineChain(chainId),
     message: JSON.stringify({ expirationTime }),
