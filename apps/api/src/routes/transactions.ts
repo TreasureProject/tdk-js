@@ -24,16 +24,14 @@ import {
   TDK_ERROR_CODES,
   TDK_ERROR_NAMES,
   TdkError,
+  createUnauthorizedError,
   normalizeEngineErrorMessage,
   parseEngineErrorMessage,
 } from "../utils/error";
-import {
-  parseTransactionRequest,
-  parseTxOverrides,
-} from "../utils/transaction";
+import { parseTxOverrides } from "../utils/transaction";
 
 export const transactionsRoutes =
-  ({ db, engine, env }: TdkApiContext): FastifyPluginAsync =>
+  ({ engine, env }: TdkApiContext): FastifyPluginAsync =>
   async (app) => {
     const checkMaintenanceMode = () => {
       if (env.ENGINE_MAINTENANCE_MODE_ENABLED) {
@@ -65,7 +63,12 @@ export const transactionsRoutes =
       async (req, reply) => {
         checkMaintenanceMode();
 
-        const { backendWallet, accountAddress } = parseTransactionRequest(req);
+        if (!req.isAuthenticated) {
+          throw createUnauthorizedError("Unauthorized", {
+            error: req.authenticationError,
+          });
+        }
+
         const {
           address,
           abi,
@@ -73,6 +76,7 @@ export const transactionsRoutes =
           args,
           txOverrides,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          backendWallet,
         } = req.body;
 
         try {
@@ -97,6 +101,7 @@ export const transactionsRoutes =
             ),
           );
 
+          // ZEE: This is the main entry point for sending transactions. Everything else is for auth and other validation.
           const { result } = await engine.contract.write(
             req.chain.id.toString(),
             address,
@@ -109,7 +114,7 @@ export const transactionsRoutes =
             },
             simulateTransaction,
             undefined,
-            accountAddress,
+            req.authenticatedUserAddress, // ZEE: Replace with any other account address for backend transactions on user's behalf
             ACCOUNT_FACTORY_ADDRESS,
           );
           reply.send(result);
@@ -143,17 +148,25 @@ export const transactionsRoutes =
       async (req, reply) => {
         checkMaintenanceMode();
 
-        const { backendWallet, accountAddress } = parseTransactionRequest(req);
+        if (!req.isAuthenticated) {
+          throw createUnauthorizedError("Unauthorized", {
+            error: req.authenticationError,
+          });
+        }
+
         const {
           to,
           value = "0x00",
           data,
           txOverrides,
           simulateTransaction = env.ENGINE_TRANSACTION_SIMULATION_ENABLED,
+          backendWallet,
         } = req.body;
 
+        Sentry.setExtra("transaction", { to, value, data });
+
         try {
-          Sentry.setExtra("transaction", { to, value, data });
+          // ZEE: This is the entry point for sending raw transactions
           const { result } = await engine.backendWallet.sendTransaction(
             req.chain.id.toString(),
             backendWallet,
@@ -165,7 +178,7 @@ export const transactionsRoutes =
             },
             simulateTransaction,
             undefined,
-            accountAddress,
+            req.authenticatedUserAddress, // ZEE: Replace with any other account address for backend transactions on user's behalf
             ACCOUNT_FACTORY_ADDRESS,
           );
           reply.send(result);
@@ -208,23 +221,6 @@ export const transactionsRoutes =
               ? normalizeEngineErrorMessage(result.errorMessage)
               : null,
           };
-
-          if (transaction.status === "errored") {
-            await db.transactionErrorLog.upsert({
-              where: { queueId },
-              create: {
-                queueId,
-                queuedAt: transaction.queuedAt ?? new Date(),
-                chainId: Number(transaction.chainId ?? 0),
-                signerAddress: transaction.signerAddress ?? "",
-                accountAddress: transaction.accountAddress ?? "",
-                target: transaction.target ?? "",
-                functionName: transaction.functionName ?? "",
-                errorMessage: transaction.errorMessage ?? "",
-              },
-              update: {},
-            });
-          }
 
           reply.send(transaction);
         } catch (err) {

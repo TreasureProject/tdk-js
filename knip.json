@@ -1,5 +1,9 @@
 {
-  "ignore": ["./packages/*/dist/**/*", "./examples/connect-electron/**/*"],
+  "ignore": [
+    "./packages/*/dist/**/*",
+    "./examples/connect-electron/**/*",
+    "./apps/api/scripts/**/*"
+  ],
   "ignoreBinaries": ["docker-compose"],
   "ignoreDependencies": ["pino-pretty", "tslib"],
   "rules": {

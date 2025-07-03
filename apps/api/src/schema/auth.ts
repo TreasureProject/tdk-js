@@ -1,11 +1,7 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { EXAMPLE_WALLET_ADDRESS, nullableStringSchema } from "./shared";
-import {
-  sessionSchema,
-  userProfileSchema,
-  userPublicProfileSchema,
-  userSchema,
-} from "./users";
+
+import { EXAMPLE_WALLET_ADDRESS } from "./shared";
+import { sessionSchema } from "./users";
 
 const loginPayloadSchema = Type.Object({
   domain: Type.String(),
@@ -33,12 +29,6 @@ export const readLoginPayloadReplySchema = loginPayloadSchema;
 export const loginBodySchema = Type.Object({
   payload: loginPayloadSchema,
   signature: Type.String(),
-  adminAccount: Type.Optional(
-    Type.Object({
-      payload: loginPayloadSchema,
-      signature: Type.String(),
-    }),
-  ),
   authTokenDurationSec: Type.Optional(
     Type.Integer({
       minimum: 3_600, // 1 minute
@@ -52,32 +42,13 @@ export const loginReplySchema = Type.Object({
   token: Type.String({
     description: "Authorization token for the logged in user",
   }),
-  user: Type.Intersect([
-    userSchema,
-    userProfileSchema,
-    Type.Object({
-      sessions: Type.Array(sessionSchema),
+  user: Type.Object({
+    address: Type.String({
+      description: "Treasure Account address for the requested chain",
+      examples: [EXAMPLE_WALLET_ADDRESS],
     }),
-  ]),
-  legacyProfiles: Type.Array(
-    Type.Intersect([
-      Type.Object({
-        id: Type.String(),
-        legacyAddress: nullableStringSchema,
-      }),
-      Type.Omit(userPublicProfileSchema, ["socialAccounts"]),
-    ]),
-  ),
-});
-
-export const loginCustomBodySchema = Type.Object({
-  payload: Type.String(),
-});
-
-export const loginCustomReplySchema = Type.Object({
-  userId: Type.String(),
-  email: Type.String(),
-  exp: Type.Number(),
+    sessions: Type.Array(sessionSchema),
+  }),
 });
 
 export type ReadLoginPayloadQuerystring = Static<
@@ -86,5 +57,3 @@ export type ReadLoginPayloadQuerystring = Static<
 export type ReadLoginPayloadReply = Static<typeof readLoginPayloadReplySchema>;
 export type LoginBody = Static<typeof loginBodySchema>;
 export type LoginReply = Static<typeof loginReplySchema>;
-export type LoginCustomBody = Static<typeof loginCustomBodySchema>;
-export type LoginCustomReply = Static<typeof loginCustomReplySchema>;

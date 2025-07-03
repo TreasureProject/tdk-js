@@ -14,7 +14,6 @@ export const TDK_ERROR_CODES = {
   MAINTENANCE_MODE_ENABLED: "MAINTENANCE_MODE_ENABLED",
   AUTH_UNAUTHORIZED: "AUTH_UNAUTHORIZED",
   BACKEND_WALLET_FORBIDDEN: "BACKEND_WALLET_FORBIDDEN",
-  HARVESTER_NFT_HANDLER_NOT_FOUND: "HARVESTER_NFT_HANDLER_NOT_FOUND",
   MAGICSWAP_POOL_NOT_FOUND: "MAGICSWAP_POOL_NOT_FOUND",
   MAGICSWAP_SWAP_FAILED: "MAGICSWAP_SWAP_FAILED",
   MAGICSWAP_ADD_LIQUIDITY_FAILED: "MAGICSWAP_ADD_LIQUIDITY_FAILED",
@@ -103,14 +102,6 @@ export const createUnauthorizedError = (
     message,
     statusCode: 401,
     data,
-  });
-
-export const createUserNotFoundError = () =>
-  new TdkError({
-    name: TDK_ERROR_NAMES.UserError,
-    code: TDK_ERROR_CODES.USER_NOT_FOUND,
-    statusCode: 404,
-    message: "User not found",
   });
 
 export const createForbiddenBackendWalletError = () =>

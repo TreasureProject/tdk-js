@@ -39,24 +39,15 @@ export const parseTxOverrides = (
 export const parseTransactionRequest = (
   req: FastifyRequest<{ Body: { backendWallet: string } }>,
 ) => {
-  let backendWallet: string | undefined;
-  let accountAddress: string | undefined;
-
-  // Backend requests use verified values from the request headers
-  if (req.isBackendRequest) {
-    backendWallet = req.verifiedBackendWallet;
-    accountAddress = req.verifiedBackendUserAddress;
-  } else {
-    // Non-backend requests require an authenticated user
-    if (!req.isAuthenticated) {
-      throw createUnauthorizedError("Unauthorized", {
-        error: req.authenticationError,
-      });
-    }
-
-    backendWallet = req.body.backendWallet;
-    accountAddress = req.authenticatedUserAddress;
+  // Requests require an authenticated user
+  if (!req.isAuthenticated) {
+    throw createUnauthorizedError("Unauthorized", {
+      error: req.authenticationError,
+    });
   }
+
+  const backendWallet = req.body.backendWallet;
+  const accountAddress = req.authenticatedUserAddress;
 
   if (!backendWallet) {
     throw createForbiddenBackendWalletError();
